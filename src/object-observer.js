@@ -3,6 +3,7 @@
 
 	var observables = new WeakMap(),
 		pathsMap = new WeakMap(),
+		api,
 		details;
 
 	//	PUBLIC APIs
@@ -98,7 +99,7 @@
 	}
 
 	//	INTERNALS
-	//
+	//	
 	function iterate(graph, result, path) {
 		var tmp, pVal;
 		if (Array.isArray(graph)) {
@@ -142,12 +143,15 @@
 		return result;
 	}
 
-	Reflect.defineProperty(this, 'details', {
+	api = {};
+
+
+	Reflect.defineProperty(api, 'details', {
 		value: {
 			description: 'Proxy driven data observer implementation'
 		}
 	});
-	Reflect.defineProperty(scope, 'createObservable', {
+	Reflect.defineProperty(api, 'createObservable', {
 		value: function (target) {
 			if (!target || typeof target !== 'object') {
 				throw new Error('observable may be created from non null object only');
@@ -157,7 +161,9 @@
 			return result;
 		}
 	});
-	Reflect.defineProperty(scope, 'observe', { value: observe });
-	Reflect.defineProperty(scope, 'unobserve', { value: unobserve });
-	Reflect.defineProperty(scope, 'flatten', { value: flattenObject });
+	Reflect.defineProperty(api, 'observe', { value: observe });
+	Reflect.defineProperty(api, 'unobserve', { value: unobserve });
+	Reflect.defineProperty(api, 'flatten', { value: flattenObject });
+
+	Reflect.defineProperty(scope, 'ObjectObserver', { value: api });
 })(this);
