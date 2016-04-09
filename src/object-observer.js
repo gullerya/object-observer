@@ -1,7 +1,9 @@
 ﻿(function (scope) {
 	'use strict';
 
-	var observables = new WeakMap(),
+	var observed = new WeakMap(),
+		observables = new WeakMap(),
+		callbacks = new WeakMap(),
 		pathsMap = new WeakMap(),
 		api,
 		details;
@@ -12,7 +14,7 @@
 		var result,
 			rootTarget = arguments[1] || target;
 
-		result = Proxy.revocable(target, {
+		result = new Proxy(target, {
 			set: function proxiedSet(target, key, value) {
 				var oldValue = target[key],
 					result,
@@ -21,15 +23,20 @@
 
 				result = Reflect.set(target, key, value);
 				path = pathsMap.has(target) ? [pathsMap.get(target), key].join('.') : key;
-				if (result) {
+				if (result && value !== oldValue && callbacks.get(rootTarget).length) {
+					//	should not check object to object comparison, all of the object are anyway become proxies
+					//	calc old values
+					//	calc new values
+					//	create marged update map
+					//	call callbacks
+
 					if (typeof oldValue === 'object' && oldValue) {
-						//	remove old proxy
 					}
 					if (typeof value === 'object' && value) {
 						pathsMap.set(value, path);
 						Reflect.set(target, key, createObservable(value, rootTarget));
 					}
-					observables.get(rootTarget).forEach(function (callback) {
+					callbacks.get(rootTarget).forEach(function (callback) {
 						try {
 							callback(changes);
 						} catch (e) {
@@ -48,7 +55,6 @@
 				result = Reflect.deleteProperty(target, key);
 				if (result) {
 					if (typeof oldValue === 'object' && oldValue) {
-						pathsMap.get(oldValue).revoke();
 						pathsMap.delete(oldValue);
 						//	calc flat paths and build an array of changes
 					} else {
@@ -58,7 +64,7 @@
 							oldValue: oldValue
 						});
 					}
-					observables.get(rootTarget).forEach(function (callback) {
+					callbacks.get(rootTarget).forEach(function (callback) {
 						try {
 							callback(changes);
 						} catch (e) {
@@ -68,24 +74,26 @@
 				}
 				return result;
 			}
-		}).proxy;
+		});
 
 		return result;
 	}
 
 	function observe(observable, callback) {
-		if (!observables.has(observable)) {
+		let target = observables.get(observable);
+		if (!target || !callbacks.has(target)) {
 			throw new Error(observable + ' is not a known observable');
 		}
 		if (typeof callback !== 'function') {
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		observables.get(observable).push(callback);
+		callbacks.get(target).push(callback);
 	}
 
 	function unobserve(observable) {
-		if (!observables.has(observable)) {
+		let target = observables.get(observable);
+		if (!target || !callbacks.has(target)) {
 			throw new Error(observable + ' is not a known observable');
 		}
 
@@ -94,7 +102,7 @@
 				//	if callbacks list contains argument[i] - remove it
 			}
 		} else {
-			observables.get(observable) = [];
+			callbacks.get(targetwwwww) = [];
 		}
 	}
 
@@ -157,7 +165,8 @@
 				throw new Error('observable may be created from non null object only');
 			}
 			let result = createObservable(target);
-			observables.set(target, []);
+			observables.set(result, target);
+			callbacks.set(target, []);
 			return result;
 		}
 	});

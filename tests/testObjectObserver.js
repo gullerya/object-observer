@@ -1,10 +1,10 @@
 ﻿(function () {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing DataObserver' }), observer = new DataObserver();
+	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver' });
 
-	if (observer.details.description.indexOf('Proxy') < 0) {
-		console.info('data observer not of a Proxy implementation - skipping non relevant tests');
+	if (ObjectObserver.details.description.indexOf('Proxy') < 0) {
+		console.info('object observer not of a Proxy implementation - skipping non relevant tests');
 		return;
 	}
 
@@ -15,12 +15,9 @@
 			address: null
 		}, po, events = [], tmpAddress = { street: 'some' };
 
-		po = observer.getObserved(o, function (path, value, oldValue) {
-			events.push({
-				p: path,
-				v: value,
-				o: oldValue
-			});
+		po = ObjectObserver.createObservable(o);
+		ObjectObserver.observe(po, function (changes) {
+			events.push(changes);
 		});
 
 		po.name = 'new name';

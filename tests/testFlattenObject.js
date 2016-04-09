@@ -2,7 +2,6 @@
 	'use strict';
 
 	var suite = window.Utils.JustTest.createSuite({ name: 'Flattening Object' }),
-		observer = new DataObserver(),
 		data = {
 			string: 'some',
 			number: 669847,
@@ -87,7 +86,7 @@
 	suite.addTest({ name: 'test A - object' }, function (pass, fail) {
 		var flat;
 
-		flat = flatten(data);
+		flat = ObjectObserver.flatten(data);
 
 		if (flat['string'] !== 'some') fail(1);
 		if (flat['number'] !== 669847) fail(2);
@@ -117,7 +116,7 @@
 		while (counter--) {
 			dataArray.push(data);
 		}
-		flat = flatten(dataArray);
+		flat = ObjectObserver.flatten(dataArray);
 
 		for (var i = 0; i < counter; i++) {
 			arrayPrefix = '[' + i + '].';
