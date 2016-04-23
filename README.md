@@ -1,5 +1,4 @@
-Summary
-=======
+# Summary
 
 Observating a changes performed on any arbitrary object (array being subtype of it, of course) is a MUST HAVE facility in JavaScript world (i'd say in any environment in general and in those providing GUI espesially).
 
@@ -13,10 +12,18 @@ Present library attempts to provide this functionality in a most clean (from con
   - first, create observable clone from the specified object
   - second, register observers on that observable (not on the original one)
 
-API
-===
-TODO
+# API
 
-Examples
-========
+Assuming
+
+# Loading
+
+You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you
+1. Adding a refernce (script tag) to the object-oserver.js in your HTML:
+`<script src="object-observer.js"></script>`
+
+
+
+# Examples
+
 TODO
