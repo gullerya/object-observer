@@ -8,9 +8,9 @@ Present library attempts to provide this functionality in a most clean (from con
 - Implementation relies on Proxy facility
 - Observation is 'deep', yielding changes from a sub-graphs too
 - Changes delivered in a synchronous way
-- Original object are being 'intrumented', thus requiring one more step in a consumption flow
+- Original objects are 'intrumented', thus requiring one more step in a consumption flow
   - first, create observable clone from the specified object
-  - second, register observers on that observable (not on the original one)
+  - second, register observers on the observable (not on the original object)
 
 # Loading the Library
 
