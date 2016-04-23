@@ -12,16 +12,36 @@ Present library attempts to provide this functionality in a most clean (from con
   - first, create observable clone from the specified object
   - second, register observers on that observable (not on the original one)
 
-# API
-
-Assuming
-
-# Loading
+# Loading the Library
 
 You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you
 1. Adding a refernce (script tag) to the object-oserver.js in your HTML:
 `<script src="object-observer.js"></script>`
+2. Implementing a simple custom loader:
+'
+var customNamespace = {};
 
+		fetch('../src/object-observer.js')
+			.then(function (response) {
+				if (response.status === 200) {
+					response.text()
+						.then(function (code) {
+							Function(code).call(customNamespace);
+							if (typeof customNamespace.ObjectObserver !== 'object') fail('expected to find ObjectObserver on custom scope');
+
+							pass();
+						})
+						.catch(fail);
+				} else {
+					fail('failed to fetch the code: ' + response.status);
+				}
+			})
+			.catch(fail);
+'
+
+# API
+
+Assuming
 
 
 # Examples
