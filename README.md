@@ -16,30 +16,37 @@ Present library attempts to provide this functionality in a most clean (from con
 
 You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you
 
-1. Adding a refernce (script tag) to the object-oserver.js in your HTML:
+* Simple a reference (script tag) to the object-oserver.js in your HTML:
 ```html
 <script src="object-observer.js"></script>
+<script>
+	var person = { name: 'some name' },
+	    observablePerson;
+	observablePerson = ObjectObserver.createObservable(person);
+</script>
 ```
 
-2. Implementing a simple custom loader (add your error handling as appropriate):
+* Custom loader with custom namespace, if you want to keep global scope clean (add your error handling as appropriate):
 ```javascript
-var customNamespace = {};
+var customNamespace = {},
+    person = { name: 'some name' },
+    observablePerson;
 
-fetch('object-observer.js')
-	.then(function (response) {
-		if (response.status === 200) {
-			response.text()
-				.then(function (code) {
-					Function(code).call(customNamespace);
-				})
-				.catch(fail);
-		}
-	});
+fetch('object-observer.js').then(function (response) {
+	if (response.status === 200) {
+		response.text().then(function (code) {
+			Function(code).call(customNamespace);
+			
+			//	the below code is an example of consumption, locate is in your app lifecycle as needed
+			observablePerson = customNamespace.ObjectObserver.observe();
+		});
+	}
+});
 ```
 
 # API
 
-Assuming
+TODO
 
 
 # Examples
