@@ -17,10 +17,12 @@ Present library attempts to provide this functionality in a most clean (from con
 You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you
 
 1. Adding a refernce (script tag) to the object-oserver.js in your HTML:
-`<script src="object-observer.js"></script>`
+```html
+<script src="object-observer.js"></script>
+```
 
 2. Implementing a simple custom loader (add your error handling as appropriate):
-'
+```javascript
 var customNamespace = {};
 
 fetch('object-observer.js')
@@ -33,7 +35,7 @@ fetch('object-observer.js')
 				.catch(fail);
 		}
 	});
-'
+```
 
 # API
 
