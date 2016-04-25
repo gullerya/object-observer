@@ -3,11 +3,6 @@
 
 	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver' });
 
-	if (ObjectObserver.details.description.indexOf('Proxy') < 0) {
-		console.info('object observer not of a Proxy implementation - skipping non relevant tests');
-		return;
-	}
-
 	suite.addTest({ name: 'creating observable remain original object as is' }, function (pass, fail) {
 		var person = {
 			name: 'name',
@@ -89,7 +84,7 @@
 			}
 		}, po, events = [], newAddress = {};
 
-		po = ObjectObserver.createObservable(o)
+		po = ObjectObserver.createObservable(o);
 		ObjectObserver.observe(po, function (changes) {
 			[].push.apply(events, changes);
 		});
