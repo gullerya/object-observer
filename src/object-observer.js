@@ -4,38 +4,48 @@
 	var observed = new WeakMap(),
 		observables = new WeakMap(),
 		callbacks = new WeakMap(),
-		pathsMap = new WeakMap(),
 		api,
 		details;
 
 	//	PUBLIC APIs
 	//
-	function createObservable(target) {
-		var result,
-			rootTarget = arguments[1] || target;
+	function createObservable(target, rootTarget, basePath) {
+		var targetCopy,
+			observable;
 
-		result = new Proxy(target, {
+		targetCopy = copy(target);
+
+		Reflect.ownKeys(targetCopy).forEach(function (key) {
+			var path;
+			if (targetCopy[key] && typeof targetCopy[key] === 'object') {
+				path = basePath ? [basePath, key].join('.') : key;
+				targetCopy[key] = createObservable(targetCopy[key], rootTarget, path);
+			}
+		});
+
+		observable = new Proxy(targetCopy, {
 			set: function proxiedSet(target, key, value) {
 				var oldValue = target[key],
 					result,
 					changes = [],
+					change,
 					path;
 
 				result = Reflect.set(target, key, value);
-				path = pathsMap.has(target) ? [pathsMap.get(target), key].join('.') : key;
 				if (result && value !== oldValue && callbacks.get(rootTarget).length) {
-					//	should not check object to object comparison, all of the object are anyway become proxies
-					//	calc old values
-					//	calc new values
-					//	create marged update map
-					//	call callbacks
+					path = basePath ? [basePath, key].join('.') : key;
 
 					if (typeof oldValue === 'object' && oldValue) {
+						//	TODO: clean ups?
 					}
 					if (typeof value === 'object' && value) {
-						pathsMap.set(value, path);
-						Reflect.set(target, key, createObservable(value, rootTarget));
+						target[key] = createObservable(value, rootTarget, path);
 					}
+					change = {};
+					change.path = path;
+					change.value = value;
+					if (typeof oldValue !== 'undefined') { change.oldValue = oldValue; }
+					changes.push(change);
 					callbacks.get(rootTarget).forEach(function (callback) {
 						try {
 							callback(changes);
@@ -50,20 +60,20 @@
 				var oldValue = target[key],
 					result,
 					changes = [],
+					change,
 					path;
 
 				result = Reflect.deleteProperty(target, key);
 				if (result) {
+					path = basePath ? [basePath, key].join('.') : key;
+
 					if (typeof oldValue === 'object' && oldValue) {
-						pathsMap.delete(oldValue);
-						//	calc flat paths and build an array of changes
-					} else {
-						path = pathsMap.has(target) ? [pathsMap.get(target), key].join('.') : key;
-						changes.push({
-							path: path,
-							oldValue: oldValue
-						});
+						//	TODO: clean ups?
 					}
+					change = {};
+					change.path = path;
+					change.oldValue = oldValue;
+					changes.push(change);
 					callbacks.get(rootTarget).forEach(function (callback) {
 						try {
 							callback(changes);
@@ -76,7 +86,7 @@
 			}
 		});
 
-		return result;
+		return observable;
 	}
 
 	function observe(observable, callback) {
@@ -102,12 +112,26 @@
 				//	if callbacks list contains argument[i] - remove it
 			}
 		} else {
-			callbacks.get(targetwwwww) = [];
+			callbacks.get(target) = [];
 		}
 	}
 
 	//	INTERNALS
 	//	
+	function copy(target) {
+		var result;
+		if (!target || typeof target !== 'object') {
+			throw new Error('copy target MUST be a non-null object');
+		}
+
+		if (Array.isArray(target)) {
+			result = target.slice();
+		} else {
+			result = Object.assign({}, target);
+		}
+		return result;
+	}
+
 	function iterate(graph, result, path) {
 		var tmp, pVal;
 		if (Array.isArray(graph)) {
@@ -164,7 +188,7 @@
 			if (!target || typeof target !== 'object') {
 				throw new Error('observable may be created from non null object only');
 			}
-			let result = createObservable(target);
+			let result = createObservable(target, target, '');
 			observables.set(result, target);
 			callbacks.set(target, []);
 			return result;
