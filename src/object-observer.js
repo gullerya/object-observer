@@ -11,113 +11,181 @@
 	//
 	function createObservable(target, rootTarget, basePath) {
 		var targetCopy,
-			observable;
+			observable,
+			ownPath;
+
+		function processArraySubgraph(element, index) {
+			if (element && typeof element === 'object') {
+				ownPath = basePath ? [basePath, key].join('.') : key;
+				targetCopy[index] = createObservable(element, rootTarget, ownPath);
+			}
+		}
+
+		function processObjectSubgraph(key) {
+			if (targetCopy[key] && typeof targetCopy[key] === 'object') {
+				ownPath = basePath ? [basePath, key].join('.') : key;
+				targetCopy[key] = createObservable(targetCopy[key], rootTarget, ownPath);
+			}
+		}
+
+		function proxiedSet(target, key, value) {
+			console.dir(this)
+			var oldValue = target[key],
+				result,
+				changes = [],
+				change,
+				path;
+
+			result = Reflect.set(target, key, value);
+			if (result && value !== oldValue && callbacks.get(rootTarget).length) {
+				path = basePath ? [basePath, key].join('.') : key;
+
+				if (typeof oldValue === 'object' && oldValue) {
+					//	TODO: clean ups?
+				}
+				if (typeof value === 'object' && value) {
+					target[key] = createObservable(value, rootTarget, path);
+				}
+				change = {};
+				change.path = path;
+				change.value = value;
+				if (typeof oldValue !== 'undefined') { change.oldValue = oldValue; }
+				changes.push(change);
+				callbacks.get(rootTarget).forEach(function (callback) {
+					try {
+						callback(changes);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+			}
+			return result;
+		}
+
+		function proxiedDelete(target, key) {
+			var oldValue = target[key],
+				result,
+				changes = [],
+				change,
+				path;
+
+			result = Reflect.deleteProperty(target, key);
+			if (result) {
+				path = basePath ? [basePath, key].join('.') : key;
+
+				if (typeof oldValue === 'object' && oldValue) {
+					//	TODO: clean ups?
+				}
+				change = {};
+				change.path = path;
+				change.oldValue = oldValue;
+				changes.push(change);
+				callbacks.get(rootTarget).forEach(function (callback) {
+					try {
+						callback(changes);
+					} catch (e) {
+						console.error(e);
+					}
+				});
+			}
+			return result;
+		}
 
 		targetCopy = copy(target);
 
-		Reflect.ownKeys(targetCopy).forEach(function (key) {
-			var path;
-			if (targetCopy[key] && typeof targetCopy[key] === 'object') {
-				path = basePath ? [basePath, key].join('.') : key;
-				targetCopy[key] = createObservable(targetCopy[key], rootTarget, path);
-			}
-		});
+		if (Array.isArray(targetCopy)) {
+			targetCopy.forEach(processArraySubgraph);
+			//	TODO: handle an array case
+		} else {
+			Reflect.ownKeys(targetCopy).forEach(processObjectSubgraph);
+			observable = new Proxy(targetCopy, {
+				set: proxiedSet,
+				deleteProperty: proxiedDelete
+			});
+		}
 
-		observable = new Proxy(targetCopy, {
-			set: function proxiedSet(target, key, value) {
-				var oldValue = target[key],
-					result,
-					changes = [],
-					change,
-					path;
-
-				result = Reflect.set(target, key, value);
-				if (result && value !== oldValue && callbacks.get(rootTarget).length) {
-					path = basePath ? [basePath, key].join('.') : key;
-
-					if (typeof oldValue === 'object' && oldValue) {
-						//	TODO: clean ups?
-					}
-					if (typeof value === 'object' && value) {
-						target[key] = createObservable(value, rootTarget, path);
-					}
-					change = {};
-					change.path = path;
-					change.value = value;
-					if (typeof oldValue !== 'undefined') { change.oldValue = oldValue; }
-					changes.push(change);
-					callbacks.get(rootTarget).forEach(function (callback) {
-						try {
-							callback(changes);
-						} catch (e) {
-							console.error(e);
-						}
-					});
-				}
-				return result;
-			},
-			deleteProperty: function proxiedDelete(target, key) {
-				var oldValue = target[key],
-					result,
-					changes = [],
-					change,
-					path;
-
-				result = Reflect.deleteProperty(target, key);
-				if (result) {
-					path = basePath ? [basePath, key].join('.') : key;
-
-					if (typeof oldValue === 'object' && oldValue) {
-						//	TODO: clean ups?
-					}
-					change = {};
-					change.path = path;
-					change.oldValue = oldValue;
-					changes.push(change);
-					callbacks.get(rootTarget).forEach(function (callback) {
-						try {
-							callback(changes);
-						} catch (e) {
-							console.error(e);
-						}
-					});
-				}
-				return result;
-			}
-		});
+		observables.set(observable, new ObservableInfo(rootTarget, basePath));
+		if (target === rootTarget) { callbacks.set(target, []); }
 
 		return observable;
 	}
 
 	function observe(observable, callback) {
-		let target = observables.get(observable);
-		if (!target || !callbacks.has(target)) {
-			throw new Error(observable + ' is not a known observable');
+		if (!observable || typeof observable !== 'object') {
+			throw new Error('observable parameter MUST be a non-null object');
 		}
 		if (typeof callback !== 'function') {
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		callbacks.get(target).push(callback);
+		var observableInfo = observables.get(observable),
+			callbacks;
+		if (!observableInfo) {
+			throw new Error(observable + ' is not a known observable');
+		} else {
+			callbacks = callbacks.get(observableInfo.root);
+		}
+
+		if (callbacks.indexOf(callback) < 0) {
+			callbacks.push(callback);
+		} else {
+			console.info('observer callback may be bound only once for an observable');
+		}
 	}
 
 	function unobserve(observable) {
-		let target = observables.get(observable);
-		if (!target || !callbacks.has(target)) {
+		if (!observable || typeof observable !== 'object') {
+			throw new Error('observable parameter MUST be a non-null object');
+		}
+
+		var observableInfo = observables.get(observable), i,
+			callbacks;
+		if (!observableInfo) {
 			throw new Error(observable + ' is not a known observable');
+		} else {
+			callbacks = callbacks.get(observableInfo.root);
 		}
 
 		if (arguments.length > 1) {
-			for (let i = 1; i < arguments.length; i++) {
-				//	if callbacks list contains argument[i] - remove it
-			}
+			Array.from(arguments).forEach(function (argument, index) {
+				if (index > 1) {
+					i = callbacks.indexOf(argument);
+					if (i) {
+						callbacks.splice(i, 1);
+					}
+				}
+			});
 		} else {
-			callbacks.get(target) = [];
+			callbacks.splice(0, callbacks.length);
 		}
 	}
 
 	//	INTERNALS
-	//	
+	//
+	function ObservableInfo(rootObservable, basePath) {
+		Reflect.defineProperty(this, 'root', { value: rootObservable });
+		Reflect.defineProperty(this, 'basePath', { value: basePath });
+	}
+
+	function InsertChange(path, value) {
+		Reflect.defineProperty(this, 'type', { value: 'insert' });
+		Reflect.defineProperty(this, 'path', { value: path });
+		Reflect.defineProperty(this, 'value', { value: value });
+	}
+
+	function UpdateChange(path, value, oldValue) {
+		Reflect.defineProperty(this, 'type', { value: 'update' });
+		Reflect.defineProperty(this, 'path', { value: path });
+		Reflect.defineProperty(this, 'value', { value: value });
+		Reflect.defineProperty(this, 'oldValue', { value: oldValue });
+	}
+
+	function DeleteChange(path, oldValue) {
+		Reflect.defineProperty(this, 'type', { value: 'delete' });
+		Reflect.defineProperty(this, 'path', { value: path });
+		Reflect.defineProperty(this, 'oldValue', { value: oldValue });
+	}
+
 	function copy(target) {
 		var result;
 		if (!target || typeof target !== 'object') {
@@ -177,7 +245,6 @@
 
 	api = {};
 
-
 	Reflect.defineProperty(api, 'details', {
 		value: {
 			description: 'Proxy driven data observer implementation'
@@ -186,12 +253,9 @@
 	Reflect.defineProperty(api, 'createObservable', {
 		value: function (target) {
 			if (!target || typeof target !== 'object') {
-				throw new Error('observable may be created from non null object only');
+				throw new Error('observable may be created from non-null object only');
 			}
-			let result = createObservable(target, target, '');
-			observables.set(result, target);
-			callbacks.set(target, []);
-			return result;
+			return createObservable(target, target, '');
 		}
 	});
 	Reflect.defineProperty(api, 'observe', { value: observe });

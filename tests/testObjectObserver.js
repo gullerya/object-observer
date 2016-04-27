@@ -72,7 +72,7 @@
 	});
 
 	suite.addTest({ name: 'sub tree object operations' }, function (pass, fail) {
-		var o = {
+		var person = {
 			name: 'name',
 			age: 7,
 			address: null,
@@ -84,7 +84,7 @@
 			}
 		}, po, events = [], newAddress = {};
 
-		po = ObjectObserver.createObservable(o);
+		po = ObjectObserver.createObservable(person);
 		ObjectObserver.observe(po, function (changes) {
 			[].push.apply(events, changes);
 		});
