@@ -91,8 +91,10 @@
 			return result;
 		}
 
+		//	cloning the original target
 		targetCopy = copy(target);
 
+		//	proxifying the clone
 		if (Array.isArray(targetCopy)) {
 			targetCopy.forEach(processArraySubgraph);
 			//	TODO: handle an array case
@@ -104,8 +106,13 @@
 			});
 		}
 
-		observables.set(observable, new ObservableInfo(rootTarget, basePath));
-		if (target === rootTarget) { callbacks.set(target, []); }
+		//	registering the observable
+		if (target === rootTarget) {
+			observables.set(observable, new ObservableInfo(rootTarget, basePath));
+			callbacks.set(target, []);
+		} else {
+			observables.set(observable, new ObservableInfo(rootTarget, basePath));
+		}
 
 		return observable;
 	}
@@ -119,15 +126,15 @@
 		}
 
 		var observableInfo = observables.get(observable),
-			callbacks;
+			cbs;
 		if (!observableInfo) {
 			throw new Error(observable + ' is not a known observable');
 		} else {
-			callbacks = callbacks.get(observableInfo.root);
+			cbs = callbacks.get(observableInfo.root);
 		}
 
-		if (callbacks.indexOf(callback) < 0) {
-			callbacks.push(callback);
+		if (cbs.indexOf(callback) < 0) {
+			cbs.push(callback);
 		} else {
 			console.info('observer callback may be bound only once for an observable');
 		}
@@ -139,24 +146,24 @@
 		}
 
 		var observableInfo = observables.get(observable), i,
-			callbacks;
+			cbs;
 		if (!observableInfo) {
 			throw new Error(observable + ' is not a known observable');
 		} else {
-			callbacks = callbacks.get(observableInfo.root);
+			cbs = callbacks.get(observableInfo.root);
 		}
 
 		if (arguments.length > 1) {
 			Array.from(arguments).forEach(function (argument, index) {
 				if (index > 1) {
-					i = callbacks.indexOf(argument);
+					i = cbs.indexOf(argument);
 					if (i) {
-						callbacks.splice(i, 1);
+						cbs.splice(i, 1);
 					}
 				}
 			});
 		} else {
-			callbacks.splice(0, callbacks.length);
+			cbs.splice(0, cbs.length);
 		}
 	}
 
