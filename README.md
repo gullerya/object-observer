@@ -1,6 +1,6 @@
 # Summary
 
-Observating a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (i'd say in any environment in general and in those providing GUI espesially).
+Observating a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (i'd say in any environment in general and in those providing GUI especially).
 
 Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout actual 'touch' of the original objects, but seems like spec is not yet mature enough for that.
 
@@ -22,7 +22,7 @@ You have 2 ways to load the library: into a 'window' global scope, or a custom s
 <script>
 	var person = { name: 'some name' },
 	    observablePerson;
-	observablePerson = ObjectObserver.createObservable(person);
+	observablePerson = ObjectObserver.observableFrom(person);
 </script>
 ```
 
@@ -38,7 +38,7 @@ fetch('object-observer.js').then(function (response) {
 			Function(code).call(customNamespace);
 			
 			//	the below code is an example of consumption, locate it in your app lifecycle/flow as appropriate
-			observablePerson = customNamespace.ObjectObserver.observe();
+			observablePerson = customNamespace.ObjectObserver.observableFrom(person);
 		});
 	}
 });

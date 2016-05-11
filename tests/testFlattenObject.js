@@ -86,7 +86,7 @@
 	suite.addTest({ name: 'test A - object' }, function (pass, fail) {
 		var flat;
 
-		flat = ObjectObserver.flatten(data);
+		flat = flattenObject(data);
 
 		if (flat['string'] !== 'some') fail(1);
 		if (flat['number'] !== 669847) fail(2);
@@ -116,7 +116,7 @@
 		while (counter--) {
 			dataArray.push(data);
 		}
-		flat = ObjectObserver.flatten(dataArray);
+		flat = flattenObject(dataArray);
 
 		for (var i = 0; i < counter; i++) {
 			arrayPrefix = '[' + i + '].';

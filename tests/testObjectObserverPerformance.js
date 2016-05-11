@@ -16,7 +16,7 @@
 		}, po;
 
 		for (var i = 0; i < 10000; i++) {
-			po = ObjectObserver.createObservable(o);
+			po = ObjectObserver.observableFrom(o);
 		}
 
 		pass();

@@ -7,29 +7,58 @@
 		api,
 		details;
 
-	//	PUBLIC APIs
-	//
 	function createObservable(target, rootTarget, basePath) {
-		var targetCopy,
-			observable,
+		var clone, result;
+
+		//	instrumentation
+		clone = copy(target);
+		result = proxify(clone, rootTarget, basePath);
+		Observable.call(result);
+
+		//	registration
+		if (target === rootTarget) {
+			observables.set(result, new ObservableInfo(rootTarget, basePath));
+			callbacks.set(target, []);
+		} else {
+			observables.set(result, new ObservableInfo(rootTarget, basePath));
+		}
+
+		return result;
+	}
+
+	function copy(target) {
+		var result;
+		if (!target || typeof target !== 'object') {
+			throw new Error('copy target MUST be a non-null object');
+		}
+
+		if (Array.isArray(target)) {
+			result = target.slice();
+		} else {
+			result = Object.assign({}, target);
+		}
+		return result;
+	}
+
+	function proxify(target, rootTarget, basePath) {
+		var proxy,
 			ownPath;
 
 		function processArraySubgraph(element, index) {
 			if (element && typeof element === 'object') {
 				ownPath = basePath ? [basePath, key].join('.') : key;
-				targetCopy[index] = createObservable(element, rootTarget, ownPath);
+				target[index] = createObservable(element, rootTarget, ownPath);
 			}
 		}
 
 		function processObjectSubgraph(key) {
-			if (targetCopy[key] && typeof targetCopy[key] === 'object') {
+			if (target[key] && typeof target[key] === 'object') {
 				ownPath = basePath ? [basePath, key].join('.') : key;
-				targetCopy[key] = createObservable(targetCopy[key], rootTarget, ownPath);
+				target[key] = createObservable(target[key], rootTarget, ownPath);
 			}
 		}
 
 		function proxiedSet(target, key, value) {
-			console.dir(this)
 			var oldValue = target[key],
 				result,
 				changes = [],
@@ -38,7 +67,11 @@
 
 			result = Reflect.set(target, key, value);
 			if (result && value !== oldValue && callbacks.get(rootTarget).length) {
-				path = basePath ? [basePath, key].join('.') : key;
+				if (Array.isArray(target) && !isNaN(parseInt(key))) {
+					path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
+				} else {
+					path = basePath ? [basePath, key].join('.') : key;
+				}
 
 				if (typeof oldValue === 'object' && oldValue) {
 					//	TODO: clean ups?
@@ -71,7 +104,11 @@
 
 			result = Reflect.deleteProperty(target, key);
 			if (result) {
-				path = basePath ? [basePath, key].join('.') : key;
+				if (Array.isArray(target) && !isNaN(parseInt(key))) {
+					path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
+				} else {
+					path = basePath ? [basePath, key].join('.') : key;
+				}
 
 				if (typeof oldValue === 'object' && oldValue) {
 					//	TODO: clean ups?
@@ -91,44 +128,38 @@
 			return result;
 		}
 
-		//	cloning the original target
-		targetCopy = copy(target);
-
-		//	proxifying the clone
-		if (Array.isArray(targetCopy)) {
-			targetCopy.forEach(processArraySubgraph);
-			//	TODO: handle an array case
+		if (Array.isArray(target)) {
+			target.forEach(processArraySubgraph);
+			proxy = new Proxy(target, {
+				set: proxiedSet,
+				deleteProperty: proxiedDelete
+			});
 		} else {
-			Reflect.ownKeys(targetCopy).forEach(processObjectSubgraph);
-			observable = new Proxy(targetCopy, {
+			Reflect.ownKeys(target).forEach(processObjectSubgraph);
+			proxy = new Proxy(target, {
 				set: proxiedSet,
 				deleteProperty: proxiedDelete
 			});
 		}
 
-		//	registering the observable
-		if (target === rootTarget) {
-			observables.set(observable, new ObservableInfo(rootTarget, basePath));
-			callbacks.set(target, []);
-		} else {
-			observables.set(observable, new ObservableInfo(rootTarget, basePath));
-		}
-
-		return observable;
+		return proxy;
 	}
 
-	function observe(observable, callback) {
-		if (!observable || typeof observable !== 'object') {
-			throw new Error('observable parameter MUST be a non-null object');
-		}
+	//	TODO: move here the whole management of the internal of each observable, e.g. info object may be disposed
+	function Observable() {
+		Reflect.defineProperty(this, 'observe', { value: observe });
+		Reflect.defineProperty(this, 'unobserve', { value: unobserve });
+	}
+
+	function observe(callback) {
 		if (typeof callback !== 'function') {
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		var observableInfo = observables.get(observable),
+		var observableInfo = observables.get(this),
 			cbs;
 		if (!observableInfo) {
-			throw new Error(observable + ' is not a known observable');
+			throw new Error(this + ' is not a known observable');
 		} else {
 			cbs = callbacks.get(observableInfo.root);
 		}
@@ -140,12 +171,12 @@
 		}
 	}
 
-	function unobserve(observable) {
+	function unobserve() {
 		if (!observable || typeof observable !== 'object') {
 			throw new Error('observable parameter MUST be a non-null object');
 		}
 
-		var observableInfo = observables.get(observable), i,
+		var observableInfo = observables.get(this), i,
 			cbs;
 		if (!observableInfo) {
 			throw new Error(observable + ' is not a known observable');
@@ -153,13 +184,11 @@
 			cbs = callbacks.get(observableInfo.root);
 		}
 
-		if (arguments.length > 1) {
-			Array.from(arguments).forEach(function (argument, index) {
-				if (index > 1) {
-					i = cbs.indexOf(argument);
-					if (i) {
-						cbs.splice(i, 1);
-					}
+		if (arguments.length) {
+			Array.from(arguments).forEach(function (argument) {
+				i = cbs.indexOf(argument);
+				if (i) {
+					cbs.splice(i, 1);
 				}
 			});
 		} else {
@@ -167,8 +196,6 @@
 		}
 	}
 
-	//	INTERNALS
-	//
 	function ObservableInfo(rootObservable, basePath) {
 		Reflect.defineProperty(this, 'root', { value: rootObservable });
 		Reflect.defineProperty(this, 'basePath', { value: basePath });
@@ -193,63 +220,6 @@
 		Reflect.defineProperty(this, 'oldValue', { value: oldValue });
 	}
 
-	function copy(target) {
-		var result;
-		if (!target || typeof target !== 'object') {
-			throw new Error('copy target MUST be a non-null object');
-		}
-
-		if (Array.isArray(target)) {
-			result = target.slice();
-		} else {
-			result = Object.assign({}, target);
-		}
-		return result;
-	}
-
-	function iterate(graph, result, path) {
-		var tmp, pVal;
-		if (Array.isArray(graph)) {
-			tmp = path + '[';
-			graph.forEach(function (itm, idx) {
-				if (itm && typeof itm === 'object') {
-					iterate(itm, result, [tmp, idx, ']'].join(''));
-				} else {
-					result[[tmp, idx, ']'].join('')] = itm;
-				}
-			});
-		} else {
-			tmp = (path ? path + '.' : '');
-			Reflect.ownKeys(graph).forEach(function (pKey) {
-				pVal = graph[pKey];
-				if (pVal && typeof pVal === 'object') {
-					iterate(pVal, result, tmp + pKey);
-				} else {
-					result[tmp + pKey] = pVal;
-				}
-			});
-		}
-	}
-
-	function flattenObject(graph) {
-		var result = {};
-		if (typeof graph !== 'object') { throw new Error('illegal graph argument, object expected'); }
-		if (graph) { iterate(graph, result, ''); }
-		return result;
-	}
-
-	function calculateGraphChange(oldGraph, newGraph) {
-		var oldGraphFlat,
-			newGraphFlat,
-			result;
-
-		oldGraphFlat = flattenObject(oldGraph);
-		newGraphFlat = flattenObject(newGraph);
-		//	generate list of changes
-
-		return result;
-	}
-
 	api = {};
 
 	Reflect.defineProperty(api, 'details', {
@@ -257,17 +227,16 @@
 			description: 'Proxy driven data observer implementation'
 		}
 	});
-	Reflect.defineProperty(api, 'createObservable', {
+	Reflect.defineProperty(api, 'observableFrom', {
 		value: function (target) {
 			if (!target || typeof target !== 'object') {
-				throw new Error('observable may be created from non-null object only');
+				throw new Error('observable MAY ONLY be created from non-null object only');
+			} else if ('observe' in target || 'unobserve' in target) {
+				throw new Error('target object MUST NOT have not own nor inherited properties "observe" and/or "unobserve"')
 			}
 			return createObservable(target, target, '');
 		}
 	});
-	Reflect.defineProperty(api, 'observe', { value: observe });
-	Reflect.defineProperty(api, 'unobserve', { value: unobserve });
-	Reflect.defineProperty(api, 'flatten', { value: flattenObject });
 
 	Reflect.defineProperty(scope, 'ObjectObserver', { value: api });
 })(this);
