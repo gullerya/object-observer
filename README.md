@@ -28,7 +28,7 @@ You have 2 ways to load the library: into a 'window' global scope, or a custom s
 ```html
 <script src="object-observer.js"></script>
 <script>
-	var person = { name: 'some name' },
+	var person = { name: 'Uriya', age: 8 },
 	    observablePerson;
 	observablePerson = ObjectObserver.observableFrom(person);
 </script>
@@ -37,7 +37,7 @@ You have 2 ways to load the library: into a 'window' global scope, or a custom s
 * Following loader exemplifies how to load the library into a __custom scope__ (add error handling as appropriate):
 ```javascript
 var customNamespace = {},
-    person = { name: 'some name' },
+    person = { name: 'Nava', age: 6 },
     observablePerson;
 
 fetch('object-observer.js').then(function (response) {
@@ -58,7 +58,7 @@ fetch('object-observer.js').then(function (response) {
 
 - `observableFrom` - receives a __non-null object__ and returns __`Observable`__:
 	```javascript
-	var person = { name: 'Nava', age: '6' },
+	var person = { name: 'Aya', age: '1' },
 		observablePerson;
 
 	observablePerson = ObjectObserver.observableFrom(person);
