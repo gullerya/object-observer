@@ -18,7 +18,12 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
 
 #### Backlog:
 - Changes should have a _type_ on them
-- Support _bulk operations_ for the following use-cases: push(a, b, c), unshift(a, b, c), splice(0, 3, a, b, c)
+- Support _bulk operations_ for the following use-cases (all `Array` related):
+  - `push(a, b, c)`
+  - `unshift(a, b, c)`
+  - `splice(0, 3, a, b, c)`
+  - `reverse()`
+  - `sort()`
 
 # Loading the Library
 
