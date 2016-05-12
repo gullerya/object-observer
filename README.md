@@ -13,6 +13,13 @@ Present library attempts to provide this functionality in a most clean (from con
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
 
+### Support matrix: __Chrome__, __Firefox__, __Edge__
+Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
+
+### Backlog:
+- Changes should have a _type_ on them
+- Support _bulk operations_ for the following use-cases: push(a, b, c), unshift(a, b, c), splice(0, 3, a, b, c)
+
 # Loading the Library
 
 You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you.
@@ -82,7 +89,7 @@ fetch('object-observer.js').then(function (response) {
 	- `value` - new value or `undefined` if 'delete' change was observed
 	- `oldValue` - old value or `undefined` if 'insert' change was observed
 	
-- `unobserve` - receives a __function/s__ which previously was/were registered as an observer/s and removes it/them. If __no parameter/s__ passed, all observers will be removed:
+- `unobserve` - receives a __function/s__ which previously was/were registered as an observer/s and removes it/them. If __no arguments__ passed, all observers will be removed:
 	```javascript
 	...
 	observablePerson.unobserve(personUIObserver);
