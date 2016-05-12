@@ -1,6 +1,6 @@
 # Summary
 
-Observation of a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (i'd say in any environment in general and in those providing GUI especially).
+Observation of a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (I'd say in any environment in general and in those providing GUI especially).
 
 Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout actual 'touch' of the original objects, but seems like spec is not yet mature enough for that.
 

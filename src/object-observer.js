@@ -59,7 +59,8 @@
 		}
 
 		function proxiedSet(target, key, value) {
-			var oldValue = target[key],
+			var oldValuePresent = target.hasOwnProperty(key),
+				oldValue = target[key],
 				result,
 				changes = [],
 				change,
@@ -79,10 +80,11 @@
 				if (typeof value === 'object' && value) {
 					target[key] = createObservable(value, rootTarget, path);
 				}
-				change = {};
-				change.path = path;
-				change.value = value;
-				if (typeof oldValue !== 'undefined') { change.oldValue = oldValue; }
+				if (oldValuePresent) {
+					change = new UpdateChange(path, value, oldValue);
+				} else {
+					change = new InsertChange(path, value);
+				}
 				changes.push(change);
 				callbacks.get(rootTarget).forEach(function (callback) {
 					try {
@@ -113,9 +115,7 @@
 				if (typeof oldValue === 'object' && oldValue) {
 					//	TODO: clean ups?
 				}
-				change = {};
-				change.path = path;
-				change.oldValue = oldValue;
+				change = new DeleteChange(path, oldValue);
 				changes.push(change);
 				callbacks.get(rootTarget).forEach(function (callback) {
 					try {
