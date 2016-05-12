@@ -56,7 +56,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `ObjectObserver`
 
-- `observableFrom` - receives a __non-null object__ and returns __`Observable`__:
+- __`observableFrom`__ - receives a _non-null object_ and returns __`Observable`__:
 	```javascript
 	var person = { name: 'Aya', age: '1' },
 		observablePerson;
@@ -67,7 +67,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `Observable`
 
-- `observe` - receives a __function__, which will be added to the list of observers subscribed for a changes of this observable:
+- __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
 	```javascript
 	function personUIObserver(changes) {
 		changes.forEach(change => {
@@ -82,14 +82,14 @@ fetch('object-observer.js').then(function (response) {
 	observablePerson.observe(personUIObserver);
 	```
 	
-	Changes delivered always as an array. Changes __MAY NOT__ be null. Changes __MAY__ be an empty array.
+	Changes delivered always as an array. Changes MAY NOT be null. Changes MAY be an empty array.
 	Each change is a defined, non-null object, having:
 	- `type` - on the following: 'insert', 'update', 'delete' (not yet implemented, reserved for the future use)
 	- `path` - path to the changed property from the root of the observed graph (see examples below)
 	- `value` - new value or `undefined` if 'delete' change was observed
 	- `oldValue` - old value or `undefined` if 'insert' change was observed
 	
-- `unobserve` - receives a __function/s__ which previously was/were registered as an observer/s and removes it/them. If __no arguments__ passed, all observers will be removed:
+- __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
 	```javascript
 	...
 	observablePerson.unobserve(personUIObserver);
