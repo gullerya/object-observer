@@ -74,8 +74,15 @@ fetch('object-observer.js').then(function (response) {
 	observablePerson = ObjectObserver.observableFrom(person);
 	observablePerson.observe(personUIObserver);
 	```
-- `unobserve` - receives a function/s which previously was/were registered as an observer/s and removes it/them
-				If no parameter/s passed, all observers will be removed
+	
+	Changes delivered always as an array. Changes __MAY NOT__ be null. Changes __MAY__ be an empty array.
+	Each change is a defined, non-null object, having:
+	- `type` - on the following: 'insert', 'update', 'delete' (not yet implemented, reserved for the future use)
+	- `path` - path to the changed property from the root of the observed graph (see examples below)
+	- `value` - new value or `undefined` if 'delete' change was observed
+	- `oldValue` - old value or `undefined` if 'insert' change was observed
+	
+- `unobserve` - receives a function/s which previously was/were registered as an observer/s and removes it/them. If no parameter/s passed, all observers will be removed:
 	```javascript
 	...
 	observablePerson.unobserve(personUIObserver);
