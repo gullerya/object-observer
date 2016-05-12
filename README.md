@@ -5,7 +5,7 @@ Observating a changes performed on any arbitrary object (array being subtype of 
 Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout actual 'touch' of the original objects, but seems like spec is not yet mature enough for that.
 
 Present library attempts to provide this functionality in a most clean (from consumption/API perspective) and performant way. Main aspects:
-- Implementation relies on _Proxy_ facility
+- Implementation relies on __Proxy__ mechanism
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
 - Changes delivered always as an __array__, in order to have unified callback API signature supporting future bulk changes delivery in a single call back
@@ -47,7 +47,7 @@ fetch('object-observer.js').then(function (response) {
 
 # API
 
-#### __ObjectObserver__ service APIs:
+##### _ObjectObserver_ service APIs:
 
 - `observableFrom` - receives a __non-null object__ and returns __Observable__
 	```javascript
@@ -58,7 +58,7 @@ fetch('object-observer.js').then(function (response) {
 	...
 	```
 
-### Observable APIs
+##### _Observable_ APIs
 
 - `observe` - receives a function, which will be added to the list of observers subscribed for a changes of this observable
 	```javascript
