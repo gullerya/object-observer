@@ -9,14 +9,16 @@ Present library attempts to provide this functionality in a most clean (from con
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
 - Changes delivered always as an __array__, in order to have unified callback API signature supporting future bulk changes delivery in a single call back
-- Original objects are '__intrumented__', thus requiring few basic steps in a consumption flow
+- Original objects are __intrumented__, thus requiring few basic steps in a consumption flow
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
 
-### Support matrix: __Chrome__, __Firefox__, __Edge__
+![Chrome](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_32x32.png)
+
+#### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sup>49+</sup>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sup>42+</sup>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sup>13+</sup>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
-### Backlog:
+#### Backlog:
 - Changes should have a _type_ on them
 - Support _bulk operations_ for the following use-cases: push(a, b, c), unshift(a, b, c), splice(0, 3, a, b, c)
 
