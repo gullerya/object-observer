@@ -56,7 +56,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `ObjectObserver`
 
-- `observableFrom` - receives a _non-null object_ and returns __`Observable`__:
+- __`observableFrom`__ - receives a _non-null object_ and returns __`Observable`__:
 	```javascript
 	var person = { name: 'Aya', age: '1' },
 		observablePerson;
@@ -67,7 +67,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `Observable`
 
-- `observe` - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
+- __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
 	```javascript
 	function personUIObserver(changes) {
 		changes.forEach(change => {
@@ -89,7 +89,7 @@ fetch('object-observer.js').then(function (response) {
 	- `value` - new value or `undefined` if 'delete' change was observed
 	- `oldValue` - old value or `undefined` if 'insert' change was observed
 	
-- `unobserve` - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
+- __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
 	```javascript
 	...
 	observablePerson.unobserve(personUIObserver);
