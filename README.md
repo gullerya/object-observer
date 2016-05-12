@@ -49,7 +49,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `ObjectObserver`
 
-- `observableFrom` - receives a __non-null object__ and returns __Observable__
+- `observableFrom` - receives a __non-null object__ and returns __`Observable`__:
 	```javascript
 	var person = { name: 'Nava', age: '6' },
 		observablePerson;
@@ -60,7 +60,7 @@ fetch('object-observer.js').then(function (response) {
 
 ##### `Observable`
 
-- `observe` - receives a function, which will be added to the list of observers subscribed for a changes of this observable
+- `observe` - receives a function, which will be added to the list of observers subscribed for a changes of this observable:
 	```javascript
 	function personUIObserver(changes) {
 		changes.forEach(change => {
