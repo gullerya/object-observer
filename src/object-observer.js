@@ -1,9 +1,7 @@
 ﻿(function (scope) {
 	'use strict';
 
-	var observed = new WeakMap(),
-		observables = new WeakMap(),
-		callbacks = new WeakMap(),
+	var callbacks = new WeakMap(),
 		api,
 		details;
 
@@ -13,14 +11,11 @@
 		//	instrumentation
 		clone = copy(target);
 		result = proxify(clone, rootTarget, basePath);
-		Observable.call(result);
+		Observable.call(result, rootTarget, basePath);
 
 		//	registration
 		if (target === rootTarget) {
-			observables.set(result, new ObservableInfo(rootTarget, basePath));
 			callbacks.set(target, []);
-		} else {
-			observables.set(result, new ObservableInfo(rootTarget, basePath));
 		}
 
 		return result;
@@ -151,24 +146,12 @@
 		return proxy;
 	}
 
-	//	TODO: move here the whole management of the internal of each observable, e.g. info object may be disposed
-	function Observable() {
-		Reflect.defineProperty(this, 'observe', { value: observe });
-		Reflect.defineProperty(this, 'unobserve', { value: unobserve });
-	}
-
 	function observe(callback) {
 		if (typeof callback !== 'function') {
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		var observableInfo = observables.get(this),
-			cbs;
-		if (!observableInfo) {
-			throw new Error(this + ' is not a known observable');
-		} else {
-			cbs = callbacks.get(observableInfo.root);
-		}
+		var cbs = callbacks.get(this.root);
 
 		if (cbs.indexOf(callback) < 0) {
 			cbs.push(callback);
@@ -182,13 +165,7 @@
 			throw new Error('observable parameter MUST be a non-null object');
 		}
 
-		var observableInfo = observables.get(this), i,
-			cbs;
-		if (!observableInfo) {
-			throw new Error(observable + ' is not a known observable');
-		} else {
-			cbs = callbacks.get(observableInfo.root);
-		}
+		var i, cbs = callbacks.get(this.root);
 
 		if (arguments.length) {
 			Array.from(arguments).forEach(function (argument) {
@@ -202,9 +179,11 @@
 		}
 	}
 
-	function ObservableInfo(rootObservable, basePath) {
+	function Observable(rootObservable, basePath) {
 		Reflect.defineProperty(this, 'root', { value: rootObservable });
 		Reflect.defineProperty(this, 'basePath', { value: basePath });
+		Reflect.defineProperty(this, 'observe', { value: observe });
+		Reflect.defineProperty(this, 'unobserve', { value: unobserve });
 	}
 
 	function InsertChange(path, value) {
