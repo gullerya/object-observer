@@ -58,6 +58,11 @@
 			}
 		}
 
+		function proxiedArrayGet(target, key) {
+			var result = Reflect.get(target, key);
+			return result;
+		}
+
 		function proxiedSet(target, key, value) {
 			var oldValuePresent = target.hasOwnProperty(key),
 				oldValue = target[key],
@@ -131,6 +136,7 @@
 		if (Array.isArray(target)) {
 			target.forEach(processArraySubgraph);
 			proxy = new Proxy(target, {
+				get: proxiedArrayGet,
 				set: proxiedSet,
 				deleteProperty: proxiedDelete
 			});
@@ -206,18 +212,22 @@
 		Reflect.defineProperty(this, 'path', { value: path });
 		Reflect.defineProperty(this, 'value', { value: value });
 	}
-
 	function UpdateChange(path, value, oldValue) {
 		Reflect.defineProperty(this, 'type', { value: 'update' });
 		Reflect.defineProperty(this, 'path', { value: path });
 		Reflect.defineProperty(this, 'value', { value: value });
 		Reflect.defineProperty(this, 'oldValue', { value: oldValue });
 	}
-
 	function DeleteChange(path, oldValue) {
 		Reflect.defineProperty(this, 'type', { value: 'delete' });
 		Reflect.defineProperty(this, 'path', { value: path });
 		Reflect.defineProperty(this, 'oldValue', { value: oldValue });
+	}
+	function ReverseChange(path, oldValue) {
+		Reflect.defineProperty(this, 'type', { value: 'reverse' });
+	}
+	function ShuffleChange(path, oldValue) {
+		Reflect.defineProperty(this, 'type', { value: 'shuffle' });
 	}
 
 	api = {};
