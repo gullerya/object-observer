@@ -10,8 +10,7 @@
 
 		if (target === rootTarget) {
 			internals.set(target, {
-				callbacks: [],
-				basePath: basePath
+				callbacks: []
 			});
 		}
 
@@ -152,7 +151,7 @@
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		var cbs = internals.get(this.root).callbacks;
+		var cbs = internals.get(this._internals.root).callbacks;
 
 		if (cbs.indexOf(callback) < 0) {
 			cbs.push(callback);
@@ -166,7 +165,7 @@
 			throw new Error('observable parameter MUST be a non-null object');
 		}
 
-		var i, cbs = internals.get(this.root).callbacks;
+		var i, cbs = internals.get(this._internals.root).callbacks;
 
 		if (arguments.length) {
 			Array.from(arguments).forEach(function (argument) {
@@ -180,9 +179,11 @@
 		}
 	}
 
-	function Observable(rootObservable, basePath) {
-		Reflect.defineProperty(this, 'root', { value: rootObservable });
-		Reflect.defineProperty(this, 'basePath', { value: basePath });
+	function Observable(rootTarget, basePath) {
+		var internals = {};
+		Reflect.defineProperty(internals, 'root', { value: rootTarget });
+
+		Reflect.defineProperty(this, '_internals', { value: internals });
 		Reflect.defineProperty(this, 'observe', { value: observe });
 		Reflect.defineProperty(this, 'unobserve', { value: unobserve });
 	}
