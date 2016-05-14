@@ -1,22 +1,23 @@
 ﻿(function (scope) {
 	'use strict';
 
-	var callbacks = new WeakMap(),
+	var internals = new WeakMap(),
 		api,
 		details;
 
 	function createObservable(target, rootTarget, basePath) {
 		var clone, result;
 
-		//	instrumentation
+		if (target === rootTarget) {
+			internals.set(target, {
+				callbacks: [],
+				basePath: basePath
+			});
+		}
+
 		clone = copy(target);
 		result = proxify(clone, rootTarget, basePath);
 		Observable.call(result, rootTarget, basePath);
-
-		//	registration
-		if (target === rootTarget) {
-			callbacks.set(target, []);
-		}
 
 		return result;
 	}
@@ -67,7 +68,7 @@
 				path;
 
 			result = Reflect.set(target, key, value);
-			if (result && value !== oldValue && callbacks.get(rootTarget).length) {
+			if (result && value !== oldValue && internals.get(rootTarget).callbacks.length) {
 				if (Array.isArray(target) && !isNaN(parseInt(key))) {
 					path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
 				} else {
@@ -86,7 +87,7 @@
 					change = new InsertChange(path, value);
 				}
 				changes.push(change);
-				callbacks.get(rootTarget).forEach(function (callback) {
+				internals.get(rootTarget).callbacks.forEach(function (callback) {
 					try {
 						callback(changes);
 					} catch (e) {
@@ -117,7 +118,7 @@
 				}
 				change = new DeleteChange(path, oldValue);
 				changes.push(change);
-				callbacks.get(rootTarget).forEach(function (callback) {
+				internals.get(rootTarget).callbacks.forEach(function (callback) {
 					try {
 						callback(changes);
 					} catch (e) {
@@ -151,7 +152,7 @@
 			throw new Error('callback parameter MUST be a function');
 		}
 
-		var cbs = callbacks.get(this.root);
+		var cbs = internals.get(this.root).callbacks;
 
 		if (cbs.indexOf(callback) < 0) {
 			cbs.push(callback);
@@ -165,7 +166,7 @@
 			throw new Error('observable parameter MUST be a non-null object');
 		}
 
-		var i, cbs = callbacks.get(this.root);
+		var i, cbs = internals.get(this.root).callbacks;
 
 		if (arguments.length) {
 			Array.from(arguments).forEach(function (argument) {
