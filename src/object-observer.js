@@ -180,7 +180,8 @@
 	}
 
 	function Observable(rootTarget, basePath) {
-		var internals = {};
+		var c,
+			internals = {};
 		Reflect.defineProperty(internals, 'root', { value: rootTarget });
 
 		Reflect.defineProperty(this, '_internals', { value: internals });

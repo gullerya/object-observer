@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/object-observer.svg)](https://badge.fury.io/js/object-observer)
+
 # Summary
 
 Observation of a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (I'd say in any environment in general and in those providing GUI especially).
