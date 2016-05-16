@@ -1,27 +1,9 @@
 ﻿(function (scope) {
 	'use strict';
 
-	var internals = new WeakMap(),
-		api,
-		details;
+	var api;
 
-	function createObservable(target, rootTarget, basePath) {
-		var clone, result;
-
-		if (target === rootTarget) {
-			internals.set(target, {
-				callbacks: []
-			});
-		}
-
-		clone = copy(target);
-		result = proxify(clone, rootTarget, basePath);
-		Observable.call(result, rootTarget, basePath);
-
-		return result;
-	}
-
-	function copy(target) {
+	function copyShallow(target) {
 		var result;
 		if (!target || typeof target !== 'object') {
 			throw new Error('copy target MUST be a non-null object');
@@ -35,21 +17,24 @@
 		return result;
 	}
 
-	function proxify(target, rootTarget, basePath) {
-		var proxy,
-			ownPath;
+	function proxify(target, observableData, basePath) {
+		var proxy;
 
 		function processArraySubgraph(element, index) {
+			var path, copy;
 			if (element && typeof element === 'object') {
-				ownPath = basePath ? [basePath, key].join('.') : key;
-				target[index] = createObservable(element, rootTarget, ownPath);
+				path = basePath ? [basePath, key].join('.') : key;
+				copy = copyShallow(element);
+				target[index] = proxify(copy, observableData, path);
 			}
 		}
 
 		function processObjectSubgraph(key) {
+			var path, copy;
 			if (target[key] && typeof target[key] === 'object') {
-				ownPath = basePath ? [basePath, key].join('.') : key;
-				target[key] = createObservable(target[key], rootTarget, ownPath);
+				path = basePath ? [basePath, key].join('.') : key;
+				copy = copyShallow(target[key]);
+				target[key] = proxify(copy, observableData, path);
 			}
 		}
 
@@ -67,7 +52,7 @@
 				path;
 
 			result = Reflect.set(target, key, value);
-			if (result && value !== oldValue && internals.get(rootTarget).callbacks.length) {
+			if (result && value !== oldValue && observableData.callbacks.length) {
 				if (Array.isArray(target) && !isNaN(parseInt(key))) {
 					path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
 				} else {
@@ -78,7 +63,7 @@
 					//	TODO: clean ups?
 				}
 				if (typeof value === 'object' && value) {
-					target[key] = createObservable(value, rootTarget, path);
+					target[key] = proxify(value, observableData, path);
 				}
 				if (oldValuePresent) {
 					change = new UpdateChange(path, value, oldValue);
@@ -86,7 +71,7 @@
 					change = new InsertChange(path, value);
 				}
 				changes.push(change);
-				internals.get(rootTarget).callbacks.forEach(function (callback) {
+				observableData.callbacks.forEach(function (callback) {
 					try {
 						callback(changes);
 					} catch (e) {
@@ -117,7 +102,7 @@
 				}
 				change = new DeleteChange(path, oldValue);
 				changes.push(change);
-				internals.get(rootTarget).callbacks.forEach(function (callback) {
+				observableData.callbacks.forEach(function (callback) {
 					try {
 						callback(changes);
 					} catch (e) {
@@ -146,47 +131,42 @@
 		return proxy;
 	}
 
-	function observe(callback) {
-		if (typeof callback !== 'function') {
-			throw new Error('callback parameter MUST be a function');
+	function ObservableData(target) {
+		var clone,
+			proxy,
+			callbacks = [];
+
+		function observe(callback) {
+			if (typeof callback !== 'function') { throw new Error('callback parameter MUST be a function'); }
+
+			if (callbacks.indexOf(callback) < 0) {
+				callbacks.push(callback);
+			} else {
+				console.info('observer callback may be bound only once for an observable');
+			}
 		}
 
-		var cbs = internals.get(this._internals.root).callbacks;
-
-		if (cbs.indexOf(callback) < 0) {
-			cbs.push(callback);
-		} else {
-			console.info('observer callback may be bound only once for an observable');
+		function unobserve() {
+			if (arguments.length) {
+				Array.from(arguments).forEach(function (argument) {
+					i = callbacks.indexOf(argument);
+					if (i) {
+						callbacks.splice(i, 1);
+					}
+				});
+			} else {
+				callbacks.splice(0, callbacks.length);
+			}
 		}
-	}
 
-	function unobserve() {
-		if (!observable || typeof observable !== 'object') {
-			throw new Error('observable parameter MUST be a non-null object');
-		}
+		clone = copyShallow(target);
+		proxy = proxify(clone, this, '');
 
-		var i, cbs = internals.get(this._internals.root).callbacks;
+		Reflect.defineProperty(proxy, 'observe', { value: observe });
+		Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 
-		if (arguments.length) {
-			Array.from(arguments).forEach(function (argument) {
-				i = cbs.indexOf(argument);
-				if (i) {
-					cbs.splice(i, 1);
-				}
-			});
-		} else {
-			cbs.splice(0, cbs.length);
-		}
-	}
-
-	function Observable(rootTarget, basePath) {
-		var c,
-			internals = {};
-		Reflect.defineProperty(internals, 'root', { value: rootTarget });
-
-		Reflect.defineProperty(this, '_internals', { value: internals });
-		Reflect.defineProperty(this, 'observe', { value: observe });
-		Reflect.defineProperty(this, 'unobserve', { value: unobserve });
+		Reflect.defineProperty(this, 'callbacks', { get: function () { return callbacks.slice(); } });
+		Reflect.defineProperty(this, 'proxy', { value: proxy });
 	}
 
 	function InsertChange(path, value) {
@@ -214,11 +194,6 @@
 
 	api = {};
 
-	Reflect.defineProperty(api, 'details', {
-		value: {
-			description: 'Proxy driven data observer implementation'
-		}
-	});
 	Reflect.defineProperty(api, 'observableFrom', {
 		value: function (target) {
 			if (!target || typeof target !== 'object') {
@@ -226,7 +201,8 @@
 			} else if ('observe' in target || 'unobserve' in target) {
 				throw new Error('target object MUST NOT have not own nor inherited properties "observe" and/or "unobserve"')
 			}
-			return createObservable(target, target, '');
+			var observableData = new ObservableData(target);
+			return observableData.proxy;
 		}
 	});
 
