@@ -61,7 +61,7 @@ fetch('object-observer.js').then(function (response) {
 
 # APIs
 
-##### `ObjectObserver`
+##### `ObjectObserver` service
 
 - __`observableFrom`__ - receives a _non-null object_ and returns __`Observable`__ interface:
 	```javascript
