@@ -19,9 +19,9 @@ Present library attempts to provide this functionality in a most clean (from con
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
 #### Backlog:
-- ~~Changes should have a _type_ on them~~ DONE
+- ~~Changes should have a _type_ on them~~ done
 - Support _bulk operations_ for the following use-cases (all `Array` related):
-  - `push(a, b, c)`
+  - ~~`push(a, b, c)`~~ done
   - `unshift(a, b, c)`
   - `splice(0, 3, a, b, c)`
   - `reverse()`
