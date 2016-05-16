@@ -4,11 +4,9 @@
 	var api;
 
 	function copyShallow(target) {
-		var result;
-		if (!target || typeof target !== 'object') {
-			throw new Error('copy target MUST be a non-null object');
-		}
+		if (!target || typeof target !== 'object') { throw new Error('copy target MUST be a non-null object'); }
 
+		var result;
 		if (Array.isArray(target)) {
 			result = target.slice();
 		} else {
@@ -17,26 +15,30 @@
 		return result;
 	}
 
-	function proxify(target, observableData, basePath) {
-		var proxy;
-
-		function processArraySubgraph(element, index) {
-			var path, copy;
+	function processArraySubgraph(subGraph, observableData, basePath) {
+		var path, copy;
+		subGraph.forEach(function (element, index) {
 			if (element && typeof element === 'object') {
 				path = basePath ? [basePath, key].join('.') : key;
 				copy = copyShallow(element);
-				target[index] = proxify(copy, observableData, path);
+				subGraph[index] = proxify(copy, observableData, path);
 			}
-		}
+		});
+	}
 
-		function processObjectSubgraph(key) {
-			var path, copy;
-			if (target[key] && typeof target[key] === 'object') {
+	function processObjectSubgraph(subGraph, observableData, basePath) {
+		var path, copy;
+		Reflect.ownKeys(subGraph).forEach(function (key) {
+			if (subGraph[key] && typeof subGraph[key] === 'object') {
 				path = basePath ? [basePath, key].join('.') : key;
-				copy = copyShallow(target[key]);
-				target[key] = proxify(copy, observableData, path);
+				copy = copyShallow(subGraph[key]);
+				subGraph[key] = proxify(copy, observableData, path);
 			}
-		}
+		});
+	}
+
+	function proxify(target, observableData, basePath) {
+		var proxy;
 
 		function proxiedArrayGet(target, key) {
 			var result = Reflect.get(target, key);
@@ -114,14 +116,14 @@
 		}
 
 		if (Array.isArray(target)) {
-			target.forEach(processArraySubgraph);
+			processArraySubgraph(target, observableData, basePath);
 			proxy = new Proxy(target, {
 				get: proxiedArrayGet,
 				set: proxiedSet,
 				deleteProperty: proxiedDelete
 			});
 		} else {
-			Reflect.ownKeys(target).forEach(processObjectSubgraph);
+			processObjectSubgraph(target, observableData, basePath);
 			proxy = new Proxy(target, {
 				set: proxiedSet,
 				deleteProperty: proxiedDelete
@@ -132,8 +134,7 @@
 	}
 
 	function ObservableData(target) {
-		var clone,
-			proxy,
+		var proxy,
 			callbacks = [];
 
 		function observe(callback) {
@@ -159,9 +160,7 @@
 			}
 		}
 
-		clone = copyShallow(target);
-		proxy = proxify(clone, this, '');
-
+		proxy = proxify(copyShallow(target), this, '');
 		Reflect.defineProperty(proxy, 'observe', { value: observe });
 		Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 
