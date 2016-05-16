@@ -61,7 +61,7 @@ fetch('object-observer.js').then(function (response) {
 
 # APIs
 
-##### `ObjectObserver` service
+##### `ObjectObserver`
 
 - __`observableFrom`__ - receives a _non-null object_ and returns __`Observable`__ interface:
 	```javascript
@@ -72,7 +72,7 @@ fetch('object-observer.js').then(function (response) {
 	...
 	```
 
-##### `Observable` interface
+##### `Observable`
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
 	```javascript
