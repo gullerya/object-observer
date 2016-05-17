@@ -15,7 +15,7 @@
 
     function processArraySubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        subGraph.forEach(function (element, index) {
+        subGraph.forEach((element, index) => {
             if (element && typeof element === 'object') {
                 path = basePath ? [basePath, key].join('.') : key;
                 copy = copyShallow(element);
@@ -26,7 +26,7 @@
 
     function processObjectSubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        Reflect.ownKeys(subGraph).forEach(function (key) {
+        Reflect.ownKeys(subGraph).forEach(key => {
             if (subGraph[key] && typeof subGraph[key] === 'object') {
                 path = basePath ? [basePath, key].join('.') : key;
                 copy = copyShallow(subGraph[key]);
@@ -43,7 +43,7 @@
             if (key === 'push') {
                 result = function proxiedPush() {
                     var pushResult, pushContent = [], changes = [];
-                    Array.from(arguments).forEach(function (arg, index) {
+                    Array.from(arguments).forEach((arg, index) => {
                         var pArg;
                         if (arg && typeof arg === 'object') {
                             pArg = proxify(arg, observableData, basePath + '[' + (target.length + index) + ']');
@@ -68,7 +68,7 @@
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
                     var unshiftResult, unshiftContent = [], changes = [];
-                    Array.from(arguments).forEach(function (arg, index) {
+                    Array.from(arguments).forEach((arg, index) => {
                         var pArg;
                         if (arg && typeof arg === 'object') {
                             pArg = proxify(arg, observableData, basePath + '[' + index + ']');
@@ -124,7 +124,7 @@
                     change = new InsertChange(path, value);
                 }
                 changes.push(change);
-                observableData.callbacks.forEach(function (callback) {
+                observableData.callbacks.forEach(callback => {
                     try {
                         callback(changes);
                     } catch (e) {
@@ -155,7 +155,7 @@
                 }
                 change = new DeleteChange(path, oldValue);
                 changes.push(change);
-                observableData.callbacks.forEach(function (callback) {
+                observableData.callbacks.forEach(callback => {
                     try {
                         callback(changes);
                     } catch (e) {
@@ -200,8 +200,8 @@
 
         function unobserve() {
             if (arguments.length) {
-                Array.from(arguments).forEach(function (argument) {
-                    i = callbacks.indexOf(argument);
+                Array.from(arguments).forEach(argument => {
+                    var i = callbacks.indexOf(argument);
                     if (i) {
                         callbacks.splice(i, 1);
                     }
