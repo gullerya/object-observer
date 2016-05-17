@@ -22,7 +22,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
 - ~~Changes should have a _type_ on them~~ done
 - Support _bulk operations_ for the following use-cases (all `Array` related):
   - ~~`push(a, b, c)`~~ done
-  - `unshift(a, b, c)`
+  - ~~`unshift(a, b, c)`~~ done
   - `splice(0, 3, a, b, c)`
   - `reverse()`
   - `sort()`

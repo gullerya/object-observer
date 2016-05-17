@@ -42,9 +42,7 @@
             var result;
             if (key === 'push') {
                 result = function proxiedPush() {
-                    var pushResult,
-                        pushContent = [],
-                        changes = [];
+                    var pushResult, pushContent = [], changes = [];
                     Array.from(arguments).forEach(function (arg, index) {
                         var pArg;
                         if (arg && typeof arg === 'object') {
@@ -66,6 +64,31 @@
                         }
                     });
                     return pushResult;
+                }
+            } else if (key === 'unshift') {
+                result = function proxiedUnshift() {
+                    var unshiftResult, unshiftContent = [], changes = [];
+                    Array.from(arguments).forEach(function (arg, index) {
+                        var pArg;
+                        if (arg && typeof arg === 'object') {
+                            pArg = proxify(arg, observableData, basePath + '[' + index + ']');
+                        } else {
+                            pArg = arg;
+                        }
+                        unshiftContent.push(pArg);
+                    });
+                    unshiftContent.forEach(function (pe, index) {
+                        changes.push(new InsertChange(basePath + '[' + index + ']', pe));
+                    });
+                    unshiftResult = Reflect.apply(target[key], target, unshiftContent);
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                    return unshiftResult;
                 }
             } else {
                 result = Reflect.get(target, key);
