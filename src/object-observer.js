@@ -90,6 +90,21 @@
                     });
                     return unshiftResult;
                 }
+            } else if (key === 'reverse') {
+                result = function proxiedReverse() {
+                    var reverseResult, changes = [];
+                    reverseResult = Reflect.apply(target[key], target, arguments);
+                    changes.push(new ReverseChange());
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+
+                    return observableData.proxy;
+                }
             } else {
                 result = Reflect.get(target, key);
             }
@@ -105,7 +120,7 @@
 				path;
 
             result = Reflect.set(target, key, value);
-            if (result && value !== oldValue && observableData.callbacks.length) {
+            if (observableData.callbacks.length && result && value !== oldValue) {
                 if (Array.isArray(target) && !isNaN(parseInt(key))) {
                     path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
                 } else {
@@ -143,7 +158,7 @@
 				path;
 
             result = Reflect.deleteProperty(target, key);
-            if (result) {
+            if (observableData.callbacks.length && result) {
                 if (Array.isArray(target) && !isNaN(parseInt(key))) {
                     path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
                 } else {
@@ -235,10 +250,10 @@
         Reflect.defineProperty(this, 'path', { value: path });
         Reflect.defineProperty(this, 'oldValue', { value: oldValue });
     }
-    function ReverseChange(path, oldValue) {
+    function ReverseChange() {
         Reflect.defineProperty(this, 'type', { value: 'reverse' });
     }
-    function ShuffleChange(path, oldValue) {
+    function ShuffleChange() {
         Reflect.defineProperty(this, 'type', { value: 'shuffle' });
     }
 

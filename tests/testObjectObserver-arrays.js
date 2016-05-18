@@ -126,5 +126,25 @@
         pass();
     });
 
+    suite.addTest({ name: 'array reverse operation' }, function (pass, fail) {
+        var a = [1, 2, 3],
+			pa,
+            reversed,
+			events = [];
+        pa = ObjectObserver.observableFrom(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        reversed = pa.reverse();
+
+        if (events.length !== 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events[0].type !== 'reverse') fail('event 0 did not fire as expected');
+        if (reversed !== pa) fail('reverse base functionality broken');
+        if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) fail('reverse base functionality broken');
+
+        pass();
+    });
+
     suite.run();
 })();
