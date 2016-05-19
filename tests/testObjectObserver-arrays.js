@@ -3,7 +3,7 @@
 
     var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver - arrays' });
 
-    suite.addTest({ name: 'array push operation - primitive' }, function (pass, fail) {
+    suite.addTest({ name: 'array push operation - primitives' }, function (pass, fail) {
         var a = [1, 2, 3, 4],
 			pa,
 			events = [],
@@ -65,7 +65,7 @@
         pass();
     });
 
-    suite.addTest({ name: 'array unshift operation - primitive' }, function (pass, fail) {
+    suite.addTest({ name: 'array unshift operation - primitives' }, function (pass, fail) {
         var a = [],
 			pa,
 			events = [],
@@ -126,7 +126,7 @@
         pass();
     });
 
-    suite.addTest({ name: 'array reverse operation' }, function (pass, fail) {
+    suite.addTest({ name: 'array reverse operation - primitives' }, function (pass, fail) {
         var a = [1, 2, 3],
 			pa,
             reversed,
@@ -138,10 +138,81 @@
 
         reversed = pa.reverse();
 
-        if (events.length !== 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
         if (events[0].type !== 'reverse') fail('event 0 did not fire as expected');
         if (reversed !== pa) fail('reverse base functionality broken');
         if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) fail('reverse base functionality broken');
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array reverse operation - objects' }, function (pass, fail) {
+        var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+			pa,
+            reversed,
+			events = [];
+        pa = ObjectObserver.observableFrom(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        pa[0].name = 'A';
+        reversed = pa.reverse();
+        pa[0].name = 'C';
+
+        if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[0].name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'reverse') fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path !== '[0].name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array sort operation - primitives' }, function (pass, fail) {
+        var a = [3, 2, 1],
+			pa,
+            sorted,
+			events = [];
+        pa = ObjectObserver.observableFrom(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        sorted = pa.sort();
+
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
+        if (events[0].type !== 'shuffle') fail('event 0 did not fire as expected');
+        if (sorted !== pa) fail('sort base functionality broken');
+        if (pa[0] !== 1 || pa[1] !== 2 || pa[2] !== 3) fail('sort base functionality broken');
+
+        sorted = pa.sort((a, b) => { return a < b; });
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (events[1].type !== 'shuffle') fail('event 1 did not fire as expected');
+        if (sorted !== pa) fail('sort base functionality broken');
+        if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) fail('sort base functionality broken');
+
+        pass();
+    });
+
+
+    suite.addTest({ name: 'array sort operation - objects' }, function (pass, fail) {
+        var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+			pa,
+            sorted,
+			events = [];
+        pa = ObjectObserver.observableFrom(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        pa[0].name = 'A';
+        sorted = pa.sort((a, b) => { return a.name < b.name; });
+        pa[0].name = 'C';
+
+        if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[0].name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'shuffle') fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path !== '[0].name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
 
         pass();
     });

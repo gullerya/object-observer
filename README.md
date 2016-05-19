@@ -25,7 +25,8 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
   - ~~`unshift(a, b, c)`~~ done
   - `splice(0, 3, a, b, c)`
   - ~~`reverse()`~~ done
-  - `sort()`
+  - `fill()`
+  - ~~`sort()`~~ done
 
 # Loading the Library
 

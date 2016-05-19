@@ -1,7 +1,8 @@
 ﻿(function (scope) {
     'use strict';
 
-    var api;
+    var api,
+        proxiesToTargetsMap = new WeakMap();
 
     function copyShallow(target) {
         var result;
@@ -17,7 +18,7 @@
         var path, copy;
         subGraph.forEach((element, index) => {
             if (element && typeof element === 'object') {
-                path = basePath ? [basePath, key].join('.') : key;
+                path = basePath ? [basePath, '[' + index + ']'].join('.') : ('[' + index + ']');
                 copy = copyShallow(element);
                 subGraph[index] = proxify(copy, observableData, path);
             }
@@ -92,9 +93,28 @@
                 }
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
-                    var reverseResult, changes = [];
-                    reverseResult = Reflect.apply(target[key], target, arguments);
+                    var changes = [];
+                    observableData.preventCallbacks = true;
+                    Reflect.apply(target[key], observableData.proxy, arguments);
+                    observableData.preventCallbacks = false;
                     changes.push(new ReverseChange());
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+
+                    return observableData.proxy;
+                }
+            } else if (key === 'sort') {
+                result = function proxiedSort() {
+                    var changes = [];
+                    observableData.preventCallbacks = true;
+                    Reflect.apply(target[key], observableData.proxy, arguments);
+                    observableData.preventCallbacks = false;
+                    changes.push(new ShuffleChange());
                     observableData.callbacks.forEach(function (callback) {
                         try {
                             callback(changes);
@@ -128,24 +148,28 @@
                 }
 
                 if (typeof oldValue === 'object' && oldValue) {
-                    //	TODO: clean ups?
+                    if (proxiesToTargetsMap.has(oldValue)) {
+                        proxiesToTargetsMap.delete(oldValue);
+                    }
                 }
                 if (typeof value === 'object' && value) {
                     target[key] = proxify(value, observableData, path);
                 }
-                if (oldValuePresent) {
-                    change = new UpdateChange(path, value, oldValue);
-                } else {
-                    change = new InsertChange(path, value);
-                }
-                changes.push(change);
-                observableData.callbacks.forEach(callback => {
-                    try {
-                        callback(changes);
-                    } catch (e) {
-                        console.error(e);
+                if (!observableData.preventCallbacks) {
+                    if (oldValuePresent) {
+                        change = new UpdateChange(path, value, oldValue);
+                    } else {
+                        change = new InsertChange(path, value);
                     }
-                });
+                    changes.push(change);
+                    observableData.callbacks.forEach(callback => {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                }
             }
             return result;
         }
@@ -159,28 +183,34 @@
 
             result = Reflect.deleteProperty(target, key);
             if (observableData.callbacks.length && result) {
-                if (Array.isArray(target) && !isNaN(parseInt(key))) {
-                    path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
-                } else {
-                    path = basePath ? [basePath, key].join('.') : key;
-                }
-
                 if (typeof oldValue === 'object' && oldValue) {
-                    //	TODO: clean ups?
-                }
-                change = new DeleteChange(path, oldValue);
-                changes.push(change);
-                observableData.callbacks.forEach(callback => {
-                    try {
-                        callback(changes);
-                    } catch (e) {
-                        console.error(e);
+                    if (proxiesToTargetsMap.has(oldValue)) {
+                        proxiesToTargetsMap.delete(oldValue);
                     }
-                });
+                }
+                if (!observableData.preventCallbacks) {
+                    if (Array.isArray(target) && !isNaN(parseInt(key))) {
+                        path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
+                    } else {
+                        path = basePath ? [basePath, key].join('.') : key;
+                    }
+                    change = new DeleteChange(path, oldValue);
+                    changes.push(change);
+                    observableData.callbacks.forEach(callback => {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                }
             }
             return result;
         }
 
+        if (proxiesToTargetsMap.has(target)) {
+            target = proxiesToTargetsMap.get(target);
+        }
         if (Array.isArray(target)) {
             processArraySubgraph(target, observableData, basePath);
             proxy = new Proxy(target, {
@@ -195,13 +225,15 @@
                 deleteProperty: proxiedDelete
             });
         }
+        proxiesToTargetsMap.set(proxy, target);
 
         return proxy;
     }
 
     function ObservableData(target) {
         var proxy,
-			callbacks = [];
+			callbacks = [],
+            preventCallbacks = false;
 
         function observe(callback) {
             if (typeof callback !== 'function') { throw new Error('callback parameter MUST be a function'); }
@@ -231,6 +263,7 @@
         Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 
         Reflect.defineProperty(this, 'callbacks', { get: function () { return callbacks.slice(); } });
+        Reflect.defineProperty(this, 'preventCallbacks', { value: preventCallbacks, writable: true });
         Reflect.defineProperty(this, 'proxy', { value: proxy });
     }
 
