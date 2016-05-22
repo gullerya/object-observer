@@ -196,7 +196,7 @@
 
 
     suite.addTest({ name: 'array sort operation - objects' }, function (pass, fail) {
-        var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+        var a = [{ name: 'a' }, { name: 'c' }],
 			pa,
             sorted,
 			events = [];

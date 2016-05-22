@@ -112,7 +112,8 @@
                 result = function proxiedSort() {
                     var changes = [];
                     observableData.preventCallbacks = true;
-                    Reflect.apply(target[key], observableData.proxy, arguments);
+                    Reflect.apply(target[key], target, arguments);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ShuffleChange());
                     observableData.callbacks.forEach(function (callback) {
@@ -208,8 +209,10 @@
             return result;
         }
 
-        if (proxiesToTargetsMap.has(target)) {
+        if (proxiesToTargetsMap.has(target) && !proxiesToTargetsMap.get(target).proxy) {
+            let tmp = target;
             target = proxiesToTargetsMap.get(target);
+            proxiesToTargetsMap.delete(tmp);
         }
         if (Array.isArray(target)) {
             processArraySubgraph(target, observableData, basePath);
