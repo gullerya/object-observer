@@ -1,7 +1,7 @@
 ﻿(function () {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver Load' });
+	var suite = window.Utils.JustTest.createSuite({ name: 'Testing Observable Load' });
 
 	suite.addTest({ name: 'creating 10K observables' }, function (pass, fail) {
 		var o = {
@@ -16,7 +16,7 @@
 		}, po;
 
 		for (var i = 0; i < 10000; i++) {
-			po = ObjectObserver.observableFrom(o);
+		    po = Observable.from(o);
 		}
 
 		pass();

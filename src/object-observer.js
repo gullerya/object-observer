@@ -95,7 +95,8 @@
                 result = function proxiedReverse() {
                     var changes = [];
                     observableData.preventCallbacks = true;
-                    Reflect.apply(target[key], observableData.proxy, arguments);
+                    Reflect.apply(target[key], target, arguments);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ReverseChange());
                     observableData.callbacks.forEach(function (callback) {
@@ -212,7 +213,7 @@
         if (proxiesToTargetsMap.has(target) && !proxiesToTargetsMap.get(target).proxy) {
             let tmp = target;
             target = proxiesToTargetsMap.get(target);
-            proxiesToTargetsMap.delete(tmp);
+            console.log(proxiesToTargetsMap.delete(tmp));
         }
         if (Array.isArray(target)) {
             processArraySubgraph(target, observableData, basePath);
@@ -295,7 +296,7 @@
 
     api = {};
 
-    Reflect.defineProperty(api, 'observableFrom', {
+    Reflect.defineProperty(api, 'from', {
         value: function (target) {
             if (!target || typeof target !== 'object') {
                 throw new Error('observable MAY ONLY be created from non-null object only');
@@ -307,5 +308,5 @@
         }
     });
 
-    Reflect.defineProperty(scope, 'ObjectObserver', { value: api });
+    Reflect.defineProperty(scope, 'Observable', { value: api });
 })(this);

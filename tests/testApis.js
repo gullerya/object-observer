@@ -1,11 +1,11 @@
 ﻿(function () {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver APIs' });
+	var suite = window.Utils.JustTest.createSuite({ name: 'Testing Observable APIs' });
 
 	suite.addTest({ name: 'test A' }, function (pass, fail) {
-		if (typeof ObjectObserver !== 'object') fail('expected to find ObjectObserver on global scope');
-		if (typeof ObjectObserver.observableFrom !== 'function') fail('expected to find "observableFrom" function on ObjectObserver');
+	    if (typeof Observable !== 'object') fail('expected to find Observable on global scope');
+	    if (typeof Observable.from !== 'function') fail('expected to find "from" function on Observable');
 
 		pass();
 	});
@@ -14,7 +14,7 @@
 		var bo,
 			safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -23,7 +23,7 @@
 		bo = null;
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -32,7 +32,7 @@
 		bo = true;
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -41,7 +41,7 @@
 		bo = 1;
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -50,7 +50,7 @@
 		bo = 'string';
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -59,7 +59,7 @@
 		bo = function () { };
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -70,7 +70,7 @@
 		};
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -81,7 +81,7 @@
 		};
 		safeToContinue = false;
 		try {
-			ObjectObserver.observableFrom(bo);
+		    Observable.from(bo);
 		} catch (e) {
 			safeToContinue = true;
 		}
@@ -94,7 +94,7 @@
 		var o = {},
 			oo;
 
-		oo = ObjectObserver.observableFrom(o);
+		oo = Observable.from(o);
 
 		if (typeof oo.observe !== 'function') fail('expected to find "observe" function on created observable');
 		if (typeof oo.unobserve !== 'function') fail('expected to find "unobserve" function on created observable');

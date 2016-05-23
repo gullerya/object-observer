@@ -38,7 +38,7 @@ You have 2 ways to load the library: into a 'window' global scope, or a custom s
 <script>
 	var person = { name: 'Uriya', age: 8 },
 	    observablePerson;
-	observablePerson = ObjectObserver.observableFrom(person);
+	observablePerson = Observable.from(person);
 </script>
 ```
 
@@ -54,7 +54,7 @@ fetch('object-observer.js').then(function (response) {
 			Function(code).call(customNamespace);
 			
 			//	the below code is an example of consumption, locate it in your app lifecycle/flow as appropriate
-			observablePerson = customNamespace.ObjectObserver.observableFrom(person);
+			observablePerson = customNamespace.Observable.from(person);
 		});
 	}
 });
@@ -62,18 +62,18 @@ fetch('object-observer.js').then(function (response) {
 
 # APIs
 
-##### `ObjectObserver`
+##### `Observable` static properties
 
-- __`observableFrom`__ - receives a _non-null object_ and returns __`Observable`__ interface:
+- __`from`__ - receives a _non-null object_ and returns __`Observable`__ interface:
 	```javascript
 	var person = { name: 'Aya', age: '1' },
 		observablePerson;
 
-	observablePerson = ObjectObserver.observableFrom(person);
+	observablePerson = Observable.from(person);
 	...
 	```
 
-##### `Observable`
+##### `Observable` instance properties
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
 	```javascript
@@ -86,7 +86,7 @@ fetch('object-observer.js').then(function (response) {
 		});
 	}
 	...
-	observablePerson = ObjectObserver.observableFrom(person);
+	observablePerson = Observable.from(person);
 	observablePerson.observe(personUIObserver);
 	```
 	

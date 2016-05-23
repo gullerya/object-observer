@@ -8,7 +8,7 @@
 			pa,
 			events = [],
 			callBacks = 0;
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
             callBacks++;
@@ -30,7 +30,7 @@
         var a = [],
 			pa,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -51,7 +51,7 @@
 			pa,
 			popped,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -70,7 +70,7 @@
 			pa,
 			events = [],
 			callBacks = 0;
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
             callBacks++;
@@ -91,7 +91,7 @@
         var a = [],
 			pa,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -112,7 +112,7 @@
 			pa,
 			shifted,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -131,7 +131,7 @@
 			pa,
             reversed,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -151,7 +151,7 @@
 			pa,
             reversed,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -173,7 +173,7 @@
 			pa,
             sorted,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });
@@ -196,11 +196,11 @@
 
 
     suite.addTest({ name: 'array sort operation - objects' }, function (pass, fail) {
-        var a = [{ name: 'a' }, { name: 'c' }],
+        var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
 			pa,
             sorted,
 			events = [];
-        pa = ObjectObserver.observableFrom(a);
+        pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
         });

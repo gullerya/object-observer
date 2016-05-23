@@ -1,7 +1,7 @@
 ﻿(function () {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver - objects' });
+	var suite = window.Utils.JustTest.createSuite({ name: 'Testing Observable - objects' });
 
 	suite.addTest({ name: 'creating observable leaves original object as is' }, function (pass, fail) {
 		var person = {
@@ -15,7 +15,7 @@
 		address.street = street;
 		person.address = address;
 
-		po = ObjectObserver.observableFrom(person);
+		po = Observable.from(person);
 
 		if (person.address !== address) {
 			fail('internal address object should remain the same');
@@ -34,7 +34,7 @@
 			address: null
 		}, po, events = [], tmpAddress = { street: 'some' };
 
-		po = ObjectObserver.observableFrom(o);
+		po = Observable.from(o);
 		po.observe(function (changes) {
 			[].push.apply(events, changes);
 		});
@@ -70,7 +70,7 @@
 			}
 		}, po, events = [], newAddress = {};
 
-		po = ObjectObserver.observableFrom(person);
+		po = Observable.from(person);
 		po.observe(function (changes) {
 			[].push.apply(events, changes);
 		});
