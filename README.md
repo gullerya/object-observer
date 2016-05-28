@@ -2,18 +2,19 @@
 
 # Summary
 
-Observation of a changes performed on any arbitrary object (array being subtype of it, of course) is a **MUST HAVE** facility in JavaScript world (I'd say in any environment in general and in those providing GUI especially).
+Observation of a changes performed on any arbitrary object (array being a subtype of it) is a **MUST HAVE** facility in JavaScript world.
 
-Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout actual 'touch' of the original objects, but seems like spec is not yet mature enough for that.
+Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout 'touching' the original objects, but seems like ES is not yet mature enough for that.
 
-Present library attempts to provide this functionality in a most clean (from consumption/API perspective) and performant way. Main aspects:
+Present library attempts to provide this functionality in a most clean and performant way. Main aspects:
 - Implementation relies on __Proxy__ mechanism
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
 - Changes delivered always as an __array__, in order to have unified callback API signature supporting future bulk changes delivery in a single call back
-- Original objects are __cloned__ and clone/s are __intrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
+- Original objects are __cloned__ and clone/s are __instrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
+- Array\'s mutable methods supported: `push`, `unshift`, `reverse`, `sort`, `fill`. See below for the specific changes notification delivered for each one of these
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
@@ -25,7 +26,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
   - ~~`unshift(a, b, c)`~~ done
   - `splice(0, 3, a, b, c)`
   - ~~`reverse()`~~ done
-  - `fill()`
+  - ~~`fill()`~~ done
   - ~~`sort()`~~ done
 
 # Loading the Library

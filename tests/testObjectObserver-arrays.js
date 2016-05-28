@@ -194,7 +194,6 @@
         pass();
     });
 
-
     suite.addTest({ name: 'array sort operation - objects' }, function (pass, fail) {
         var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
 			pa,
@@ -213,6 +212,62 @@
         if (events[0].type !== 'update' || events[0].path !== '[0].name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
         if (events[1].type !== 'shuffle') fail('event 1 did not fire as expected');
         if (events[2].type !== 'update' || events[2].path !== '[0].name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array fill operation - primitives' }, function (pass, fail) {
+        var a = [1, 2, 3],
+			pa,
+            filled,
+			events = [];
+        pa = Observable.from(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        filled = pa.fill('a');
+        if (filled !== pa) fail('fill base functionality broken');
+        if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[0]' || events[0].value !== 'a' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path !== '[1]' || events[1].value !== 'a' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path !== '[2]' || events[2].value !== 'a' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
+        events.splice(0);
+
+        pa.fill('b', 1, 3);
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[1]' || events[0].value !== 'b' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path !== '[2]' || events[1].value !== 'b' || events[1].oldValue !== 'a') fail('event 1 did not fire as expected');
+        events.splice(0);
+
+        pa.fill('c', -1, 3)
+        if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[2]' || events[0].value !== 'c' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array fill operation - objects' }, function (pass, fail) {
+        var a = [1, 2, 3],
+			pa,
+            filled,
+			events = [];
+        pa = Observable.from(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        filled = pa.fill({ name: 'Niv' });
+        if (filled !== pa) fail('fill base functionality broken');
+        if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[0]' || events[0].value.name !== 'Niv' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path !== '[1]' || events[1].value.name !== 'Niv' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path !== '[2]' || events[2].value.name !== 'Niv' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
+        events.splice(0);
+
+        pa[1].name = 'David';
+        if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path !== '[1].name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv') fail('event 0 did not fire as expected');
 
         pass();
     });

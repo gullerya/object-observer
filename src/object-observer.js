@@ -127,6 +127,25 @@
 
                     return observableData.proxy;
                 }
+            } else if (key === 'fill') {
+                result = function proxiedFill() {
+                    let changes;
+                    observableData.eventsCollector = [];
+                    observableData.preventCallbacks = true;
+                    Reflect.apply(target[key], observableData.proxy, arguments);
+                    changes = observableData.eventsCollector;
+                    observableData.eventsCollector = null;
+                    observableData.preventCallbacks = false;
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+
+                    return observableData.proxy;
+                }
             } else {
                 result = Reflect.get(target, key);
             }
@@ -137,8 +156,7 @@
             var oldValuePresent = target.hasOwnProperty(key),
 				oldValue = target[key],
 				result,
-				changes = [],
-				change,
+				changes = Array.isArray(observableData.eventsCollector) ? observableData.eventsCollector : [],
 				path;
 
             result = Reflect.set(target, key, value);
@@ -157,13 +175,12 @@
                 if (typeof value === 'object' && value) {
                     target[key] = proxify(value, observableData, path);
                 }
+                if (oldValuePresent) {
+                    changes.push(new UpdateChange(path, value, oldValue));
+                } else {
+                    changes.push(new InsertChange(path, value));
+                }
                 if (!observableData.preventCallbacks) {
-                    if (oldValuePresent) {
-                        change = new UpdateChange(path, value, oldValue);
-                    } else {
-                        change = new InsertChange(path, value);
-                    }
-                    changes.push(change);
                     observableData.callbacks.forEach(callback => {
                         try {
                             callback(changes);
@@ -179,8 +196,7 @@
         function proxiedDelete(target, key) {
             var oldValue = target[key],
 				result,
-				changes = [],
-				change,
+				changes = Array.isArray(observableData.eventsCollector) ? observableData.eventsCollector : [],
 				path;
 
             result = Reflect.deleteProperty(target, key);
@@ -190,14 +206,13 @@
                         proxiesToTargetsMap.delete(oldValue);
                     }
                 }
+                if (Array.isArray(target) && !isNaN(parseInt(key))) {
+                    path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
+                } else {
+                    path = basePath ? [basePath, key].join('.') : key;
+                }
+                changes.push(new DeleteChange(path, oldValue));
                 if (!observableData.preventCallbacks) {
-                    if (Array.isArray(target) && !isNaN(parseInt(key))) {
-                        path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
-                    } else {
-                        path = basePath ? [basePath, key].join('.') : key;
-                    }
-                    change = new DeleteChange(path, oldValue);
-                    changes.push(change);
                     observableData.callbacks.forEach(callback => {
                         try {
                             callback(changes);
@@ -237,6 +252,7 @@
     function ObservableData(target) {
         var proxy,
 			callbacks = [],
+            eventsCollector,
             preventCallbacks = false;
 
         function observe(callback) {
@@ -267,6 +283,7 @@
         Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 
         Reflect.defineProperty(this, 'callbacks', { get: function () { return callbacks.slice(); } });
+        Reflect.defineProperty(this, 'eventsCollector', { value: eventsCollector, writable: true });
         Reflect.defineProperty(this, 'preventCallbacks', { value: preventCallbacks, writable: true });
         Reflect.defineProperty(this, 'proxy', { value: proxy });
     }

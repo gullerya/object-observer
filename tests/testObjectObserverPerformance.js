@@ -3,7 +3,7 @@
 
 	var suite = window.Utils.JustTest.createSuite({ name: 'Testing Observable Load' });
 
-	suite.addTest({ name: 'creating 10K observables' }, function (pass, fail) {
+	suite.addTest({ name: 'creating 10K observables (each has 2 subgraphs)' }, function (pass, fail) {
 		var o = {
 			name: 'name',
 			age: 7,
