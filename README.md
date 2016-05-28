@@ -14,7 +14,7 @@ Present library attempts to provide this functionality in a most clean and perfo
 - Original objects are __cloned__ and clone/s are __instrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
-- Array's mutable methods supported: `push`, `unshift`, `reverse`, `sort`, `fill`. See below for the specific changes notification delivered for each one of these
+- Array's intrinsic __bulk__ mutation methods supported: `push`, `unshift`, `reverse`, `sort`, `fill` (see below for more info on changes delivery for these)
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
