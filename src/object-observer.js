@@ -43,20 +43,13 @@
             var result;
             if (key === 'push') {
                 result = function proxiedPush() {
-                    var pushResult, pushContent = [], changes = [];
-                    Array.from(arguments).forEach((arg, index) => {
-                        var pArg;
-                        if (arg && typeof arg === 'object') {
-                            pArg = proxify(arg, observableData, basePath + '[' + (target.length + index) + ']');
-                        } else {
-                            pArg = arg;
-                        }
-                        pushContent.push(pArg);
-                    });
-                    pushContent.forEach(function (pe, index) {
-                        changes.push(new InsertChange(basePath + '[' + (target.length + index) + ']', pe));
-                    });
-                    pushResult = Reflect.apply(target[key], target, pushContent);
+                    let pushResult, changes;
+                    observableData.eventsCollector = [];
+                    observableData.preventCallbacks = true;
+                    pushResult = Reflect.apply(target[key], observableData.proxy, arguments);
+                    changes = observableData.eventsCollector;
+                    observableData.eventsCollector = null;
+                    observableData.preventCallbacks = false;
                     observableData.callbacks.forEach(function (callback) {
                         try {
                             callback(changes);
@@ -68,9 +61,9 @@
                 }
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
-                    var unshiftResult, unshiftContent = [], changes = [];
+                    let unshiftResult, unshiftContent = [], changes = [];
                     Array.from(arguments).forEach((arg, index) => {
-                        var pArg;
+                        let pArg;
                         if (arg && typeof arg === 'object') {
                             pArg = proxify(arg, observableData, basePath + '[' + index + ']');
                         } else {
@@ -93,7 +86,7 @@
                 }
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
-                    var changes = [];
+                    let changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
@@ -111,7 +104,7 @@
                 }
             } else if (key === 'sort') {
                 result = function proxiedSort() {
-                    var changes = [];
+                    let changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
