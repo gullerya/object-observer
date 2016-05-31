@@ -18,7 +18,7 @@
         var path, copy;
         subGraph.forEach((element, index) => {
             if (element && typeof element === 'object') {
-                path = basePath ? [basePath, '[' + index + ']'].join('.') : ('[' + index + ']');
+                path = basePath.concat(index);
                 copy = copyShallow(element);
                 subGraph[index] = proxify(copy, observableData, path);
             }
@@ -29,7 +29,7 @@
         var path, copy;
         Reflect.ownKeys(subGraph).forEach(key => {
             if (subGraph[key] && typeof subGraph[key] === 'object') {
-                path = basePath ? [basePath, key].join('.') : key;
+                path = basePath.concat(key);
                 copy = copyShallow(subGraph[key]);
                 subGraph[key] = proxify(copy, observableData, path);
             }
@@ -65,14 +65,14 @@
                     Array.from(arguments).forEach((arg, index) => {
                         let pArg;
                         if (arg && typeof arg === 'object') {
-                            pArg = proxify(arg, observableData, basePath + '[' + index + ']');
+                            pArg = proxify(arg, observableData, basePath.concat(index));
                         } else {
                             pArg = arg;
                         }
                         unshiftContent.push(pArg);
                     });
                     unshiftContent.forEach(function (pe, index) {
-                        changes.push(new InsertChange(basePath + '[' + index + ']', pe));
+                        changes.push(new InsertChange(basePath.concat(index), pe));
                     });
                     unshiftResult = Reflect.apply(target[key], target, unshiftContent);
                     observableData.callbacks.forEach(function (callback) {
@@ -139,6 +139,25 @@
 
                     return observableData.proxy;
                 }
+            } else if (key === 'splice') {
+                result = function proxiedSplice() {
+                    let changes,
+                        startIndex,
+                        spliceResult;
+                    observableData.eventsCollector = [];
+                    observableData.preventCallbacks = true;
+                    startIndex = arguments[0] < 0 ? target.length + arguments[0] : arguments[0];
+                    spliceResult = Reflect.apply(target[key], observableData.proxy, arguments);
+                    changes = observableData.eventsCollector;
+                    observableData.eventsCollector = null;
+                    observableData.preventCallbacks = false;
+                    //  todo process and filter the changes, call callbacks
+                    console.dir(changes);
+                    console.log(startIndex);
+                    console.dir(spliceResult);
+
+                    return spliceResult;
+                }
             } else {
                 result = Reflect.get(target, key);
             }
@@ -154,11 +173,7 @@
 
             result = Reflect.set(target, key, value);
             if (observableData.callbacks.length && result && value !== oldValue) {
-                if (Array.isArray(target) && !isNaN(parseInt(key))) {
-                    path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
-                } else {
-                    path = basePath ? [basePath, key].join('.') : key;
-                }
+                path = basePath.concat(key);
 
                 if (typeof oldValue === 'object' && oldValue) {
                     if (proxiesToTargetsMap.has(oldValue)) {
@@ -199,11 +214,7 @@
                         proxiesToTargetsMap.delete(oldValue);
                     }
                 }
-                if (Array.isArray(target) && !isNaN(parseInt(key))) {
-                    path = basePath ? [basePath, '[' + key + ']'].join('.') : '[' + key + ']';
-                } else {
-                    path = basePath ? [basePath, key].join('.') : key;
-                }
+                path = basePath.concat(key);
                 changes.push(new DeleteChange(path, oldValue));
                 if (!observableData.preventCallbacks) {
                     observableData.callbacks.forEach(callback => {
@@ -271,7 +282,7 @@
             }
         }
 
-        proxy = proxify(copyShallow(target), this, '');
+        proxy = proxify(copyShallow(target), this, []);
         Reflect.defineProperty(proxy, 'observe', { value: observe });
         Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 

@@ -19,9 +19,9 @@
 
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
         if (callBacks !== 2) fail('expected to have 2 callbacks, found ' + callBacks);
-        if (events[0].type !== 'insert' || events[0].path !== '[4]' || events[0].value !== 5) fail('event 0 did not fire as expected');
-        if (events[1].type !== 'insert' || events[1].path !== '[5]' || events[1].value !== 6) fail('event 0 did not fire as expected');
-        if (events[2].type !== 'insert' || events[2].path !== '[6]' || events[2].value !== 7) fail('event 0 did not fire as expected');
+        if (events[0].type !== 'insert' || events[0].path.join('.') !== '4' || events[0].value !== 5) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'insert' || events[1].path.join('.') !== '5' || events[1].value !== 6) fail('event 0 did not fire as expected');
+        if (events[2].type !== 'insert' || events[2].path.join('.') !== '6' || events[2].value !== 7) fail('event 0 did not fire as expected');
 
         pass();
     });
@@ -37,11 +37,11 @@
 
         pa.push({ text: 'initial' });
         if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
-        if (events[0].type !== 'insert' || events[0].path !== '[0]' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
 
         pa[0].text = 'name';
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-        if (events[1].type !== 'update' || events[1].path !== '[0].text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '0.text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
 
         pass();
     });
@@ -59,7 +59,7 @@
         popped = pa.pop();
 
         if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
-        if (events[0].type !== 'delete' || events[0].path !== '[0]' || events[0].oldValue !== 'some') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some') fail('event 0 did not fire as expected');
         if (popped !== 'some') fail('pop base functionality broken');
 
         pass();
@@ -80,9 +80,9 @@
         pa.unshift('b', 'c');
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
         if (callBacks !== 2) fail('expected to have 2 callbacks, found ' + callBacks);
-        if (events[0].type !== 'insert' || events[0].path !== '[0]' || events[0].value !== 'a') fail('event 0 did not fire as expected');
-        if (events[1].type !== 'insert' || events[1].path !== '[0]' || events[1].value !== 'b') fail('event 1 did not fire as expected');
-        if (events[2].type !== 'insert' || events[2].path !== '[1]' || events[2].value !== 'c') fail('event 2 did not fire as expected');
+        if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'insert' || events[1].path.join('.') !== '0' || events[1].value !== 'b') fail('event 1 did not fire as expected');
+        if (events[2].type !== 'insert' || events[2].path.join('.') !== '1' || events[2].value !== 'c') fail('event 2 did not fire as expected');
 
         pass();
     });
@@ -98,11 +98,11 @@
 
         pa.unshift({ text: 'initial' });
         if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
-        if (events[0].type !== 'insert' || events[0].path !== '[0]' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
 
         pa[0].text = 'name';
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-        if (events[1].type !== 'update' || events[1].path !== '[0].text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '0.text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
 
         pass();
     });
@@ -120,7 +120,7 @@
         shifted = pa.shift();
 
         if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
-        if (events[0].type !== 'delete' || events[0].path !== '[0]' || events[0].oldValue !== 'some' || events[0].newValue) fail('event 0 did not fire as expected');
+        if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue) fail('event 0 did not fire as expected');
         if (shifted !== 'some') fail('shift base functionality broken');
 
         pass();
@@ -161,9 +161,9 @@
         pa[0].name = 'C';
 
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[0].name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0.name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
         if (events[1].type !== 'reverse') fail('event 1 did not fire as expected');
-        if (events[2].type !== 'update' || events[2].path !== '[0].name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
 
         pass();
     });
@@ -209,9 +209,9 @@
         pa[0].name = 'C';
 
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[0].name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0.name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
         if (events[1].type !== 'shuffle') fail('event 1 did not fire as expected');
-        if (events[2].type !== 'update' || events[2].path !== '[0].name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
 
         pass();
     });
@@ -229,20 +229,20 @@
         filled = pa.fill('a');
         if (filled !== pa) fail('fill base functionality broken');
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[0]' || events[0].value !== 'a' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
-        if (events[1].type !== 'update' || events[1].path !== '[1]' || events[1].value !== 'a' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
-        if (events[2].type !== 'update' || events[2].path !== '[2]' || events[2].value !== 'a' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value !== 'a' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value !== 'a' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value !== 'a' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
         events.splice(0);
 
         pa.fill('b', 1, 3);
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[1]' || events[0].value !== 'b' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
-        if (events[1].type !== 'update' || events[1].path !== '[2]' || events[1].value !== 'b' || events[1].oldValue !== 'a') fail('event 1 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value !== 'b' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '2' || events[1].value !== 'b' || events[1].oldValue !== 'a') fail('event 1 did not fire as expected');
         events.splice(0);
 
         pa.fill('c', -1, 3)
         if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[2]' || events[0].value !== 'c' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'c' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
 
         pass();
     });
@@ -260,16 +260,41 @@
         filled = pa.fill({ name: 'Niv' });
         if (filled !== pa) fail('fill base functionality broken');
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[0]' || events[0].value.name !== 'Niv' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
-        if (events[1].type !== 'update' || events[1].path !== '[1]' || events[1].value.name !== 'Niv' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
-        if (events[2].type !== 'update' || events[2].path !== '[2]' || events[2].value.name !== 'Niv' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value.name !== 'Niv' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !==  '1' || events[1].value.name !== 'Niv' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value.name !== 'Niv' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
         events.splice(0);
 
         pa[1].name = 'David';
         if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
-        if (events[0].type !== 'update' || events[0].path !== '[1].name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv') fail('event 0 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '1.name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv') fail('event 0 did not fire as expected');
 
         pass();
+    });
+
+    suite.addTest({ name: 'array splice operation - primitives' }, function (pass, fail) {
+        var a = [1, 2, 3, 4, 5, 6],
+			pa,
+            spliced,
+			events = [];
+        pa = Observable.from(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        spliced = pa.splice(2, 2, 'a');
+        if (spliced !== pa) fail('splice base functionality broken');
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'a' || events[0].oldValue !== 3) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'delete' || events[1].path.join('.') !== '3' || events[1].oldValue !== 4) fail('event 1 did not fire as expected');
+        events.splice(0);
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array splice operation - objects' }, function (pass, fail) {
+
+        fail();
     });
 
     suite.run();

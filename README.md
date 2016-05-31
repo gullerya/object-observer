@@ -94,7 +94,7 @@ fetch('object-observer.js').then(function (response) {
 	Changes delivered always as an array. Changes MAY NOT be null. Changes MAY be an empty array.
 	Each change is a defined, non-null object, having:
 	- `type` - on the following: 'insert', 'update', 'delete' (not yet implemented, reserved for the future use)
-	- `path` - path to the changed property from the root of the observed graph (see examples below)
+	- `path` - path to the changed property represented as an __Array__ of nodes (see examples below)
 	- `value` - new value or `undefined` if 'delete' change was observed
 	- `oldValue` - old value or `undefined` if 'insert' change was observed
 	
