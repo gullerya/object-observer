@@ -89,7 +89,7 @@
                 result = function proxiedShift() {
                     let shiftResult, changes = [];
                     observableData.preventCallbacks = true;
-                    shiftResult = target.shift();
+                    shiftResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new DeleteChange(basePath.concat(0), shiftResult));
@@ -170,6 +170,7 @@
                     removed = arguments.length < 2 ? (target.length - startIndex) : arguments[1];
                     inserted = Math.max(arguments.length - 2, 0);
                     spliceResult = Reflect.apply(target[key], observableData.proxy, arguments);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     for (index = 0; index < removed; index++) {
                         if (index < inserted) {

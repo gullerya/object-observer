@@ -343,8 +343,28 @@
     });
 
     suite.addTest({ name: 'array splice operation - objects' }, function (pass, fail) {
+        var a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
+			pa,
+            spliced,
+			events = [];
+        pa = Observable.from(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
 
-        fail();
+        pa.splice(1, 2, { text: '1' });
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== '1' || events[0].oldValue.text !== 'b') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'delete' || events[1].path.join('.') !== '2' || events[1].oldValue.text !== 'c') fail('event 1 did not fire as expected');
+        events.splice(0);
+
+        pa[1].text = 'B';
+        pa[2].text = 'D';
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '1.text' || events[0].value !== 'B' || events[0].oldValue !== '1') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd') fail('event 1 did not fire as expected');
+
+        pass();
     });
 
     suite.run();
