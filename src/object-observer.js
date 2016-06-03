@@ -75,6 +75,7 @@
                         changes.push(new InsertChange(basePath.concat(index), pe));
                     });
                     unshiftResult = Reflect.apply(target[key], target, unshiftContent);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.callbacks.forEach(function (callback) {
                         try {
                             callback(changes);
@@ -83,6 +84,23 @@
                         }
                     });
                     return unshiftResult;
+                }
+            } else if (key === 'shift') {
+                result = function proxiedShift() {
+                    let shiftResult, changes = [];
+                    observableData.preventCallbacks = true;
+                    shiftResult = target.shift();
+                    processArraySubgraph(target, observableData, basePath);
+                    observableData.preventCallbacks = false;
+                    changes.push(new DeleteChange(basePath.concat(0), shiftResult));
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                    return shiftResult;
                 }
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
@@ -141,20 +159,36 @@
                 }
             } else if (key === 'splice') {
                 result = function proxiedSplice() {
-                    let changes,
+                    let changes = [],
+                        index,
                         startIndex,
+                        removed,
+                        inserted,
                         spliceResult;
-                    observableData.eventsCollector = [];
                     observableData.preventCallbacks = true;
-                    startIndex = arguments[0] < 0 ? target.length + arguments[0] : arguments[0];
+                    startIndex = arguments.length === 0 ? 0 : (arguments[0] < 0 ? target.length + arguments[0] : arguments[0]);
+                    removed = arguments.length < 2 ? (target.length - startIndex) : arguments[1];
+                    inserted = Math.max(arguments.length - 2, 0);
                     spliceResult = Reflect.apply(target[key], observableData.proxy, arguments);
-                    changes = observableData.eventsCollector;
-                    observableData.eventsCollector = null;
                     observableData.preventCallbacks = false;
-                    //  todo process and filter the changes, call callbacks
-                    console.dir(changes);
-                    console.log(startIndex);
-                    console.dir(spliceResult);
+                    for (index = 0; index < removed; index++) {
+                        if (index < inserted) {
+                            changes.push(new UpdateChange(basePath.concat(startIndex + index), target[startIndex + index], spliceResult[index]));
+                        } else {
+                            changes.push(new DeleteChange(basePath.concat(startIndex + index), spliceResult[index]));
+                        }
+                    }
+                    for (; index < inserted; index++) {
+                        changes.push(new InsertChange(basePath.concat(startIndex + index), target[startIndex + index]));
+                    }
+
+                    observableData.callbacks.forEach(function (callback) {
+                        try {
+                            callback(changes);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
 
                     return spliceResult;
                 }

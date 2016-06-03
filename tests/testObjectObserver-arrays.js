@@ -88,7 +88,7 @@
     });
 
     suite.addTest({ name: 'array unshift operation - objects' }, function (pass, fail) {
-        var a = [],
+        var a = [{ text: 'original' }],
 			pa,
 			events = [];
         pa = Observable.from(a);
@@ -99,15 +99,18 @@
         pa.unshift({ text: 'initial' });
         if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
         if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
+        events.splice(0);
 
         pa[0].text = 'name';
+        pa[1].text = 'other';
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-        if (events[1].type !== 'update' || events[1].path.join('.') !== '0.text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0.text' || events[0].value !== 'name' || events[0].oldValue !== 'initial') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original') fail('event 1 did not fire as expected');
 
         pass();
     });
 
-    suite.addTest({ name: 'array shift operation' }, function (pass, fail) {
+    suite.addTest({ name: 'array shift operation - primitives' }, function (pass, fail) {
         var a = ['some'],
 			pa,
 			shifted,
@@ -122,6 +125,30 @@
         if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
         if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue) fail('event 0 did not fire as expected');
         if (shifted !== 'some') fail('shift base functionality broken');
+
+        pass();
+    });
+
+    suite.addTest({ name: 'array shift operation - objects' }, function (pass, fail) {
+        var a = [{ text: 'a' }, { text: 'b' }],
+			pa,
+			shifted,
+			events = [];
+        pa = Observable.from(a);
+        pa.observe(function (eventsList) {
+            [].push.apply(events, eventsList);
+        });
+
+        shifted = pa.shift();
+
+        if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue.text !== 'a') fail('event 0 did not fire as expected');
+        if (shifted.text !== 'a') fail('shift base functionality broken');
+        events.splice(0);
+
+        pa[0].text = 'c';
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
+        if (events[0].type !== 'update' || events[0].path.join('.') !== '0.text' || events[0].oldValue !== 'b' || events[0].value !== 'c') fail('event 0 did not fire as expected');
 
         pass();
     });
@@ -261,7 +288,7 @@
         if (filled !== pa) fail('fill base functionality broken');
         if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
         if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value.name !== 'Niv' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
-        if (events[1].type !== 'update' || events[1].path.join('.') !==  '1' || events[1].value.name !== 'Niv' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value.name !== 'Niv' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
         if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value.name !== 'Niv' || events[2].oldValue !== 3) fail('event 2 did not fire as expected');
         events.splice(0);
 
@@ -276,18 +303,41 @@
         var a = [1, 2, 3, 4, 5, 6],
 			pa,
             spliced,
-			events = [];
+			events = [],
+            callbacks = 0;
         pa = Observable.from(a);
         pa.observe(function (eventsList) {
             [].push.apply(events, eventsList);
+            callbacks++;
         });
 
         spliced = pa.splice(2, 2, 'a');
-        if (spliced !== pa) fail('splice base functionality broken');
+        if (!Array.isArray(spliced) || spliced.length !== 2 || spliced[0] !== 3 || spliced[1] !== 4) fail('splice base functionality broken');
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (callbacks !== 1) fail('expected to have 1 callback, found ' + callbacks);
         if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'a' || events[0].oldValue !== 3) fail('event 0 did not fire as expected');
         if (events[1].type !== 'delete' || events[1].path.join('.') !== '3' || events[1].oldValue !== 4) fail('event 1 did not fire as expected');
         events.splice(0);
+        callbacks = 0;
+
+        //  pa = [1,2,'a',5,6]
+        spliced = pa.splice(-3);
+        if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+        if (callbacks !== 1) fail('expected to have 1 callback, found ' + callbacks);
+        if (events[0].type !== 'delete' || events[0].path.join('.') !== '2' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
+        if (events[1].type !== 'delete' || events[1].path.join('.') !== '3' || events[1].oldValue !== 5) fail('event 1 did not fire as expected');
+        if (events[2].type !== 'delete' || events[2].path.join('.') !== '4' || events[2].oldValue !== 6) fail('event 2 did not fire as expected');
+        events.splice(0);
+        callbacks = 0;
+
+        //  pa = [1,2]
+        spliced = pa.splice(0);
+        if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+        if (callbacks !== 1) fail('expected to have 1 callback, found ' + callbacks);
+        if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 1) fail('event 0 did not fire as expected');
+        if (events[1].type !== 'delete' || events[1].path.join('.') !== '1' || events[1].oldValue !== 2) fail('event 1 did not fire as expected');
+        events.splice(0);
+        callbacks = 0;
 
         pass();
     });
