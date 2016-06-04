@@ -95,10 +95,10 @@ fetch('object-observer.js').then(function (response) {
 	
 	Changes delivered always as an array. Changes MAY NOT be null. Changes MAY be an empty array.
 	Each change is a defined, non-null object, having:
-	- `type` - on the following: 'insert', 'update', 'delete' (not yet implemented, reserved for the future use)
+	- `type` - one of the following: 'insert', 'update', 'delete', 'shuffle' or 'reverse'
 	- `path` - path to the changed property represented as an __Array__ of nodes (see examples below)
-	- `value` - new value or `undefined` if 'delete' change was observed
-	- `oldValue` - old value or `undefined` if 'insert' change was observed
+	- `value` - new value; not available in 'delete', 'shuffle' and 'reverse' changes
+	- `oldValue` - old value; not available in 'insert', 'shuffle' or 'reverse' changes
 	
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
 	```javascript
@@ -109,6 +109,25 @@ fetch('object-observer.js').then(function (response) {
 	...
 	```
 
-# More examples / code snippets
+# Examples
 
+##### Objects
+	```javascript
+	var order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+		observableOrder;
 
+	observableOrder = Observable.from(order);
+	observableOrder.observe(changes => {
+		changes.forEach(change => {
+			console.log(change);
+		});
+	});
+
+	observableOrder.ammount = 7;				//	console:	UpdateChange { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
+	observableOrder.address = {
+		street: 'Str 75',
+		apt: 29
+	};											//	console:	InsertChange { type: "insert", path: ['address'], value: { ... } }
+	observableOrder.address.apt = 30;			//	console:	UpdateChange { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
+	delete observableOrder.remark;				//	console:	DeleteChange { type: "delete", path: ['remark'], oldValue: 'remove me' }
+	```
