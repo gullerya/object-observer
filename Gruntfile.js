@@ -3,11 +3,12 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         jshint: {
-            files: ['Gruntfile.js', 'src/**/*.js'],
             options: {
                 globals: {
+                    esversion: 6
                 }
-            }
+            },
+            files: ['Gruntfile.js', 'src/**/*.js']
         },
         uglify: {
             build: {

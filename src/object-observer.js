@@ -206,10 +206,10 @@
             return result;
         }
 
-        if (proxiesToTargetsMap.has(target) && !proxiesToTargetsMap.get(target).proxy) {
+        if (proxiesToTargetsMap.has(target)) {
             var tmp = target;
             target = proxiesToTargetsMap.get(target);
-            console.log(proxiesToTargetsMap.delete(tmp));
+            proxiesToTargetsMap.delete(tmp);
         }
         if (Array.isArray(target)) {
             processArraySubgraph(target, observableData, basePath);
