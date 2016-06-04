@@ -26,6 +26,10 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - Optimization for the cases of Array massive mutations
  - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
 
+#### Versions
+- 0.1.0
+  - First stable API release
+
 
 # Loading the Library
 
@@ -107,4 +111,4 @@ fetch('object-observer.js').then(function (response) {
 
 # More examples / code snippets
 
-TODO
+
