@@ -14,13 +14,17 @@ Present library attempts to provide this functionality in a most clean and perfo
 - Original objects are __cloned__ and clone/s are __instrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
-- Array's intrinsic mutation methods supported: `push`, `pop`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
+- Arrays:
+  - generic object-like mutations supported
+  - intrinsic mutation methods supported: `push`, `pop`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
+  - massive mutations delivered in a single callback, usually having an array of an atomic changes
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
 #### Backlog:
-
+ - Optimization for the cases of Array massive mutations
+ - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
 
 
 # Loading the Library
