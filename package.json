@@ -30,6 +30,9 @@
   "files": [
     "bin/object-observer.js"
   ],
+  "scripts": {
+    "test": "grunt test"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gullerya/object-observer-js"

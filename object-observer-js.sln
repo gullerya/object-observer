@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "object-observer-js", "http://localhost:54583", "{7EF5E335-E5D9-4180-9A67-81E5ECE444C7}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -23,6 +23,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "object-observer-js", "http:
 		Release.AspNetCompiler.Debug = "False"
 		SlnRelativePath = "..\object-observer-js\"
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2583B73A-0200-4009-96E7-5B5B79AAD5A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
