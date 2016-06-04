@@ -50,13 +50,7 @@
                     changes = observableData.eventsCollector;
                     observableData.eventsCollector = null;
                     observableData.preventCallbacks = false;
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return pushResult;
                 };
             } else if (key === 'unshift') {
@@ -76,13 +70,7 @@
                     });
                     unshiftResult = Reflect.apply(target[key], target, unshiftContent);
                     processArraySubgraph(target, observableData, basePath);
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return unshiftResult;
                 };
             } else if (key === 'shift') {
@@ -93,13 +81,7 @@
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new DeleteChange(basePath.concat(0), shiftResult));
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return shiftResult;
                 };
             } else if (key === 'reverse') {
@@ -110,14 +92,7 @@
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ReverseChange());
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'sort') {
@@ -128,14 +103,7 @@
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ShuffleChange());
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'fill') {
@@ -147,14 +115,7 @@
                     changes = observableData.eventsCollector;
                     observableData.eventsCollector = null;
                     observableData.preventCallbacks = false;
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'splice') {
@@ -183,14 +144,7 @@
                         changes.push(new InsertChange(basePath.concat(startIndex + index), target[startIndex + index]));
                     }
 
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return spliceResult;
                 };
             } else {
@@ -224,13 +178,7 @@
                     changes.push(new InsertChange(path, value));
                 }
                 if (!observableData.preventCallbacks) {
-                    observableData.callbacks.forEach(callback => {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                 }
             }
             return result;
@@ -252,13 +200,7 @@
                 path = basePath.concat(key);
                 changes.push(new DeleteChange(path, oldValue));
                 if (!observableData.preventCallbacks) {
-                    observableData.callbacks.forEach(callback => {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                 }
             }
             return result;
@@ -348,6 +290,16 @@
     }
     function ShuffleChange() {
         Reflect.defineProperty(this, 'type', { value: 'shuffle' });
+    }
+
+    function publishChanges(callbacks, changes) {
+        for (var i = 0; i < callbacks.length; i++) {
+            try {
+                callbacks[i](changes);
+            } catch (e) {
+                console.error(e);
+            }
+        }
     }
 
     api = {};
