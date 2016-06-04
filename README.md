@@ -112,22 +112,22 @@ fetch('object-observer.js').then(function (response) {
 # Examples
 
 ##### Objects
-	```javascript
-	var order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
-		observableOrder;
-	observableOrder = Observable.from(order);
-	observableOrder.observe(changes => {
-		changes.forEach(change => {
-			console.log(change);
-		});
+```javascript
+var order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+	observableOrder;
+observableOrder = Observable.from(order);
+observableOrder.observe(changes => {
+	changes.forEach(change => {
+		console.log(change);
 	});
-	observableOrder.ammount = 7;		// { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
-	observableOrder.address = {
-		street: 'Str 75',
-		apt: 29
-	};									// { type: "insert", path: ['address'], value: { ... } }
-	observableOrder.address.apt = 30;	// { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
-	delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue: 'remove me' }
-	```
+});
+observableOrder.ammount = 7;		// { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
+observableOrder.address = {
+	street: 'Str 75',
+	apt: 29
+};									// { type: "insert", path: ['address'], value: { ... } }
+observableOrder.address.apt = 30;	// { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
+delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue: 'remove me' }
+```
 
 ##### Arrays
