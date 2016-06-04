@@ -33,4 +33,9 @@ module.exports = function (grunt) {
 
         grunt.task.run('uglify:build');
     });
+
+    grunt.registerTask('full-ci', 'Full CI Build cycle', function () {
+        grunt.task.run('build');
+        grunt.task.run('test');
+    });
 };
