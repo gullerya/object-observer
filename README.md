@@ -25,6 +25,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
 #### Backlog:
  - Optimization for the cases of Array massive mutations
  - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
+ - Create build process including test automation on CI and probably minification/reorg of a consumable code
 
 #### Versions
 - 0.1.0
@@ -122,10 +123,10 @@ observableOrder.observe(changes => {
 	});
 });
 observableOrder.ammount = 7;		// { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
-observableOrder.address = {
+observableOrder.address = {			// { type: "insert", path: ['address'], value: { ... } }
 	street: 'Str 75',
 	apt: 29
-};									// { type: "insert", path: ['address'], value: { ... } }
+};
 observableOrder.address.apt = 30;	// { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
 delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue: 'remove me' }
 ```
