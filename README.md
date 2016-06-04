@@ -10,7 +10,7 @@ Present library attempts to provide this functionality in a most clean and perfo
 - Implementation relies on __Proxy__ mechanism
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
-- Changes delivered always as an __array__, in order to have unified callback API signature supporting future bulk changes delivery in a single call back
+- Changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
 - Original objects are __cloned__ and clone/s are __instrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
