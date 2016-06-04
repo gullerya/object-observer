@@ -8,6 +8,9 @@
   },
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via Proxy; changes delivered in a synchronous way",
   "main": "src/object-observer.js",
+  "devDependencies": {
+    "grunt": "~0.4.5"
+  },
   "keywords": [
     "object",
     "array",
