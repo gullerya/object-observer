@@ -5,14 +5,24 @@ module.exports = function (grunt) {
         jshint: {
             files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
             options: {
-                esversion: 6,
                 globals: {
+                }
+            }
+        },
+        uglify: {
+            build: {
+                options: {
+                    screwIE8: true
+                },
+                files: {
+                    'bin/object-observer.min.js': ['src/object-observer.js']
                 }
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.registerTask('test', ['jshint']);
 
@@ -20,5 +30,7 @@ module.exports = function (grunt) {
         grunt.log.writeln('Copy to "bin"');
         fs.writeFileSync('bin/object-observer.js', fs.readFileSync('src/object-observer.js'));
         grunt.log.ok();
+
+        grunt.task.run('uglify:build');
     });
 };

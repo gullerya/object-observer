@@ -16,7 +16,7 @@
 
     function processArraySubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        subGraph.forEach((element, index) => {
+        subGraph.forEach(function (element, index) {
             if (element && typeof element === 'object') {
                 path = basePath.concat(index);
                 copy = copyShallow(element);
@@ -27,7 +27,7 @@
 
     function processObjectSubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        Reflect.ownKeys(subGraph).forEach(key => {
+        Reflect.ownKeys(subGraph).forEach(function (key) {
             if (subGraph[key] && typeof subGraph[key] === 'object') {
                 path = basePath.concat(key);
                 copy = copyShallow(subGraph[key]);
@@ -43,7 +43,7 @@
             var result;
             if (key === 'push') {
                 result = function proxiedPush() {
-                    let pushResult, changes;
+                    var pushResult, changes;
                     observableData.eventsCollector = [];
                     observableData.preventCallbacks = true;
                     pushResult = Reflect.apply(target[key], observableData.proxy, arguments);
@@ -55,9 +55,9 @@
                 };
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
-                    let unshiftResult, unshiftContent = [], changes = [];
-                    Array.from(arguments).forEach((arg, index) => {
-                        let pArg;
+                    var unshiftResult, unshiftContent = [], changes = [];
+                    Array.from(arguments).forEach(function (arg, index) {
+                        var pArg;
                         if (arg && typeof arg === 'object') {
                             pArg = proxify(arg, observableData, basePath.concat(index));
                         } else {
@@ -75,7 +75,7 @@
                 };
             } else if (key === 'shift') {
                 result = function proxiedShift() {
-                    let shiftResult, changes = [];
+                    var shiftResult, changes = [];
                     observableData.preventCallbacks = true;
                     shiftResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
@@ -86,7 +86,7 @@
                 };
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
-                    let changes = [];
+                    var changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
@@ -97,7 +97,7 @@
                 };
             } else if (key === 'sort') {
                 result = function proxiedSort() {
-                    let changes = [];
+                    var changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
@@ -108,7 +108,7 @@
                 };
             } else if (key === 'fill') {
                 result = function proxiedFill() {
-                    let changes;
+                    var changes;
                     observableData.eventsCollector = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], observableData.proxy, arguments);
@@ -120,7 +120,7 @@
                 };
             } else if (key === 'splice') {
                 result = function proxiedSplice() {
-                    let changes = [],
+                    var changes = [],
                         index,
                         startIndex,
                         removed,
@@ -207,7 +207,7 @@
         }
 
         if (proxiesToTargetsMap.has(target) && !proxiesToTargetsMap.get(target).proxy) {
-            let tmp = target;
+            var tmp = target;
             target = proxiesToTargetsMap.get(target);
             console.log(proxiesToTargetsMap.delete(tmp));
         }
@@ -248,7 +248,7 @@
 
         function unobserve() {
             if (arguments.length) {
-                Array.from(arguments).forEach(argument => {
+                Array.from(arguments).forEach(function (argument) {
                     var i = callbacks.indexOf(argument);
                     if (i) {
                         callbacks.splice(i, 1);

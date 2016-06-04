@@ -16,7 +16,7 @@
 
     function processArraySubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        subGraph.forEach((element, index) => {
+        subGraph.forEach(function (element, index) {
             if (element && typeof element === 'object') {
                 path = basePath.concat(index);
                 copy = copyShallow(element);
@@ -27,7 +27,7 @@
 
     function processObjectSubgraph(subGraph, observableData, basePath) {
         var path, copy;
-        Reflect.ownKeys(subGraph).forEach(key => {
+        Reflect.ownKeys(subGraph).forEach(function (key) {
             if (subGraph[key] && typeof subGraph[key] === 'object') {
                 path = basePath.concat(key);
                 copy = copyShallow(subGraph[key]);
@@ -43,27 +43,21 @@
             var result;
             if (key === 'push') {
                 result = function proxiedPush() {
-                    let pushResult, changes;
+                    var pushResult, changes;
                     observableData.eventsCollector = [];
                     observableData.preventCallbacks = true;
                     pushResult = Reflect.apply(target[key], observableData.proxy, arguments);
                     changes = observableData.eventsCollector;
                     observableData.eventsCollector = null;
                     observableData.preventCallbacks = false;
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return pushResult;
                 };
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
-                    let unshiftResult, unshiftContent = [], changes = [];
-                    Array.from(arguments).forEach((arg, index) => {
-                        let pArg;
+                    var unshiftResult, unshiftContent = [], changes = [];
+                    Array.from(arguments).forEach(function (arg, index) {
+                        var pArg;
                         if (arg && typeof arg === 'object') {
                             pArg = proxify(arg, observableData, basePath.concat(index));
                         } else {
@@ -76,90 +70,57 @@
                     });
                     unshiftResult = Reflect.apply(target[key], target, unshiftContent);
                     processArraySubgraph(target, observableData, basePath);
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return unshiftResult;
                 };
             } else if (key === 'shift') {
                 result = function proxiedShift() {
-                    let shiftResult, changes = [];
+                    var shiftResult, changes = [];
                     observableData.preventCallbacks = true;
                     shiftResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new DeleteChange(basePath.concat(0), shiftResult));
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                     return shiftResult;
                 };
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
-                    let changes = [];
+                    var changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ReverseChange());
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'sort') {
                 result = function proxiedSort() {
-                    let changes = [];
+                    var changes = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ShuffleChange());
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'fill') {
                 result = function proxiedFill() {
-                    let changes;
+                    var changes;
                     observableData.eventsCollector = [];
                     observableData.preventCallbacks = true;
                     Reflect.apply(target[key], observableData.proxy, arguments);
                     changes = observableData.eventsCollector;
                     observableData.eventsCollector = null;
                     observableData.preventCallbacks = false;
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return observableData.proxy;
                 };
             } else if (key === 'splice') {
                 result = function proxiedSplice() {
-                    let changes = [],
+                    var changes = [],
                         index,
                         startIndex,
                         removed,
@@ -183,14 +144,7 @@
                         changes.push(new InsertChange(basePath.concat(startIndex + index), target[startIndex + index]));
                     }
 
-                    observableData.callbacks.forEach(function (callback) {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
-
+                    publishChanges(observableData.callbacks, changes);
                     return spliceResult;
                 };
             } else {
@@ -224,13 +178,7 @@
                     changes.push(new InsertChange(path, value));
                 }
                 if (!observableData.preventCallbacks) {
-                    observableData.callbacks.forEach(callback => {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                 }
             }
             return result;
@@ -252,20 +200,14 @@
                 path = basePath.concat(key);
                 changes.push(new DeleteChange(path, oldValue));
                 if (!observableData.preventCallbacks) {
-                    observableData.callbacks.forEach(callback => {
-                        try {
-                            callback(changes);
-                        } catch (e) {
-                            console.error(e);
-                        }
-                    });
+                    publishChanges(observableData.callbacks, changes);
                 }
             }
             return result;
         }
 
         if (proxiesToTargetsMap.has(target) && !proxiesToTargetsMap.get(target).proxy) {
-            let tmp = target;
+            var tmp = target;
             target = proxiesToTargetsMap.get(target);
             console.log(proxiesToTargetsMap.delete(tmp));
         }
@@ -306,7 +248,7 @@
 
         function unobserve() {
             if (arguments.length) {
-                Array.from(arguments).forEach(argument => {
+                Array.from(arguments).forEach(function (argument) {
                     var i = callbacks.indexOf(argument);
                     if (i) {
                         callbacks.splice(i, 1);
@@ -348,6 +290,16 @@
     }
     function ShuffleChange() {
         Reflect.defineProperty(this, 'type', { value: 'shuffle' });
+    }
+
+    function publishChanges(callbacks, changes) {
+        for (var i = 0; i < callbacks.length; i++) {
+            try {
+                callbacks[i](changes);
+            } catch (e) {
+                console.error(e);
+            }
+        }
     }
 
     api = {};
