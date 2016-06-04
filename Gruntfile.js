@@ -3,7 +3,7 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         jshint: {
-            files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+            files: ['Gruntfile.js', 'src/**/*.js'],
             options: {
                 globals: {
                 }
@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                     screwIE8: true
                 },
                 files: {
-                    'dist/object-observer.min.js': ['src/object-observer.js']
+                    'dist/object-observer.min.js': ['dist/object-observer.js']
                 }
             }
         }
