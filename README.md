@@ -131,3 +131,5 @@ fetch('object-observer.js').then(function (response) {
 	observableOrder.address.apt = 30;			//	console:	UpdateChange { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
 	delete observableOrder.remark;				//	console:	DeleteChange { type: "delete", path: ['remark'], oldValue: 'remove me' }
 	```
+
+##### Arrays
