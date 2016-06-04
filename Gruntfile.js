@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                     screwIE8: true
                 },
                 files: {
-                    'bin/object-observer.min.js': ['src/object-observer.js']
+                    'dist/object-observer.min.js': ['src/object-observer.js']
                 }
             }
         }
@@ -28,7 +28,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', 'Customized build', function () {
         grunt.log.writeln('Copy to "bin"');
-        fs.writeFileSync('bin/object-observer.js', fs.readFileSync('src/object-observer.js'));
+        fs.writeFileSync('dist/object-observer.js', fs.readFileSync('src/object-observer.js'));
         grunt.log.ok();
 
         grunt.task.run('uglify:build');
