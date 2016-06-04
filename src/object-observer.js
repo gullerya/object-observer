@@ -58,7 +58,7 @@
                         }
                     });
                     return pushResult;
-                }
+                };
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
                     let unshiftResult, unshiftContent = [], changes = [];
@@ -84,7 +84,7 @@
                         }
                     });
                     return unshiftResult;
-                }
+                };
             } else if (key === 'shift') {
                 result = function proxiedShift() {
                     let shiftResult, changes = [];
@@ -101,7 +101,7 @@
                         }
                     });
                     return shiftResult;
-                }
+                };
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
                     let changes = [];
@@ -119,7 +119,7 @@
                     });
 
                     return observableData.proxy;
-                }
+                };
             } else if (key === 'sort') {
                 result = function proxiedSort() {
                     let changes = [];
@@ -137,7 +137,7 @@
                     });
 
                     return observableData.proxy;
-                }
+                };
             } else if (key === 'fill') {
                 result = function proxiedFill() {
                     let changes;
@@ -156,7 +156,7 @@
                     });
 
                     return observableData.proxy;
-                }
+                };
             } else if (key === 'splice') {
                 result = function proxiedSplice() {
                     let changes = [],
@@ -192,7 +192,7 @@
                     });
 
                     return spliceResult;
-                }
+                };
             } else {
                 result = Reflect.get(target, key);
             }
@@ -357,7 +357,7 @@
             if (!target || typeof target !== 'object') {
                 throw new Error('observable MAY ONLY be created from non-null object only');
             } else if ('observe' in target || 'unobserve' in target) {
-                throw new Error('target object MUST NOT have not own nor inherited properties "observe" and/or "unobserve"')
+                throw new Error('target object MUST NOT have not own nor inherited properties "observe" and/or "unobserve"');
             }
             var observableData = new ObservableData(target);
             return observableData.proxy;

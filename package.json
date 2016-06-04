@@ -9,7 +9,9 @@
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via Proxy; changes delivered in a synchronous way",
   "main": "src/object-observer.js",
   "devDependencies": {
-    "grunt": "~0.4.5"
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~1.0.0",
+    "grunt-contrib-uglify": "~1.0.1"
   },
   "keywords": [
     "object",
@@ -26,7 +28,7 @@
   ],
   "license": "MIT",
   "files": [
-    "src/object-observer.js"
+    "bin/object-observer.js"
   ],
   "repository": {
     "type": "git",
