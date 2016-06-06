@@ -98,37 +98,45 @@
                 };
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {
-                    var changes = [];
+                    var reverseResult, changes = [];
                     observableData.preventCallbacks = true;
-                    Reflect.apply(target[key], target, arguments);
+                    reverseResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ReverseChange());
                     publishChanges(observableData.callbacks, changes);
-                    return observableData.proxy;
+                    return reverseResult;
                 };
             } else if (key === 'sort') {
                 result = function proxiedSort() {
-                    var changes = [];
+                    var sortResult, changes = [];
                     observableData.preventCallbacks = true;
-                    Reflect.apply(target[key], target, arguments);
+                    sortResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     changes.push(new ShuffleChange());
                     publishChanges(observableData.callbacks, changes);
-                    return observableData.proxy;
+                    return sortResult;
                 };
             } else if (key === 'fill') {
                 result = function proxiedFill() {
-                    var changes;
-                    observableData.eventsCollector = [];
+                    var fillResult, start, end, changes = [], prev;
+                    start = arguments.length < 2 ? 0 : (arguments[1] < 0 ? target.length + arguments[1] : arguments[1]);
+                    end = arguments.length < 3 ? target.length : (arguments[2] < 0 ? target.length + arguments[2] : arguments[2]);
+                    prev = target.slice(start, end);
                     observableData.preventCallbacks = true;
-                    Reflect.apply(target[key], observableData.proxy, arguments);
-                    changes = observableData.eventsCollector;
-                    observableData.eventsCollector = null;
+                    fillResult = Reflect.apply(target[key], target, arguments);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
+                    for (var i = start; i < end; i++) {
+                        if (target.hasOwnProperty(i - start)) {
+                            changes.push(new UpdateChange(basePath.concat(i), target[i], prev[i - start]));
+                        } else {
+                            changes.push(new InsertChange(basePath.concat(i), target[i]));
+                        }
+                    }
                     publishChanges(observableData.callbacks, changes);
-                    return observableData.proxy;
+                    return fillResult;
                 };
             } else if (key === 'splice') {
                 result = function proxiedSplice() {
@@ -142,7 +150,7 @@
                     startIndex = arguments.length === 0 ? 0 : (arguments[0] < 0 ? target.length + arguments[0] : arguments[0]);
                     removed = arguments.length < 2 ? (target.length - startIndex) : arguments[1];
                     inserted = Math.max(arguments.length - 2, 0);
-                    spliceResult = Reflect.apply(target[key], observableData.proxy, arguments);
+                    spliceResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
                     for (index = 0; index < removed; index++) {

@@ -164,4 +164,6 @@ observableA.shift();				//	{ type: 'delete', path: [0], oldValue: 1 }
 //	the following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.unshift('x', 'y');		//	{ type: 'insert', path: [0], value: 'x' }
 									//	{ type: 'insert', path: [1], value: 'y' }
+
+
 ```
