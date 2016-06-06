@@ -27,6 +27,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - Optimization for the cases of Array massive mutations
  - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
  - Create build process including test automation on CI and probably minification/reorg of a consumable code
+ - Changes, probably based on my own consumption of this library in [data-tier](https://github.com/gullerya/data-tier) module and/or community feedback
 
 #### Versions
 - 0.1.0
@@ -165,5 +166,23 @@ observableA.shift();				//	{ type: 'delete', path: [0], oldValue: 1 }
 observableA.unshift('x', 'y');		//	{ type: 'insert', path: [0], value: 'x' }
 									//	{ type: 'insert', path: [1], value: 'y' }
 
+//	observableA = [ 2, 3, 4, 'a', 'b' ]
+observableA.reverse();				//	{ type: 'reverse' }
 
+
+//	observableA = [ 'b', 'a', 4, 3, 2 ]
+observableA.sort();					//	{ type: 'shuffle' }
+
+
+//	observableA = [ 2, 3, 4, 'a', 'b' ]
+observableA.fill(0, 0, 1);			//	{ type: 'update', path: [0], value: 0, oldValue: 2 }
+
+
+//	observableA = [ 0, 3, 4, 'a', 'b' ]
+//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.splice(0, 1, 'x', 'y');	//	{ type: 'update', path: [0], value: 'x', oldValue: 0 }
+									//	{ type: 'insert', path: [1], value: 'y' }
 ```
+Arrays notes:
+- Some of array operations are effectively moving/reindexing the whole rest of an array (shift, unshift, splice, reverse, sort). In cases of massive changes touching presumable the whole array I took pessimistic approach and opt for a special non-detailed event: 'reverse' for `reverse` and 'shuffle' for `sort`. The rest of these methods I'm handling in optimistic way opting to deliver the changes that directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
+- am I missed something?
