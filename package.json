@@ -29,8 +29,7 @@
   ],
   "license": "MIT",
   "files": [
-    "dist/object-observer.js",
-    "dist/object-observer.min.js"
+    "dist"
   ],
   "scripts": {
     "test": "grunt test"
