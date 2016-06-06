@@ -41,7 +41,18 @@
 
         function proxiedArrayGet(target, key) {
             var result;
-            if (key === 'push') {
+            if (key === 'pop') {
+                result = function proxiedPop() {
+                    var poppedIndex, popResult, changes;
+                    observableData.preventCallbacks = true;
+                    poppedIndex = target.length - 1;
+                    popResult = Reflect.apply(target[key], target, arguments);
+                    observableData.preventCallbacks = false;
+                    changes = [new DeleteChange(basePath.concat(poppedIndex), popResult)];
+                    publishChanges(observableData.callbacks, changes);
+                    return popResult;
+                };
+            } else if (key === 'push') {
                 result = function proxiedPush() {
                     var pushResult, changes;
                     observableData.eventsCollector = [];
@@ -52,6 +63,17 @@
                     observableData.preventCallbacks = false;
                     publishChanges(observableData.callbacks, changes);
                     return pushResult;
+                };
+            } else if (key === 'shift') {
+                result = function proxiedShift() {
+                    var shiftResult, changes;
+                    observableData.preventCallbacks = true;
+                    shiftResult = Reflect.apply(target[key], target, arguments);
+                    processArraySubgraph(target, observableData, basePath);
+                    observableData.preventCallbacks = false;
+                    changes = [new DeleteChange(basePath.concat(0), shiftResult)];
+                    publishChanges(observableData.callbacks, changes);
+                    return shiftResult;
                 };
             } else if (key === 'unshift') {
                 result = function proxiedUnshift() {
@@ -72,17 +94,6 @@
                     processArraySubgraph(target, observableData, basePath);
                     publishChanges(observableData.callbacks, changes);
                     return unshiftResult;
-                };
-            } else if (key === 'shift') {
-                result = function proxiedShift() {
-                    var shiftResult, changes = [];
-                    observableData.preventCallbacks = true;
-                    shiftResult = Reflect.apply(target[key], target, arguments);
-                    processArraySubgraph(target, observableData, basePath);
-                    observableData.preventCallbacks = false;
-                    changes.push(new DeleteChange(basePath.concat(0), shiftResult));
-                    publishChanges(observableData.callbacks, changes);
-                    return shiftResult;
                 };
             } else if (key === 'reverse') {
                 result = function proxiedReverse() {

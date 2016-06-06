@@ -17,7 +17,7 @@ Present library attempts to provide this functionality in a most clean and perfo
   - second, register observers on the observable (not on the original object)
 - Arrays:
   - generic object-like mutations supported
-  - intrinsic mutation methods supported: `push`, `pop`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
+  - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
@@ -133,3 +133,35 @@ delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue:
 ```
 
 ##### Arrays
+
+```javascript
+var a = [ 1, 2, 3, 4, 5],
+	observableA;
+
+observableA = Observable.from(a);
+observableA.observe(changes => {
+	changes.forEach(change => {
+		console.log(change);
+	});
+});
+
+
+//	observableA = [ 1, 2, 3, 4, 5 ]
+observableA.pop();					//	{ type: 'delete', path: [4], oldValue: 5 }
+
+
+//	observableA = [ 1, 2, 3, 4 ]
+//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.push('a', 'b');			//	{ type: 'insert', path: [4], value: 'a' }
+									//	{ type: 'insert', path: [5], value: 'b' }
+
+
+//	observableA = [1, 2, 3, 4, 'a', 'b']
+observableA.shift();				//	{ type: 'delete', path: [0], oldValue: 1 }
+
+
+//	observableA = [ 2, 3, 4, 'a', 'b' ]
+//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.unshift('x', 'y');		//	{ type: 'insert', path: [0], value: 'x' }
+									//	{ type: 'insert', path: [1], value: 'y' }
+```

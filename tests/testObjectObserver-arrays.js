@@ -58,7 +58,7 @@
 
         popped = pa.pop();
 
-        if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
         if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some') fail('event 0 did not fire as expected');
         if (popped !== 'some') fail('pop base functionality broken');
 
@@ -122,7 +122,7 @@
 
         shifted = pa.shift();
 
-        if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
         if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue) fail('event 0 did not fire as expected');
         if (shifted !== 'some') fail('shift base functionality broken');
 
@@ -141,7 +141,7 @@
 
         shifted = pa.shift();
 
-        if (events.length < 1) fail('expected to have at least 1 event, found ' + events.length);
+        if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
         if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue.text !== 'a') fail('event 0 did not fire as expected');
         if (shifted.text !== 'a') fail('shift base functionality broken');
         events.splice(0);
