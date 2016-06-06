@@ -44,8 +44,8 @@
             if (key === 'pop') {
                 result = function proxiedPop() {
                     var poppedIndex, popResult, changes;
-                    observableData.preventCallbacks = true;
                     poppedIndex = target.length - 1;
+                    observableData.preventCallbacks = true;
                     popResult = Reflect.apply(target[key], target, arguments);
                     observableData.preventCallbacks = false;
                     changes = [new DeleteChange(basePath.concat(poppedIndex), popResult)];
@@ -54,13 +54,14 @@
                 };
             } else if (key === 'push') {
                 result = function proxiedPush() {
-                    var pushResult, changes;
-                    observableData.eventsCollector = [];
+                    var pushResult, changes = [];
                     observableData.preventCallbacks = true;
-                    pushResult = Reflect.apply(target[key], observableData.proxy, arguments);
-                    changes = observableData.eventsCollector;
-                    observableData.eventsCollector = null;
+                    pushResult = Reflect.apply(target[key], target, arguments);
+                    processArraySubgraph(target, observableData, basePath);
                     observableData.preventCallbacks = false;
+                    for (var i = arguments.length; i > 0; i--) {
+                        changes.push(new InsertChange(basePath.concat(pushResult - i), target[pushResult - i]));
+                    }
                     publishChanges(observableData.callbacks, changes);
                     return pushResult;
                 };
