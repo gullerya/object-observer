@@ -9,8 +9,10 @@
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via Proxy; changes delivered in a synchronous way",
   "main": "dist/object-observer.js",
   "devDependencies": {
+    "karma": "~0.13.0",
     "grunt": "~0.4.5",
     "grunt-cli": "~1.2.0",
+    "grunt-karma": "~2.0.0",
     "grunt-contrib-jshint": "~1.0.0",
     "grunt-contrib-uglify": "~1.0.1"
   },
