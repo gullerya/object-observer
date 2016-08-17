@@ -10,7 +10,7 @@
 			}
 		});
 	} else {
-		tmp = (path ? path + '.' : '');
+		tmp = path ? path + '.' : '';
 		Reflect.ownKeys(graph).forEach(function (pKey) {
 			pVal = graph[pKey];
 			if (pVal && typeof pVal === 'object') {

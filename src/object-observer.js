@@ -20,7 +20,7 @@
             if (element && typeof element === 'object') {
                 path = basePath.concat(index);
                 copy = copyShallow(element);
-                subGraph[index] = proxify(copy, observableData, path);
+                subGraph[index] = proxify(copy, observableData, path).proxy;
             }
         });
     }
@@ -31,7 +31,7 @@
             if (subGraph[key] && typeof subGraph[key] === 'object') {
                 path = basePath.concat(key);
                 copy = copyShallow(subGraph[key]);
-                subGraph[key] = proxify(copy, observableData, path);
+                subGraph[key] = proxify(copy, observableData, path).proxy;
             }
         });
     }
@@ -82,7 +82,7 @@
                     Array.from(arguments).forEach(function (arg, index) {
                         var pArg;
                         if (arg && typeof arg === 'object') {
-                            pArg = proxify(arg, observableData, basePath.concat(index));
+                            pArg = proxify(arg, observableData, basePath.concat(index)).proxy;
                         } else {
                             pArg = arg;
                         }
@@ -148,7 +148,7 @@
                         spliceResult;
                     observableData.preventCallbacks = true;
                     startIndex = arguments.length === 0 ? 0 : (arguments[0] < 0 ? target.length + arguments[0] : arguments[0]);
-                    removed = arguments.length < 2 ? (target.length - startIndex) : arguments[1];
+                    removed = arguments.length < 2 ? target.length - startIndex : arguments[1];
                     inserted = Math.max(arguments.length - 2, 0);
                     spliceResult = Reflect.apply(target[key], target, arguments);
                     processArraySubgraph(target, observableData, basePath);
@@ -190,7 +190,7 @@
                     }
                 }
                 if (typeof value === 'object' && value) {
-                    target[key] = proxify(value, observableData, path);
+                    target[key] = proxify(value, observableData, path).proxy;
                 }
                 if (oldValuePresent) {
                     changes.push(new UpdateChange(path, value, oldValue));
@@ -233,14 +233,14 @@
         }
         if (Array.isArray(target)) {
             processArraySubgraph(target, observableData, basePath);
-            proxy = new Proxy(target, {
+            proxy = Proxy.revocable(target, {
                 get: proxiedArrayGet,
                 set: proxiedSet,
                 deleteProperty: proxiedDelete
             });
         } else {
             processObjectSubgraph(target, observableData, basePath);
-            proxy = new Proxy(target, {
+            proxy = Proxy.revocable(target, {
                 set: proxiedSet,
                 deleteProperty: proxiedDelete
             });
@@ -270,7 +270,7 @@
             if (arguments.length) {
                 Array.from(arguments).forEach(function (argument) {
                     var i = callbacks.indexOf(argument);
-                    if (i) {
+                    if (i >= 0) {
                         callbacks.splice(i, 1);
                     }
                 });
@@ -279,7 +279,7 @@
             }
         }
 
-        proxy = proxify(copyShallow(target), this, []);
+        proxy = proxify(copyShallow(target), this, []).proxy;
         Reflect.defineProperty(proxy, 'observe', { value: observe });
         Reflect.defineProperty(proxy, 'unobserve', { value: unobserve });
 
