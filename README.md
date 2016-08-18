@@ -184,5 +184,4 @@ observableA.splice(0, 1, 'x', 'y');	//	{ type: 'update', path: [0], value: 'x', 
 									//	{ type: 'insert', path: [1], value: 'y' }
 ```
 Arrays notes:
-- Some of array operations are effectively moving/reindexing the whole rest of an array (shift, unshift, splice, reverse, sort). In cases of massive changes touching presumable the whole array I took pessimistic approach and opt for a special non-detailed event: 'reverse' for `reverse` and 'shuffle' for `sort`. The rest of these methods I'm handling in optimistic way opting to deliver the changes that directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
-- am I missed something?
+- Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort). In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.

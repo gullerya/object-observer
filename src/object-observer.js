@@ -257,12 +257,12 @@
             preventCallbacks = false;
 
         function observe(callback) {
-            if (typeof callback !== 'function') { throw new Error('callback parameter MUST be a function'); }
+            if (typeof callback !== 'function') { throw new Error('observer (callback) parameter MUST be a function'); }
 
             if (callbacks.indexOf(callback) < 0) {
                 callbacks.push(callback);
             } else {
-                console.info('observer callback may be bound only once for an observable');
+            	console.info('observer (callback) may be bound to an observable only once');
             }
         }
 
