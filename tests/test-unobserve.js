@@ -125,9 +125,5 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'inner child implicit unobserve' }, function (pass, fail) {
-		fail();
-	});
-
 	suite.run();
 })();
