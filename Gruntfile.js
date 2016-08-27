@@ -12,9 +12,6 @@ module.exports = function (grunt) {
         },
         uglify: {
             build: {
-                options: {
-                    screwIE8: true
-                },
                 files: {
                     'dist/object-observer.min.js': ['dist/object-observer.js']
                 }

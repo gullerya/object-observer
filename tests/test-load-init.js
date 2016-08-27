@@ -4,7 +4,7 @@
 	var suite = window.Utils.JustTest.createSuite({ name: 'Testing loading/initialization flavors' });
 
 	suite.addTest({ name: 'test A - regular script import' }, function (pass, fail) {
-	    if (typeof window.Observable !== 'object') fail('expected to find Observable on global scope');
+	    if (typeof window.Observable !== 'function') fail('expected to find Observable c~tor on global scope');
 
 		pass();
 	});
@@ -18,7 +18,7 @@
 					response.text()
 						.then(function (code) {
 							Function(code).call(customNamespace);
-							if (typeof customNamespace.Observable !== 'object') fail('expected to find Observable on custom scope');
+							if (typeof customNamespace.Observable !== 'function') fail('expected to find Observable c~tor on custom scope');
 
 							pass();
 						})

@@ -14,7 +14,7 @@
     "grunt-cli": "~1.2.0",
     "grunt-karma": "~2.0.0",
     "grunt-contrib-jshint": "~1.0.0",
-    "grunt-contrib-uglify": "~1.0.1"
+    "grunt-contrib-uglify": "^2.0.0"
   },
   "keywords": [
     "object",
