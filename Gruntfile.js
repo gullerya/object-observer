@@ -20,7 +20,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks("gruntify-eslint");
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 
-	grunt.registerTask('test', ['jshint']);
+	grunt.registerTask('test', ['eslint']);
 
 	grunt.registerTask('build', 'Customized build', function () {
 		grunt.log.writeln('Copy to "bin"');
