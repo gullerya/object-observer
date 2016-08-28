@@ -1,0 +1,19 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script"
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-console": "off"
+  },
+  "globals": {
+    "Proxy": true,
+    "Reflect": true,
+    "WeakMap": true
+  }
+}

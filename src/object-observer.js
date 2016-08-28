@@ -353,8 +353,8 @@
 		value: function (target) {
 			if (!target || typeof target !== 'object') {
 				throw new Error('observable MAY ONLY be created from non-null object only');
-			} else if ('observe' in target || 'unobserve' in target) {
-				throw new Error('target object MUST NOT have not own nor inherited properties "observe" and/or "unobserve"');
+			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
+				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
 			}
 			var observableData = new Observable(target);
 			return observableData.proxy;
