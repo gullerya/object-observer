@@ -40,13 +40,18 @@
 
 	function revokeProxyGraph(proxyGraph) {
 		Reflect.ownKeys(proxyGraph).forEach(function (key) {
-			if (proxyGraph[key] && typeof proxyGraph[key] === 'object') {
-				revokeProxyGraph(proxyGraph[key]);
+			var prop = proxyGraph[key];
+			if (prop && typeof prop === 'object') {
+				console.log('revoking: ' + key);
+				revokeProxyGraph(prop);
 			}
 		});
+		console.dir(proxyGraph);
 		if (proxiesToRevokables.has(proxyGraph)) {
 			proxiesToRevokables.get(proxyGraph).revoke();
 			proxiesToRevokables.delete(proxyGraph);
+		} else {
+			console.log('did not found map for');
 		}
 	}
 

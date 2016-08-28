@@ -125,5 +125,81 @@
 		pass();
 	});
 
+	suite.addTest({ name: 'test unobserve - revoke the observable (Object)' }, function (pass, fail) {
+		var o = { some: 'text', inner: { more: 'text' } },
+			oo = Observable.from(o),
+			ooi = oo.inner,
+			cntr = 0,
+			observer = function () { cntr++; };
+
+		oo.observe(observer);
+		oo.some = 'thing';
+		ooi.more = 'stuff';
+		if (cntr !== 2) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 2');
+
+		oo.revoke();
+		try {
+			oo.some = 'true';
+			fail(' execution should not get here');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+		try {
+			ooi.more = 'test';
+			fail(' execution should not get here');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+
+		pass();
+	});
+
+	suite.addTest({ name: 'test unobserve - revoke the observable (Array)' }, function (pass, fail) {
+		var o = [{ some: 'text' }, { inner: { more: 'text', arr: ['a', 'b', 'c'] } }],
+			oo = Observable.from(o),
+			ooi = oo[1],
+			ooia = ooi.inner.arr,
+			cntr = 0,
+			observer = function () { cntr++; };
+
+		oo.observe(observer);
+		oo.push({});
+		oo[0].some = 'thing';
+		ooi.adding = 'new';
+		ooi.inner.more = 'stuff';
+		ooia.pop();
+		if (cntr !== 5) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
+
+		oo.revoke();
+		try {
+			oo.pop();
+			fail(' execution should not get here (A)');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+		try {
+			oo[0].some = 'test';
+			fail(' execution should not get here (B)');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+		try {
+			ooi.more = 'true';
+			if (cntr > 5) fail('expected to not have any new callbacks');
+			ooi.inner.more = 'again';
+			fail(' execution should not get here (C)');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+		try {
+			ooia.push('d');
+			fail(' execution should not get here (D)');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		}
+
+		pass();
+	});
+
 	suite.run();
 })();
