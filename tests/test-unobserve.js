@@ -125,7 +125,7 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'test unobserve - revoke the observable (Object)' }, function (pass, fail) {
+	suite.addTest({ name: 'test unobserve - revoke the observable (Object)', skip: true }, function (pass, fail) {
 		var o = { some: 'text', inner: { more: 'text' } },
 			oo = Observable.from(o),
 			ooi = oo.inner,
@@ -162,6 +162,8 @@
 			cntr = 0,
 			observer = function () { cntr++; };
 
+		console.dir(ooi);
+
 		oo.observe(observer);
 		oo.push({});
 		oo[0].some = 'thing';
@@ -171,6 +173,9 @@
 		if (cntr !== 5) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
 
 		oo.revoke();
+
+		console.dir(ooi);
+
 		try {
 			oo.pop();
 			fail(' execution should not get here (A)');

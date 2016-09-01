@@ -15,25 +15,23 @@
 	}
 
 	function processArraySubgraph(subGraph, observableData, basePath) {
-		var path, copy, revokable;
+		var path, copy;
 		subGraph.forEach(function (element, index) {
 			if (element && typeof element === 'object') {
 				path = basePath.concat(index);
 				copy = copyShallow(element);
-				revokable = proxify(copy, observableData, path);
-				subGraph[index] = revokable.proxy;
+				subGraph[index] = proxify(copy, observableData, path).proxy;
 			}
 		});
 	}
 
 	function processObjectSubgraph(subGraph, observableData, basePath) {
-		var path, copy, revokable;
+		var path, copy;
 		Reflect.ownKeys(subGraph).forEach(function (key) {
 			if (subGraph[key] && typeof subGraph[key] === 'object') {
 				path = basePath.concat(key);
 				copy = copyShallow(subGraph[key]);
-				revokable = proxify(copy, observableData, path);
-				subGraph[key] = revokable.proxy;
+				subGraph[key] = proxify(copy, observableData, path).proxy;
 			}
 		});
 	}
@@ -42,21 +40,20 @@
 		Reflect.ownKeys(proxyGraph).forEach(function (key) {
 			var prop = proxyGraph[key];
 			if (prop && typeof prop === 'object') {
-				console.log('revoking: ' + key);
 				revokeProxyGraph(prop);
 			}
 		});
-		console.dir(proxyGraph);
 		if (proxiesToRevokables.has(proxyGraph)) {
+			console.dir(proxyGraph);
 			proxiesToRevokables.get(proxyGraph).revoke();
 			proxiesToRevokables.delete(proxyGraph);
 		} else {
-			console.log('did not found map for');
+			console.warn('did not found map for');
 		}
 	}
 
 	function proxify(target, observableData, basePath) {
-		var proxy;
+		var revokableProxy;
 
 		function proxiedArrayGet(target, key) {
 			var result;
@@ -259,31 +256,33 @@
 		}
 		if (Array.isArray(target)) {
 			processArraySubgraph(target, observableData, basePath);
-			proxy = Proxy.revocable(target, {
-				get: proxiedArrayGet,
+			revokableProxy = Proxy.revocable(target, {
 				set: proxiedSet,
+				get: proxiedArrayGet,
 				deleteProperty: proxiedDelete
 			});
 		} else {
 			processObjectSubgraph(target, observableData, basePath);
-			proxy = Proxy.revocable(target, {
+			revokableProxy = Proxy.revocable(target, {
 				set: proxiedSet,
 				deleteProperty: proxiedDelete
 			});
 		}
-		proxiesToRevokables.set(proxy.proxy, proxy);
-		proxiesToTargetsMap.set(proxy, target);
+		proxiesToRevokables.set(revokableProxy.proxy, revokableProxy);
+		proxiesToTargetsMap.set(revokableProxy, target);
 
-		return proxy;
+		return revokableProxy;
 	}
 
 	function Observable(target) {
 		var proxy,
+			isRevoked = false,
 			callbacks = [],
             eventsCollector,
             preventCallbacks = false;
 
 		function observe(callback) {
+			if (isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
 			if (typeof callback !== 'function') { throw new Error('observer (callback) parameter MUST be a function'); }
 
 			if (callbacks.indexOf(callback) < 0) {
@@ -294,6 +293,7 @@
 		}
 
 		function unobserve() {
+			if (isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved amymore'); }
 			if (arguments.length) {
 				Array.from(arguments).forEach(function (argument) {
 					var i = callbacks.indexOf(argument);
@@ -307,7 +307,12 @@
 		}
 
 		function revoke() {
-			revokeProxyGraph(proxy);
+			if (!isRevoked) {
+				isRevoked = true;
+				revokeProxyGraph(proxy);
+			} else {
+				console.log('revokation of Observable have an effect only once');
+			}
 		}
 
 		proxy = proxify(copyShallow(target), this, []).proxy;

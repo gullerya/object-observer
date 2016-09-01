@@ -8,7 +8,7 @@ Observation of a changes performed on any arbitrary object (array being a subtyp
 Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout 'touching' the original objects, but seems like ES is not yet mature enough for that.
 
 Present library attempts to provide this functionality in a most clean and performant way. Main aspects:
-- Implementation relies on __Proxy__ mechanism
+- Implementation relies on __Proxy__ mechanism (specifically, revokable Proxy)
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
 - Changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
@@ -28,8 +28,13 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
  - Create build process including test automation on CI and probably minification/reorg of a consumable code
  - Changes, probably based on my own consumption of this library in [data-tier](https://github.com/gullerya/data-tier) module and/or community feedback
+ - Consider adding support for a Symbol defined object properties
+ - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this ![issue](https://github.com/gullerya/object-observer-js/issues/1))
 
 #### Versions
+- 0.2.0
+  - Tech: moved proxy implementation to revokable
+  - API: added revokability to an Observable
 - 0.1.0
   - First stable API release
 
@@ -109,6 +114,13 @@ fetch('object-observer.js').then(function (response) {
 	observablePerson.unobserve(personUIObserver);
 	...
 	observablePerson.unobserve();
+	...
+	```
+
+- __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on revoked `Observable`. Subsequent `revoke` invokation will have no effect:
+	```javascript
+	...
+	observablePerson.revoke();
 	...
 	```
 
