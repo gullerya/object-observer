@@ -29,7 +29,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - Create build process including test automation on CI and probably minification/reorg of a consumable code
  - Changes, probably based on my own consumption of this library in [data-tier](https://github.com/gullerya/data-tier) module and/or community feedback
  - Consider adding support for a Symbol defined object properties
- - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this ![issue](https://github.com/gullerya/object-observer-js/issues/1))
+ - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1))
 
 #### Versions
 - 0.2.0
