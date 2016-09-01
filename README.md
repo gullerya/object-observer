@@ -117,7 +117,7 @@ fetch('object-observer.js').then(function (response) {
 	...
 	```
 
-- __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on revoked `Observable`. Subsequent `revoke` invokation will have no effect:
+- __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on the revoked `Observable`. Subsequent `revoke` invokations will have no effect:
 	```javascript
 	...
 	observablePerson.revoke();
