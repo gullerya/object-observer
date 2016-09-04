@@ -43,6 +43,8 @@
         if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
         if (events[1].type !== 'update' || events[1].path.join('.') !== '0.text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
 
+		//	TODO: add case of push bulk of objects
+
         pass();
     });
 

@@ -16,6 +16,7 @@
 
 	function processArraySubgraph(subGraph, observableData, basePath) {
 		var path, copy;
+		if (proxiesToRevokables.has(subGraph)) return;
 		subGraph.forEach(function (element, index) {
 			if (element && typeof element === 'object') {
 				path = basePath.concat(index);
@@ -27,6 +28,7 @@
 
 	function processObjectSubgraph(subGraph, observableData, basePath) {
 		var path, copy;
+		if (proxiesToRevokables.has(subGraph)) return;
 		Reflect.ownKeys(subGraph).forEach(function (key) {
 			if (subGraph[key] && typeof subGraph[key] === 'object') {
 				path = basePath.concat(key);

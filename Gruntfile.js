@@ -23,7 +23,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('test', ['eslint']);
 
 	grunt.registerTask('build', 'Customized build', function () {
-		grunt.log.writeln('Copy to "bin"');
+		grunt.log.writeln('Copy to "dist"');
 		fs.writeFileSync('dist/object-observer.js', fs.readFileSync('src/object-observer.js'));
 		grunt.log.ok();
 

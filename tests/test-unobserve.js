@@ -125,7 +125,7 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'test unobserve - revoke the observable (Object)', skip: true }, function (pass, fail) {
+	suite.addTest({ name: 'test unobserve - revoke the observable (Object)' }, function (pass, fail) {
 		var o = { some: 'text', inner: { more: 'text' } },
 			oo = Observable.from(o),
 			ooi = oo.inner,
