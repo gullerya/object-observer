@@ -162,8 +162,6 @@
 			cntr = 0,
 			observer = function () { cntr++; };
 
-		console.dir(ooi);
-
 		oo.observe(observer);
 		oo.push({});
 		oo[0].some = 'thing';
@@ -173,8 +171,6 @@
 		if (cntr !== 5) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
 
 		oo.revoke();
-
-		console.dir(ooi);
 
 		try {
 			oo.pop();

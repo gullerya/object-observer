@@ -96,9 +96,9 @@
 
 		oo = Observable.from(o);
 
-		if (typeof oo.observe !== 'function') fail('expected to find "observe" function on the created observable');
-		if (typeof oo.unobserve !== 'function') fail('expected to find "unobserve" function on the created observable');
-		if (typeof oo.revoke !== 'function') fail('expectd to find "revoke" function on the created observable');
+		if (typeof oo.observe !== 'function') fail('expected to find "observe" function on the created Observable');
+		if (typeof oo.unobserve !== 'function') fail('expected to find "unobserve" function on the created Observable');
+		if (typeof oo.revoke !== 'function') fail('expectd to find "revoke" function on the created Observable');
 
 		pass();
 	});
