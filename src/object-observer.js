@@ -47,67 +47,95 @@
 			};
 		} else if (key === 'push') {
 			result = function proxiedPush() {
-				var pushResult, changes = [], startingLength;
+				var pushContent, pushResult, changes = [], startingLength;
+				pushContent = Array.from(arguments);
 				startingLength = target.length;
-				for (var i = 0; i < arguments.length; i++) {
-					if (arguments[i] && typeof arguments[i] === 'object') {
-						arguments[i] = new Observed(arguments[i], startingLength + i, observed).proxy;
+				pushContent.forEach(function (item, index) {
+					if (item && typeof item === 'object') {
+						pushContent[index] = new Observed(item, startingLength + index, observed).proxy;
 					}
-					changes.push(new InsertChange(observed.path.concat(startingLength + i), arguments[i]));
-				}
-				pushResult = Reflect.apply(target[key], target, arguments);
+					changes.push(new InsertChange(observed.path.concat(startingLength + index), item));
+				});
+				pushResult = Reflect.apply(target[key], target, pushContent);
 				publishChanges(observable.callbacks, changes);
 				return pushResult;
 			};
 		} else if (key === 'shift') {
 			result = function proxiedShift() {
-				var shiftResult, changes;
-				observable.preventCallbacks = true;
+				var shiftResult, changes, tmpObserved;
 				shiftResult = Reflect.apply(target[key], target, arguments);
-				processArraySubgraph(target, observed);
-				observable.preventCallbacks = false;
+				target.forEach(function (element, index) {
+					if (element && typeof element === 'object') {
+						tmpObserved = targetsToObserved.get(proxiesToTargetsMap.get(element));
+						if (tmpObserved) {
+							tmpObserved.ownKey = index;
+						} else {
+							console.error('failed to resolve proxy -> target -> observed');
+						}
+					}
+				});
 				changes = [new DeleteChange(observed.path.concat(0), shiftResult)];
 				publishChanges(observable.callbacks, changes);
 				return shiftResult;
 			};
 		} else if (key === 'unshift') {
 			result = function proxiedUnshift() {
-				var unshiftResult, unshiftContent = [], changes = [];
-				Array.from(arguments).forEach(function (arg, index) {
-					var pArg;
-					if (arg && typeof arg === 'object') {
-						pArg = new Observed(arg, index, observed).proxy;
-					} else {
-						pArg = arg;
+				var unshiftContent, unshiftResult, changes = [], tmpObserved;
+				unshiftContent = Array.from(arguments);
+				unshiftContent.forEach(function (item, index) {
+					if (item && typeof item === 'object') {
+						unshiftContent[index] = new Observed(item, index, observed).proxy;
 					}
-					unshiftContent.push(pArg);
-				});
-				unshiftContent.forEach(function (pe, index) {
-					changes.push(new InsertChange(observed.path.concat(index), pe));
 				});
 				unshiftResult = Reflect.apply(target[key], target, unshiftContent);
-				processArraySubgraph(target, observed);
+				target.forEach(function (item, index) {
+					if (item && typeof item === 'object') {
+						tmpObserved = targetsToObserved.get(proxiesToTargetsMap.get(item));
+						if (tmpObserved) {
+							tmpObserved.ownKey = index;
+						} else {
+							console.error('failed to resolve proxy -> target -> observed');
+						}
+					}
+				});
+				for (var i = 0; i < unshiftContent.length; i++) {
+					changes.push(new InsertChange(observed.path.concat(i), target[i]));
+				}
 				publishChanges(observable.callbacks, changes);
 				return unshiftResult;
 			};
 		} else if (key === 'reverse') {
 			result = function proxiedReverse() {
-				var reverseResult, changes = [];
-				observable.preventCallbacks = true;
+				var reverseResult, changes = [], tmpObserved;
 				reverseResult = Reflect.apply(target[key], target, arguments);
-				processArraySubgraph(target, observed);
-				observable.preventCallbacks = false;
+				target.forEach(function (element, index) {
+					if (element && typeof element === 'object') {
+						tmpObserved = targetsToObserved.get(proxiesToTargetsMap.get(element));
+						if (tmpObserved) {
+							tmpObserved.ownKey = index;
+						} else {
+							console.error('failed to resolve proxy -> target -> observed');
+						}
+					}
+				});
 				changes.push(new ReverseChange());
 				publishChanges(observable.callbacks, changes);
 				return reverseResult;
 			};
 		} else if (key === 'sort') {
 			result = function proxiedSort() {
-				var sortResult, changes = [];
-				observable.preventCallbacks = true;
+				var sortResult, changes = [], tmpObserved;
 				sortResult = Reflect.apply(target[key], target, arguments);
-				processArraySubgraph(target, observed);
-				observable.preventCallbacks = false;
+				target.forEach(function (element, index) {
+					if (element && typeof element === 'object') {
+						tmpObserved = targetsToObserved.get(proxiesToTargetsMap.get(element));
+						if (tmpObserved) {
+							tmpObserved.ownKey = index;
+						} else {
+							console.error('failed to resolve proxy -> target -> observed');
+						}
+					}
+				});
 				changes.push(new ShuffleChange());
 				publishChanges(observable.callbacks, changes);
 				return sortResult;
@@ -117,14 +145,17 @@
 				var fillResult, start, end, changes = [], prev;
 				start = arguments.length < 2 ? 0 : (arguments[1] < 0 ? target.length + arguments[1] : arguments[1]);
 				end = arguments.length < 3 ? target.length : (arguments[2] < 0 ? target.length + arguments[2] : arguments[2]);
-				prev = target.slice(start, end);
-				observable.preventCallbacks = true;
+				prev = target.slice();
 				fillResult = Reflect.apply(target[key], target, arguments);
-				processArraySubgraph(target, observed);
-				observable.preventCallbacks = false;
 				for (var i = start; i < end; i++) {
-					if (target.hasOwnProperty(i - start)) {
-						changes.push(new UpdateChange(observed.path.concat(i), target[i], prev[i - start]));
+					if (target[i] && typeof target[i] === 'object') {
+						target[i] = new Observed(target[i], i, observed).proxy;
+					}
+					if (prev.hasOwnProperty(i)) {
+						changes.push(new UpdateChange(observed.path.concat(i), target[i], prev[i]));
+						if (prev[i] && typeof prev[i] === 'object') {
+							console.error('REMINDER: implement revoke of replaced items by fill method');
+						}
 					} else {
 						changes.push(new InsertChange(observed.path.concat(i), target[i]));
 					}
@@ -134,19 +165,44 @@
 			};
 		} else if (key === 'splice') {
 			result = function proxiedSplice() {
-				var changes = [],
-					index,
-					startIndex,
-					removed,
-					inserted,
-					spliceResult;
-				observable.preventCallbacks = true;
-				startIndex = arguments.length === 0 ? 0 : (arguments[0] < 0 ? target.length + arguments[0] : arguments[0]);
-				removed = arguments.length < 2 ? target.length - startIndex : arguments[1];
-				inserted = Math.max(arguments.length - 2, 0);
-				spliceResult = Reflect.apply(target[key], target, arguments);
-				processArraySubgraph(target, observed);
-				observable.preventCallbacks = false;
+				var spliceContent, spliceResult, changes = [], tmpObserved,
+					index, startIndex, removed, inserted;
+
+				spliceContent = Array.from(arguments);
+
+				//	obserify the newcomers
+				spliceContent.forEach(function (item, index) {
+					if (index > 1 && item && typeof item === 'object') {
+						spliceContent[index] = new Observed(item, index, observed).proxy;
+					}
+				});
+
+				//	calculate pointers
+				startIndex = spliceContent.length === 0 ? 0 : (spliceContent[0] < 0 ? target.length + spliceContent[0] : spliceContent[0]);
+				removed = spliceContent.length < 2 ? target.length - startIndex : spliceContent[1];
+				inserted = Math.max(spliceContent.length - 2, 0);
+				spliceResult = Reflect.apply(target[key], target, spliceContent);
+
+				//	reindex the paths
+				target.forEach(function (element, index) {
+					if (element && typeof element === 'object') {
+						tmpObserved = targetsToObserved.get(proxiesToTargetsMap.get(element));
+						if (tmpObserved) {
+							tmpObserved.ownKey = index;
+						} else {
+							console.error('failed to resolve proxy -> target -> observed');
+						}
+					}
+				});
+
+				//	revoke removed Observed
+				spliceResult.forEach(function (removed) {
+					if (removed && typeof removed === 'object') {
+						console.error('REMINDER: implement revoke of removed items by splice method');
+					}
+				});
+
+				//	publish changes
 				for (index = 0; index < removed; index++) {
 					if (index < inserted) {
 						changes.push(new UpdateChange(observed.path.concat(startIndex + index), target[startIndex + index], spliceResult[index]));
@@ -157,8 +213,8 @@
 				for (; index < inserted; index++) {
 					changes.push(new InsertChange(observed.path.concat(startIndex + index), target[startIndex + index]));
 				}
-
 				publishChanges(observable.callbacks, changes);
+
 				return spliceResult;
 			};
 		} else {
@@ -276,9 +332,10 @@
 		}
 
 		targetsToObserved.set(targetClone, this);
+		proxiesToTargetsMap.set(revokableProxy.proxy, targetClone);
 		Reflect.defineProperty(this, 'proxy', { value: revokableProxy.proxy });
 		Reflect.defineProperty(this, 'parent', { value: parent });
-		Reflect.defineProperty(this, 'ownKey', { value: ownKey });
+		Reflect.defineProperty(this, 'ownKey', { value: ownKey, writable: true });
 	}
 
 	Reflect.defineProperty(Observed.prototype, 'root', {
@@ -304,8 +361,7 @@
 	function Observable(observed) {
 		var isRevoked = false,
 			callbacks = [],
-            eventsCollector,
-            preventCallbacks = false;
+            eventsCollector;
 
 		function observe(callback) {
 			if (isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
