@@ -229,7 +229,7 @@
 			result,
 			observed = targetsToObserved.get(target),
 			observable = observedToObservable.get(observed.root),
-			changes = Array.isArray(observed.eventsCollector) ? observed.eventsCollector : [],
+			changes = [],
 			path;
 
 		result = Reflect.set(target, key, value);
@@ -265,7 +265,7 @@
 			result,
 			observed = targetsToObserved.get(target),
 			observable = observedToObservable.get(observed.root),
-			changes = Array.isArray(observed.eventsCollector) ? observed.eventsCollector : [],
+			changes = [],
 			path;
 
 		result = Reflect.deleteProperty(target, key);
@@ -359,9 +359,7 @@
 	});
 
 	function Observable(observed) {
-		var isRevoked = false,
-			callbacks = [],
-            eventsCollector;
+		var isRevoked = false, callbacks = [];
 
 		function observe(callback) {
 			if (isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
@@ -405,7 +403,6 @@
 
 		//	TODO: remove these guys from public access
 		Reflect.defineProperty(this, 'callbacks', { value: callbacks });
-		Reflect.defineProperty(this, 'eventsCollector', { value: eventsCollector, writable: true });
 	}
 	Observable.prototype = Object.create(Observed.prototype);
 	Observable.prototype.constructor = Observable;
