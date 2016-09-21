@@ -70,16 +70,33 @@
 	suite.addTest({ name: 'array pop operation - objects' }, function (pass, fail) {
 		var a = [{ test: 'text' }],
 			pa,
+			pad,
 			popped,
 			events = [];
 		pa = Observable.from(a);
+		pad = pa[0];
 		pa.observe(function (eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
-		popped = pa.pop();
+		pa[0].test = 'test';
+		pad.test = 'more';
+		if (events.length !== 2) fail('expected to register 2 event on observable');
 
-		fail('not yet implemented');
+		popped = pa.pop();
+		if (popped.test !== 'more') fail('expected to receive original object but with updated values');
+		if (events.length !== 3) fail('expected to get Deleted event on pop operation');
+
+		popped.new = 'value';
+		if (events.length !== 3) fail('expected to not receive events on popped object');
+		try {
+			pad.test = 'change';
+			fail('expected flow to not get to this point');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to get TypeError of operation revoke proxy object (detached)');
+		}
+
+		pass();
 	});
 
 	suite.addTest({ name: 'array unshift operation - primitives' }, function (pass, fail) {
@@ -147,25 +164,44 @@
 	});
 
 	suite.addTest({ name: 'array shift operation - objects' }, function (pass, fail) {
-		var a = [{ text: 'a' }, { text: 'b' }],
+		var a = [{ text: 'a', inner: { test: 'more' } }, { text: 'b' }],
 			pa,
+			pa0,
+			pa0i,
 			shifted,
 			events = [];
 		pa = Observable.from(a);
+		pa0 = pa[0];
+		pa0i = pa0.inner;
 		pa.observe(function (eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
+		pa[0].text = 'b';
+		pa0i.test = 'test';
+		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+		events.splice(0);
+
 		shifted = pa.shift();
+		if (shifted.text !== 'b' || shifted.inner.test !== 'test') fail('expected to receive updated original object');
 
 		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
-		if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue.text !== 'a') fail('event 0 did not fire as expected');
-		if (shifted.text !== 'a') fail('shift base functionality broken');
+		if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue.text !== 'b') fail('event 0 did not fire as expected');
 		events.splice(0);
 
 		pa[0].text = 'c';
 		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '0.text' || events[0].oldValue !== 'b' || events[0].value !== 'c') fail('event 0 did not fire as expected');
+		events.splice(0);
+
+		shifted.text = 'd';
+		if (events.length) fail('expected to not see events on revoked sub/graph');
+		try {
+			pa0i.test = 'dk';
+			fail('expecte to not get to this point');
+		} catch (e) {
+			if (!(e instanceof TypeError)) fail('expected to get TypeError on revoked proxy use');
+		}
 
 		pass();
 	});
