@@ -24,17 +24,20 @@ Present library attempts to provide this functionality in a most clean and perfo
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
 #### Backlog:
- - Optimization for the cases of Array massive mutations
- - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)?
- - Create build process including test automation on CI and probably minification/reorg of a consumable code
+ - ~~Optimization for the cases of Array massive mutations~~ Done: any array change that previously was recalculating the whole array graph including all sub-graphs, now just updates the immediate indices of the changed array
+ - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)? Status: NA
+ - Create build process including test automation on CI and probably minification/reorg of a consumable code. Status: added eslinting, minification as part of the build
  - Changes, probably based on my own consumption of this library in [data-tier](https://github.com/gullerya/data-tier) module and/or community feedback
- - Consider adding support for a Symbol defined object properties
- - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1))
+ - Consider adding support for a Symbol defined object properties. Status: in progress
+ - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1)). Status: in progress
 
 #### Versions
 - 0.2.0
   - Tech: moved proxy implementation to revokable
+  - Tech: refactored algorithm of sub-graphs indexing and management; speed and memory improved, arrays massive changes improved significantly
   - API: added revokability to an Observable
+  - 'detached' (`pop`, `shift`, `splice` actions on arrays) and replaced (simple update on objects and arrays, `fill` on arrays) observed sub-graphs are being revoked as well
+  - results of 'detach' actions (`pop`, `shift`, `splice`) are turned back to the plain object (yet having all of the changes done to the observable) when returned by APIs
 - 0.1.0
   - First stable API release
 

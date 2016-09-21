@@ -187,19 +187,19 @@
 				});
 
 				//	revoke removed Observed
-				spliceResult.forEach(function (removed) {
+				spliceResult.forEach(function (removed, index) {
 					if (removed && typeof removed === 'object') {
-						targetsToObserved.get(proxiesToTargetsMap.get(removed)).revoke();
+						spliceResult[index] = proxiesToTargetsMap.get(removed);
+						targetsToObserved.get(spliceResult[index]).revoke();
 					}
 				});
 
 				//	publish changes
 				for (index = 0; index < removed; index++) {
-					var originalObject = spliceResult[index] && typeof spliceResult[index] === 'object' ? proxiesToTargetsMap.get(spliceResult[index]) : spliceResult[index];
 					if (index < inserted) {
-						changes.push(new UpdateChange(observed.path.concat(startIndex + index), target[startIndex + index], originalObject));
+						changes.push(new UpdateChange(observed.path.concat(startIndex + index), target[startIndex + index], spliceResult[index]));
 					} else {
-						changes.push(new DeleteChange(observed.path.concat(startIndex + index), originalObject));
+						changes.push(new DeleteChange(observed.path.concat(startIndex + index), spliceResult[index]));
 					}
 				}
 				for (; index < inserted; index++) {
