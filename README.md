@@ -3,7 +3,7 @@
 
 # Summary
 
-Observation of a changes performed on any arbitrary object (array being a subtype of it) is a **MUST HAVE** facility in JavaScript world.
+Observation of a changes performed on an object (array being a subtype of it) is a **MUST HAVE** facility in JavaScript world.
 
 Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout 'touching' the original objects, but seems like ES is not yet mature enough for that.
 
@@ -12,13 +12,14 @@ Present library attempts to provide this functionality in a most clean and perfo
 - Observation is 'deep', yielding changes from a __sub-graphs__ too
 - Changes delivered in a __synchronous__ way
 - Changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
-- Original objects are __cloned__ and clone/s are __instrumented__, thus not affecting the original objects yet requiring few basic steps in a consumption flow
+- Original objects are __cloned__, thus not being affected, yet this adds one more step to the normal usage flow:
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
 - Arrays:
   - generic object-like mutations supported
   - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
+- Enhanced JavaScript objects `Map`, `WeakMap`, `Set`, `WeakSet` are not supported (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
@@ -27,9 +28,9 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - ~~Optimization for the cases of Array massive mutations~~ __Status__: done, any array change that previously was recalculating the whole array graph including all sub-graphs, now just updates the immediate indices of the changed array
  - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)? __Status__: NA
  - Create build process including test automation on CI and probably minification/reorg of a consumable code. __Status__: added eslinting, minification as part of the build
- - Changes, probably based on my own consumption of this library in [data-tier](https://github.com/gullerya/data-tier) module and/or community feedback. __Status__: in progress
+ - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
- - Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1)). __Status__: in progress
+ - ~~Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1)).~~ __Status__: done, in short I've decided that support of these object's types it very costy (or even impossible) and doesn't fits well the functionality of the library
 
 #### Versions
 - __0.2.0__

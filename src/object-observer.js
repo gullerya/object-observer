@@ -10,7 +10,7 @@
 		if (Array.isArray(target)) {
 			result = target.slice();
 		} else {
-			result = Object.assign({}, target);
+			result = Object.assign(new target.constructor(), target);
 		}
 		return result;
 	}
