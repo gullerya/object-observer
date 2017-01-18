@@ -3,7 +3,8 @@
 
 	var proxiesToTargetsMap = new WeakMap(),
 		targetsToObserved = new WeakMap(),
-        observedToObservable = new WeakMap();
+        observedToObservable = new WeakMap(),
+		nonObservables = ['Date', 'Blob', 'Number', 'String', 'Boolean', 'Error', 'SyntaxError', 'TypeError', 'URIError', 'Function', 'Promise', 'RegExp'];
 
 	function copyShallow(target) {
 		var result;
@@ -13,6 +14,10 @@
 			result = Object.assign(new target.constructor(), target);
 		}
 		return result;
+	}
+
+	function isNonObservable(target) {
+		return nonObservables.indexOf(target.constructor.name) >= 0;
 	}
 
 	function proxiedArrayGet(target, key) {
@@ -275,7 +280,7 @@
 
 	function processArraySubgraph(graph, parentObserved) {
 		graph.forEach(function (element, index) {
-			if (element && typeof element === 'object') {
+			if (element && typeof element === 'object' && !isNonObservable(element)) {
 				graph[index] = new Observed(element, index, parentObserved).proxy;
 			}
 		});
@@ -283,7 +288,7 @@
 
 	function processObjectSubgraph(graph, parentObserved) {
 		Reflect.ownKeys(graph).forEach(function (key) {
-			if (graph[key] && typeof graph[key] === 'object') {
+			if (graph[key] && typeof graph[key] === 'object' && !isNonObservable(graph[key])) {
 				graph[key] = new Observed(graph[key], key, parentObserved).proxy;
 			}
 		});
@@ -444,6 +449,8 @@
 				throw new Error('observable MAY ONLY be created from non-null object only');
 			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
 				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
+			} else if (isNonObservable(target)) {
+				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservables);
 			}
 			var observed = new Observed(target),
 				observable = new Observable(observed);

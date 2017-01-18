@@ -25,20 +25,20 @@ Present library attempts to provide this functionality in a most clean and perfo
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
 #### Backlog:
- - ~~Optimization for the cases of Array massive mutations~~ __Status__: done, any array change that previously was recalculating the whole array graph including all sub-graphs, now just updates the immediate indices of the changed array
- - Add `readPath` and `writePath` utility methods in `DataPath` object (part of change data)? __Status__: NA
- - Create build process including test automation on CI and probably minification/reorg of a consumable code. __Status__: added eslinting, minification as part of the build
  - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
- - ~~Consider adding support for special native objects Map/WeakMap/Set/WeakSet (track this [issue](https://github.com/gullerya/object-observer-js/issues/1)).~~ __Status__: done, in short I've decided that support of these object's types it very costy (or even impossible) and doesn't fits well the functionality of the library
 
 #### Versions
+- __0.2.1__
+  - Bug fix: implemented 'non-observable' object types functionality for the ones, that their observation is meaningless (or even harmful and bug causing); 'non-observables' are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp` (see this [issue](https://github.com/gullerya/object-observer-js/issues/2) for more details)
+
 - __0.2.0__
   - Tech: moved proxy implementation to revokable
   - Tech: refactored algorithm of sub-graphs indexing and management; speed and memory improved, arrays massive changes improved significantly
   - API: added revokability to an Observable
   - 'detached' (`pop`, `shift`, `splice` actions on arrays) and replaced (simple update on objects and arrays, `fill` on arrays) observed sub-graphs are being revoked as well
   - results of 'detach' actions (`pop`, `shift`, `splice`) are turned back to the plain object (yet having all of the changes done to the observable) when returned by APIs
+
 - __0.1.0__
   - First stable API release
 
