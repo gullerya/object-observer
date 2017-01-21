@@ -21,7 +21,7 @@ Present library attempts to provide this functionality in a most clean and perfo
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
 - Enhanced JavaScript objects `Map`, `WeakMap`, `Set`, `WeakSet` are not supported (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
 
-#### Support matrix: ![CHROME](https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_24x24.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_24x24.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_24x24.png) <sub>13+</sub>
+#### Support matrix: ![CHROME](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/chrome.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/firefox.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/explorer.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
 
 #### Backlog:
