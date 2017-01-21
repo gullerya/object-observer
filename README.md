@@ -19,7 +19,7 @@ Present library attempts to provide this functionality in a most clean and perfo
   - generic object-like mutations supported
   - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
-- Enhanced JavaScript objects `Map`, `WeakMap`, `Set`, `WeakSet` are not supported (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
+- Enhanced intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc are not observed (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
 
 #### Support matrix: ![CHROME](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/chrome.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/firefox.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/explorer.png) <sub>13+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
