@@ -29,7 +29,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
 
 #### Versions
-- __0.2.2
+- __0.2.2__
   - Fix: Switched internal implementation to use `Map` instead of `WeakMap` object, due to this [issue](https://github.com/Microsoft/ChakraCore/issues/2419) in Edge browsers. Once the Edge will be fixed, I'll switch back to 'weak' maps.
 
 - __0.2.1__
