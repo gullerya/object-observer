@@ -88,5 +88,84 @@
 		pass();
 	});
 
+	suite.addTest({ name: 'subgraph proxy correctly revoked when replaced' }, function (pass, fail) {
+		var o = {
+			inner: {}
+		}, oo = Observable.from(o),
+			events = [],
+			tmp;
+
+		oo.observe(function (changes) {
+			[].push.apply(events, changes);
+		});
+
+		tmp = oo.inner;
+		tmp.some = 'text';
+		if (events.length !== 1) fail('preliminary check failed, expected to observe 1 change');
+
+		oo.inner = null;
+		events = [];
+		try {
+			tmp.some = 'other text';
+			fail('flow is not supposed to get to this point');
+		} catch (e) {
+		}
+
+		if (events.length !== 0) fail('expected to not-observe any changes anymore');
+
+		pass();
+	});
+
+	suite.addTest({ name: 'subgraph proxy correctly revoked when deleted' }, function (pass, fail) {
+		var o = {
+			inner: {}
+		}, oo = Observable.from(o),
+			events = [],
+			tmp;
+
+		oo.observe(function (changes) {
+			[].push.apply(events, changes);
+		});
+
+		tmp = oo.inner;
+		tmp.some = 'text';
+		if (events.length !== 1) fail('preliminary check failed, expected to observe 1 change');
+
+		delete oo.inner;
+		events = [];
+		try {
+			tmp.some = 'other text';
+			fail('flow is not supposed to get to this point');
+		} catch (e) {
+		}
+
+		if (events.length !== 0) fail('expected to not-observe any changes anymore');
+
+		pass();
+	});
+
+	suite.addTest({ name: 'subgraph proxy correctly processed when callbacks not yet set' }, function (pass, fail) {
+		var o = {
+			inner: {}
+		}, oo = Observable.from(o),
+			events = [],
+			callback = function (changes) {
+				[].push.apply(events, changes);
+			};
+
+		oo.observe(callback);
+		oo.inner.some = 'text';
+		if (events.length !== 1) fail('preliminary check failed, expected to observe 1 change');
+		oo.unobserve(callback);
+
+		oo.inner = {};
+		events = [];
+		oo.observe(callback);
+		oo.inner.other = 'text';
+		if (events.length !== 1) fail('preliminary check failed, expected to observe 1 change');
+
+		pass();
+	});
+
 	suite.run();
 })();

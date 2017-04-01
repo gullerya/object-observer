@@ -80,5 +80,27 @@
 		pass();
 	});
 
+	suite.addTest({ name: 'non-observable should be handled correctly when replaced' }, function (pass, fail) {
+		var o = {
+			date: new Date()
+		}, oo = Observable.from(o);
+
+		oo.observe(function () { });
+		oo.date = null;
+
+		pass();
+	});
+
+	suite.addTest({ name: 'non-observable should be handled correctly when deleted' }, function (pass, fail) {
+		var o = {
+			date: new Date()
+		}, oo = Observable.from(o);
+
+		oo.observe(function () { });
+		delete oo.date;
+
+		pass();
+	});
+
 	suite.run();
 })();
