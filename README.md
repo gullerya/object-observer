@@ -48,6 +48,7 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
 - __0.1.0__
   - First stable API release
 
+For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
 
