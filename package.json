@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "homepage": "https://github.com/gullerya/object-observer-js/README.md",
   "author": {
     "name": "Guller Yuri",
@@ -11,12 +11,10 @@
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
-    "grunt-contrib-uglify": "^2.0.0",
-    "grunt-karma": "~2.0.0",
-    "babel-eslint": "^7.2.1",
-    "eslint-plugin-react": "^6.10.3",
-    "gruntify-eslint": "^3.1.0",
-    "karma": "^1.5.0"
+    "uglify-es": "^3.2.0",
+    "babel-eslint": "^8.0.2",
+    "eslint-plugin-react": "^7.5.1",
+    "gruntify-eslint": "^4.0.0"
   },
   "keywords": [
     "object",
