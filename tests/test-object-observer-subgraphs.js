@@ -1,14 +1,14 @@
-﻿(function () {
+﻿(function() {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing Observable - subgraphs' });
+	let suite = window.Utils.JustTest.createSuite({name: 'Testing Observable - subgraphs'});
 
-	suite.addTest({ name: 'inner object from observable should fire events as usual' }, function (pass, fail) {
-		var o = { inner: { prop: 'more' } },
+	suite.addTest({name: 'inner object from observable should fire events as usual'}, function(pass, fail) {
+		let o = {inner: {prop: 'more'}},
 			oo = Observable.from(o),
 			iop = oo.inner,
 			events = [],
-			observer = function (changes) { events.push.apply(events, changes); };
+			observer = function(changes) { events.push.apply(events, changes); };
 
 		oo.observe(observer);
 		iop.prop = 'else';
@@ -21,12 +21,12 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'removal (detaching) of inner object from observable should disable it\'s proxy/events generating' }, function (pass, fail) {
-		var o = { inner: { prop: 'more' } },
+	suite.addTest({name: 'removal (detaching) of inner object from observable should disable it\'s proxy/events generating'}, function(pass, fail) {
+		let o = {inner: {prop: 'more'}},
 			oo = Observable.from(o),
 			iop = oo.inner,
 			cntr = 0,
-			observer = function () { cntr++; };
+			observer = function() { cntr++; };
 
 		oo.observe(observer);
 		iop.prop = 'text';
@@ -41,6 +41,53 @@
 			if (!e || !(e instanceof TypeError)) fail('expected to have TypeError while setting revoked proxy');
 		}
 		if (cntr > 0) fail('observer expected NOT to be called when removed inner object changed, but called ' + cntr);
+
+		pass();
+	});
+
+	suite.addTest({name: 'replacement of inner object from observable should return non-proxified original object'}, function(pass, fail) {
+		let o = {inner: {prop: 'more', nested: {text: 'text'}}},
+			oo = Observable.from(o),
+			events = [];
+		oo.observe(changes => events.push.apply(events, changes));
+
+		oo.inner.prop = 'some';
+		if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 2) {
+			fail('expected to have correct update event');
+		}
+		events = [];
+
+		oo.inner = {p: 'back'};
+		if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 1) {
+			fail('expected to have correct update event - metadata');
+		} else {
+			if (!events[0].oldValue || events[0].oldValue.prop !== 'some') {
+				fail('expected to have correct update event - correct oldValue present');
+			}
+			if (events[0].oldValue.nested.text !== 'text') {
+				fail('expected to have correct update event - correct oldValue nested object present');
+			}
+		}
+
+		pass();
+	});
+
+	suite.addTest({name: 'Object.assign on observable should raise an event/s of update with non-proxified original object'}, function(pass, fail) {
+		let oldData = {b: {b1: "x", b2: "y"}},
+			newData = {b: {b1: "z"}},
+			observable = Observable.from(oldData),
+			events = [];
+		observable.observe(changes => events.push.apply(events, changes));
+
+		Object.assign(observable, newData);
+
+		if (events.length !== 1 || events[0].type !== 'update' || events[0].path.join('.') !== 'b') {
+			fail('UPDATE event metadata NOT as expected');
+		} else if (!events[0].value || events[0].value.b1 !== 'z') {
+			fail('UPDATE event (new) value NOT as expected');
+		} else if (!events[0].oldValue || events[0].oldValue.b1 !== 'x' || events[0].oldValue.b2 !== 'y') {
+			fail('UPDATE event oldValue NOT as expected');
+		}
 
 		pass();
 	});
