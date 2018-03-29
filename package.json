@@ -1,19 +1,19 @@
 {
   "name": "object-observer",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "homepage": "https://github.com/gullerya/object-observer-js/README.md",
   "author": {
     "name": "Guller Yuri",
     "email": "gullerya@gmail.com"
   },
-  "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via Proxy; changes delivered in a synchronous way",
-  "main": "dist/object-observer.js",
+  "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
+  "main": "dist/object-observer.min.js",
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.2",
     "grunt-cli": "^1.2.0",
-    "uglify-es": "^3.2.0",
-    "babel-eslint": "^8.0.2",
-    "eslint-plugin-react": "^7.5.1",
+    "uglify-es": "^3.3.9",
+    "babel-eslint": "^8.2.2",
+    "eslint-plugin-react": "^7.7.0",
     "gruntify-eslint": "^4.0.0"
   },
   "keywords": [

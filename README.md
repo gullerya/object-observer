@@ -3,32 +3,37 @@
 
 # Summary
 
-Observation of a changes performed on an object (array being a subtype of it) is a **MUST HAVE** facility in JavaScript world.
+`object-observer` provides an __observation of a changes performed on an object__ (array being a subtype of it), hopefully in a most clean and performant way.
 
-Native facility would be the best solution for this, since it may provide non-intrusive observation wihtout 'touching' the original objects, but seems like ES is not yet mature enough for that.
-
-Present library attempts to provide this functionality in a most clean and performant way. Main aspects:
-- Implementation relies on __Proxy__ mechanism (specifically, revokable Proxy)
-- Observation is 'deep', yielding changes from a __sub-graphs__ too
-- Changes delivered in a __synchronous__ way
-- Changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
-- Original objects are __cloned__, thus not being affected; this adds one more step to the normal usage flow:
+Main aspects:
+- implementation relies on __Proxy__ mechanism (specifically, revokable Proxy)
+- observation is 'deep', yielding changes from a __sub-graphs__ too
+- changes delivered in a __synchronous__ way
+- changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
+- original objects are __cloned__, thus not being affected; this adds one more step to the normal usage flow:
   - first, create observable clone from the specified object
   - second, register observers on the observable (not on the original object)
-- Arrays:
+- arrays:
   - generic object-like mutations supported
   - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
-- Enhanced intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc are not observed (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
+- enhanced intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc are not observed (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
 
-#### Support matrix: ![CHROME](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/chrome.png) <sub>49+</sub>, ![FIREFOX](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/firefox.png) <sub>42+</sub>, ![EDGE](https://raw.githubusercontent.com/gullerya/data-tier/master/tools/browser_icons/explorer.png) <sub>13+</sub>
-Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of ObjectObserver.
+#### Support matrix: ![CHROME](./tools/browser_icons/chrome.png) <sub>49+</sub>, ![FIREFOX](./tools/browser_icons/firefox.png) <sub>42+</sub>, ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub>
+Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of `object-observer`.
 
 #### Backlog:
  - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
 
 #### Versions
+
+- __0.2.5__
+  - Fix: [issue #8](https://github.com/gullerya/object-observer-js/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 
+
+- __0.2.4__
+  - Minor syntactic fixes
+
 - __0.2.3__
   - Fix: correct handling of removal/replacement of the non-observable objects (issues [this](https://github.com/gullerya/object-observer-js/issues/4) and [this](https://github.com/gullerya/object-observer-js/issues/3))
 
@@ -44,9 +49,6 @@ Support matrix is mainly dependent on 2 advanced language features: `Proxy` and 
   - API: added revokability to an Observable
   - 'detached' (`pop`, `shift`, `splice` actions on arrays) and replaced (simple update on objects and arrays, `fill` on arrays) observed sub-graphs are being revoked as well
   - results of 'detach' actions (`pop`, `shift`, `splice`) are turned back to the plain object (yet having all of the changes done to the observable) when returned by APIs
-
-- __0.1.0__
-  - First stable API release
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
