@@ -3,7 +3,7 @@
 
 # Summary
 
-`object-observer` provides an __observation of a changes performed on an object__ (array being a subtype of it), hopefully in a most clean and performant way.
+__`object-observer`__ provides an observation of a changes performed on an object graph (array being a subtype of it).
 
 Main aspects:
 - implementation relies on __Proxy__ mechanism (specifically, revokable Proxy)
