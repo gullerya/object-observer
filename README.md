@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/object-observer.svg)](https://badge.fury.io/js/object-observer)
-[![Build Status](https://travis-ci.org/gullerya/object-observer-js.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
+[![Build Status](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
 
 # Summary
 
