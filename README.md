@@ -20,7 +20,6 @@ Main aspects:
 - intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 
 #### Support matrix: ![CHROME](./tools/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./tools/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./tools/browser_icons/nodejs.png) <sub>8.10.0+</sub>
-Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of `object-observer`.
 
 #### Backlog:
  - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
@@ -91,7 +90,7 @@ fetch('object-observer.min.js').then(function (response) {
 
 - __`from`__ - receives a _non-null object_ and returns __`Observable`__ interface:
 	```javascript
-	var person = { name: 'Aya', age: '1' },
+	let person = { name: 'Aya', age: '1' },
 		observablePerson;
 
 	observablePerson = Observable.from(person);
@@ -142,7 +141,7 @@ fetch('object-observer.min.js').then(function (response) {
 
 ##### Objects
 ```javascript
-var order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+let order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
 	observableOrder;
 observableOrder = Observable.from(order);
 observableOrder.observe(changes => {
@@ -162,7 +161,7 @@ delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue:
 ##### Arrays
 
 ```javascript
-var a = [ 1, 2, 3, 4, 5],
+let a = [ 1, 2, 3, 4, 5],
 	observableA;
 
 observableA = Observable.from(a);
