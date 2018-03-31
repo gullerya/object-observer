@@ -17,25 +17,26 @@ Main aspects:
   - generic object-like mutations supported
   - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
-- enhanced intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc are not observed (see this [issue](https://github.com/gullerya/object-observer-js/issues/1) for more details)
+- intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 
-#### Support matrix: ![CHROME](./tools/browser_icons/chrome.png) <sub>49+</sub>, ![FIREFOX](./tools/browser_icons/firefox.png) <sub>42+</sub>, ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub>
+#### Support matrix: ![CHROME](./tools/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./tools/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./tools/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 Support matrix is mainly dependent on 2 advanced language features: `Proxy` and `Reflect`. The broader their adoption - the broader the support matrix of `object-observer`.
 
 #### Backlog:
  - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
+ - Prepare the library to be consumed as ES module (via `import` API)
 
 #### Versions
 
 - __0.2.5__
-  - Fix: [issue #8](https://github.com/gullerya/object-observer-js/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 
+  - Fix: [issue #8](https://github.com/gullerya/object-observer/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 
 
 - __0.2.4__
   - Minor syntactic fixes
 
 - __0.2.3__
-  - Fix: correct handling of removal/replacement of the non-observable objects (issues [this](https://github.com/gullerya/object-observer-js/issues/4) and [this](https://github.com/gullerya/object-observer-js/issues/3))
+  - Fix: correct handling of removal/replacement of the non-observable objects (issues [this](https://github.com/gullerya/object-observer/issues/4) and [this](https://github.com/gullerya/object-observer-js/issues/3))
 
 - __0.2.2__
   - Fix: Switched internal implementation to use `Map` instead of `WeakMap` object, due to this [issue](https://github.com/Microsoft/ChakraCore/issues/2419) in Edge browsers. Once the Edge will be fixed, I'll switch back to 'weak' maps.
@@ -56,11 +57,11 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you.
 
-* Simple a reference (script tag) to the object-oserver.js in your HTML will load it into the __global scope__:
+* Simple a reference (script tag) to the `object-observer.min.js`/`object-observer.js` in your `HTML` will load it into the __global scope__:
 ```html
-<script src="object-observer.js"></script>
+<script src="object-observer.min.js"></script>
 <script>
-	var person = { name: 'Uriya', age: 8 },
+	let person = { name: 'Uriya', age: 8 },
 	    observablePerson;
 	observablePerson = Observable.from(person);
 </script>
@@ -68,11 +69,11 @@ You have 2 ways to load the library: into a 'window' global scope, or a custom s
 
 * Following loader exemplifies how to load the library into a __custom scope__ (add error handling as appropriate):
 ```javascript
-var customNamespace = {},
+let customNamespace = {},
     person = { name: 'Nava', age: 6 },
     observablePerson;
 
-fetch('object-observer.js').then(function (response) {
+fetch('object-observer.min.js').then(function (response) {
 	if (response.status === 200) {
 		response.text().then(function (code) {
 			Function(code).call(customNamespace);
