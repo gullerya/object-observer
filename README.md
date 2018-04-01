@@ -10,14 +10,13 @@ Main aspects:
 - observation is 'deep', yielding changes from a __sub-graphs__ too
 - changes delivered in a __synchronous__ way
 - changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
-- original objects are __cloned__, thus not being affected; this adds one more step to the normal usage flow:
-  - first, create observable clone from the specified object
-  - second, register observers on the observable (not on the original object)
+- original objects are __cloned__ while turned into `Observable`s 
 - arrays:
   - generic object-like mutations supported
-  - intrinsic mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice` (see below for more info on changes delivery for these)
+  - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
-- intrinsic methods of `Map`, `WeakMap`, `Set`, `WeakSet` like `set`, `get`, `delete` etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
+- intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
+- following host objects __are not__ observed, but left as they are (the list will be updated upon changes): `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
 #### Support matrix: ![CHROME](./tools/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./tools/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./tools/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
@@ -27,6 +26,10 @@ Main aspects:
  - Prepare the library to be consumed as ES module (via `import` API)
 
 #### Versions
+
+- __0.2.6__
+  - Fixed cloning logic to allow observability for host objects like `DOMStringMap` and alike (gave up on calling original object's constructor)
+  - Documentation fixes 
 
 - __0.2.5__
   - Fix: [issue #8](https://github.com/gullerya/object-observer/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 

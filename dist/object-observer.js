@@ -10,7 +10,7 @@
 	function copyShallow(target) {
 		return Array.isArray(target) ?
 			target.slice() :
-			Object.assign(new target.constructor(), target);
+			Object.assign({}, target);
 	}
 
 	function isNonObservable(target) {
