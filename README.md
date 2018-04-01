@@ -28,7 +28,7 @@ Main aspects:
 #### Versions
 
 - __0.2.6__
-  - Fixed cloning logic to allow observability for host objects like `DOMStringMap` and alike (gave up on calling original object's constructor)
+  - Fixed cloning logic to allow observability for host objects like `DOMStringMap` and alike (gave up on calling the original object's constructor)
   - Documentation fixes 
 
 - __0.2.5__
@@ -91,7 +91,7 @@ fetch('object-observer.min.js').then(function (response) {
 
 ##### `Observable` static properties
 
-- __`from`__ - receives a _non-null object_ and returns __`Observable`__ interface:
+- __`from`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface:
 	```javascript
 	let person = { name: 'Aya', age: '1' },
 		observablePerson;
@@ -100,6 +100,8 @@ fetch('object-observer.min.js').then(function (response) {
 	...
 	```
 
+    Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.assign`, therefore only __own enumerables__ are going to be observed.
+    
 ##### `Observable` instance properties
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
