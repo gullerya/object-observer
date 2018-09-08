@@ -9,12 +9,15 @@
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "main": "dist/object-observer.min.js",
   "devDependencies": {
-    "grunt": "^1.0.2",
-    "grunt-cli": "^1.2.0",
+    "eslint": "^5.5.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-config-standard": "^12.0.0",
+    "fs-extra": "^7.0.0",
     "uglify-es": "^3.3.9",
-    "babel-eslint": "^8.2.2",
-    "eslint-plugin-react": "^7.7.0",
-    "gruntify-eslint": "^4.0.0"
+    "just-test": "^0.0.1"
   },
   "keywords": [
     "object",
@@ -34,7 +37,8 @@
     "dist"
   ],
   "scripts": {
-    "test": "grunt test"
+    "eslint": "eslint -c .eslintrc.json ../src/*.js",
+    "build": "node ./tools/build-dist.js"
   },
   "repository": {
     "type": "git",

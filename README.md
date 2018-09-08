@@ -19,7 +19,7 @@ Main aspects:
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 - following host objects __are not__ observed, but left as they are (the list will be updated upon changes): `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
-#### Support matrix: ![CHROME](./tools/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./tools/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./tools/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./tools/browser_icons/nodejs.png) <sub>8.10.0+</sub>
+#### Support matrix: ![CHROME](./docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Backlog:
  - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress

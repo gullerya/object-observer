@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
 	'use strict';
 
 	const scope = this || window,
@@ -8,9 +8,7 @@
 		nonObservables = ['Date', 'Blob', 'Number', 'String', 'Boolean', 'Error', 'SyntaxError', 'TypeError', 'URIError', 'Function', 'Promise', 'RegExp'];
 
 	function copyShallow(target) {
-		return Array.isArray(target) ?
-			target.slice() :
-			Object.assign({}, target);
+		return Array.isArray(target) ? target.slice() : Object.assign({}, target);
 	}
 
 	function isNonObservable(target) {
