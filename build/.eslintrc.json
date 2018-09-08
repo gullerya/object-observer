@@ -19,8 +19,5 @@
     "object-curly-spacing": "off",
     "eol-last": "off",
     "one-var": "off"
-  },
-  "globals": {
-    "DataTier": true
   }
 }
