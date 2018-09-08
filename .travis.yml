@@ -2,8 +2,6 @@ language: node_js
 node_js:
 - "8"
 
-before_install:
-- cd build
 install:
 - npm install
 
@@ -12,4 +10,4 @@ script:
 
 cache:
   directories:
-  - "build/node_modules"
+  - "node_modules"

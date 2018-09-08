@@ -1,0 +1,51 @@
+{
+  "name": "object-observer",
+  "version": "0.2.7-snapshot",
+  "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
+  "keywords": [
+    "object",
+    "array",
+    "observe",
+    "observer",
+    "observable",
+    "changes",
+    "deep",
+    "tree",
+    "graph",
+    "javascript",
+    "proxy"
+  ],
+  "homepage": "https://github.com/gullerya/object-observer",
+  "bugs": {
+    "url": "https://github.com/gullerya/object-observer-js/issues",
+    "email": "gullerya@gmail.com"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/object-observer.min.js",
+  "author": {
+    "name": "Guller Yuri",
+    "email": "gullerya@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gullerya/object-observer-js"
+  },
+  "scripts": {
+    "eslint": "eslint -c ./build/.eslintrc.json ./src/*.js",
+    "build": "node ./build/tools/build-dist.js"
+  },
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-config-standard": "^12.0.0",
+    "fs-extra": "^7.0.0",
+    "uglify-es": "^3.3.9",
+    "just-test": "^0.1.0"
+  }
+}
