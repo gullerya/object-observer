@@ -37,7 +37,7 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 # Loading the Library
 
-You have few ways to load the library: as an ES6 module (named or default) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
+You have few ways to load the library: as an ES6 module (named or default, pay attention to the __module__ in the path) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
 
 * ES6 module - default import (__preferred__):
 ```javascript
@@ -51,7 +51,7 @@ import {Observable as Obsrvbl} from 'dist/module/object-observer.min.js';
 
 * Simple a reference (script tag) to the `object-observer.min.js`/`object-observer.js` in your `HTML` will load it into the __global scope__:
 ```html
-<script src="object-observer.min.js"></script>
+<script src="dist/object-observer.min.js"></script>
 <script>
 	let person = { name: 'Uriya', age: 8 },
 	    observablePerson;
@@ -65,7 +65,7 @@ let customNamespace = {},
     person = { name: 'Nava', age: 6 },
     observablePerson;
 
-fetch('object-observer.min.js').then(function (response) {
+fetch('dist/object-observer.min.js').then(function (response) {
 	if (response.status === 200) {
 		response.text().then(function (code) {
 			Function(code).call(customNamespace);
