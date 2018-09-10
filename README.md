@@ -21,11 +21,6 @@ Main aspects:
 
 #### Support matrix: ![CHROME](./docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
-#### Backlog:
- - Changes, probably based on my own consumption of this library in __data-tier__ module ([GitHub](https://github.com/gullerya/data-tier), [NPM](https://www.npmjs.com/package/data-tier)) and/or community feedback. __Status__: in progress
- - Consider adding support for a Symbol defined object properties. __Status__: in progress
- - Prepare the library to be consumed as ES module (via `import` API)
-
 #### Last versions (full changelog is [here](docs/changelog.md))
 
 - __1.0.0__
