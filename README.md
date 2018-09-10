@@ -37,7 +37,7 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 # Loading the Library
 
-You have few ways to load the library: as an ES6 module (named or default, pay attention to the __`module`__ / __`node-module`__ in the path) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
+You have few ways to load the library: as an __ES6 module__ (named or default, pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you).
 
 * ES6 module - default import (__preferred__):
 ```javascript
@@ -45,7 +45,7 @@ You have few ways to load the library: as an ES6 module (named or default, pay a
 import Observable from 'dist/module/object-observer.min.js';
 
 //  NodeJS
-let Observable = require('./dist/node-module/object-obsever');
+let Observable = require('./dist/node-module/object-observer');
 ```
 
 * ES6 module - named import:
