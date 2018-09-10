@@ -26,7 +26,10 @@ Main aspects:
  - Consider adding support for a Symbol defined object properties. __Status__: in progress
  - Prepare the library to be consumed as ES module (via `import` API)
 
-#### Versions
+#### Last versions (full changelog is [here](docs/changelog.md))
+
+- __1.0.0__
+  - Added ES6 module packaging (both regular and minified)
 
 - __0.2.6__
   - Fixed cloning logic to allow observability for host objects like `DOMStringMap` and alike (gave up on calling the original object's constructor)
@@ -35,30 +38,21 @@ Main aspects:
 - __0.2.5__
   - Fix: [issue #8](https://github.com/gullerya/object-observer/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 
 
-- __0.2.4__
-  - Minor syntactic fixes
-
-- __0.2.3__
-  - Fix: correct handling of removal/replacement of the non-observable objects (issues [this](https://github.com/gullerya/object-observer/issues/4) and [this](https://github.com/gullerya/object-observer-js/issues/3))
-
-- __0.2.2__
-  - Fix: Switched internal implementation to use `Map` instead of `WeakMap` object, due to this [issue](https://github.com/Microsoft/ChakraCore/issues/2419) in Edge browsers. Once the Edge will be fixed, I'll switch back to 'weak' maps.
-
-- __0.2.1__
-  - Bug fix: implemented 'non-observable' object types functionality for the ones, that their observation is meaningless (or even harmful and bug causing); 'non-observables' are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp` (see this [issue](https://github.com/gullerya/object-observer-js/issues/2) for more details)
-
-- __0.2.0__
-  - Tech: moved proxy implementation to revokable
-  - Tech: refactored algorithm of sub-graphs indexing and management; speed and memory improved, arrays massive changes improved significantly
-  - API: added revokability to an Observable
-  - 'detached' (`pop`, `shift`, `splice` actions on arrays) and replaced (simple update on objects and arrays, `fill` on arrays) observed sub-graphs are being revoked as well
-  - results of 'detach' actions (`pop`, `shift`, `splice`) are turned back to the plain object (yet having all of the changes done to the observable) when returned by APIs
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
 
-You have 2 ways to load the library: into a 'window' global scope, or a custom scope provided by you.
+You have few ways to load the library: as an ES6 module (named or default) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
+
+* ES6 module - default import (__preferred__):
+```javascript
+import Observable from 'dist/module/object-observer.min.js';
+```
+
+* ES6 module - named import:
+```javascript
+import {Observable as Obsrvbl} from 'dist/module/object-observer.min.js';
+```
 
 * Simple a reference (script tag) to the `object-observer.min.js`/`object-observer.js` in your `HTML` will load it into the __global scope__:
 ```html

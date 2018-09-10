@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "0.2.7-snapshot",
+  "version": "1.0.0",
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
@@ -24,7 +24,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/object-observer.min.js",
+  "main": "dist/module/object-observer.min.js",
   "author": {
     "name": "Guller Yuri",
     "email": "gullerya@gmail.com"
@@ -34,7 +34,7 @@
     "url": "https://github.com/gullerya/object-observer-js"
   },
   "scripts": {
-    "eslint": "eslint -c ./build/.eslintrc.json ./src/*.js",
+    "eslint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
     "build": "node ./build/tools/build-dist.js"
   },
   "devDependencies": {
