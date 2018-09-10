@@ -18,6 +18,10 @@ fs.writeFileSync(
 	uglifyES.minify(fs.readFileSync('./dist/module/object-observer.js', {encoding: 'utf8'})).code
 );
 fs.writeFileSync(
+	'./dist/node-module/object-observer.min.js',
+	uglifyES.minify(fs.readFileSync('./dist/node-module/object-observer.js', {encoding: 'utf8'})).code
+);
+fs.writeFileSync(
 	'./dist/object-observer.min.js',
 	uglifyES.minify(fs.readFileSync('./dist/object-observer.js', {encoding: 'utf8'})).code
 );

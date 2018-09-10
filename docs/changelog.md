@@ -1,6 +1,6 @@
 #### Changelog
 
-- __1.0.0__
+- __1.0.1__
   - Added ES6 module packaging (both regular and minified)
 
 - __0.2.6__

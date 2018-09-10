@@ -24,7 +24,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/module/object-observer.min.js",
+  "main": "dist/node-module/object-observer.min.js",
   "author": {
     "name": "Guller Yuri",
     "email": "gullerya@gmail.com"

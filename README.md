@@ -23,7 +23,7 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-- __1.0.0__
+- __1.0.1__
   - Added ES6 module packaging (both regular and minified)
 
 - __0.2.6__
@@ -37,11 +37,15 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 # Loading the Library
 
-You have few ways to load the library: as an ES6 module (named or default, pay attention to the __module__ in the path) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
+You have few ways to load the library: as an ES6 module (named or default, pay attention to the __`module`__ / __`node-module`__ in the path) or as a regular script (into a 'window' global scope, or a custom scope provided by you).
 
 * ES6 module - default import (__preferred__):
 ```javascript
+//  browser
 import Observable from 'dist/module/object-observer.min.js';
+
+//  NodeJS
+let Observable = require('./dist/node-module/object-obsever');
 ```
 
 * ES6 module - named import:
