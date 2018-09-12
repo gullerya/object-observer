@@ -181,6 +181,7 @@
 				removed = splLen < 2 ? tarLen - startIndex : spliceContent[1];
 				inserted = Math.max(splLen - 2, 0);
 				spliceResult = Reflect.apply(target[key], target, spliceContent);
+				tarLen = target.length;
 
 				//	reindex the paths
 				for (let i = 0, item; i < tarLen; i++) {

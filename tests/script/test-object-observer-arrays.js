@@ -426,6 +426,17 @@
 		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '1.text' || events[0].value !== 'B' || events[0].oldValue !== '1') fail('event 0 did not fire as expected');
 		if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd') fail('event 1 did not fire as expected');
+		events.splice(0);
+
+		spliced = pa.splice(1, 1, {text: 'A'}, {text: 'B'});
+		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+		if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== 'A' || events[0].oldValue.text !== 'B') fail('event 0 did not fire as expected');
+		if (events[1].type !== 'insert' || events[1].path.join('.') !== '2' || events[1].value.text !== 'B' || typeof events[1].oldValue !== 'undefined') fail('event 1 did not fire as expected');
+		events.splice(0);
+
+		pa[3].text = 'C';
+		if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
+		if (events[0].type !== 'update' || events[0].path.join('.') !== '3.text' || events[0].value !== 'C' || events[0].oldValue !== 'D') fail('event 0 did not fire as expected');
 
 		pass();
 	});

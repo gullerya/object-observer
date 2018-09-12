@@ -1,5 +1,8 @@
 #### Changelog
 
+- __1.0.3__
+  - Fixed [Issue no. 9](https://github.com/gullerya/object-observer/issues/9) - incorrect tail array items indexing/pathing after performing `splice` which inserts new items in the middle of array
+
 - __1.0.2__
   - Removed named export, only a default export/import is available (see docs below)
 
