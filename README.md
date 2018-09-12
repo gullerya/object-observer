@@ -108,7 +108,7 @@ fetch('dist/object-observer.min.js').then(function (response) {
 	observablePerson.observe(personUIObserver);
 	```
 	
-	Changes delivered always as a never-null-nor-empty array of `Change` objects.
+	Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
 	Each change is a defined, non-null object, see `Change` definition below.
 	
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
@@ -120,7 +120,7 @@ fetch('dist/object-observer.min.js').then(function (response) {
 	...
 	```
 
-- __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on the revoked `Observable`. Subsequent `revoke` invokations will have no effect:
+- __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on the revoked `Observable`. Subsequent `revoke` invocations will have no effect:
 	```javascript
 	...
 	observablePerson.revoke();
