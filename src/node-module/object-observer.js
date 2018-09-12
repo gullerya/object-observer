@@ -73,7 +73,7 @@ function proxiedArrayGet(target, key) {
 		result = function proxiedUnshift() {
 			let unshiftContent, unshiftResult, changes = [], tmpObserved;
 			unshiftContent = Array.from(arguments);
-			unshiftContent.forEach(function(item, index) {
+			unshiftContent.forEach((item, index) => {
 				if (item && typeof item === 'object') {
 					unshiftContent[index] = new Observed(item, index, observed).proxy;
 				}
@@ -301,16 +301,6 @@ function processObjectSubgraph(graph, parentObserved) {
 
 function Observed(origin, ownKey, parent) {
 	let targetClone, revokable, proxy;
-
-	if (!origin || typeof origin !== 'object') {
-		throw new Error('Observed MUST be created from a non null object origin');
-	}
-	if (parent && (typeof ownKey === 'undefined' || ownKey === null)) {
-		throw new Error('any non-root (parent-less) Observed MUST have an own path; now parent is ' + parent + '; key is ' + ownKey);
-	}
-	if (parent && !(parent instanceof Observed)) {
-		throw new Error('parent, when supplied, MUST be an instance of Observed');
-	}
 
 	targetClone = copyShallow(origin);
 
