@@ -1,10 +1,10 @@
-﻿import {Observable as Obsrv} from '../../dist/module/object-observer.js';
+﻿import Observable from '../../dist/module/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing unobserving/removal of observed object'});
 
 suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, function(pass, fail) {
 	let o = {some: 'text'},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		cntr = 0,
 		observer = function() { cntr++; };
 
@@ -23,7 +23,7 @@ suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, f
 
 suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, function(pass, fail) {
 	let o = {some: 'text'},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
 		observerA = function() { cntrA++; },
@@ -55,7 +55,7 @@ suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, fun
 
 suite.addTest({name: 'test unobserve - unobserve few'}, function(pass, fail) {
 	let o = {some: 'text'},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
 		observerA = function() { cntrA++; },
@@ -80,7 +80,7 @@ suite.addTest({name: 'test unobserve - unobserve few'}, function(pass, fail) {
 
 suite.addTest({name: 'test unobserve - unobserve all'}, function(pass, fail) {
 	let o = {some: 'text'},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
 		observerA = function() { cntrA++; },
@@ -105,7 +105,7 @@ suite.addTest({name: 'test unobserve - unobserve all'}, function(pass, fail) {
 
 suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, function(pass, fail) {
 	let o = {some: 'text'},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		cntr = 0,
 		observer = function() { cntr++; };
 
@@ -126,7 +126,7 @@ suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, f
 
 suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, function(pass, fail) {
 	let o = {some: 'text', inner: {more: 'text'}},
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		ooi = oo.inner,
 		cntr = 0,
 		observer = function() { cntr++; };
@@ -155,7 +155,7 @@ suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, functio
 
 suite.addTest({name: 'test unobserve - revoke the observable (Array)'}, function(pass, fail) {
 	let o = [{some: 'text'}, {inner: {more: 'text', arr: ['a', 'b', 'c']}}],
-		oo = Obsrv.from(o),
+		oo = Observable.from(o),
 		ooi = oo[1],
 		ooia = ooi.inner.arr,
 		cntr = 0,

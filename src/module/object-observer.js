@@ -3,10 +3,6 @@ const proxiesToTargetsMap = new Map(),
 	observedToObservable = new Map(),
 	nonObservables = ['Date', 'Blob', 'Number', 'String', 'Boolean', 'Error', 'SyntaxError', 'TypeError', 'URIError', 'Function', 'Promise', 'RegExp'];
 
-export {
-	Observable
-}
-
 export default Observable;
 
 function copyShallow(target) {
@@ -23,15 +19,14 @@ function proxiedArrayGet(target, key) {
 		observable = observedToObservable.get(observed.root);
 	if (key === 'pop') {
 		result = function proxiedPop() {
-			let poppedIndex, popResult, tmpTarget, changes;
+			let poppedIndex, popResult, tmpTarget;
 			poppedIndex = target.length - 1;
 			popResult = Reflect.apply(target[key], target, arguments);
 			tmpTarget = proxiesToTargetsMap.get(popResult);
 			if (tmpTarget) {
 				targetsToObserved.get(tmpTarget).revoke();
 			}
-			changes = [new DeleteChange(observed.path.concat(poppedIndex), tmpTarget || popResult)];
-			observable.notify(changes);
+			observable.notify([new DeleteChange(observed.path.concat(poppedIndex), tmpTarget || popResult)]);
 			return tmpTarget || popResult;
 		};
 	} else if (key === 'push') {
@@ -52,7 +47,7 @@ function proxiedArrayGet(target, key) {
 		};
 	} else if (key === 'shift') {
 		result = function proxiedShift() {
-			let shiftResult, changes, tmpTarget;
+			let shiftResult, tmpTarget;
 			shiftResult = Reflect.apply(target[key], target, arguments);
 			tmpTarget = proxiesToTargetsMap.get(shiftResult);
 			if (tmpTarget) {
@@ -71,8 +66,7 @@ function proxiedArrayGet(target, key) {
 					}
 				}
 			}
-			changes = [new DeleteChange(observed.path.concat(0), tmpTarget || shiftResult)];
-			observable.notify(changes);
+			observable.notify([new DeleteChange(observed.path.concat(0), tmpTarget || shiftResult)]);
 			return tmpTarget || shiftResult;
 		};
 	} else if (key === 'unshift') {
@@ -104,7 +98,7 @@ function proxiedArrayGet(target, key) {
 		};
 	} else if (key === 'reverse') {
 		result = function proxiedReverse() {
-			let changes, tmpObserved;
+			let tmpObserved;
 			Reflect.apply(target[key], target, arguments);
 			for (let i = 0, l = target.length, item; i < l; i++) {
 				item = target[i];
@@ -117,13 +111,12 @@ function proxiedArrayGet(target, key) {
 					}
 				}
 			}
-			changes = [new ReverseChange()];
-			observable.notify(changes);
+			observable.notify([new ReverseChange()]);
 			return this;
 		};
 	} else if (key === 'sort') {
 		result = function proxiedSort() {
-			let changes, tmpObserved;
+			let tmpObserved;
 			Reflect.apply(target[key], target, arguments);
 			for (let i = 0, l = target.length, item; i < l; i++) {
 				item = target[i];
@@ -136,8 +129,7 @@ function proxiedArrayGet(target, key) {
 					}
 				}
 			}
-			changes = [new ShuffleChange()];
-			observable.notify(changes);
+			observable.notify([new ShuffleChange()]);
 			return this;
 		};
 	} else if (key === 'fill') {
@@ -253,12 +245,9 @@ function proxiedSet(target, key, value) {
 			targetsToObserved.get(oldTarget).revoke();
 		}
 
-		if (observable.hasListeners) {
-			let path = observed.path.concat(key),
-				changes = [oldValuePresent ? new UpdateChange(path, value, oldTarget || oldValue) : new InsertChange(path, value)];
-			if (!observed.preventCallbacks) {
-				observable.notify(changes);
-			}
+		if (observable.hasListeners() && !observed.preventCallbacks) {
+			let path = observed.path.concat(key);
+			observable.notify([oldValuePresent ? new UpdateChange(path, value, oldTarget || oldValue) : new InsertChange(path, value)]);
 		}
 	}
 	return result;
@@ -279,12 +268,9 @@ function proxiedDelete(target, key) {
 			targetsToObserved.get(oldTarget).revoke();
 		}
 
-		if (observable.hasListeners) {
-			let path = observed.path.concat(key),
-				changes = [new DeleteChange(path, oldTarget || oldValue)];
-			if (!observed.preventCallbacks) {
-				observable.notify(changes);
-			}
+		if (observable.hasListeners() && !observed.preventCallbacks) {
+			let path = observed.path.concat(key);
+			observable.notify([new DeleteChange(path, oldTarget || oldValue)]);
 		}
 	}
 	return result;

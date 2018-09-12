@@ -324,6 +324,14 @@ suite.addTest({name: 'array fill operation - primitives'}, function(pass, fail) 
 	pa.fill('c', -1, 3);
 	if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'c' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+	events.splice(0);
+
+	//	simulating insertion of a new item into array (fill does not extend an array, so we may do it only on internal items)
+	delete pa[1];
+	pa.fill('d', 1, 2);
+	if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+	if (events[0].type !== 'delete' || events[0].path.join('.') !== '1' || typeof events[0].value !== 'undefined' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+	if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value !== 'd' || typeof events[1].oldValue !== 'undefined') fail('event 1 did not fire as expected');
 
 	pass();
 });

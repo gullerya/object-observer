@@ -1,5 +1,8 @@
 #### Changelog
 
+- __1.0.2__
+  - Removed named export, only a default export/import is available (see docs below)
+
 - __1.0.1__
   - Added ES6 module packaging (both regular and minified)
 

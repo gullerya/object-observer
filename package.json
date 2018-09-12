@@ -48,6 +48,7 @@
     "eslint-config-standard": "^12.0.0",
     "fs-extra": "^7.0.0",
     "uglify-es": "^3.3.9",
-    "just-test": "^0.1.0"
+    "just-test": "^0.1.0",
+    "puppeteer": "^1.8.0"
   }
 }

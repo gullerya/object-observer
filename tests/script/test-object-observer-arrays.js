@@ -1,15 +1,15 @@
-﻿(function () {
+﻿(() => {
 	'use strict';
 
-	var suite = window.Utils.JustTest.createSuite({ name: 'Testing ObjectObserver - arrays' });
+	let suite = Utils.JustTest.createSuite({name: 'Testing ObjectObserver - arrays'});
 
-	suite.addTest({ name: 'array push operation - primitives' }, function (pass, fail) {
-		var a = [1, 2, 3, 4],
+	suite.addTest({name: 'array push operation - primitives'}, function(pass, fail) {
+		let a = [1, 2, 3, 4],
 			pa,
 			events = [],
 			callBacks = 0;
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 			callBacks++;
 		});
@@ -26,16 +26,16 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array push operation - objects' }, function (pass, fail) {
-		var a = [],
+	suite.addTest({name: 'array push operation - objects'}, function(pass, fail) {
+		let a = [],
 			pa,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
-		pa.push({ text: 'initial' });
+		pa.push({text: 'initial'});
 		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
 		if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
 
@@ -48,13 +48,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array pop operation - primitives' }, function (pass, fail) {
-		var a = ['some'],
+	suite.addTest({name: 'array pop operation - primitives'}, function(pass, fail) {
+		let a = ['some'],
 			pa,
 			popped,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -67,15 +67,15 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array pop operation - objects' }, function (pass, fail) {
-		var a = [{ test: 'text' }],
+	suite.addTest({name: 'array pop operation - objects'}, function(pass, fail) {
+		let a = [{test: 'text'}],
 			pa,
 			pad,
 			popped,
 			events = [];
 		pa = Observable.from(a);
 		pad = pa[0];
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -99,13 +99,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array unshift operation - primitives' }, function (pass, fail) {
-		var a = [],
+	suite.addTest({name: 'array unshift operation - primitives'}, function(pass, fail) {
+		let a = [],
 			pa,
 			events = [],
 			callBacks = 0;
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 			callBacks++;
 		});
@@ -121,16 +121,16 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array unshift operation - objects' }, function (pass, fail) {
-		var a = [{ text: 'original' }],
+	suite.addTest({name: 'array unshift operation - objects'}, function(pass, fail) {
+		let a = [{text: 'original'}],
 			pa,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
-		pa.unshift({ text: 'initial' });
+		pa.unshift({text: 'initial'});
 		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
 		if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
 		events.splice(0);
@@ -144,13 +144,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array shift operation - primitives' }, function (pass, fail) {
-		var a = ['some'],
+	suite.addTest({name: 'array shift operation - primitives'}, function(pass, fail) {
+		let a = ['some'],
 			pa,
 			shifted,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -163,8 +163,8 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array shift operation - objects' }, function (pass, fail) {
-		var a = [{ text: 'a', inner: { test: 'more' } }, { text: 'b' }],
+	suite.addTest({name: 'array shift operation - objects'}, function(pass, fail) {
+		let a = [{text: 'a', inner: {test: 'more'}}, {text: 'b'}],
 			pa,
 			pa0,
 			pa0i,
@@ -173,7 +173,7 @@
 		pa = Observable.from(a);
 		pa0 = pa[0];
 		pa0i = pa0.inner;
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -206,13 +206,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array reverse operation - primitives' }, function (pass, fail) {
-		var a = [1, 2, 3],
+	suite.addTest({name: 'array reverse operation - primitives'}, function(pass, fail) {
+		let a = [1, 2, 3],
 			pa,
-            reversed,
+			reversed,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -226,13 +226,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array reverse operation - objects' }, function (pass, fail) {
-		var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+	suite.addTest({name: 'array reverse operation - objects'}, function(pass, fail) {
+		let a = [{name: 'a'}, {name: 'b'}, {name: 'c'}],
 			pa,
-            reversed,
+			reversed,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -249,13 +249,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array sort operation - primitives' }, function (pass, fail) {
-		var a = [3, 2, 1],
+	suite.addTest({name: 'array sort operation - primitives'}, function(pass, fail) {
+		let a = [3, 2, 1],
 			pa,
-            sorted,
+			sorted,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -275,13 +275,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array sort operation - objects' }, function (pass, fail) {
-		var a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
+	suite.addTest({name: 'array sort operation - objects'}, function(pass, fail) {
+		let a = [{name: 'a'}, {name: 'b'}, {name: 'c'}],
 			pa,
-            sorted,
+			sorted,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -298,13 +298,13 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array fill operation - primitives' }, function (pass, fail) {
-		var a = [1, 2, 3],
+	suite.addTest({name: 'array fill operation - primitives'}, function(pass, fail) {
+		let a = [1, 2, 3],
 			pa,
-            filled,
+			filled,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
@@ -322,24 +322,32 @@
 		if (events[1].type !== 'update' || events[1].path.join('.') !== '2' || events[1].value !== 'b' || events[1].oldValue !== 'a') fail('event 1 did not fire as expected');
 		events.splice(0);
 
-		pa.fill('c', -1, 3)
+		pa.fill('c', -1, 3);
 		if (events.length !== 1) fail('expected to have 1 events, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'c' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+		events.splice(0);
+
+		//	simulating insertion of a new item into array (fill does not extend an array, so we may do it only on internal items)
+		delete pa[1];
+		pa.fill('d', 1, 2);
+		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+		if (events[0].type !== 'delete' || events[0].path.join('.') !== '1' || typeof events[0].value !== 'undefined' || events[0].oldValue !== 'b') fail('event 0 did not fire as expected');
+		if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value !== 'd' || typeof events[1].oldValue !== 'undefined') fail('event 1 did not fire as expected');
 
 		pass();
 	});
 
-	suite.addTest({ name: 'array fill operation - objects' }, function (pass, fail) {
-		var a = [{ some: 'text' }, { some: 'else' }, { some: 'more' }],
+	suite.addTest({name: 'array fill operation - objects'}, function(pass, fail) {
+		let a = [{some: 'text'}, {some: 'else'}, {some: 'more'}],
 			pa,
-            filled,
+			filled,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
-		filled = pa.fill({ name: 'Niv' });
+		filled = pa.fill({name: 'Niv'});
 		if (filled !== pa) fail('fill base functionality broken');
 		if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value.name !== 'Niv' || events[0].oldValue.some !== 'text') fail('event 0 did not fire as expected');
@@ -354,14 +362,14 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array splice operation - primitives' }, function (pass, fail) {
-		var a = [1, 2, 3, 4, 5, 6],
+	suite.addTest({name: 'array splice operation - primitives'}, function(pass, fail) {
+		let a = [1, 2, 3, 4, 5, 6],
 			pa,
-            spliced,
+			spliced,
 			events = [],
-            callbacks = 0;
+			callbacks = 0;
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 			callbacks++;
 		});
@@ -397,17 +405,17 @@
 		pass();
 	});
 
-	suite.addTest({ name: 'array splice operation - objects' }, function (pass, fail) {
-		var a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
+	suite.addTest({name: 'array splice operation - objects'}, function(pass, fail) {
+		let a = [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}],
 			pa,
-            spliced,
+			spliced,
 			events = [];
 		pa = Observable.from(a);
-		pa.observe(function (eventsList) {
+		pa.observe(function(eventsList) {
 			[].push.apply(events, eventsList);
 		});
 
-		pa.splice(1, 2, { text: '1' });
+		spliced = pa.splice(1, 2, {text: '1'});
 		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== '1' || events[0].oldValue.text !== 'b') fail('event 0 did not fire as expected');
 		if (events[1].type !== 'delete' || events[1].path.join('.') !== '2' || events[1].oldValue.text !== 'c') fail('event 1 did not fire as expected');

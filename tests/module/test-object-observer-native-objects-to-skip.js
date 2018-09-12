@@ -1,4 +1,4 @@
-﻿import {Observable} from '../../dist/module/object-observer.js';
+﻿import Observable from '../../dist/module/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable - non-observables'});
 

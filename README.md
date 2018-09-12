@@ -23,6 +23,9 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+- __1.0.2__
+  - Removed named export, only a default export/import is available (see docs below)
+
 - __1.0.1__
   - Added ES6 module packaging (both regular and minified)
 
@@ -30,27 +33,19 @@ Main aspects:
   - Fixed cloning logic to allow observability for host objects like `DOMStringMap` and alike (gave up on calling the original object's constructor)
   - Documentation fixes 
 
-- __0.2.5__
-  - Fix: [issue #8](https://github.com/gullerya/object-observer/issues/8) - incorrect `oldValue` supplied in `update`/`delete` events when handling inner object/s sub-graph 
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
 
-You have few ways to load the library: as an __ES6 module__ (named or default, pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you).
+You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you).
 
-* ES6 module - default import (__preferred__):
+* ES6 module (__preferred__):
 ```javascript
 //  browser
 import Observable from 'dist/module/object-observer.min.js';
 
 //  NodeJS
 let Observable = require('./dist/node-module/object-observer');
-```
-
-* ES6 module - named import:
-```javascript
-import {Observable as Obsrvbl} from 'dist/module/object-observer.min.js';
 ```
 
 * Simple a reference (script tag) to the `object-observer.min.js`/`object-observer.js` in your `HTML` will load it into the __global scope__:
@@ -113,12 +108,8 @@ fetch('dist/object-observer.min.js').then(function (response) {
 	observablePerson.observe(personUIObserver);
 	```
 	
-	Changes delivered always as an array. Changes MAY NOT be null. Changes MAY be an empty array.
-	Each change is a defined, non-null object, having:
-	- `type` - one of the following: 'insert', 'update', 'delete', 'shuffle' or 'reverse'
-	- `path` - path to the changed property represented as an __Array__ of nodes (see examples below)
-	- `value` - new value; not available in 'delete', 'shuffle' and 'reverse' changes
-	- `oldValue` - old value; not available in 'insert', 'shuffle' or 'reverse' changes
+	Changes delivered always as a never-null-nor-empty array of `Change` objects.
+	Each change is a defined, non-null object, see `Change` definition below.
 	
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
 	```javascript
@@ -135,6 +126,14 @@ fetch('dist/object-observer.min.js').then(function (response) {
 	observablePerson.revoke();
 	...
 	```
+
+##### `Change` instance properties
+
+- __`type`__ - one of the following: 'insert', 'update', 'delete', 'shuffle' or 'reverse'
+- __`path`__ - path to the changed property represented as an __Array__ of nodes (see examples below)
+- __`value`__ - new value; not available in 'delete', 'shuffle' and 'reverse' changes
+- __`oldValue`__ - old value; not available in 'insert', 'shuffle' or 'reverse' changes
+
 
 # Examples
 
