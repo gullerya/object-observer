@@ -1,5 +1,8 @@
 #### Changelog
 
+- __1.0.4__
+  - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
+
 - __1.0.3__
   - Fixed [Issue no. 9](https://github.com/gullerya/object-observer/issues/9) - incorrect tail array items indexing/pathing after performing `splice` which inserts new items in the middle of array
 

@@ -23,14 +23,14 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+- __1.0.4__
+  - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
+
 - __1.0.3__
   - Fixed [Issue no. 9](https://github.com/gullerya/object-observer/issues/9) - incorrect tail array items indexing/pathing after performing `splice` which inserts new items in the middle of array
 
 - __1.0.2__
   - Removed named export, only a default export/import is available (see docs below)
-
-- __1.0.1__
-  - Added ES6 module packaging (both regular and minified)
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 

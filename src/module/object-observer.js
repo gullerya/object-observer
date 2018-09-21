@@ -1,7 +1,20 @@
-const proxiesToTargetsMap = new Map(),
-	targetsToObserved = new Map(),
-	observedToObservable = new Map(),
-	nonObservables = ['Date', 'Blob', 'Number', 'String', 'Boolean', 'Error', 'SyntaxError', 'TypeError', 'URIError', 'Function', 'Promise', 'RegExp'];
+const proxiesToTargetsMap = new WeakMap(),
+	targetsToObserved = new WeakMap(),
+	observedToObservable = new WeakMap(),
+	nonObservables = {
+		Date: true,
+		Blob: true,
+		Number: true,
+		String: true,
+		Boolean: true,
+		Error: true,
+		SyntaxError: true,
+		TypeError: true,
+		URIError: true,
+		Function: true,
+		Promise: true,
+		RegExp: true
+	};
 
 export default Observable;
 
@@ -10,7 +23,7 @@ function copyShallow(target) {
 }
 
 function isNonObservable(target) {
-	return nonObservables.indexOf(target.constructor.name) >= 0;
+	return nonObservables.hasOwnProperty(target.constructor.name);
 }
 
 function proxiedArrayGet(target, key) {
@@ -278,18 +291,19 @@ function proxiedDelete(target, key) {
 }
 
 function processArraySubgraph(graph, parentObserved) {
-	for (let i = 0, l = graph.length, item; i < l; i++) {
-		item = graph[i];
+	let l = graph.length, item;
+	while (l--) {
+		item = graph[l];
 		if (item && typeof item === 'object' && !isNonObservable(item)) {
-			graph[i] = new Observed(item, i, parentObserved).proxy;
+			graph[l] = new Observed(item, l, parentObserved).proxy;
 		}
 	}
 }
 
 function processObjectSubgraph(graph, parentObserved) {
-	let keys = Object.keys(graph);
-	for (let i = 0, l = keys.length, key, item; i < l; i++) {
-		key = keys[i];
+	let keys = Object.keys(graph), l = keys.length, key, item;
+	while (l--) {
+		key = keys[l];
 		item = graph[key];
 		if (item && typeof item === 'object' && !isNonObservable(item)) {
 			graph[key] = new Observed(item, key, parentObserved).proxy;
@@ -300,34 +314,29 @@ function processObjectSubgraph(graph, parentObserved) {
 //	CLASSES
 
 function Observed(origin, ownKey, parent) {
-	let targetClone, revokable, proxy;
-
-	targetClone = copyShallow(origin);
+	let targetClone = copyShallow(origin);
 
 	if (Array.isArray(targetClone)) {
 		processArraySubgraph(targetClone, this);
-		revokable = Proxy.revocable(targetClone, {
+		this.revokable = Proxy.revocable(targetClone, {
 			set: proxiedSet,
 			get: proxiedArrayGet,
 			deleteProperty: proxiedDelete
 		});
 	} else {
 		processObjectSubgraph(targetClone, this);
-		revokable = Proxy.revocable(targetClone, {
+		this.revokable = Proxy.revocable(targetClone, {
 			set: proxiedSet,
 			deleteProperty: proxiedDelete
 		});
 	}
-	proxy = revokable.proxy;
+	this.targetClone = targetClone;
+	this.proxy = this.revokable.proxy;
+	this.ownKey = ownKey;
+	this.parent = parent;
 
 	targetsToObserved.set(targetClone, this);
-	proxiesToTargetsMap.set(proxy, targetClone);
-	Object.defineProperties(this, {
-		revokable: {value: revokable},
-		proxy: {value: proxy},
-		parent: {value: parent},
-		ownKey: {value: ownKey, writable: true}
-	});
+	proxiesToTargetsMap.set(this.proxy, targetClone);
 }
 
 Object.defineProperty(Observed.prototype, 'root', {
@@ -410,11 +419,11 @@ function Observable(observed) {
 		}
 	}
 
-	function hasListeners() {
+	this.hasListeners = function hasListeners() {
 		return callbacks.length > 0;
-	}
+	};
 
-	function notify(changes) {
+	this.notify = function notify(changes) {
 		for (let i = 0, l = callbacks.length, callback; i < l; i++) {
 			callback = callbacks[i];
 			try {
@@ -423,70 +432,55 @@ function Observable(observed) {
 				console.error('one/some of the observing callbacks failed with ', e);
 			}
 		}
-	}
+	};
 
-	Object.defineProperties(observed.proxy, {
-		observe: {value: observe},
-		unobserve: {value: unobserve},
-		revoke: {value: revoke}
-	});
-
-	Object.defineProperties(this, {
-		hasListeners: {value: hasListeners},
-		notify: {value: notify}
-	});
+	observed.targetClone.observe = observe;
+	observed.targetClone.unobserve = unobserve;
+	observed.targetClone.revoke = revoke;
 }
 
 function InsertChange(path, value) {
-	Object.defineProperties(this, {
-		type: {value: 'insert'},
-		path: {value: path},
-		value: {value: value}
-	});
+	this.type = 'insert';
+	this.path = path;
+	this.value = value;
 }
 
 function UpdateChange(path, value, oldValue) {
-	Object.defineProperties(this, {
-		type: {value: 'update'},
-		path: {value: path},
-		value: {value: value},
-		oldValue: {value: oldValue}
-	});
+	this.type = 'update';
+	this.path = path;
+	this.value = value;
+	this.oldValue = oldValue;
 }
 
 function DeleteChange(path, oldValue) {
-	Object.defineProperties(this, {
-		type: {value: 'delete'},
-		path: {value: path},
-		oldValue: {value: oldValue}
-	});
+	this.type = 'delete';
+	this.path = path;
+	this.oldValue = oldValue;
 }
 
 function ReverseChange() {
-	Object.defineProperties(this, {
-		type: {value: 'reverse'}
-	});
+	this.type = 'reverse';
 }
 
 function ShuffleChange() {
-	Object.defineProperties(this, {
-		type: {value: 'shuffle'}
-	});
+	this.type = 'shuffle';
 }
 
 Object.defineProperty(Observable, 'from', {
 	value: function(target) {
-		if (!target || typeof target !== 'object') {
-			throw new Error('observable MAY ONLY be created from non-null object only');
-		} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
-			throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
-		} else if (isNonObservable(target)) {
-			throw new Error(target + ' found to be one of non-observable object types: ' + nonObservables);
+		if (target && typeof target === 'object' && !isNonObservable(target) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
+			let observed = new Observed(target), observable = new Observable(observed);
+			observedToObservable.set(observed, observable);
+			return observed.proxy;
+		} else {
+			if (!target || typeof target !== 'object') {
+				throw new Error('observable MAY ONLY be created from non-null object only');
+			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
+				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
+			} else if (isNonObservable(target)) {
+				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservables);
+			}
 		}
-		let observed = new Observed(target),
-			observable = new Observable(observed);
-		observedToObservable.set(observed, observable);
-		return observed.proxy;
 	}
 });
 Object.freeze(Observable);
