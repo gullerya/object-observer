@@ -3,9 +3,6 @@
 [![npm](https://img.shields.io/npm/v/@gullerya/observable.svg?label=@gulerya/observable)](https://www.npmjs.com/package/@gullerya/observable)
 [![Build Status](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
 
-
-
-
 # Summary
 
 __`object-observer`__ provides an observation of a changes performed on an object graph (array being a subtype of it).
