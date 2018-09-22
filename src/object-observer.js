@@ -489,9 +489,11 @@
 			}
 		}
 
-		observed.targetClone.observe = observe;
-		observed.targetClone.unobserve = unobserve;
-		observed.targetClone.revoke = revoke;
+		Object.defineProperties(observed.targetClone, {
+			observe: {value: observe},
+			unobserve: {value: unobserve},
+			revoke: {value: revoke}
+		});
 
 		this.hasListeners = hasListeners;
 		this.notify = notify;

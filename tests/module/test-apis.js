@@ -10,7 +10,7 @@ suite.addTest({name: 'test A'}, function(pass, fail) {
 });
 
 suite.addTest({name: 'negative tests - invalid parameters'}, function(pass, fail) {
-	var bo,
+	let bo,
 		safeToContinue = false;
 	try {
 		Observable.from(bo);
@@ -89,8 +89,8 @@ suite.addTest({name: 'negative tests - invalid parameters'}, function(pass, fail
 	pass();
 });
 
-suite.addTest({name: 'test observable APIs'}, function(pass, fail) {
-	var o = {},
+suite.addTest({name: 'test observable APIs presence'}, function(pass, fail) {
+	let o = {},
 		oo;
 
 	oo = Observable.from(o);
@@ -98,6 +98,16 @@ suite.addTest({name: 'test observable APIs'}, function(pass, fail) {
 	if (typeof oo.observe !== 'function') fail('expected to find "observe" function on the created Observable');
 	if (typeof oo.unobserve !== 'function') fail('expected to find "unobserve" function on the created Observable');
 	if (typeof oo.revoke !== 'function') fail('expectd to find "revoke" function on the created Observable');
+
+	pass();
+});
+
+suite.addTest({name: 'test observable APIs - not enumerables'}, function(pass, fail) {
+	let o = {}, oo;
+
+	oo = Observable.from(o);
+
+	if (Object.keys(oo).length) fail('expected to not see any enumerable keys on the empty observable object');
 
 	pass();
 });
