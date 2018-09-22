@@ -35,15 +35,18 @@
 			[].push.apply(events, eventsList);
 		});
 
-		pa.push({text: 'initial'});
-		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
+		pa.push({text: 'initial'}, {text: 'secondary'});
+		if (events.length !== 2) fail('expected to have 2 event, found ' + events.length);
 		if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial') fail('event 0 did not fire as expected');
+		if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value.text !== 'secondary') fail('event 1 did not fire as expected');
 
 		pa[0].text = 'name';
-		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-		if (events[1].type !== 'update' || events[1].path.join('.') !== '0.text' || events[1].value !== 'name' || events[1].oldValue !== 'initial') fail('event 1 did not fire as expected');
+		if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
+		if (events[2].type !== 'update' || events[2].path.join('.') !== '0.text' || events[2].value !== 'name' || events[2].oldValue !== 'initial') fail('event 2 did not fire as expected');
 
-		//	TODO: add case of push bulk of objects
+		pa[1].text = 'more';
+		if (events.length !== 4) fail('expected to have 4 events, found ' + events.length);
+		if (events[3].type !== 'update' || events[3].path.join('.') !== '1.text' || events[3].value !== 'more' || events[3].oldValue !== 'secondary') fail('event 3 did not fire as expected');
 
 		pass();
 	});

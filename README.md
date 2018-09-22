@@ -23,7 +23,7 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-- __1.0.4__
+- __1.0.5__
   - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
 
 - __1.0.3__
