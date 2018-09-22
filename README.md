@@ -1,6 +1,6 @@
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 [![npm](https://img.shields.io/npm/v/object-observer.svg?label=object-observer)](https://www.npmjs.com/package/object-observer)
-[![npm](https://img.shields.io/npm/v/@gullerya/observable.svg?label=@gulerya/observable)](https://www.npmjs.com/package/@gullerya/observable)
+[![npm](https://img.shields.io/npm/v/@gullerya/observable.svg?label=@gullerya/observable)](https://www.npmjs.com/package/@gullerya/observable)
 [![Build Status](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
 
 # Summary
