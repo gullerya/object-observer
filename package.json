@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "1.0.6-snapshot",
+  "version": "1.0.7-snapshot",
   "description": "Object observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
