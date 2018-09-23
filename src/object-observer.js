@@ -283,36 +283,36 @@
 
 	function proxiedSet(target, key, value) {
 		let oldValue = target[key],
-			result,
+			newValue,
 			observed = targetsToObserved.get(target),
 			observable = observedToObservable.get(observed.root);
 
 		if (value && typeof value === 'object' && !isNonObservable(value)) {
-			result = Reflect.set(target, key, new Observed(value, key, observed).proxy);
+			newValue = new Observed(value, key, observed).proxy;
 		} else {
-			result = Reflect.set(target, key, value);
+			newValue = value;
 		}
 
-		if (result) {
-			if (oldValue) {
-				let oldTarget = proxiesToTargetsMap.get(oldValue);
-				if (oldTarget) {
-					targetsToObserved.get(oldTarget).revoke();
-					oldValue = oldTarget;
-				}
-			}
+		target[key] = newValue;
 
-			if (observable.hasListeners() && !observed.preventCallbacks) {
-				let i, p = observed.path, l = p.length, path = new Array(l + 1);
-				for (i = 0; i < l; i++) path[i] = p[i];
-				path[l] = key;
-				observable.notify([typeof oldValue !== 'undefined'
-					? {type: 'update', path: path, value: value, oldValue: oldValue}
-					: {type: 'insert', path: path, value: value}
-				]);
+		if (oldValue) {
+			let oldTarget = proxiesToTargetsMap.get(oldValue);
+			if (oldTarget) {
+				targetsToObserved.get(oldTarget).revoke();
+				oldValue = oldTarget;
 			}
 		}
-		return result;
+
+		if (observable.hasListeners() && !observed.preventCallbacks) {
+			let i, p = observed.path, l = p.length, path = new Array(l + 1);
+			for (i = 0; i < l; i++) path[i] = p[i];
+			path[l] = key;
+			observable.notify([typeof oldValue !== 'undefined'
+				? {type: 'update', path: path, value: value, oldValue: oldValue}
+				: {type: 'insert', path: path, value: value}
+			]);
+		}
+		return true;
 	}
 
 	function proxiedDelete(target, key) {
@@ -321,7 +321,7 @@
 			observed = targetsToObserved.get(target),
 			observable = observedToObservable.get(observed.root);
 
-		result = Reflect.deleteProperty(target, key);
+		result = delete target[key];
 
 		if (result) {
 			if (oldValue) {
