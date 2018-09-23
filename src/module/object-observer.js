@@ -1,6 +1,5 @@
 const proxiesToTargetsMap = new WeakMap(),
 	targetsToObserved = new WeakMap(),
-	observedToObservable = new WeakMap(),
 	nonObservables = {
 		Date: true,
 		Blob: true,
@@ -18,24 +17,15 @@ const proxiesToTargetsMap = new WeakMap(),
 
 export default Observable;
 
-function cloneArrayShallow(target) {
-	let i = 0, l = target.length, result = new Array(l);
-	for (; i < l; i++) result[i] = target[i];
-	return result;
-}
-
-function cloneObjectShallow(target) {
-	return Object.assign({}, target);
-}
-
-function isNonObservable(target) {
-	return nonObservables.hasOwnProperty(target.constructor.name);
+function isObservable(target) {
+	return target && typeof target === 'object' && !nonObservables.hasOwnProperty(target.constructor.name);
 }
 
 function proxiedArrayGet(target, key) {
 	let result,
 		observed = targetsToObserved.get(target),
-		observable = observedToObservable.get(observed.root);
+		basePath = observed.getPath(),
+		observable = observed.observable;
 	if (key === 'pop') {
 		result = function proxiedPop() {
 			let poppedIndex, popResult, tmpTarget;
@@ -47,8 +37,8 @@ function proxiedArrayGet(target, key) {
 				popResult = tmpTarget;
 			}
 
-			let i, p = observed.path, l = p.length, changePath = new Array(l + 1);
-			for (i = 0; i < l; i++) changePath[i] = p[i];
+			let i, l = basePath.length, changePath = new Array(l + 1);
+			for (i = 0; i < l; i++) changePath[i] = basePath[i];
 			changePath[l] = poppedIndex;
 
 			observable.notify([{type: 'delete', path: changePath, oldValue: popResult}]);
@@ -57,16 +47,18 @@ function proxiedArrayGet(target, key) {
 	} else if (key === 'push') {
 		result = function proxiedPush() {
 			let l = arguments.length, pushContent = new Array(l), pushResult, changes = [],
-				startingLength, i1, p = observed.path, l1 = p.length, changePath;
+				startingLength, i1, l1 = basePath.length, changePath;
 			startingLength = target.length;
 			for (let i = 0, item; i < l; i++) {
 				item = arguments[i];
-				if (item && typeof item === 'object') {
-					item = new Observed(item, startingLength + i, observed).proxy;
+				if (isObservable(item)) {
+					item = new Observed({
+						target: item, ownKey: startingLength + i, parent: observed, observable: observable
+					}).proxy;
 				}
 				pushContent[i] = item;
 				changePath = new Array(l1 + 1);
-				for (i1 = 0; i1 < l1; i1++) changePath[i] = p[i1];
+				for (i1 = 0; i1 < l1; i1++) changePath[i] = basePath[i1];
 				changePath[l1] = startingLength + i;
 
 				changes[i] = {type: 'insert', path: changePath, value: item};
@@ -99,7 +91,7 @@ function proxiedArrayGet(target, key) {
 			}
 			observable.notify([{
 				type: 'delete',
-				path: observed.path.concat(0),
+				path: basePath.concat(0),
 				oldValue: shiftResult
 			}]);
 			return shiftResult;
@@ -109,8 +101,10 @@ function proxiedArrayGet(target, key) {
 			let unshiftContent, unshiftResult, changes = [], tmpObserved;
 			unshiftContent = Array.from(arguments);
 			unshiftContent.forEach((item, index) => {
-				if (item && typeof item === 'object') {
-					unshiftContent[index] = new Observed(item, index, observed).proxy;
+				if (isObservable(item)) {
+					unshiftContent[index] = new Observed({
+						target: item, ownKey: index, parent: observed, observable: observable
+					}).proxy;
 				}
 			});
 			unshiftResult = Reflect.apply(target[key], target, unshiftContent);
@@ -126,7 +120,7 @@ function proxiedArrayGet(target, key) {
 				}
 			}
 			for (let i = 0, l = unshiftContent.length; i < l; i++) {
-				changes.push({type: 'insert', path: observed.path.concat(i), value: target[i]});
+				changes.push({type: 'insert', path: basePath.concat(i), value: target[i]});
 			}
 			observable.notify(changes);
 			return unshiftResult;
@@ -176,8 +170,10 @@ function proxiedArrayGet(target, key) {
 			Reflect.apply(target[key], target, arguments);
 			for (let i = start, item, tmpTarget; i < end; i++) {
 				item = target[i];
-				if (item && typeof item === 'object') {
-					target[i] = new Observed(item, i, observed).proxy;
+				if (isObservable(item)) {
+					target[i] = new Observed({
+						target: item, ownKey: i, parent: observed, observable: observable
+					}).proxy;
 				}
 				if (prev.hasOwnProperty(i)) {
 					tmpTarget = proxiesToTargetsMap.get(prev[i]);
@@ -187,12 +183,12 @@ function proxiedArrayGet(target, key) {
 
 					changes.push({
 						type: 'update',
-						path: observed.path.concat(i),
+						path: basePath.concat(i),
 						value: target[i],
 						oldValue: tmpTarget || prev[i]
 					});
 				} else {
-					changes.push({type: 'insert', path: observed.path.concat(i), value: target[i]});
+					changes.push({type: 'insert', path: basePath.concat(i), value: target[i]});
 				}
 			}
 			observable.notify(changes);
@@ -209,8 +205,10 @@ function proxiedArrayGet(target, key) {
 			//	observify the newcomers
 			for (let i = 0, item; i < splLen; i++) {
 				item = spliceContent[i];
-				if (i > 1 && item && typeof item === 'object') {
-					spliceContent[i] = new Observed(item, i, observed).proxy;
+				if (i > 1 && isObservable(item)) {
+					spliceContent[i] = new Observed({
+						target: item, ownKey: i, parent: observed, observable: observable
+					}).proxy;
 				}
 			}
 
@@ -250,14 +248,14 @@ function proxiedArrayGet(target, key) {
 				if (index < inserted) {
 					changes.push({
 						type: 'update',
-						path: observed.path.concat(startIndex + index),
+						path: basePath.concat(startIndex + index),
 						value: target[startIndex + index],
 						oldValue: spliceResult[index]
 					});
 				} else {
 					changes.push({
 						type: 'delete',
-						path: observed.path.concat(startIndex + index),
+						path: basePath.concat(startIndex + index),
 						oldValue: spliceResult[index]
 					});
 				}
@@ -265,7 +263,7 @@ function proxiedArrayGet(target, key) {
 			for (; index < inserted; index++) {
 				changes.push({
 					type: 'insert',
-					path: observed.path.concat(startIndex + index),
+					path: basePath.concat(startIndex + index),
 					value: target[startIndex + index]
 				});
 			}
@@ -281,17 +279,16 @@ function proxiedArrayGet(target, key) {
 
 function proxiedSet(target, key, value) {
 	let oldValue = target[key],
-		newValue,
 		observed = targetsToObserved.get(target),
-		observable = observedToObservable.get(observed.root);
+		observable = observed.observable;
 
-	if (value && typeof value === 'object' && !isNonObservable(value)) {
-		newValue = new Observed(value, key, observed).proxy;
+	if (isObservable(value)) {
+		target[key] = new Observed({
+			target: value, ownKey: key, parent: observed, observable: observable
+		}).proxy;
 	} else {
-		newValue = value;
+		target[key] = value;
 	}
-
-	target[key] = newValue;
 
 	if (oldValue) {
 		let oldTarget = proxiesToTargetsMap.get(oldValue);
@@ -301,8 +298,11 @@ function proxiedSet(target, key, value) {
 		}
 	}
 
-	if (observable.hasListeners() && !observed.preventCallbacks) {
-		let i, p = observed.path, l = p.length, path = new Array(l + 1);
+	if (observable.hasListeners()) {
+		let i,
+			p = observed.getPath(),
+			l = p.length,
+			path = new Array(l + 1);
 		for (i = 0; i < l; i++) path[i] = p[i];
 		path[l] = key;
 		observable.notify([typeof oldValue !== 'undefined'
@@ -315,13 +315,10 @@ function proxiedSet(target, key, value) {
 
 function proxiedDelete(target, key) {
 	let oldValue = target[key],
-		result,
 		observed = targetsToObserved.get(target),
-		observable = observedToObservable.get(observed.root);
+		observable = observed.observable;
 
-	result = delete target[key];
-
-	if (result) {
+	if (delete target[key]) {
 		if (oldValue) {
 			let oldTarget = proxiesToTargetsMap.get(oldValue);
 			if (oldTarget) {
@@ -330,115 +327,113 @@ function proxiedDelete(target, key) {
 			}
 		}
 
-		if (observable.hasListeners() && !observed.preventCallbacks) {
-			let i, p = observed.path, l = p.length, path = new Array(l + 1);
+		if (observable.hasListeners()) {
+			let i, p = observed.getPath(), l = p.length, path = new Array(l + 1);
 			for (i = 0; i < l; i++) path[i] = p[i];
 			path[l] = key;
 			observable.notify([{type: 'delete', path: path, oldValue: oldValue}]);
 		}
-	}
-	return result;
-}
-
-function processArraySubgraph(graph, parentObserved) {
-	let i = 0, l = graph.length, item;
-	for (; i < l; i++) {
-		item = graph[i];
-		if (item && typeof item === 'object' && !isNonObservable(item)) {
-			graph[i] = new Observed(item, i, parentObserved).proxy;
-		}
-	}
-}
-
-function processObjectSubgraph(graph, parentObserved) {
-	let keys = Object.keys(graph), l = keys.length, key, item;
-	while (l--) {
-		key = keys[l];
-		item = graph[key];
-		if (item && typeof item === 'object' && !isNonObservable(item)) {
-			graph[key] = new Observed(item, key, parentObserved).proxy;
-		}
+		return true;
+	} else {
+		return false;
 	}
 }
 
 //	CLASSES
 
-function Observed(origin, ownKey, parent) {
-	let targetClone;
+function Observed(properties) {
+	this.ownKey = properties.ownKey;
+	this.parent = properties.parent;
+	this.observable = properties.observable;
 
-	if (Array.isArray(origin)) {
-		targetClone = cloneArrayShallow(origin);
-		processArraySubgraph(targetClone, this);
-		this.revokable = Proxy.revocable(targetClone, {
+	let target = properties.target, clone;
+	if (Array.isArray(target)) {
+		let i = 0, l = target.length;
+		clone = new Array(l);
+		for (; i < l; i++) clone[i] = target[i];
+		this.processArraySubgraph(clone);
+		this.revokable = Proxy.revocable(clone, {
 			set: proxiedSet,
 			get: proxiedArrayGet,
 			deleteProperty: proxiedDelete
 		});
 	} else {
-		targetClone = cloneObjectShallow(origin);
-		processObjectSubgraph(targetClone, this);
-		this.revokable = Proxy.revocable(targetClone, {
+		clone = Object.assign({}, target);
+		this.processObjectSubgraph(clone);
+		this.revokable = Proxy.revocable(clone, {
 			set: proxiedSet,
 			deleteProperty: proxiedDelete
 		});
 	}
-	this.targetClone = targetClone;
-	this.proxy = this.revokable.proxy;
-	this.ownKey = ownKey;
-	this.parent = parent;
 
-	targetsToObserved.set(targetClone, this);
-	proxiesToTargetsMap.set(this.proxy, targetClone);
+	this.proxy = this.revokable.proxy;
+	this.targetClone = clone;
+
+	targetsToObserved.set(clone, this);
+	proxiesToTargetsMap.set(this.proxy, clone);
 }
 
-Object.defineProperty(Observed.prototype, 'root', {
-	get: function() {
-		let result = this;
-		while (result.parent) {
-			result = result.parent;
+Observed.prototype.processObjectSubgraph = function processObjectSubgraph(graph) {
+	let keys = Object.keys(graph), l = keys.length, key, item, observable = this.observable;
+	while (l--) {
+		key = keys[l];
+		item = graph[key];
+		if (isObservable(item)) {
+			graph[key] = new Observed({
+				target: item, ownKey: key, parent: this, observable: observable
+			}).proxy;
 		}
-		return result;
 	}
-});
-Object.defineProperty(Observed.prototype, 'path', {
-	get: function() {
-		let tmp = [], result = [], l1 = 0, l2 = 0, pointer = this;
-		while (typeof pointer.ownKey !== 'undefined') {
-			tmp[l1++] = pointer.ownKey;
-			pointer = pointer.parent;
+};
+Observed.prototype.processArraySubgraph = function processArraySubgraph(graph) {
+	let i = 0, l = graph.length, item, observable = this.observable;
+	for (; i < l; i++) {
+		item = graph[i];
+		if (isObservable(item)) {
+			graph[i] = new Observed({
+				target: item, ownKey: i, parent: this, observable: observable
+			}).proxy;
 		}
-		while (l1--) result[l2++] = tmp[l1];
-		return result;
 	}
-});
-Object.defineProperty(Observed.prototype, 'revoke', {
-	value: function() {
-		let target = proxiesToTargetsMap.get(this.proxy),
-			keys = Object.keys(target);
+};
+Observed.prototype.getPath = function getPath() {
+	let tmp = [], result = [], l1 = 0, l2 = 0, pointer = this;
+	while (pointer.ownKey !== null) {
+		tmp[l1++] = pointer.ownKey;
+		pointer = pointer.parent;
+	}
+	while (l1--) result[l2++] = tmp[l1];
+	return result;
+};
+Observed.prototype.revoke = function revoke() {
+	let target = proxiesToTargetsMap.get(this.proxy),
+		keys = Object.keys(target),
+		l = keys.length;
 
-		//	revoke native proxy
-		this.revokable.revoke();
+	//	revoke native proxy
+	this.revokable.revoke();
 
-		//	roll back observed graph to unobserved one
-		for (let i = 0, l = keys.length, key, tmpTarget; i < l; i++) {
-			key = keys[i];
+	//	roll back observed graph to unobserved one
+	while (l--) {
+		let key = keys[l],
 			tmpTarget = proxiesToTargetsMap.get(target[key]);
-			if (tmpTarget) {
-				target[key] = targetsToObserved.get(tmpTarget).revoke();
-			}
+		if (tmpTarget) {
+			target[key] = targetsToObserved.get(tmpTarget).revoke();
 		}
-
-		//	clean revoked Observed from the maps
-		proxiesToTargetsMap.delete(this.proxy);
-		targetsToObserved.delete(target);
-
-		//	return an unobserved graph (effectively this is an opposite of an Observed constructor logic)
-		return target;
 	}
-});
 
-function Observable(observed) {
-	let isRevoked = false, callbacks = [];
+	//	clean revoked Observed from the maps
+	proxiesToTargetsMap.delete(this.proxy);
+	targetsToObserved.delete(target);
+
+	//	return an unobserved graph (effectively this is an opposite of an Observed constructor logic)
+	return target;
+};
+
+function Observable(target) {
+	let rootObserved,
+		isRevoked = false,
+		callbacks = [];
 
 	function observe(callback) {
 		if (isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
@@ -466,17 +461,25 @@ function Observable(observed) {
 	function revoke() {
 		if (!isRevoked) {
 			isRevoked = true;
-			observed.revoke();
+			rootObserved.revoke();
 		} else {
 			console.log('revoking of Observable effective only once');
 		}
 	}
 
-	function hasListeners() {
-		return callbacks.length > 0;
-	}
+	this.getRootProxy = function getRootProxy() {
+		return rootObserved.proxy;
+	};
 
-	function notify(changes) {
+	this.hasListeners = function hasListeners() {
+		return callbacks.length > 0;
+	};
+
+	this.getListeners = function getListeners() {
+		return callbacks;
+	};
+
+	this.notify = function notify(changes) {
 		let l = callbacks.length;
 		while (l--) {
 			try {
@@ -485,30 +488,32 @@ function Observable(observed) {
 				console.error('one/some of the observing callbacks failed with ', e);
 			}
 		}
-	}
+	};
 
-	Object.defineProperties(observed.targetClone, {
+	rootObserved = new Observed({
+		target: target,
+		ownKey: null,
+		parent: null,
+		observable: this
+	});
+	Object.defineProperties(rootObserved.targetClone, {
 		observe: {value: observe},
 		unobserve: {value: unobserve},
 		revoke: {value: revoke}
 	});
-
-	this.hasListeners = hasListeners;
-	this.notify = notify;
 }
 
 Object.defineProperty(Observable, 'from', {
 	value: function(target) {
-		if (target && typeof target === 'object' && !isNonObservable(target) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
-			let observed = new Observed(target), observable = new Observable(observed);
-			observedToObservable.set(observed, observable);
-			return observed.proxy;
+		if (isObservable(target) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
+			let observable = new Observable(target);
+			return observable.getRootProxy();
 		} else {
 			if (!target || typeof target !== 'object') {
 				throw new Error('observable MAY ONLY be created from non-null object only');
 			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
 				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
-			} else if (isNonObservable(target)) {
+			} else if (!isObservable(target)) {
 				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservables);
 			}
 		}
