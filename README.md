@@ -144,35 +144,45 @@ fetch('dist/object-observer.min.js').then(function (response) {
 ##### Objects
 ```javascript
 let order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
-    observableOrder;
-observableOrder = Observable.from(order);
+    observableOrder = Observable.from(order);
+
 observableOrder.observe(changes => {
     changes.forEach(change => {
         console.log(change);
     });
 });
-observableOrder.ammount = 7;		// { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
-observableOrder.address = {			// { type: "insert", path: ['address'], value: { ... } }
+
+
+observableOrder.ammount = 7;
+//  { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
+
+
+observableOrder.address = {
     street: 'Str 75',
     apt: 29
 };
-observableOrder.address.apt = 30;	// { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
-delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue: 'remove me' }
+//  { type: "insert", path: ['address'], value: { ... } }
+
+
+observableOrder.address.apt = 30;
+//  { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
+
+
+delete observableOrder.remark;
+//  { type: "delete", path: ['remark'], oldValue: 'remove me' }
 ```
 
 ##### Arrays
 
 ```javascript
 let a = [ 1, 2, 3, 4, 5 ],
-    observableA;
+    observableA = Observable.from(a);
 
-observableA = Observable.from(a);
 observableA.observe(changes => {
     changes.forEach(change => {
         console.log(change);
     });
 });
-
 
 //  observableA = [ 1, 2, 3, 4, 5 ]
 observableA.pop();
@@ -219,14 +229,14 @@ observableA.splice(0, 1, 'x', 'y');
 //  { type: 'update', path: [0], value: 'x', oldValue: 0 }
 //  { type: 'insert', path: [1], value: 'y' }
 
-let customer = {
-        orders: [ ... ]
-    },
+
+let customer = { orders: [ ... ] },
     oCustomer = Observable.from(customer);
 
 //  sortin the orders array, pay attention to the path in the event
 oCustomer.orders.sort();
 //  { type: 'shuffle', path: ['orders'] }
+
 
 oCustomer.orders.reverse();
 //  { type: 'reverse', path: ['orders'] }
