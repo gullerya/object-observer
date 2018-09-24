@@ -165,33 +165,8 @@ class Observed {
 		return pointer.callbacks;
 	}
 
-	proxiedDelete(target, key) {
-		let oldValue = target[key];
-
-		if (delete target[key]) {
-			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = oldValue[sysObsKey];
-				if (tmpObserved) {
-					tmpObserved.revoke();
-					oldValue = tmpObserved.target;
-				}
-			}
-
-			//	publish changes
-			let listeners = this.getListeners();
-			if (listeners.length) {
-				let path = this.getPath();
-				path.push(key);
-				Observed.callListeners(listeners, [{type: 'delete', path: path, oldValue: oldValue}]);
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	proxiedSet(target, key, value) {
-		let oldValue = target[key];
+		let oldValue = target[key], tmpObserved, listeners, path;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
 			target[key] = new Observed({target: value, ownKey: key, parent: this}).proxy;
@@ -200,7 +175,7 @@ class Observed {
 		}
 
 		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = oldValue[sysObsKey];
+			tmpObserved = oldValue[sysObsKey];
 			if (tmpObserved) {
 				tmpObserved.revoke();
 				oldValue = tmpObserved.target;
@@ -208,9 +183,9 @@ class Observed {
 		}
 
 		//	publish changes
-		let listeners = this.getListeners();
+		listeners = this.getListeners();
 		if (listeners.length) {
-			let path = this.getPath();
+			path = this.getPath();
 			path.push(key);
 			Observed.callListeners(listeners, typeof oldValue !== 'undefined'
 				? [{type: 'update', path: path, value: value, oldValue: oldValue}]
@@ -218,6 +193,31 @@ class Observed {
 			);
 		}
 		return true;
+	}
+
+	proxiedDelete(target, key) {
+		let oldValue = target[key], tmpObserved, listeners, path;
+
+		if (delete target[key]) {
+			if (oldValue && typeof oldValue === 'object') {
+				tmpObserved = oldValue[sysObsKey];
+				if (tmpObserved) {
+					tmpObserved.revoke();
+					oldValue = tmpObserved.target;
+				}
+			}
+
+			//	publish changes
+			listeners = this.getListeners();
+			if (listeners.length) {
+				path = this.getPath();
+				path.push(key);
+				Observed.callListeners(listeners, [{type: 'delete', path: path, oldValue: oldValue}]);
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	proxiedArrayGet(target, key) {
