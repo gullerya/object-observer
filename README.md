@@ -90,7 +90,6 @@ let person = { name: 'Aya', age: '1' },
     observablePerson;
 
 observablePerson = Observable.from(person);
-...
 ```
 
 Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
@@ -117,18 +116,14 @@ Each change is a defined, non-null object, see `Change` definition below.
 	
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
 ```javascript
-...
 observablePerson.unobserve(personUIObserver);
-...
+//  or
 observablePerson.unobserve();
-...
 ```
 
 - __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on the revoked `Observable`. Subsequent `revoke` invocations will have no effect:
 ```javascript
-...
 observablePerson.revoke();
-...
 ```
 
 ##### `Change` instance properties
