@@ -1,4 +1,5 @@
-const proxiesToObserved = new Map(),
+const
+	sysObsKey = Symbol('system-observer-key'),
 	nonObservables = {
 		Date: true,
 		Blob: true,
@@ -18,6 +19,7 @@ class ObservableArray extends Array {
 	constructor(origin, observed) {
 		super(origin.length);
 		let l = origin.length, item;
+		this[sysObsKey] = observed;
 		while (l--) {
 			item = origin[l];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
@@ -29,15 +31,15 @@ class ObservableArray extends Array {
 	}
 
 	revoke() {
-		proxiesToObserved.get(this).revoke();
+		this[sysObsKey].revoke();
 	}
 
 	observe(callback) {
-		proxiesToObserved.get(this).observe(callback);
+		this[sysObsKey].observe(callback);
 	}
 
 	unobserve() {
-		let observed = proxiesToObserved.get(this);
+		let observed = this[sysObsKey];
 		observed.unobserve.apply(observed, arguments);
 	}
 }
@@ -45,6 +47,7 @@ class ObservableArray extends Array {
 class ObservableObject {
 	constructor(origin, observed) {
 		let keys = Object.getOwnPropertyNames(origin), l = keys.length, key, item;
+		this[sysObsKey] = observed;
 		while (l--) {
 			key = keys[l];
 			item = origin[key];
@@ -57,15 +60,15 @@ class ObservableObject {
 	}
 
 	revoke() {
-		proxiesToObserved.get(this).revoke();
+		this[sysObsKey].revoke();
 	}
 
 	observe(callback) {
-		proxiesToObserved.get(this).observe(callback);
+		this[sysObsKey].observe(callback);
 	}
 
 	unobserve() {
-		let observed = proxiesToObserved.get(this);
+		let observed = this[sysObsKey];
 		observed.unobserve.apply(observed, arguments);
 	}
 }
@@ -98,8 +101,6 @@ class Observed {
 
 		this.proxy = this.revokable.proxy;
 		this.target = clone;
-
-		proxiesToObserved.set(this.proxy, this);
 	}
 
 	revoke() {
@@ -113,15 +114,12 @@ class Observed {
 			key = keys[l];
 			item = target[key];
 			if (item && typeof item === 'object') {
-				tmpObserved = proxiesToObserved.get(item);
+				tmpObserved = item[sysObsKey];
 				if (tmpObserved) {
 					target[key] = tmpObserved.revoke();
 				}
 			}
 		}
-
-		//	clean revoked Observed from the maps
-		proxiesToObserved.delete(this.proxy);
 
 		//	return an unobserved graph (effectively this is an opposite of an Observed constructor logic)
 		return target;
@@ -167,23 +165,12 @@ class Observed {
 		return pointer.callbacks;
 	}
 
-	static callListeners(listeners, changes) {
-		let l = listeners.length;
-		while (l--) {
-			try {
-				listeners[l](changes);
-			} catch (e) {
-				console.error(e);
-			}
-		}
-	}
-
 	proxiedDelete(target, key) {
 		let oldValue = target[key];
 
 		if (delete target[key]) {
 			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = proxiesToObserved.get(oldValue);
+				let tmpObserved = oldValue[sysObsKey];
 				if (tmpObserved) {
 					tmpObserved.revoke();
 					oldValue = tmpObserved.target;
@@ -213,7 +200,7 @@ class Observed {
 		}
 
 		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = proxiesToObserved.get(oldValue);
+			let tmpObserved = oldValue[sysObsKey];
 			if (tmpObserved) {
 				tmpObserved.revoke();
 				oldValue = tmpObserved.target;
@@ -240,7 +227,7 @@ class Observed {
 				poppedIndex = target.length - 1;
 				popResult = target.pop();
 				if (popResult && typeof popResult === 'object') {
-					tmpObserved = proxiesToObserved.get(popResult);
+					tmpObserved = popResult[sysObsKey];
 					if (tmpObserved) {
 						tmpObserved.revoke();
 						popResult = tmpObserved.target;
@@ -288,7 +275,7 @@ class Observed {
 				let listeners = observed.getListeners(), shiftResult, tmpObserved;
 				shiftResult = target.shift();
 				if (shiftResult && typeof shiftResult === 'object') {
-					tmpObserved = proxiesToObserved.get(shiftResult);
+					tmpObserved = shiftResult[sysObsKey];
 					if (tmpObserved) {
 						tmpObserved.revoke();
 						shiftResult = tmpObserved.target;
@@ -299,7 +286,7 @@ class Observed {
 				for (let i = 0, l = target.length, item, tmpObserved; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
 						} else {
@@ -329,7 +316,7 @@ class Observed {
 				for (let i = 0, l = target.length, item; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
 						} else {
@@ -356,7 +343,7 @@ class Observed {
 				for (let i = 0, l = target.length, item; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
 						} else {
@@ -377,7 +364,7 @@ class Observed {
 				for (let i = 0, l = target.length, item; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
 						} else {
@@ -416,7 +403,7 @@ class Observed {
 					if (prev.hasOwnProperty(i)) {
 						tmpTarget = prev[i];
 						if (tmpTarget && typeof tmpTarget === 'object') {
-							tmpObserved = proxiesToObserved.get(tmpTarget);
+							tmpObserved = tmpTarget[sysObsKey];
 							if (tmpObserved) {
 								tmpObserved.revoke();
 								tmpTarget = tmpObserved.target;
@@ -467,7 +454,7 @@ class Observed {
 				for (let i = 0, item; i < tarLen; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
 						} else {
@@ -480,7 +467,7 @@ class Observed {
 				for (let i = 0, l = spliceResult.length, item, tmpObserved; i < l; i++) {
 					item = spliceResult[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = proxiesToObserved.get(item);
+						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.revoke();
 							spliceResult[i] = tmpObserved.target;
@@ -519,6 +506,17 @@ class Observed {
 			return proxiedArrayMethods[key].bind(undefined, target, this);
 		} else {
 			return target[key];
+		}
+	}
+
+	static callListeners(listeners, changes) {
+		let l = listeners.length;
+		while (l--) {
+			try {
+				listeners[l](changes);
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	}
 }
