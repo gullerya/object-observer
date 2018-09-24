@@ -5,24 +5,27 @@
 
 # Summary
 
-__`object-observer`__ provides an observation of a changes performed on an object graph (array being a subtype of it).
+__`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
 Main aspects:
-- implementation relies on __Proxy__ mechanism (specifically, revokable Proxy)
+- implemented via native __Proxy__ (revokable)
 - observation is 'deep', yielding changes from a __sub-graphs__ too
 - changes delivered in a __synchronous__ way
-- changes delivered always as an __array__, in order to have unified callback API signature supporting also bulk changes delivery in a single call back
-- original objects are __cloned__ while turned into `Observable`s 
-- arrays:
+- original objects are __cloned__ while turned into `Observable`s
+- arrays specifics:
   - generic object-like mutations supported
   - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-- following host objects __are not__ observed, but left as they are (the list will be updated upon changes): `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
+- following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
 #### Support matrix: ![CHROME](./docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Last versions (full changelog is [here](docs/changelog.md))
+
+- __1.1.0__
+  - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
+  - further performance improvements
 
 - __1.0.6__
   - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
@@ -31,14 +34,14 @@ Main aspects:
 - __1.0.3__
   - Fixed [Issue no. 9](https://github.com/gullerya/object-observer/issues/9) - incorrect tail array items indexing/pathing after performing `splice` which inserts new items in the middle of array
 
-- __1.0.2__
-  - Removed named export, only a default export/import is available (see docs below)
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
 
-You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you).
+You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you). See examples below.
+
+Attention: in some (observable :-)) future non-module syntax flavor will be frozen in a stable state and only defect fixes will be done there.
+Active development will focus on the ES6 module code base, which is effectively raising the support matrix of Chrome to 61, FF to 60 and EDGE to 16.
 
 * ES6 module (__preferred__):
 ```javascript
@@ -130,10 +133,10 @@ fetch('dist/object-observer.min.js').then(function (response) {
 
 ##### `Change` instance properties
 
-- __`type`__ - one of the following: 'insert', 'update', 'delete', 'shuffle' or 'reverse'
+- __`type`__ - one of the following: `insert`, `update`, `delete`, `shuffle` or `reverse`
 - __`path`__ - path to the changed property represented as an __Array__ of nodes (see examples below)
-- __`value`__ - new value; not available in 'delete', 'shuffle' and 'reverse' changes
-- __`oldValue`__ - old value; not available in 'insert', 'shuffle' or 'reverse' changes
+- __`value`__ - new value; not available in `delete`, `shuffle` and `reverse` changes
+- __`oldValue`__ - old value; not available in `insert`, `shuffle` or `reverse` changes
 
 
 # Examples
@@ -160,52 +163,73 @@ delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue:
 ##### Arrays
 
 ```javascript
-let a = [ 1, 2, 3, 4, 5],
-	observableA;
+let a = [ 1, 2, 3, 4, 5 ],
+    observableA;
 
 observableA = Observable.from(a);
 observableA.observe(changes => {
-	changes.forEach(change => {
-		console.log(change);
-	});
+    changes.forEach(change => {
+        console.log(change);
+    });
 });
 
 
-//	observableA = [ 1, 2, 3, 4, 5 ]
-observableA.pop();					//	{ type: 'delete', path: [4], oldValue: 5 }
+//  observableA = [ 1, 2, 3, 4, 5 ]
+observableA.pop();
+//  { type: 'delete', path: [4], oldValue: 5 }
 
 
-//	observableA = [ 1, 2, 3, 4 ]
-//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
-observableA.push('a', 'b');			//	{ type: 'insert', path: [4], value: 'a' }
-									//	{ type: 'insert', path: [5], value: 'b' }
+//  now observableA = [ 1, 2, 3, 4 ]
+//  following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.push('a', 'b');
+//  { type: 'insert', path: [4], value: 'a' }
+//  { type: 'insert', path: [5], value: 'b' }
 
 
-//	observableA = [1, 2, 3, 4, 'a', 'b']
-observableA.shift();				//	{ type: 'delete', path: [0], oldValue: 1 }
+//  now observableA = [1, 2, 3, 4, 'a', 'b']
+observableA.shift();
+//  { type: 'delete', path: [0], oldValue: 1 }
 
 
-//	observableA = [ 2, 3, 4, 'a', 'b' ]
-//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
-observableA.unshift('x', 'y');		//	{ type: 'insert', path: [0], value: 'x' }
-									//	{ type: 'insert', path: [1], value: 'y' }
-
-//	observableA = [ 2, 3, 4, 'a', 'b' ]
-observableA.reverse();				//	{ type: 'reverse' }
+//  now observableA = [ 2, 3, 4, 'a', 'b' ]
+//  following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.unshift('x', 'y');
+//  { type: 'insert', path: [0], value: 'x' }
+//  { type: 'insert', path: [1], value: 'y' }
 
 
-//	observableA = [ 'b', 'a', 4, 3, 2 ]
-observableA.sort();					//	{ type: 'shuffle' }
+//  now observableA = [ 2, 3, 4, 'a', 'b' ]
+observableA.reverse();
+//  { type: 'reverse', path: [] } (see below and exampe of this event for nested array)
 
 
-//	observableA = [ 2, 3, 4, 'a', 'b' ]
-observableA.fill(0, 0, 1);			//	{ type: 'update', path: [0], value: 0, oldValue: 2 }
+//  now observableA = [ 'b', 'a', 4, 3, 2 ]
+observableA.sort();
+//  { type: 'shuffle', path: [] } (see below and exampe of this event for nested array)
 
 
-//	observableA = [ 0, 3, 4, 'a', 'b' ]
-//	the following operation will cause a single callback to the observer with an array of 2 changes in it)
-observableA.splice(0, 1, 'x', 'y');	//	{ type: 'update', path: [0], value: 'x', oldValue: 0 }
-									//	{ type: 'insert', path: [1], value: 'y' }
+//  observableA = [ 2, 3, 4, 'a', 'b' ]
+observableA.fill(0, 0, 1);
+//  { type: 'update', path: [0], value: 0, oldValue: 2 }
+
+
+//  observableA = [ 0, 3, 4, 'a', 'b' ]
+//  the following operation will cause a single callback to the observer with an array of 2 changes in it)
+observableA.splice(0, 1, 'x', 'y');
+//  { type: 'update', path: [0], value: 'x', oldValue: 0 }
+//  { type: 'insert', path: [1], value: 'y' }
+
+let customer = {
+    orders: [ ... ]
+},
+oCustomer = Observable.from(customer);
+
+//  sortin the orders array, pay attention to the path in the event
+oCustomer.orders.sort();
+//  { type: 'shuffle', path: ['orders'] }
+
+oCustomer.orders.reverse();
+//  { type: 'reverse', path: ['orders'] }
 ```
 Arrays notes:
 - Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort). In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
