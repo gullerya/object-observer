@@ -148,7 +148,7 @@
 						}
 					}
 				}
-				observable.notify([{type: 'reverse'}]);
+				observable.notify([{type: 'reverse', path: observed.path}]);
 				return this;
 			};
 		} else if (key === 'sort') {
@@ -166,7 +166,7 @@
 						}
 					}
 				}
-				observable.notify([{type: 'shuffle'}]);
+				observable.notify([{type: 'shuffle', path: observed.path}]);
 				return this;
 			};
 		} else if (key === 'fill') {

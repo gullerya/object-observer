@@ -335,7 +335,7 @@ Observed.prototype.proxiedArrayGet = function proxiedArrayGet(target, key) {
 
 			//	publish changes
 			if (listeners.length) {
-				observed.callListeners(listeners, [{type: 'reverse'}]);
+				observed.callListeners(listeners, [{type: 'reverse', path: observed.getPath()}]);
 			}
 			return observed.proxy;
 		},
@@ -356,7 +356,7 @@ Observed.prototype.proxiedArrayGet = function proxiedArrayGet(target, key) {
 
 			//	publish changes
 			if (listeners.length) {
-				observed.callListeners(listeners, [{type: 'shuffle'}]);
+				observed.callListeners(listeners, [{type: 'shuffle', path: observed.getPath()}]);
 			}
 			return observed.proxy;
 		},
@@ -529,5 +529,4 @@ class Observable {
 }
 
 Object.freeze(Observable);
-
 export default Observable;

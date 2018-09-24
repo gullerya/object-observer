@@ -209,7 +209,7 @@
 		pass();
 	});
 
-	suite.addTest({name: 'array reverse operation - primitives'}, function(pass, fail) {
+	suite.addTest({name: 'array reverse operation - primitives (flat array)'}, function(pass, fail) {
 		let a = [1, 2, 3],
 			pa,
 			reversed,
@@ -223,8 +223,28 @@
 
 		if (reversed !== pa) fail('reverse base functionality broken');
 		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
-		if (events[0].type !== 'reverse') fail('event 0 did not fire as expected');
+		if (events[0].type !== 'reverse' || events[0].path.length !== 0) fail('event 0 did not fire as expected');
 		if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) fail('reverse base functionality broken');
+
+		pass();
+	});
+
+	suite.addTest({name: 'array reverse operation - primitives (nested array)'}, function(pass, fail) {
+		let a = {a1: {a2: [1, 2, 3]}},
+			pa,
+			reversed,
+			events = [];
+		pa = Observable.from(a);
+		pa.observe(function(eventsList) {
+			[].push.apply(events, eventsList);
+		});
+
+		reversed = pa.a1.a2.reverse();
+
+		if (reversed !== pa.a1.a2) fail('reverse base functionality broken');
+		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
+		if (events[0].type !== 'reverse' || events[0].path.length !== 2 || events[0].path.join('.') !== 'a1.a2') fail('event 0 did not fire as expected');
+		if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) fail('reverse base functionality broken');
 
 		pass();
 	});
@@ -246,13 +266,13 @@
 		if (reversed !== pa) fail('reverse base functionality broken');
 		if (events.length !== 3) fail('expected to have 3 events, found ' + events.length);
 		if (events[0].type !== 'update' || events[0].path.join('.') !== '0.name' || events[0].value !== 'A' || events[0].oldValue !== 'a') fail('event 0 did not fire as expected');
-		if (events[1].type !== 'reverse') fail('event 1 did not fire as expected');
+		if (events[1].type !== 'reverse' || events[1].path.length !== 0) fail('event 1 did not fire as expected');
 		if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c') fail('event 2 did not fire as expected');
 
 		pass();
 	});
 
-	suite.addTest({name: 'array sort operation - primitives'}, function(pass, fail) {
+	suite.addTest({name: 'array sort operation - primitives (flat array)'}, function(pass, fail) {
 		let a = [3, 2, 1],
 			pa,
 			sorted,
@@ -272,8 +292,34 @@
 		sorted = pa.sort((a, b) => { return a < b ? 1 : -1; });
 		if (sorted !== pa) fail('sort base functionality broken');
 		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
-		if (events[1].type !== 'shuffle') fail('event 1 did not fire as expected');
+		if (events[1].type !== 'shuffle' || events[1].path.length !== 0) fail('event 1 did not fire as expected');
 		if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) fail('sort base functionality broken');
+
+		pass();
+	});
+
+	suite.addTest({name: 'array sort operation - primitives (nested array)'}, function(pass, fail) {
+		let a = {a1: {a2: [3, 2, 1]}},
+			pa,
+			sorted,
+			events = [];
+		pa = Observable.from(a);
+		pa.observe(function(eventsList) {
+			[].push.apply(events, eventsList);
+		});
+
+		sorted = pa.a1.a2.sort();
+
+		if (sorted !== pa.a1.a2) fail('sort base functionality broken');
+		if (events.length !== 1) fail('expected to have 1 event, found ' + events.length);
+		if (events[0].type !== 'shuffle' || events[0].path.length !== 2 || events[0].path.join('.') !== 'a1.a2') fail('event 0 did not fire as expected');
+		if (pa.a1.a2[0] !== 1 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 3) fail('sort base functionality broken');
+
+		sorted = pa.a1.a2.sort((a, b) => { return a < b ? 1 : -1; });
+		if (sorted !== pa.a1.a2) fail('sort base functionality broken');
+		if (events.length !== 2) fail('expected to have 2 events, found ' + events.length);
+		if (events[1].type !== 'shuffle' || events[1].path.length !== 2 || events[1].path.join('.') !== 'a1.a2') fail('event 1 did not fire as expected');
+		if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) fail('sort base functionality broken');
 
 		pass();
 	});

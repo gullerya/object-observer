@@ -1,9 +1,9 @@
-﻿(function() {
+﻿(() => {
 	'use strict';
 
 	let suite = Utils.JustTest.createSuite({name: 'Testing Observable Load'});
 
-	suite.addTest({name: 'creating 10K observables, 1M deep mutations X 3'}, function(pass, fail) {
+	suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
 		let mutationIterations = 1000000,
 			o = {
 				name: 'name',
@@ -13,11 +13,14 @@
 						name: 'street name',
 						apt: 123
 					}
-				}
+				},
+				orders: []
 			},
 			po,
 			changesCountA,
-			changesCountB;
+			changesCountB,
+			started,
+			ended;
 
 		//	creation of Observable
 		for (let i = 0; i < 10000; i++) {
@@ -43,40 +46,46 @@
 		//	mutation of existing property
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' deep mutations...');
+		console.info('performing ' + mutationIterations + ' deep (x3) primitive mutations...');
+		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
 			po.address.street.apt = i;
 		}
+		ended = performance.now();
 		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
 
 		//	adding new property
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' deep additions...');
+		console.info('performing ' + mutationIterations + ' deep (x3) primitive additions...');
+		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
 			po.address.street[i] = i;
 		}
+		ended = performance.now();
 		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
 
 		//	removing new property
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' deep deletions...');
+		console.info('performing ' + mutationIterations + ' deep (x3) primitive deletions...');
+		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
 			delete po.address.street[i];
 		}
+		ended = performance.now();
 		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
 
 		pass();
 	});
 
-	suite.addTest({name: 'push 100K observables to an array, then pop them back'}, function(pass, fail) {
+	suite.addTest({name: 'push 100000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
 		let mutationIterations = 100000,
 			o = {
 				name: 'name',
@@ -88,12 +97,19 @@
 					}
 				}
 			},
+			orders = [
+				{id: 1, description: 'some description', sum: 1234},
+				{id: 2, description: 'some description', sum: 1234},
+				{id: 3, description: 'some description', sum: 1234}
+			],
 			po,
 			changesCountA,
-			changesCountB;
+			changesCountB,
+			started,
+			ended;
 
 		//	creation of Observable
-		po = Observable.from([]);
+		po = Observable.from({users: []});
 
 		//	add listeners/callbacks
 		po.observe(changes => {
@@ -114,26 +130,43 @@
 		//	push objects
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' pushes...');
+		console.info('performing ' + mutationIterations + ' objects pushes...');
+		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
-			po.push(o);
+			po.users.push(o);
 		}
-		if (po.length !== mutationIterations) fail('expected to have total of ' + mutationIterations + ' elements in pushed array, but got ' + po.length);
+		ended = performance.now();
+		if (po.users.length !== mutationIterations) fail('expected to have total of ' + mutationIterations + ' elements in pushed array, but got ' + po.length);
 		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+
+		//	add orders array to each one of them
+		changesCountA = 0;
+		changesCountB = 0;
+		console.info('performing ' + mutationIterations + ' additions of arrays onto the objects...');
+		started = performance.now();
+		for (let i = 0; i < mutationIterations; i++) {
+			po.users[i].orders = orders;
+		}
+		ended = performance.now();
+		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
+		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
 
 		//	pop objects
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' pops...');
+		console.info('performing ' + mutationIterations + ' object pops...');
+		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
-			po.pop(o);
+			po.users.pop(o);
 		}
-		if (po.length !== 0) fail('expected to have total of 0 elements in pushed array, but got ' + po.length);
+		ended = performance.now();
+		if (po.users.length !== 0) fail('expected to have total of 0 elements in pushed array, but got ' + po.length);
 		if (changesCountA !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 		if (changesCountB !== mutationIterations) fail('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
 
 		pass();
 	});
