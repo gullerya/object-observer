@@ -56,9 +56,9 @@ let Observable = require('./dist/node-module/object-observer');
 ```html
 <script src="dist/object-observer.min.js"></script>
 <script>
-	let person = { name: 'Uriya', age: 8 },
-	    observablePerson;
-	observablePerson = Observable.from(person);
+    let person = { name: 'Uriya', age: 8 },
+        observablePerson;
+    observablePerson = Observable.from(person);
 </script>
 ```
 
@@ -69,14 +69,14 @@ let customNamespace = {},
     observablePerson;
 
 fetch('dist/object-observer.min.js').then(function (response) {
-	if (response.status === 200) {
-		response.text().then(function (code) {
-			Function(code).call(customNamespace);
-			
-			//	the below code is an example of consumption, locate it in your app lifecycle/flow as appropriate
-			observablePerson = customNamespace.Observable.from(person);
-		});
-	}
+    if (response.status === 200) {
+        response.text().then(function (code) {
+            Function(code).call(customNamespace);
+
+            //	the below code is an example of consumption, locate it in your app lifecycle/flow as appropriate
+            observablePerson = customNamespace.Observable.from(person);
+        });
+    }
 });
 ```
 
@@ -85,51 +85,51 @@ fetch('dist/object-observer.min.js').then(function (response) {
 ##### `Observable` static properties
 
 - __`from`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface:
-	```javascript
-	let person = { name: 'Aya', age: '1' },
-		observablePerson;
+```javascript
+let person = { name: 'Aya', age: '1' },
+    observablePerson;
 
-	observablePerson = Observable.from(person);
-	...
-	```
+observablePerson = Observable.from(person);
+...
+```
 
-    Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
+Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
     
 ##### `Observable` instance properties
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable:
-	```javascript
-	function personUIObserver(changes) {
-		changes.forEach(change => {
-			console.log(change.type);
-			console.log(change.path);
-			console.log(change.value);
-			console.log(change.oldValue);
-		});
-	}
-	...
-	observablePerson = Observable.from(person);
-	observablePerson.observe(personUIObserver);
-	```
+```javascript
+function personUIObserver(changes) {
+    changes.forEach(change => {
+        console.log(change.type);
+        console.log(change.path);
+        console.log(change.value);
+        console.log(change.oldValue);
+    });
+}
+...
+observablePerson = Observable.from(person);
+observablePerson.observe(personUIObserver);
+```
 	
-	Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
-	Each change is a defined, non-null object, see `Change` definition below.
+Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
+Each change is a defined, non-null object, see `Change` definition below.
 	
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed:
-	```javascript
-	...
-	observablePerson.unobserve(personUIObserver);
-	...
-	observablePerson.unobserve();
-	...
-	```
+```javascript
+...
+observablePerson.unobserve(personUIObserver);
+...
+observablePerson.unobserve();
+...
+```
 
 - __`revoke`__ - parameterless. All of the proxies along the observed graph will be revoked and thus become unusable. `observe` and `unobserve` methods will mimic the revoked `Proxy` behaviour and throw `TypeError` if used on the revoked `Observable`. Subsequent `revoke` invocations will have no effect:
-	```javascript
-	...
-	observablePerson.revoke();
-	...
-	```
+```javascript
+...
+observablePerson.revoke();
+...
+```
 
 ##### `Change` instance properties
 
