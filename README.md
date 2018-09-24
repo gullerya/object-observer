@@ -56,7 +56,7 @@ let Observable = require('./dist/node-module/object-observer');
 ```html
 <script src="dist/object-observer.min.js"></script>
 <script>
-    let person = { name: 'Uriya', age: 8 },
+    let person = { name: 'Uria', age: 8 },
         observablePerson;
     observablePerson = Observable.from(person);
 </script>
