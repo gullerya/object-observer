@@ -144,17 +144,17 @@ fetch('dist/object-observer.min.js').then(function (response) {
 ##### Objects
 ```javascript
 let order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
-	observableOrder;
+    observableOrder;
 observableOrder = Observable.from(order);
 observableOrder.observe(changes => {
-	changes.forEach(change => {
-		console.log(change);
-	});
+    changes.forEach(change => {
+        console.log(change);
+    });
 });
 observableOrder.ammount = 7;		// { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
 observableOrder.address = {			// { type: "insert", path: ['address'], value: { ... } }
-	street: 'Str 75',
-	apt: 29
+    street: 'Str 75',
+    apt: 29
 };
 observableOrder.address.apt = 30;	// { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
 delete observableOrder.remark;		// { type: "delete", path: ['remark'], oldValue: 'remove me' }
@@ -220,9 +220,9 @@ observableA.splice(0, 1, 'x', 'y');
 //  { type: 'insert', path: [1], value: 'y' }
 
 let customer = {
-    orders: [ ... ]
-},
-oCustomer = Observable.from(customer);
+        orders: [ ... ]
+    },
+    oCustomer = Observable.from(customer);
 
 //  sortin the orders array, pay attention to the path in the event
 oCustomer.orders.sort();
