@@ -41,7 +41,7 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you). See examples below.
 
 Attention: in some (observable :-)) future non-module syntax flavor will be frozen in a stable state and only defect fixes will be done there.
-Active development will focus on the ES6 module code base, which is effectively raising the support matrix of Chrome to 61, FF to 60 and EDGE to 16.
+Active development will focus on the ES6 module code base, which is effectively raising the support matrix of Chrome to 61, FireFox to 60 and Edge to 16.
 
 * ES6 module (__preferred__):
 ```javascript
