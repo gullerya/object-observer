@@ -232,4 +232,5 @@ oCustomer.orders.reverse();
 //  { type: 'reverse', path: ['orders'] }
 ```
 Arrays notes:
-- Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort). In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
+- Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
+In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
