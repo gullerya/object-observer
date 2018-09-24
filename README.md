@@ -93,7 +93,7 @@ fetch('dist/object-observer.min.js').then(function (response) {
 	...
 	```
 
-    Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.assign`, therefore only __own enumerables__ are going to be observed.
+    Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
     
 ##### `Observable` instance properties
 
