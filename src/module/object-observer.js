@@ -50,12 +50,32 @@ class ObservableArray extends Array {
 	}
 
 	observe(callback) {
-		this[sysObsKey].observe(callback);
+		let observedRoot = this[sysObsKey],
+			callbacks = observedRoot.callbacks;
+		if (observedRoot.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
+		if (typeof callback !== 'function') { throw new Error('observer (callback) parameter MUST be a function'); }
+
+		if (callbacks.indexOf(callback) < 0) {
+			callbacks.push(callback);
+		} else {
+			console.info('observer (callback) may be bound to an observable only once');
+		}
 	}
 
 	unobserve() {
-		let observed = this[sysObsKey];
-		observed.unobserve.apply(observed, arguments);
+		let observed = this[sysObsKey],
+			callbacks = observed.callbacks,
+			l, idx;
+		if (observed.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
+		l = arguments.length;
+		if (l) {
+			while (l--) {
+				idx = callbacks.indexOf(arguments[l]);
+				if (idx >= 0) callbacks.splice(idx, 1);
+			}
+		} else {
+			callbacks.splice(0);
+		}
 	}
 }
 
@@ -79,12 +99,32 @@ class ObservableObject {
 	}
 
 	observe(callback) {
-		this[sysObsKey].observe(callback);
+		let observedRoot = this[sysObsKey],
+			callbacks = observedRoot.callbacks;
+		if (observedRoot.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
+		if (typeof callback !== 'function') { throw new Error('observer (callback) parameter MUST be a function'); }
+
+		if (callbacks.indexOf(callback) < 0) {
+			callbacks.push(callback);
+		} else {
+			console.info('observer (callback) may be bound to an observable only once');
+		}
 	}
 
 	unobserve() {
-		let observed = this[sysObsKey];
-		observed.unobserve.apply(observed, arguments);
+		let observed = this[sysObsKey],
+			callbacks = observed.callbacks,
+			l, idx;
+		if (observed.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
+		l = arguments.length;
+		if (l) {
+			while (l--) {
+				idx = callbacks.indexOf(arguments[l]);
+				if (idx >= 0) callbacks.splice(idx, 1);
+			}
+		} else {
+			callbacks.splice(0);
+		}
 	}
 }
 
@@ -137,30 +177,6 @@ class Observed {
 
 		//	return an unobserved graph (effectively this is an opposite of an Observed constructor logic)
 		return target;
-	}
-
-	observe(callback) {
-		if (this.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
-		if (typeof callback !== 'function') { throw new Error('observer (callback) parameter MUST be a function'); }
-
-		if (this.callbacks.indexOf(callback) < 0) {
-			this.callbacks.push(callback);
-		} else {
-			console.info('observer (callback) may be bound to an observable only once');
-		}
-	}
-
-	unobserve() {
-		if (this.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
-		let l = arguments.length;
-		if (l) {
-			while (l--) {
-				let idx = this.callbacks.indexOf(arguments[l]);
-				if (idx >= 0) this.callbacks.splice(idx, 1);
-			}
-		} else {
-			this.callbacks.splice(0);
-		}
 	}
 
 	getPath() {
