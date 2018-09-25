@@ -14,6 +14,35 @@ const
 		Promise: true,
 		RegExp: true
 	},
+	prepareArray = function(origin, destination, observer) {
+		let l = origin.length, item;
+		destination[sysObsKey] = observer;
+		while (l--) {
+			item = origin[l];
+			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+				destination[l] = Array.isArray(item)
+					? new ArrayObserver({target: item, ownKey: l, parent: observer}).proxy
+					: new ObjectObserver({target: item, ownKey: l, parent: observer}).proxy;
+			} else {
+				destination[l] = item;
+			}
+		}
+	},
+	prepareObject = function(origin, destination, observer) {
+		let keys = Object.keys(origin), l = keys.length, key, item;
+		destination[sysObsKey] = observer;
+		while (l--) {
+			key = keys[l];
+			item = origin[key];
+			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+				destination[key] = Array.isArray(item)
+					? new ArrayObserver({target: item, ownKey: key, parent: observer}).proxy
+					: new ObjectObserver({target: item, ownKey: key, parent: observer}).proxy;
+			} else {
+				destination[key] = item;
+			}
+		}
+	},
 	callListeners = function(listeners, changes) {
 		let l = listeners.length;
 		while (l--) {
@@ -31,20 +60,6 @@ const
 	SHUFFLE = 'shuffle';
 
 class ObservableArray extends Array {
-	constructor(origin, observed) {
-		super(origin.length);
-		let l = origin.length, item;
-		this[sysObsKey] = observed;
-		while (l--) {
-			item = origin[l];
-			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				this[l] = new Observed({target: item, ownKey: l, parent: observed}).proxy;
-			} else {
-				this[l] = item;
-			}
-		}
-	}
-
 	revoke() {
 		this[sysObsKey].revoke();
 	}
@@ -80,20 +95,6 @@ class ObservableArray extends Array {
 }
 
 class ObservableObject {
-	constructor(origin, observed) {
-		let keys = Object.getOwnPropertyNames(origin), l = keys.length, key, item;
-		this[sysObsKey] = observed;
-		while (l--) {
-			key = keys[l];
-			item = origin[key];
-			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				this[key] = new Observed({target: item, ownKey: key, parent: observed}).proxy;
-			} else {
-				this[key] = item;
-			}
-		}
-	}
-
 	revoke() {
 		this[sysObsKey].revoke();
 	}
@@ -128,61 +129,47 @@ class ObservableObject {
 	}
 }
 
-class Observed {
+class ArrayObserver {
 	constructor(properties) {
+		let clone, origin = properties.target;
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			this.callbacks = [];
-		}
-		this.parent = properties.parent;
-		this.ownKey = properties.ownKey;
-
-		let target = properties.target, clone, op = Observed.prototype;
-		if (Array.isArray(target)) {
-			clone = new ObservableArray(target, this);
-			this.revokable = Proxy.revocable(clone, {
-				deleteProperty: op.proxiedDelete.bind(this),
-				set: op.proxiedSet.bind(this),
-				get: op.proxiedArrayGet.bind(this)
-			});
+			clone = new ObservableArray(origin.length);
 		} else {
-			clone = new ObservableObject(target, this);
-			this.revokable = Proxy.revocable(clone, {
-				deleteProperty: op.proxiedDelete.bind(this),
-				set: op.proxiedSet.bind(this)
-			});
+			this.parent = properties.parent;
+			this.ownKey = properties.ownKey;
+			clone = new Array(origin.length);
 		}
-
+		prepareArray(origin, clone, this);
+		this.revokable = Proxy.revocable(clone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = clone;
 	}
 
+	//	returns an unobserved graph (effectively this is an opposite of an ArrayObserver constructor logic)
 	revoke() {
-		let target = this.target, keys = Object.keys(target), l = keys.length, key, item;
-
 		//	revoke native proxy
 		this.revokable.revoke();
 
-		//	roll back observed graph to unobserved one
+		//	roll back observed array to an unobserved one
+		let target = this.target, l = target.length, item;
 		while (l--) {
-			key = keys[l];
-			item = target[key];
+			item = target[l];
 			if (item && typeof item === 'object') {
 				let tmpObserved = item[sysObsKey];
 				if (tmpObserved) {
-					target[key] = tmpObserved.revoke();
+					target[l] = tmpObserved.revoke();
 				}
 			}
 		}
-
-		//	return an unobserved graph (effectively this is an opposite of an Observed constructor logic)
 		return target;
 	}
 
 	getPath() {
-		let tmpKey, tmp = [], result, l1 = 0, l2 = 0, pointer = this;
-		while ((tmpKey = pointer.ownKey) !== null) {
-			tmp[l1++] = tmpKey;
+		let tmp = [], result, l1 = 0, l2 = 0, pointer = this;
+		while (pointer.parent) {
+			tmp[l1++] = pointer.ownKey;
 			pointer = pointer.parent;
 		}
 		result = new Array(l1);
@@ -196,11 +183,13 @@ class Observed {
 		return pointer.callbacks;
 	}
 
-	proxiedSet(target, key, value) {
+	set(target, key, value) {
 		let oldValue = target[key], listeners, path, changes;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = new Observed({target: value, ownKey: key, parent: this}).proxy;
+			target[key] = Array.isArray(value)
+				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
+				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
 		} else {
 			target[key] = value;
 		}
@@ -225,7 +214,7 @@ class Observed {
 		return true;
 	}
 
-	proxiedDelete(target, key) {
+	deleteProperty(target, key) {
 		let oldValue = target[key], listeners, path, changes;
 
 		if (delete target[key]) {
@@ -250,7 +239,7 @@ class Observed {
 		}
 	}
 
-	proxiedArrayGet(target, key) {
+	get(target, key) {
 		const proxiedArrayMethods = {
 			pop: function proxiedPop(target, observed) {
 				let poppedIndex, popResult;
@@ -283,7 +272,9 @@ class Observed {
 				for (i = 0; i < l; i++) {
 					item = arguments[i + 2];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-						item = new Observed({target: item, ownKey: initialLength + i, parent: observed}).proxy;
+						item = Array.isArray(item)
+							? new ArrayObserver({target: item, ownKey: initialLength + i, parent: observed}).proxy
+							: new ObjectObserver({target: item, ownKey: initialLength + i, parent: observed}).proxy;
 					}
 					pushContent[i] = item;
 				}
@@ -339,7 +330,9 @@ class Observed {
 				unshiftContent.splice(0, 2);
 				unshiftContent.forEach((item, index) => {
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-						unshiftContent[index] = new Observed({target: item, ownKey: index, parent: observed}).proxy;
+						unshiftContent[index] = Array.isArray(item)
+							? new ArrayObserver({target: item, ownKey: index, parent: observed}).proxy
+							: new ObjectObserver({target: item, ownKey: index, parent: observed}).proxy;
 					}
 				});
 				unshiftResult = Reflect.apply(target.unshift, target, unshiftContent);
@@ -425,7 +418,9 @@ class Observed {
 				for (let i = start, item, tmpTarget; i < end; i++) {
 					item = target[i];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-						target[i] = new Observed({target: item, ownKey: i, parent: observed}).proxy;
+						target[i] = Array.isArray(item)
+							? new ArrayObserver({target: item, ownKey: i, parent: observed}).proxy
+							: new ObjectObserver({target: item, ownKey: i, parent: observed}).proxy;
 					}
 					if (prev.hasOwnProperty(i)) {
 						tmpTarget = prev[i];
@@ -465,7 +460,9 @@ class Observed {
 				for (let i = 2, item; i < splLen; i++) {
 					item = spliceContent[i];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-						spliceContent[i] = new Observed({target: item, ownKey: i, parent: observed}).proxy;
+						spliceContent[i] = Array.isArray(item)
+							? new ArrayObserver({target: item, ownKey: i, parent: observed}).proxy
+							: new ObjectObserver({target: item, ownKey: i, parent: observed}).proxy;
 					}
 				}
 
@@ -534,10 +531,124 @@ class Observed {
 	}
 }
 
+class ObjectObserver {
+	constructor(properties) {
+		let clone, origin = properties.target;
+		if (properties.parent === null) {
+			this.isRevoked = false;
+			this.callbacks = [];
+			clone = new ObservableObject();
+		} else {
+			this.parent = properties.parent;
+			this.ownKey = properties.ownKey;
+			clone = {};
+		}
+		prepareObject(origin, clone, this);
+		this.revokable = Proxy.revocable(clone, this);
+		this.proxy = this.revokable.proxy;
+		this.target = clone;
+	}
+
+	//	returns an unobserved graph (effectively this is an opposite of an ObjectObserver constructor logic)
+	revoke() {
+		//	revoke native proxy
+		this.revokable.revoke();
+
+		//	roll back observed graph to an unobserved one
+		let target = this.target, keys = Object.keys(target), l = keys.length, key, item;
+		while (l--) {
+			key = keys[l];
+			item = target[key];
+			if (item && typeof item === 'object') {
+				let tmpObserved = item[sysObsKey];
+				if (tmpObserved) {
+					target[key] = tmpObserved.revoke();
+				}
+			}
+		}
+		return target;
+	}
+
+	getPath() {
+		let tmp = [], result, l1 = 0, l2 = 0, pointer = this;
+		while (pointer.parent) {
+			tmp[l1++] = pointer.ownKey;
+			pointer = pointer.parent;
+		}
+		result = new Array(l1);
+		while (l1--) result[l2++] = tmp[l1];
+		return result;
+	}
+
+	getListeners() {
+		let pointer = this;
+		while (pointer.parent) pointer = pointer.parent;
+		return pointer.callbacks;
+	}
+
+	set(target, key, value) {
+		let oldValue = target[key], listeners, path, changes;
+
+		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
+			target[key] = Array.isArray(value)
+				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
+				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
+		} else {
+			target[key] = value;
+		}
+
+		if (oldValue && typeof oldValue === 'object') {
+			let tmpObserved = oldValue[sysObsKey];
+			if (tmpObserved) {
+				oldValue = tmpObserved.revoke();
+			}
+		}
+
+		//	publish changes
+		listeners = this.getListeners();
+		if (listeners.length) {
+			path = this.getPath();
+			path.push(key);
+			changes = typeof oldValue === 'undefined'
+				? [{type: INSERT, path: path, value: value}]
+				: [{type: UPDATE, path: path, value: value, oldValue: oldValue}];
+			callListeners(listeners, changes);
+		}
+		return true;
+	}
+
+	deleteProperty(target, key) {
+		let oldValue = target[key], listeners, path, changes;
+
+		if (delete target[key]) {
+			if (oldValue && typeof oldValue === 'object') {
+				let tmpObserved = oldValue[sysObsKey];
+				if (tmpObserved) {
+					oldValue = tmpObserved.revoke();
+				}
+			}
+
+			//	publish changes
+			listeners = this.getListeners();
+			if (listeners.length) {
+				path = this.getPath();
+				path.push(key);
+				changes = [{type: DELETE, path: path, oldValue: oldValue}];
+				callListeners(listeners, changes);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
 class Observable {
 	static from(target) {
 		if (target && typeof target === 'object' && !nonObservables.hasOwnProperty(target.constructor.name) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
-			let observed = new Observed({target: target, ownKey: null, parent: null});
+			let observed = Array.isArray(target)
+				? new ArrayObserver({target: target, ownKey: null, parent: null})
+				: new ObjectObserver({target: target, ownKey: null, parent: null});
 			return observed.proxy;
 		} else {
 			if (!target || typeof target !== 'object') {
