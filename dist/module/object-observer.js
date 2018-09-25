@@ -13,7 +13,22 @@ const
 		Function: true,
 		Promise: true,
 		RegExp: true
-	};
+	},
+	callListeners = function(listeners, changes) {
+		let l = listeners.length;
+		while (l--) {
+			try {
+				listeners[l](changes);
+			} catch (e) {
+				console.error('failed to deliver changes to listener' + listeners[l], e);
+			}
+		}
+	},
+	INSERT = 'insert',
+	UPDATE = 'update',
+	DELETE = 'delete',
+	REVERSE = 'reverse',
+	SHUFFLE = 'shuffle';
 
 class ObservableArray extends Array {
 	constructor(origin, observed) {
@@ -75,28 +90,27 @@ class ObservableObject {
 
 class Observed {
 	constructor(properties) {
+		if (properties.parent === null) {
+			this.isRevoked = false;
+			this.callbacks = [];
+		}
 		this.parent = properties.parent;
 		this.ownKey = properties.ownKey;
 
-		let target = properties.target, clone;
+		let target = properties.target, clone, op = Observed.prototype;
 		if (Array.isArray(target)) {
 			clone = new ObservableArray(target, this);
 			this.revokable = Proxy.revocable(clone, {
-				deleteProperty: this.proxiedDelete.bind(this),
-				set: this.proxiedSet.bind(this),
-				get: this.proxiedArrayGet.bind(this)
+				deleteProperty: op.proxiedDelete.bind(this),
+				set: op.proxiedSet.bind(this),
+				get: op.proxiedArrayGet.bind(this)
 			});
 		} else {
 			clone = new ObservableObject(target, this);
 			this.revokable = Proxy.revocable(clone, {
-				deleteProperty: this.proxiedDelete.bind(this),
-				set: this.proxiedSet.bind(this)
+				deleteProperty: op.proxiedDelete.bind(this),
+				set: op.proxiedSet.bind(this)
 			});
-		}
-
-		if (this.parent === null) {
-			this.isRevoked = false;
-			this.callbacks = [];
 		}
 
 		this.proxy = this.revokable.proxy;
@@ -104,7 +118,7 @@ class Observed {
 	}
 
 	revoke() {
-		let target = this.target, keys = Object.keys(target), l = keys.length, key, item, tmpObserved;
+		let target = this.target, keys = Object.keys(target), l = keys.length, key, item;
 
 		//	revoke native proxy
 		this.revokable.revoke();
@@ -114,7 +128,7 @@ class Observed {
 			key = keys[l];
 			item = target[key];
 			if (item && typeof item === 'object') {
-				tmpObserved = item[sysObsKey];
+				let tmpObserved = item[sysObsKey];
 				if (tmpObserved) {
 					target[key] = tmpObserved.revoke();
 				}
@@ -150,11 +164,12 @@ class Observed {
 	}
 
 	getPath() {
-		let tmp = [], result = [], l1 = 0, l2 = 0, pointer = this;
-		while (pointer.ownKey !== null) {
-			tmp[l1++] = pointer.ownKey;
+		let tmpKey, tmp = [], result, l1 = 0, l2 = 0, pointer = this;
+		while ((tmpKey = pointer.ownKey) !== null) {
+			tmp[l1++] = tmpKey;
 			pointer = pointer.parent;
 		}
+		result = new Array(l1);
 		while (l1--) result[l2++] = tmp[l1];
 		return result;
 	}
@@ -166,7 +181,7 @@ class Observed {
 	}
 
 	proxiedSet(target, key, value) {
-		let oldValue = target[key], tmpObserved, listeners, path;
+		let oldValue = target[key], listeners, path, changes;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
 			target[key] = new Observed({target: value, ownKey: key, parent: this}).proxy;
@@ -175,10 +190,9 @@ class Observed {
 		}
 
 		if (oldValue && typeof oldValue === 'object') {
-			tmpObserved = oldValue[sysObsKey];
+			let tmpObserved = oldValue[sysObsKey];
 			if (tmpObserved) {
-				tmpObserved.revoke();
-				oldValue = tmpObserved.target;
+				oldValue = tmpObserved.revoke();
 			}
 		}
 
@@ -187,23 +201,22 @@ class Observed {
 		if (listeners.length) {
 			path = this.getPath();
 			path.push(key);
-			Observed.callListeners(listeners, typeof oldValue !== 'undefined'
-				? [{type: 'update', path: path, value: value, oldValue: oldValue}]
-				: [{type: 'insert', path: path, value: value}]
-			);
+			changes = typeof oldValue === 'undefined'
+				? [{type: INSERT, path: path, value: value}]
+				: [{type: UPDATE, path: path, value: value, oldValue: oldValue}];
+			callListeners(listeners, changes);
 		}
 		return true;
 	}
 
 	proxiedDelete(target, key) {
-		let oldValue = target[key], tmpObserved, listeners, path;
+		let oldValue = target[key], listeners, path, changes;
 
 		if (delete target[key]) {
 			if (oldValue && typeof oldValue === 'object') {
-				tmpObserved = oldValue[sysObsKey];
+				let tmpObserved = oldValue[sysObsKey];
 				if (tmpObserved) {
-					tmpObserved.revoke();
-					oldValue = tmpObserved.target;
+					oldValue = tmpObserved.revoke();
 				}
 			}
 
@@ -212,7 +225,8 @@ class Observed {
 			if (listeners.length) {
 				path = this.getPath();
 				path.push(key);
-				Observed.callListeners(listeners, [{type: 'delete', path: path, oldValue: oldValue}]);
+				changes = [{type: DELETE, path: path, oldValue: oldValue}];
+				callListeners(listeners, changes);
 			}
 			return true;
 		} else {
@@ -223,14 +237,13 @@ class Observed {
 	proxiedArrayGet(target, key) {
 		const proxiedArrayMethods = {
 			pop: function proxiedPop(target, observed) {
-				let poppedIndex, popResult, tmpObserved;
+				let poppedIndex, popResult;
 				poppedIndex = target.length - 1;
 				popResult = target.pop();
 				if (popResult && typeof popResult === 'object') {
-					tmpObserved = popResult[sysObsKey];
+					let tmpObserved = popResult[sysObsKey];
 					if (tmpObserved) {
-						tmpObserved.revoke();
-						popResult = tmpObserved.target;
+						popResult = tmpObserved.revoke();
 					}
 				}
 
@@ -239,19 +252,19 @@ class Observed {
 				if (listeners.length) {
 					let path = observed.getPath();
 					path.push(poppedIndex);
-					Observed.callListeners(listeners, [{type: 'delete', path: path, oldValue: popResult}]);
+					callListeners(listeners, [{type: DELETE, path: path, oldValue: popResult}]);
 				}
 				return popResult;
 			},
 			push: function proxiedPush(target, observed) {
-				let l = arguments.length - 2, pushContent = new Array(l), pushResult, changes = [],
+				let i, l = arguments.length - 2, item, pushContent = new Array(l), pushResult, changes,
 					initialLength, basePath, listeners = observed.getListeners();
 				initialLength = target.length;
 
 				if (listeners.length) {
 					basePath = observed.getPath();
 				}
-				for (let i = 0, item; i < l; i++) {
+				for (i = 0; i < l; i++) {
 					item = arguments[i + 2];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
 						item = new Observed({target: item, ownKey: initialLength + i, parent: observed}).proxy;
@@ -262,49 +275,50 @@ class Observed {
 
 				//	publish changes
 				if (listeners.length) {
-					for (let i = initialLength, l = target.length; i < l; i++) {
+					changes = [];
+					for (i = initialLength, l = target.length; i < l; i++) {
 						let path = basePath.slice(0);
 						path.push(i);
-						changes[i - initialLength] = {type: 'insert', path: path, value: target[i]};
+						changes[i - initialLength] = {type: INSERT, path: path, value: target[i]};
 					}
-					Observed.callListeners(listeners, changes);
+					callListeners(listeners, changes);
 				}
 				return pushResult;
 			},
 			shift: function proxiedShift(target, observed) {
-				let listeners = observed.getListeners(), shiftResult, tmpObserved;
+				let shiftResult, i, l, item, listeners, path, changes;
+
 				shiftResult = target.shift();
 				if (shiftResult && typeof shiftResult === 'object') {
-					tmpObserved = shiftResult[sysObsKey];
+					let tmpObserved = shiftResult[sysObsKey];
 					if (tmpObserved) {
-						tmpObserved.revoke();
-						shiftResult = tmpObserved.target;
+						shiftResult = tmpObserved.revoke();
 					}
 				}
 
 				//	update indices of the remaining items
-				for (let i = 0, l = target.length, item, tmpObserved; i < l; i++) {
+				for (i = 0, l = target.length; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = item[sysObsKey];
+						let tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
-						} else {
-							console.error('unexpectedly failed to resolve proxy -> observed');
 						}
 					}
 				}
 
 				//	publish changes
+				listeners = observed.getListeners();
 				if (listeners.length) {
-					let path = observed.getPath();
+					path = observed.getPath();
 					path.push(0);
-					Observed.callListeners(listeners, [{type: 'delete', path: path, oldValue: shiftResult}]);
+					changes = [{type: DELETE, path: path, oldValue: shiftResult}];
+					callListeners(listeners, changes);
 				}
 				return shiftResult;
 			},
 			unshift: function proxiedUnshift(target, observed) {
-				let listeners = observed.getListeners(), unshiftContent, unshiftResult, changes = [], tmpObserved;
+				let listeners = observed.getListeners(), unshiftContent, unshiftResult, changes;
 				unshiftContent = Array.from(arguments);
 				unshiftContent.splice(0, 2);
 				unshiftContent.forEach((item, index) => {
@@ -316,66 +330,65 @@ class Observed {
 				for (let i = 0, l = target.length, item; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = item[sysObsKey];
+						let tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
-						} else {
-							console.error('failed to resolve proxy -> observed');
 						}
 					}
 				}
 
 				//	publish changes
 				if (listeners.length) {
-					let basePath = observed.getPath(), path;
-					for (let i = 0, l = unshiftContent.length; i < l; i++) {
+					let basePath = observed.getPath(), l = unshiftContent.length, path;
+					changes = new Array(l);
+					for (let i = 0; i < l; i++) {
 						path = basePath.slice(0);
 						path.push(i);
-						changes.push({type: 'insert', path: path, value: target[i]});
+						changes[i] = {type: INSERT, path: path, value: target[i]};
 					}
-					Observed.callListeners(listeners, changes);
+					callListeners(listeners, changes);
 				}
 				return unshiftResult;
 			},
 			reverse: function proxiedReverse(target, observed) {
-				let listeners = observed.getListeners(), tmpObserved;
+				let i, l, item, listeners, changes;
 				target.reverse();
-				for (let i = 0, l = target.length, item; i < l; i++) {
+				for (i = 0, l = target.length; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = item[sysObsKey];
+						let tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
-						} else {
-							console.error('failed to resolve proxy -> observed');
 						}
 					}
 				}
 
 				//	publish changes
+				listeners = observed.getListeners();
 				if (listeners.length) {
-					Observed.callListeners(listeners, [{type: 'reverse', path: observed.getPath()}]);
+					changes = [{type: REVERSE, path: observed.getPath()}];
+					callListeners(listeners, changes);
 				}
 				return observed.proxy;
 			},
 			sort: function proxiedSort(target, observed, comparator) {
-				let listeners = observed.getListeners(), tmpObserved;
+				let i, l, item, listeners, changes;
 				target.sort(comparator);
-				for (let i = 0, l = target.length, item; i < l; i++) {
+				for (i = 0, l = target.length; i < l; i++) {
 					item = target[i];
 					if (item && typeof item === 'object') {
-						tmpObserved = item[sysObsKey];
+						let tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
-						} else {
-							console.error('failed to resolve proxy -> observed');
 						}
 					}
 				}
 
 				//	publish changes
+				listeners = observed.getListeners();
 				if (listeners.length) {
-					Observed.callListeners(listeners, [{type: 'shuffle', path: observed.getPath()}]);
+					changes = [{type: SHUFFLE, path: observed.getPath()}];
+					callListeners(listeners, changes);
 				}
 				return observed.proxy;
 			},
@@ -393,36 +406,33 @@ class Observed {
 				if (listeners.length) {
 					basePath = observed.getPath();
 				}
-				for (let i = start, item, tmpObserved, tmpTarget; i < end; i++) {
+				for (let i = start, item, tmpTarget; i < end; i++) {
 					item = target[i];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-						target[i] = new Observed({
-							target: item, ownKey: i, parent: observed
-						}).proxy;
+						target[i] = new Observed({target: item, ownKey: i, parent: observed}).proxy;
 					}
 					if (prev.hasOwnProperty(i)) {
 						tmpTarget = prev[i];
 						if (tmpTarget && typeof tmpTarget === 'object') {
-							tmpObserved = tmpTarget[sysObsKey];
+							let tmpObserved = tmpTarget[sysObsKey];
 							if (tmpObserved) {
-								tmpObserved.revoke();
-								tmpTarget = tmpObserved.target;
+								tmpTarget = tmpObserved.revoke();
 							}
 						}
 
 						path = basePath.slice(0);
 						path.push(i);
-						changes.push({type: 'update', path: path, value: target[i], oldValue: tmpTarget});
+						changes.push({type: UPDATE, path: path, value: target[i], oldValue: tmpTarget});
 					} else {
 						path = basePath.slice(0);
 						path.push(i);
-						changes.push({type: 'insert', path: path, value: target[i]});
+						changes.push({type: INSERT, path: path, value: target[i]});
 					}
 				}
 
 				//	publish changes
 				if (listeners.length) {
-					Observed.callListeners(listeners, changes);
+					callListeners(listeners, changes);
 				}
 				return observed.proxy;
 			},
@@ -457,20 +467,18 @@ class Observed {
 						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
 							tmpObserved.ownKey = i;
-						} else {
-							console.error('failed to resolve proxy -> target -> observed');
 						}
 					}
 				}
 
 				//	revoke removed Observed
-				for (let i = 0, l = spliceResult.length, item, tmpObserved; i < l; i++) {
+				let i, l, item;
+				for (i = 0, l = spliceResult.length; i < l; i++) {
 					item = spliceResult[i];
 					if (item && typeof item === 'object') {
 						tmpObserved = item[sysObsKey];
 						if (tmpObserved) {
-							tmpObserved.revoke();
-							spliceResult[i] = tmpObserved.target;
+							spliceResult[i] = tmpObserved.revoke();
 						}
 					}
 				}
@@ -483,21 +491,21 @@ class Observed {
 						path.push(startIndex + index);
 						if (index < inserted) {
 							changes.push({
-								type: 'update',
+								type: UPDATE,
 								path: path,
 								value: target[startIndex + index],
 								oldValue: spliceResult[index]
 							});
 						} else {
-							changes.push({type: 'delete', path: path, oldValue: spliceResult[index]});
+							changes.push({type: DELETE, path: path, oldValue: spliceResult[index]});
 						}
 					}
 					for (; index < inserted; index++) {
 						path = basePath.slice(0);
 						path.push(startIndex + index);
-						changes.push({type: 'insert', path: path, value: target[startIndex + index]});
+						changes.push({type: INSERT, path: path, value: target[startIndex + index]});
 					}
-					Observed.callListeners(listeners, changes);
+					callListeners(listeners, changes);
 				}
 				return spliceResult;
 			}
@@ -508,24 +516,13 @@ class Observed {
 			return target[key];
 		}
 	}
-
-	static callListeners(listeners, changes) {
-		let l = listeners.length;
-		while (l--) {
-			try {
-				listeners[l](changes);
-			} catch (e) {
-				console.error(e);
-			}
-		}
-	}
 }
 
 class Observable {
 	static from(target) {
 		if (target && typeof target === 'object' && !nonObservables.hasOwnProperty(target.constructor.name) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
-			let observable = new Observed({target: target, ownKey: null, parent: null});
-			return observable.proxy;
+			let observed = new Observed({target: target, ownKey: null, parent: null});
+			return observed.proxy;
 		} else {
 			if (!target || typeof target !== 'object') {
 				throw new Error('observable MAY ONLY be created from non-null object only');
