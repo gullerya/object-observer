@@ -19,9 +19,11 @@ Main aspects:
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 - following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
-#### Support matrix: ![CHROME](./docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](./docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](./docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](./docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
+#### Support matrix: ![CHROME](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
-#### Last versions (full changelog is [here](docs/changelog.md))
+#### Performance report can be found [here](https://github.com/gullerya/object-observer/blob/master/docs/performance-report.md)
+
+#### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
 - __1.1.0__
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
@@ -92,7 +94,7 @@ let person = { name: 'Aya', age: '1' },
 observablePerson = Observable.from(person);
 ```
 
-Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
+Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from the library.
     
 ##### `Observable` instance properties
 
