@@ -89,9 +89,9 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
     <tr>
         <th style="width:75px;white-space:nowrap"></th>
         <th>create 100,000 observables</th>
-        <th>mutate primitive; deep L3; 1M times</th>
-        <th>add primitive; deep L3; 1M times</th>
-        <th>delete primitive; deep L3; 1M times</th>
+        <th>mutate primitive<br>deep L3; 1M times</th>
+        <th>add primitive<br>deep L3; 1M times</th>
+        <th>delete primitive<br>deep L3; 1M times</th>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
