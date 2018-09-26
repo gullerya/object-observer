@@ -21,6 +21,8 @@ Main aspects:
 
 #### Support matrix: ![CHROME](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png) <sub>13+</sub> | ![NODE JS](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
+#### Performance report can be found [here](https://github.com/gullerya/object-observer/blob/master/docs/performance-report.md)
+
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
 - __1.1.0__

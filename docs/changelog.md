@@ -1,4 +1,4 @@
-#### Changelog
+# Changelog
 
 - __1.1.0__
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
