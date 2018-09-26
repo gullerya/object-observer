@@ -238,7 +238,7 @@
 					}
 
 					//	publish changes
-					let listeners = observed.getListeners();
+					let listeners = observed.getObservers();
 					if (listeners.length) {
 						let path = observed.getPath();
 						path.push(poppedIndex);
@@ -248,7 +248,7 @@
 				},
 				push: function proxiedPush(target, observed) {
 					let l = arguments.length - 2, pushContent = new Array(l), pushResult, changes = [],
-						initialLength, basePath, listeners = observed.getListeners();
+						initialLength, basePath, listeners = observed.getObservers();
 					initialLength = target.length;
 
 					if (listeners.length) {
@@ -275,7 +275,7 @@
 					return pushResult;
 				},
 				shift: function proxiedShift(target, observed) {
-					let listeners = observed.getListeners(), shiftResult, tmpObserved;
+					let listeners = observed.getObservers(), shiftResult, tmpObserved;
 					shiftResult = target.shift();
 					if (shiftResult && typeof shiftResult === 'object') {
 						tmpObserved = shiftResult[sysObsKey];
@@ -307,7 +307,7 @@
 					return shiftResult;
 				},
 				unshift: function proxiedUnshift(target, observed) {
-					let listeners = observed.getListeners(), unshiftContent, unshiftResult, changes = [], tmpObserved;
+					let listeners = observed.getObservers(), unshiftContent, unshiftResult, changes = [], tmpObserved;
 					unshiftContent = Array.from(arguments);
 					unshiftContent.splice(0, 2);
 					unshiftContent.forEach((item, index) => {
@@ -341,7 +341,7 @@
 					return unshiftResult;
 				},
 				reverse: function proxiedReverse(target, observed) {
-					let listeners = observed.getListeners(), tmpObserved;
+					let listeners = observed.getObservers(), tmpObserved;
 					target.reverse();
 					for (let i = 0, l = target.length, item; i < l; i++) {
 						item = target[i];
@@ -362,7 +362,7 @@
 					return observed.proxy;
 				},
 				sort: function proxiedSort(target, observed, comparator) {
-					let listeners = observed.getListeners(), tmpObserved;
+					let listeners = observed.getObservers(), tmpObserved;
 					target.sort(comparator);
 					for (let i = 0, l = target.length, item; i < l; i++) {
 						item = target[i];
@@ -383,7 +383,7 @@
 					return observed.proxy;
 				},
 				fill: function proxiedFill(target, observed) {
-					let listeners = observed.getListeners(), normArgs, argLen,
+					let listeners = observed.getObservers(), normArgs, argLen,
 						start, end, changes = [], prev, tarLen = target.length, basePath, path;
 					normArgs = Array.from(arguments);
 					normArgs.splice(0, 2);
@@ -430,7 +430,7 @@
 					return observed.proxy;
 				},
 				splice: function proxiedSplice(target, observed) {
-					let listeners = observed.getListeners(),
+					let listeners = observed.getObservers(),
 						spliceContent, spliceResult, changes = [], tmpObserved,
 						startIndex, removed, inserted, splLen, tarLen = target.length;
 
