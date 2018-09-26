@@ -86,7 +86,7 @@
 		pass();
 	});
 
-	suite.addTest({name: 'push 100000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
+	suite.addTest({name: 'push 100,000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
 		let mutationIterations = 100000,
 			o = {
 				name: 'Anna Guller',
@@ -117,18 +117,12 @@
 
 		//	add listeners/callbacks
 		po.observe(changes => {
-			if (!changes.length) {
-				throw new Error('expected to have at least one change in the list');
-			} else {
-				changesCountA += changes.length;
-			}
+			if (!changes.length) throw new Error('expected to have at least one change in the list');
+			else changesCountA += changes.length;
 		});
 		po.observe(changes => {
-			if (!changes) {
-				throw new Error('expected changes list to be defined');
-			} else {
-				changesCountB += changes.length;
-			}
+			if (!changes) throw new Error('expected changes list to be defined');
+			else changesCountB += changes.length;
 		});
 
 		//	push objects
@@ -164,7 +158,7 @@
 		console.info('performing ' + mutationIterations + ' object pops...');
 		started = performance.now();
 		for (let i = 0; i < mutationIterations; i++) {
-			po.users.pop(o);
+			po.users.pop();
 		}
 		ended = performance.now();
 		if (po.users.length !== 0) fail('expected to have total of 0 elements in pushed array, but got ' + po.length);

@@ -10,6 +10,8 @@ Generally speaking, the framework implies some overhead on the following, when o
 - reading from observed arrays: detection of read property is performed in order to supply array mutation methods like `shift`, `push`, `splice`, `reverse` etc
 - mutation of __values__ that are objects / arrays: additional overhead comes from attaching / detaching those to the observed graph, proxying newcomers, revoking removed ones, creating internal system observers
 
+Pay attention: __each and every__ object / array (including all the nested ones) added to the observed tree processed by means of cloning and turning into observed one; in the same way, __each and every__ object / array removed from the observed tree is being 'restored' (proxy revoked and cloned object returned, but not to the actual original object).
+
 Tests described below are covering most of those flows.
 
 <span style="color:green">__In overall it looks to me, that `object-observer`'s impact on the application is negligible from both, CPU and memory aspects.__
@@ -23,7 +25,6 @@ All of the benchmarks below were performed on EliteBook 8570w:
 ### Tests
 
 ###### __CASE 1__ - creating observables, mutating nested primitive properties of an observable
-
 
 1. __Creating__ in loop 100,000 observable from the object below, having few primitive properties, one non-observable nested object level 1 (Date), one nested object level 1, one nested object level 2 and one nested array level 1:
 ```javascript
@@ -79,7 +80,7 @@ for (let i = 0; i < mutationIterations; i++) {
 }
 ```
 
-All of those mutations are being watched by the listeners mentioned above and counters verified to match an expectation.
+All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
 Below are results of those tests, where 'total' is time for the whole loop, 'asot' stands for an average single operation time.
 All times are given in 'ms', meaning that cost of a single operation on Chrome is usually half to few nanoseconds while climbing to a dozen/s of nanoseconds on Edge:
@@ -152,6 +153,116 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
     <tr>
         <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
+        <td>--</td>
+        <td>--</td>
+        <td>--</td>
+    </tr>
+</table>
+
+###### __CASE 2__ - filling an array by pushing objects, mutating nested arrays of those, popping the array back to empty
+
+1. __Pushing__ in loop 100,000 objects as below in an array nested 1 level:
+```javascript
+let person = {
+    name: 'Anna Guller',
+    accountCreated: new Date(),
+    age: 20,
+    address: {
+        city: 'Dreamland',
+        street: {
+            name: 'Hope',
+            apt: 123
+        }
+    },
+    orders: []
+},
+dataset = {
+    users: []
+},
+observable = Observable.from(dataset);      //  the observable we'll be working with
+
+//  filling the array of users
+for (let i = 0; i < mutationIterations; i++) {
+    observable.users.push(person);
+}
+```
+
+2. __Mutating__ nested `orders` array from an empty to the below one:
+```javascript
+let orders = [
+    {id: 1, description: 'some description', sum: 1234, date: new Date()},
+    {id: 2, description: 'some description', sum: 1234, date: new Date()},
+    {id: 3, description: 'some description', sum: 1234, date: new Date()}
+];
+
+for (let i = 0; i < mutationIterations; i++) {
+    observable.users[i].orders = orders;
+}
+```
+
+3. Finally, the base `users` array is being emptied by popping it to the end:
+```javascript
+for (let i = 0; i < mutationIterations; i++) {
+    observable.users.pop();
+}
+```
+
+All of those mutations are being watched by the same 2 listeners from CASE 1 and the counters are being verified to match the expectations.
+
+<table>
+    <tr>
+        <th style="width:70px;white-space:nowrap"></th>
+        <th>initial fill with push</th>
+        <th>mutate nested array</th>
+        <th>popping back to the end</th>
+    </tr>
+    <tr>
+        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+        <td>
+            asot: 0.0046<br>
+            total: 460.7
+        </td>
+        <td>
+            asot: 0.006<br>
+            total: 590.5
+        </td>
+        <td>
+            asot: 0.0035<br>
+            total: 346.4
+        </td>
+    </tr>
+    <tr>
+        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
+        <td>
+            asot: 0.01675<br>
+            total: 1675
+        </td>
+        <td>
+            asot: 0.0225<br>
+            total: 2248
+        </td>
+        <td>
+            asot: 0.012<br>
+            total: 1213
+        </td>
+    </tr>
+    <tr>
+        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td>
+            asot: 0.034<br>
+            total: 3425
+        </td>
+        <td>
+            asot: 0.038<br>
+            total: 3802
+        </td>
+        <td>
+            asot: 0.032<br>
+            total: 3246
+        </td>
+    </tr>
+    <tr>
+        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
