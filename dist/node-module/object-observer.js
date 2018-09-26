@@ -58,6 +58,16 @@ const
 			}
 		}
 	},
+	getAncestorInfo = function(self) {
+		let tmp = [], result, l1 = 0, l2 = 0;
+		while (self.parent) {
+			tmp[l1++] = self.ownKey;
+			self = self.parent;
+		}
+		result = new Array(l1);
+		while (l1--) result[l2++] = tmp[l1];
+		return {observers: self.observers, path: result};
+	},
 	observableDefinition = {
 		revoke: {
 			value: function() {
@@ -133,23 +143,6 @@ class ArrayObserver {
 		return target;
 	}
 
-	getPath() {
-		let tmp = [], result, l1 = 0, l2 = 0, pointer = this;
-		while (pointer.parent) {
-			tmp[l1++] = pointer.ownKey;
-			pointer = pointer.parent;
-		}
-		result = new Array(l1);
-		while (l1--) result[l2++] = tmp[l1];
-		return result;
-	}
-
-	getObservers() {
-		let pointer = this;
-		while (pointer.parent) pointer = pointer.parent;
-		return pointer.observers;
-	}
-
 	get(target, key) {
 		const proxiedArrayMethods = {
 			pop: function proxiedPop(target, observed) {
@@ -164,22 +157,18 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				let observers = observed.getObservers();
-				if (observers.length) {
-					let path = observed.getPath();
-					path.push(poppedIndex);
-					callObservers(observers, [{type: DELETE, path: path, oldValue: popResult}]);
+				let ad = getAncestorInfo(observed);
+				if (ad.observers.length) {
+					ad.path.push(poppedIndex);
+					callObservers(ad.observers, [{type: DELETE, path: ad.path, oldValue: popResult}]);
 				}
 				return popResult;
 			},
 			push: function proxiedPush(target, observed) {
 				let i, l = arguments.length - 2, item, pushContent = new Array(l), pushResult, changes,
-					initialLength, basePath, observers = observed.getObservers();
+					initialLength, ad = getAncestorInfo(observed);
 				initialLength = target.length;
 
-				if (observers.length) {
-					basePath = observed.getPath();
-				}
 				for (i = 0; i < l; i++) {
 					item = arguments[i + 2];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
@@ -192,19 +181,19 @@ class ArrayObserver {
 				pushResult = Reflect.apply(target.push, target, pushContent);
 
 				//	publish changes
-				if (observers.length) {
+				if (ad.observers.length) {
 					changes = [];
 					for (i = initialLength, l = target.length; i < l; i++) {
-						let path = basePath.slice(0);
+						let path = ad.path.slice(0);
 						path.push(i);
 						changes[i - initialLength] = {type: INSERT, path: path, value: target[i]};
 					}
-					callObservers(observers, changes);
+					callObservers(ad.observers, changes);
 				}
 				return pushResult;
 			},
 			shift: function proxiedShift(target, observed) {
-				let shiftResult, i, l, item, observers, path, changes;
+				let shiftResult, i, l, item, ad, changes;
 
 				shiftResult = target.shift();
 				if (shiftResult && typeof shiftResult === 'object') {
@@ -226,17 +215,16 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				observers = observed.getObservers();
-				if (observers.length) {
-					path = observed.getPath();
-					path.push(0);
-					changes = [{type: DELETE, path: path, oldValue: shiftResult}];
-					callObservers(observers, changes);
+				ad = getAncestorInfo(observed);
+				if (ad.observers.length) {
+					ad.path.push(0);
+					changes = [{type: DELETE, path: ad.path, oldValue: shiftResult}];
+					callObservers(ad.observers, changes);
 				}
 				return shiftResult;
 			},
 			unshift: function proxiedUnshift(target, observed) {
-				let observers = observed.getObservers(), unshiftContent, unshiftResult, changes;
+				let unshiftContent, unshiftResult, ad, changes;
 				unshiftContent = Array.from(arguments);
 				unshiftContent.splice(0, 2);
 				unshiftContent.forEach((item, index) => {
@@ -258,20 +246,21 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				if (observers.length) {
-					let basePath = observed.getPath(), l = unshiftContent.length, path;
+				ad = getAncestorInfo(observed);
+				if (ad.observers.length) {
+					let l = unshiftContent.length, path;
 					changes = new Array(l);
 					for (let i = 0; i < l; i++) {
-						path = basePath.slice(0);
+						path = ad.path.slice(0);
 						path.push(i);
 						changes[i] = {type: INSERT, path: path, value: target[i]};
 					}
-					callObservers(observers, changes);
+					callObservers(ad.observers, changes);
 				}
 				return unshiftResult;
 			},
 			reverse: function proxiedReverse(target, observed) {
-				let i, l, item, observers, changes;
+				let i, l, item, ad, changes;
 				target.reverse();
 				for (i = 0, l = target.length; i < l; i++) {
 					item = target[i];
@@ -284,15 +273,15 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				observers = observed.getObservers();
-				if (observers.length) {
-					changes = [{type: REVERSE, path: observed.getPath()}];
-					callObservers(observers, changes);
+				ad = getAncestorInfo(observed);
+				if (ad.observers.length) {
+					changes = [{type: REVERSE, path: ad.path}];
+					callObservers(ad.observers, changes);
 				}
 				return observed.proxy;
 			},
 			sort: function proxiedSort(target, observed, comparator) {
-				let i, l, item, observers, changes;
+				let i, l, item, ad, changes;
 				target.sort(comparator);
 				for (i = 0, l = target.length; i < l; i++) {
 					item = target[i];
@@ -305,16 +294,16 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				observers = observed.getObservers();
-				if (observers.length) {
-					changes = [{type: SHUFFLE, path: observed.getPath()}];
-					callObservers(observers, changes);
+				ad = getAncestorInfo(observed);
+				if (ad.observers.length) {
+					changes = [{type: SHUFFLE, path: ad.path}];
+					callObservers(ad.observers, changes);
 				}
 				return observed.proxy;
 			},
 			fill: function proxiedFill(target, observed) {
-				let observers = observed.getObservers(), normArgs, argLen,
-					start, end, changes = [], prev, tarLen = target.length, basePath, path;
+				let ad = getAncestorInfo(observed), normArgs, argLen,
+					start, end, changes = [], prev, tarLen = target.length, path;
 				normArgs = Array.from(arguments);
 				normArgs.splice(0, 2);
 				argLen = normArgs.length;
@@ -323,9 +312,6 @@ class ArrayObserver {
 				prev = target.slice(0);
 				Reflect.apply(target.fill, target, normArgs);
 
-				if (observers.length) {
-					basePath = observed.getPath();
-				}
 				for (let i = start, item, tmpTarget; i < end; i++) {
 					item = target[i];
 					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
@@ -342,24 +328,24 @@ class ArrayObserver {
 							}
 						}
 
-						path = basePath.slice(0);
+						path = ad.path.slice(0);
 						path.push(i);
 						changes.push({type: UPDATE, path: path, value: target[i], oldValue: tmpTarget});
 					} else {
-						path = basePath.slice(0);
+						path = ad.path.slice(0);
 						path.push(i);
 						changes.push({type: INSERT, path: path, value: target[i]});
 					}
 				}
 
 				//	publish changes
-				if (observers.length) {
-					callObservers(observers, changes);
+				if (ad.observers.length) {
+					callObservers(ad.observers, changes);
 				}
 				return observed.proxy;
 			},
 			splice: function proxiedSplice(target, observed) {
-				let observers = observed.getObservers(),
+				let ad = getAncestorInfo(observed),
 					spliceContent, spliceResult, changes = [], tmpObserved,
 					startIndex, removed, inserted, splLen, tarLen = target.length;
 
@@ -408,10 +394,10 @@ class ArrayObserver {
 				}
 
 				//	publish changes
-				if (observers.length) {
-					let index, basePath = observed.getPath(), path;
+				if (ad.observers.length) {
+					let index, path;
 					for (index = 0; index < removed; index++) {
-						path = basePath.slice(0);
+						path = ad.path.slice(0);
 						path.push(startIndex + index);
 						if (index < inserted) {
 							changes.push({
@@ -425,11 +411,11 @@ class ArrayObserver {
 						}
 					}
 					for (; index < inserted; index++) {
-						path = basePath.slice(0);
+						path = ad.path.slice(0);
 						path.push(startIndex + index);
 						changes.push({type: INSERT, path: path, value: target[startIndex + index]});
 					}
-					callObservers(observers, changes);
+					callObservers(ad.observers, changes);
 				}
 				return spliceResult;
 			}
@@ -442,7 +428,7 @@ class ArrayObserver {
 	}
 
 	set(target, key, value) {
-		let oldValue = target[key], observers, path, changes;
+		let oldValue = target[key], ad, changes;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
 			target[key] = Array.isArray(value)
@@ -460,20 +446,19 @@ class ArrayObserver {
 		}
 
 		//	publish changes
-		observers = this.getObservers();
-		if (observers.length) {
-			path = this.getPath();
-			path.push(key);
+		ad = getAncestorInfo(this);
+		if (ad.observers.length) {
+			ad.path.push(key);
 			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: path, value: value}]
-				: [{type: UPDATE, path: path, value: value, oldValue: oldValue}];
-			callObservers(observers, changes);
+				? [{type: INSERT, path: ad.path, value: value}]
+				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue}];
+			callObservers(ad.observers, changes);
 		}
 		return true;
 	}
 
 	deleteProperty(target, key) {
-		let oldValue = target[key], observers, path, changes;
+		let oldValue = target[key], ad, changes;
 
 		if (delete target[key]) {
 			if (oldValue && typeof oldValue === 'object') {
@@ -484,12 +469,11 @@ class ArrayObserver {
 			}
 
 			//	publish changes
-			observers = this.getObservers();
-			if (observers.length) {
-				path = this.getPath();
-				path.push(key);
-				changes = [{type: DELETE, path: path, oldValue: oldValue}];
-				callObservers(observers, changes);
+			ad = getAncestorInfo(this);
+			if (ad.observers.length) {
+				ad.path.push(key);
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue}];
+				callObservers(ad.observers, changes);
 			}
 			return true;
 		} else {
@@ -535,25 +519,8 @@ class ObjectObserver {
 		return target;
 	}
 
-	getPath() {
-		let tmp = [], result, l1 = 0, l2 = 0, pointer = this;
-		while (pointer.parent) {
-			tmp[l1++] = pointer.ownKey;
-			pointer = pointer.parent;
-		}
-		result = new Array(l1);
-		while (l1--) result[l2++] = tmp[l1];
-		return result;
-	}
-
-	getObservers() {
-		let pointer = this;
-		while (pointer.parent) pointer = pointer.parent;
-		return pointer.observers;
-	}
-
 	set(target, key, value) {
-		let oldValue = target[key], observers, path, changes;
+		let oldValue = target[key], ad, changes;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
 			target[key] = Array.isArray(value)
@@ -571,20 +538,19 @@ class ObjectObserver {
 		}
 
 		//	publish changes
-		observers = this.getObservers();
-		if (observers.length) {
-			path = this.getPath();
-			path.push(key);
+		ad = getAncestorInfo(this);
+		if (ad.observers.length) {
+			ad.path.push(key);
 			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: path, value: value}]
-				: [{type: UPDATE, path: path, value: value, oldValue: oldValue}];
-			callObservers(observers, changes);
+				? [{type: INSERT, path: ad.path, value: value}]
+				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue}];
+			callObservers(ad.observers, changes);
 		}
 		return true;
 	}
 
 	deleteProperty(target, key) {
-		let oldValue = target[key], observers, path, changes;
+		let oldValue = target[key], ad, changes;
 
 		if (delete target[key]) {
 			if (oldValue && typeof oldValue === 'object') {
@@ -595,12 +561,11 @@ class ObjectObserver {
 			}
 
 			//	publish changes
-			observers = this.getObservers();
-			if (observers.length) {
-				path = this.getPath();
-				path.push(key);
-				changes = [{type: DELETE, path: path, oldValue: oldValue}];
-				callObservers(observers, changes);
+			ad = getAncestorInfo(this);
+			if (ad.observers.length) {
+				ad.path.push(key);
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue}];
+				callObservers(ad.observers, changes);
 			}
 			return true;
 		} else {
