@@ -19,6 +19,44 @@ const
 		Promise: true,
 		RegExp: true
 	},
+	observableDefinition = {
+		revoke: {
+			value: function() {
+				this[sysObsKey].revoke();
+			}
+		},
+		observe: {
+			value: function(observer) {
+				let systemObserver = this[sysObsKey],
+					observers = systemObserver.observers;
+				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
+				if (typeof observer !== 'function') { throw new Error('observer parameter MUST be a function'); }
+
+				if (observers.indexOf(observer) < 0) {
+					observers.push(observer);
+				} else {
+					console.info('observer may be bound to an observable only once');
+				}
+			}
+		},
+		unobserve: {
+			value: function() {
+				let systemObserver = this[sysObsKey],
+					observers = systemObserver.observers,
+					l, idx;
+				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
+				l = arguments.length;
+				if (l) {
+					while (l--) {
+						idx = observers.indexOf(arguments[l]);
+						if (idx >= 0) observers.splice(idx, 1);
+					}
+				} else {
+					observers.splice(0);
+				}
+			}
+		}
+	},
 	prepareArray = function(origin, destination, observer) {
 		let l = origin.length, item;
 		destination[sysObsKey] = observer;
@@ -67,44 +105,6 @@ const
 		result = new Array(l1);
 		while (l1--) result[l2++] = tmp[l1];
 		return {observers: self.observers, path: result};
-	},
-	observableDefinition = {
-		revoke: {
-			value: function() {
-				this[sysObsKey].revoke();
-			}
-		},
-		observe: {
-			value: function(observer) {
-				let systemObserver = this[sysObsKey],
-					observers = systemObserver.observers;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
-				if (typeof observer !== 'function') { throw new Error('observer parameter MUST be a function'); }
-
-				if (observers.indexOf(observer) < 0) {
-					observers.push(observer);
-				} else {
-					console.info('observer may be bound to an observable only once');
-				}
-			}
-		},
-		unobserve: {
-			value: function() {
-				let systemObserver = this[sysObsKey],
-					observers = systemObserver.observers,
-					l, idx;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
-				l = arguments.length;
-				if (l) {
-					while (l--) {
-						idx = observers.indexOf(arguments[l]);
-						if (idx >= 0) observers.splice(idx, 1);
-					}
-				} else {
-					observers.splice(0);
-				}
-			}
-		}
 	};
 
 class ArrayObserver {
