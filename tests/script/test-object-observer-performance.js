@@ -32,22 +32,16 @@
 			po = Observable.from(o);
 		}
 		ended = performance.now();
-		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / creationIterations) + 'ms');
 
 		//	add listeners/callbacks
 		po.observe(changes => {
-			if (!changes.length) {
-				throw new Error('expected to have at least one change in the list');
-			} else {
-				changesCountA += changes.length;
-			}
+			if (!changes.length) throw new Error('expected to have at least one change in the list');
+			else changesCountA += changes.length;
 		});
 		po.observe(changes => {
-			if (!changes) {
-				throw new Error('expected changes list to be defined');
-			} else {
-				changesCountB += changes.length;
-			}
+			if (!changes) throw new Error('expected changes list to be defined');
+			else changesCountB += changes.length;
 		});
 
 		//	mutation of existing property

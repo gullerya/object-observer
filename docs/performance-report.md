@@ -22,9 +22,10 @@ All of the benchmarks below were performed on EliteBook 8570w:
 
 ### Tests
 
-###### __TEST 1__ - creating 10000 observables
+###### __CASE 1__ - creating 10000 observables, mutating nested primitive properties
 
-Creating in loop 10000 observable from the object below, having few primitive properties, one non-observable nested object level 1 (Date), one nested object level 1, one nested object level 2 and one nested array level 1:
+
+1. __Creating__ in loop 10000 observable from the object below, having few primitive properties, one non-observable nested object level 1 (Date), one nested object level 1, one nested object level 2 and one nested array level 1:
 ```javascript
 let person = {
     name: 'Anna Guller',
@@ -41,6 +42,40 @@ let person = {
 };
 ```
 
+2. Last observable created in previous step is used to __mutate__ nested primitive property, while 2 observers added to watch for the changes, as following:
+```javascript
+//	add listeners/callbacks
+observable.observe(changes => {
+	if (!changes.length) throw new Error('expected to have at least one change in the list');
+	else changesCountA += changes.length;
+});
+observable.observe(changes => {
+	if (!changes) throw new Error('expected changes list to be defined');
+	else changesCountB += changes.length;
+});
+
+//  deep mutation performed in a loop of 1,000,000
+for (let i = 0; i < mutationIterations; i++) {
+	observable.address.street.apt = i;
+}
+```
+
+3. Then the same setup is used to __add__ 1,000,000 nested primitive properties, as following:
+```javascript
+for (let i = 0; i < mutationIterations; i++) {
+	observable.address.street[i] = i;
+}
+```
+
+4. Finally, those newly added properties are also being __deleted__, as following:
+```javascript
+for (let i = 0; i < mutationIterations; i++) {
+	delete observable.address.street[i];
+}
+```
+
+All of those mutations are being watched by the listeners mentioned above and counters verified to match an expectation.
+Here the usual results of those tests (total is time for the whole loop, 'asot' stands for an average single operation time):
 <table>
     <tr>
         <th></th>
