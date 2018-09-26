@@ -88,7 +88,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
 <table>
     <tr>
         <th style="width:75px;white-space:nowrap"></th>
-        <th>create 100,000 observable</th>
+        <th>create 100,000 observables</th>
         <th>mutate primitive; deep L3; 1M times</th>
         <th>add primitive; deep L3; 1M times</th>
         <th>delete primitive; deep L3; 1M times</th>
@@ -213,7 +213,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     <tr>
         <th style="width:75px;white-space:nowrap"></th>
         <th>push 100,000 objects</th>
-        <th>replace nested array (100,000 times)</th>
+        <th>replace nested array 100,000 times</th>
         <th>pop 100,000 objects</th>
     </tr>
     <tr style="font-family:monospace">
