@@ -5,11 +5,13 @@ let suite = Utils.JustTest.createSuite({name: 'Testing Observable Load'});
 suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
 	let mutationIterations = 1000000,
 		o = {
-			name: 'name',
-			age: 7,
+			name: 'Anna Guller',
+			accountCreated: new Date(),
+			age: 20,
 			address: {
+				city: 'Dreamland',
 				street: {
-					name: 'street name',
+					name: 'Hope',
 					apt: 123
 				}
 			},
@@ -87,19 +89,22 @@ suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations
 suite.addTest({name: 'push 100000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
 	let mutationIterations = 100000,
 		o = {
-			name: 'name',
-			age: 7,
+			name: 'Anna Guller',
+			accountCreated: new Date(),
+			age: 20,
 			address: {
+				city: 'Dreamland',
 				street: {
-					name: 'street name',
+					name: 'Hope',
 					apt: 123
 				}
-			}
+			},
+			orders: []
 		},
 		orders = [
-			{id: 1, description: 'some description', sum: 1234},
-			{id: 2, description: 'some description', sum: 1234},
-			{id: 3, description: 'some description', sum: 1234}
+			{id: 1, description: 'some description', sum: 1234, date: new Date()},
+			{id: 2, description: 'some description', sum: 1234, date: new Date()},
+			{id: 3, description: 'some description', sum: 1234, date: new Date()}
 		],
 		po,
 		changesCountA,
