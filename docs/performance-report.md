@@ -87,14 +87,14 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
 
 <table>
     <tr>
-        <th style="width:70px;white-space:nowrap"></th>
+        <th style="width:75px;white-space:nowrap"></th>
         <th>create observable</th>
         <th>mutate primitive deep property</th>
         <th>add primitive deep property</th>
         <th>delete primitive deep property</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
         <td>
             one: 0.00495<br>
             all: 459
@@ -113,7 +113,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
         <td>
             one: 0.0148<br>
             all: 1482
@@ -132,7 +132,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.025<br>
             all: 2530
@@ -151,7 +151,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
@@ -211,13 +211,13 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
 
 <table>
     <tr>
-        <th style="width:70px;white-space:nowrap"></th>
+        <th style="width:75px;white-space:nowrap"></th>
         <th>initial fill with push</th>
         <th>mutate nested array</th>
         <th>popping back to the end</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
         <td>
             one: 0.0044<br>
             all: 442.4
@@ -232,7 +232,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
         <td>
             one: 0.016<br>
             all: 1590
@@ -247,7 +247,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.034<br>
             all: 3425
@@ -262,7 +262,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
