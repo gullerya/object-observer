@@ -3,8 +3,8 @@
 
 	let suite = Utils.JustTest.createSuite({name: 'Testing Observable Load'});
 
-	suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
-		let creationIterations = 10000,
+	suite.addTest({name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
+		let creationIterations = 100000,
 			mutationIterations = 1000000,
 			o = {
 				name: 'Anna Guller',
