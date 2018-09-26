@@ -94,7 +94,7 @@ let person = { name: 'Aya', age: '1' },
 observablePerson = Observable.from(person);
 ```
 
-Clone is deep, having cloned all of the object's sub-graph. Cloning performed by means of `Object.getOwnPropertyNames`, therefore only __own__ properties (and their descendants in case of objects/arrays) are going to be observed.
+Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from the library.
     
 ##### `Observable` instance properties
 
