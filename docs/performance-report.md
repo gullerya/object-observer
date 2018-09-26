@@ -219,31 +219,31 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     <tr>
         <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
         <td>
-            asot: 0.0046<br>
-            total: 460.7
+            asot: 0.0044<br>
+            total: 442.4
         </td>
         <td>
-            asot: 0.006<br>
-            total: 590.5
+            asot: 0.0056<br>
+            total: 560
         </td>
         <td>
-            asot: 0.0035<br>
-            total: 346.4
+            asot: 0.0033<br>
+            total: 326.6
         </td>
     </tr>
     <tr>
         <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
         <td>
-            asot: 0.01675<br>
-            total: 1675
+            asot: 0.016<br>
+            total: 1590
         </td>
         <td>
-            asot: 0.0225<br>
-            total: 2248
+            asot: 0.02<br>
+            total: 2129
         </td>
         <td>
-            asot: 0.012<br>
-            total: 1213
+            asot: 0.011<br>
+            total: 1129
         </td>
     </tr>
     <tr>
