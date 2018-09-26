@@ -25,6 +25,10 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+- __1.1.1__
+  - even more aggressive performance tightening
+  - performance tests added to the test suites
+
 - __1.1.0__
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
   - further performance improvements
@@ -32,9 +36,6 @@ Main aspects:
 - __1.0.6__
   - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
   - Minor fixes on `1.0.4` and `1.0.5`
-
-- __1.0.3__
-  - Fixed [Issue no. 9](https://github.com/gullerya/object-observer/issues/9) - incorrect tail array items indexing/pathing after performing `splice` which inserts new items in the middle of array
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 

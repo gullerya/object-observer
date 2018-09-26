@@ -1,5 +1,9 @@
 # Changelog
 
+- __1.1.1__
+  - even more aggressive performance tightening
+  - performance tests added to the test suites
+
 - __1.1.0__
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
   - further performance improvements
