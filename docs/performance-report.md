@@ -12,7 +12,7 @@ Generally speaking, the framework implies some overhead on the following, when o
 
 Tests described below are covering most of those flows.
 
-<div style="color:green;font-weight:bold">In overall it looks to me, that `object-observer`'s impact on the application is negligible from both, CPU and memory aspects.</div>
+<span style="color:green">__In overall it looks to me, that `object-observer`'s impact on the application is negligible from both, CPU and memory aspects.__</span>
 
 ### Hardware
 All of the benchmarks below were performed on EliteBook 8570w:
