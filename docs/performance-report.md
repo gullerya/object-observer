@@ -151,7 +151,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub></sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
@@ -262,7 +262,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub></sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
