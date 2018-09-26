@@ -82,7 +82,7 @@ for (let i = 0; i < mutationIterations; i++) {
 
 All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
-Below are results of those tests, where 'total' is time for the whole loop, 'asot' stands for an average single operation time.
+Below are results of those tests, where 'one' is the time of a single operation in average achieved with division of time for 'all' on the number of iterations.
 All times are given in 'ms', meaning that cost of a single operation on Chrome is usually half to few nanoseconds while climbing to a dozen/s of nanoseconds on Edge:
 
 <table>
@@ -93,65 +93,65 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         <th>add primitive deep property</th>
         <th>delete primitive deep property</th>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
         <td>
-            asot: 0.00495<br>
-            total: 459
+            one: 0.00495<br>
+            all: 459
         </td>
         <td>
-            asot: 0.00048<br>
-            total: 482.4
+            one: 0.00048<br>
+            all: 482.4
         </td>
         <td>
-            asot: 0.000922<br>
-            total: 922.4
+            one: 0.000922<br>
+            all: 922.4
         </td>
         <td>
-            asot: 0.00096<br>
-            total: 963.6
-        </td>
-    </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
-        <td>
-            asot: 0.0148<br>
-            total: 1482
-        </td>
-        <td>
-            asot: 0.0008<br>
-            total: 799
-        </td>
-        <td>
-            asot: 0.00148<br>
-            total: 1475
-        </td>
-        <td>
-            asot: 0.0017<br>
-            total: 1708
+            one: 0.00096<br>
+            all: 963.6
         </td>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
         <td>
-            asot: 0.025<br>
-            total: 2530
+            one: 0.0148<br>
+            all: 1482
         </td>
         <td>
-            asot: 0.01<br>
-            total: 10249
+            one: 0.0008<br>
+            all: 799
         </td>
         <td>
-            asot: 0.011<br>
-            total: 11048
+            one: 0.00148<br>
+            all: 1475
         </td>
         <td>
-            asot: 0.01<br>
-            total: 10876
+            one: 0.0017<br>
+            all: 1708
         </td>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td>
+            one: 0.025<br>
+            all: 2530
+        </td>
+        <td>
+            one: 0.01<br>
+            all: 10249
+        </td>
+        <td>
+            one: 0.011<br>
+            all: 11048
+        </td>
+        <td>
+            one: 0.01<br>
+            all: 10876
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
@@ -216,53 +216,53 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         <th>mutate nested array</th>
         <th>popping back to the end</th>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
         <td>
-            asot: 0.0044<br>
-            total: 442.4
+            one: 0.0044<br>
+            all: 442.4
         </td>
         <td>
-            asot: 0.0056<br>
-            total: 560
+            one: 0.0056<br>
+            all: 560
         </td>
         <td>
-            asot: 0.0033<br>
-            total: 326.6
-        </td>
-    </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
-        <td>
-            asot: 0.016<br>
-            total: 1590
-        </td>
-        <td>
-            asot: 0.02<br>
-            total: 2129
-        </td>
-        <td>
-            asot: 0.011<br>
-            total: 1129
+            one: 0.0033<br>
+            all: 326.6
         </td>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
         <td>
-            asot: 0.034<br>
-            total: 3425
+            one: 0.016<br>
+            all: 1590
         </td>
         <td>
-            asot: 0.038<br>
-            total: 3802
+            one: 0.02<br>
+            all: 2129
         </td>
         <td>
-            asot: 0.032<br>
-            total: 3246
+            one: 0.011<br>
+            all: 1129
         </td>
     </tr>
-    <tr>
-        <td style="width:70px;white-space:nowrap"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td>
+            one: 0.034<br>
+            all: 3425
+        </td>
+        <td>
+            one: 0.038<br>
+            all: 3802
+        </td>
+        <td>
+            one: 0.032<br>
+            all: 3246
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:70px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
