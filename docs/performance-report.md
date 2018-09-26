@@ -51,31 +51,31 @@ for (let i = 0; i < creationIterations; i++) {
 ```javascript
 //	add listeners/callbacks
 observable.observe(changes => {
-	if (!changes.length) throw new Error('expected to have at least one change in the list');
-	else changesCountA += changes.length;
+    if (!changes.length) throw new Error('expected to have at least one change in the list');
+    else changesCountA += changes.length;
 });
 observable.observe(changes => {
-	if (!changes) throw new Error('expected changes list to be defined');
-	else changesCountB += changes.length;
+    if (!changes) throw new Error('expected changes list to be defined');
+    else changesCountB += changes.length;
 });
 
 //  deep mutation performed in a loop of 1,000,000
 for (let i = 0; i < mutationIterations; i++) {
-	observable.address.street.apt = i;
+    observable.address.street.apt = i;
 }
 ```
 
 3. Then the same setup is used to __add__ 1,000,000 nested primitive properties, as following:
 ```javascript
 for (let i = 0; i < mutationIterations; i++) {
-	observable.address.street[i] = i;
+    observable.address.street[i] = i;
 }
 ```
 
 4. Finally, those newly added properties are also being __deleted__, as following:
 ```javascript
 for (let i = 0; i < mutationIterations; i++) {
-	delete observable.address.street[i];
+    delete observable.address.street[i];
 }
 ```
 
