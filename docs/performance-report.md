@@ -88,7 +88,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
 <table>
     <tr>
         <th style="width:75px;white-space:nowrap"></th>
-        <th>create 100,000 observables</th>
+        <th>create observable<br>100,000 times</th>
         <th>mutate primitive<br>deep L3; 1M times</th>
         <th>add primitive<br>deep L3; 1M times</th>
         <th>delete primitive<br>deep L3; 1M times</th>
