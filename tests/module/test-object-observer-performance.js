@@ -1,9 +1,10 @@
-﻿import Obsrvbl from '../../dist/module/object-observer.js';
+﻿import Observable from '../../dist/module/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable Load'});
 
-suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
-	let mutationIterations = 1000000,
+suite.addTest({name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
+	let creationIterations = 100000,
+		mutationIterations = 1000000,
 		o = {
 			name: 'Anna Guller',
 			accountCreated: new Date(),
@@ -24,24 +25,22 @@ suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations
 		ended;
 
 	//	creation of Observable
-	for (let i = 0; i < 10000; i++) {
-		po = Obsrvbl.from(o);
+	console.info('creating ' + creationIterations + ' observables from object...');
+	started = performance.now();
+	for (let i = 0; i < creationIterations; i++) {
+		po = Observable.from(o);
 	}
+	ended = performance.now();
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / creationIterations) + 'ms');
 
 	//	add listeners/callbacks
 	po.observe(changes => {
-		if (!changes.length) {
-			throw new Error('expected to have at least one change in the list');
-		} else {
-			changesCountA += changes.length;
-		}
+		if (!changes.length) throw new Error('expected to have at least one change in the list');
+		else changesCountA += changes.length;
 	});
 	po.observe(changes => {
-		if (!changes) {
-			throw new Error('expected changes list to be defined');
-		} else {
-			changesCountB += changes.length;
-		}
+		if (!changes) throw new Error('expected changes list to be defined');
+		else changesCountB += changes.length;
 	});
 
 	//	mutation of existing property
@@ -86,7 +85,7 @@ suite.addTest({name: 'creating 10,000 observables, 1,000,000 deep (x3) mutations
 	pass();
 });
 
-suite.addTest({name: 'push 100000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
+suite.addTest({name: 'push 100,000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
 	let mutationIterations = 100000,
 		o = {
 			name: 'Anna Guller',
@@ -113,22 +112,16 @@ suite.addTest({name: 'push 100000 observables to an array, mutate them and pop t
 		ended;
 
 	//	creation of Observable
-	po = Obsrvbl.from({users: []});
+	po = Observable.from({users: []});
 
 	//	add listeners/callbacks
 	po.observe(changes => {
-		if (!changes.length) {
-			throw new Error('expected to have at least one change in the list');
-		} else {
-			changesCountA += changes.length;
-		}
+		if (!changes.length) throw new Error('expected to have at least one change in the list');
+		else changesCountA += changes.length;
 	});
 	po.observe(changes => {
-		if (!changes) {
-			throw new Error('expected changes list to be defined');
-		} else {
-			changesCountB += changes.length;
-		}
+		if (!changes) throw new Error('expected changes list to be defined');
+		else changesCountB += changes.length;
 	});
 
 	//	push objects
@@ -164,7 +157,7 @@ suite.addTest({name: 'push 100000 observables to an array, mutate them and pop t
 	console.info('performing ' + mutationIterations + ' object pops...');
 	started = performance.now();
 	for (let i = 0; i < mutationIterations; i++) {
-		po.users.pop(o);
+		po.users.pop();
 	}
 	ended = performance.now();
 	if (po.users.length !== 0) fail('expected to have total of 0 elements in pushed array, but got ' + po.length);

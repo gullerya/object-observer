@@ -24,7 +24,7 @@ All of the benchmarks below were performed on EliteBook 8570w:
 
 ### Tests
 
-###### __CASE 1__ - creating observables, mutating nested primitive properties of an observable
+##### __CASE 1__ - creating observables, mutating nested primitive properties of an observable
 
 1. __Creating__ in loop 100,000 observable from the object below, having few primitive properties, one non-observable nested object level 1 (Date), one nested object level 1, one nested object level 2 and one nested array level 1:
 ```javascript
@@ -159,7 +159,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
     </tr>
 </table>
 
-###### __CASE 2__ - filling an array by pushing objects, mutating nested arrays of those, popping the array back to empty
+##### __CASE 2__ - filling an array by pushing objects, mutating nested arrays of those, popping the array back to empty
 
 1. __Pushing__ in loop 100,000 objects as below in an array nested 1 level:
 ```javascript
