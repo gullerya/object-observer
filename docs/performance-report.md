@@ -112,7 +112,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr>
-        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
+        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62</sub></td>
         <td>
             asot: 0.0148<br>
             total: 1482
@@ -131,7 +131,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr>
-        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>69</sub></td>
+        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
         <td>
             asot: 0.025<br>
             total: 2530
@@ -150,7 +150,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr>
-        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11.4</sub></td>
+        <td><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub>8.11</sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
