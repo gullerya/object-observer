@@ -2,11 +2,16 @@
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable APIs'});
 
-suite.addTest({name: 'test A'}, function(pass, fail) {
-	if (typeof Observable !== 'function') fail('expected to find Observable c~tor on global scope');
+suite.addTest({name: 'ensure Observable object is frozen with only defined API'}, function(pass, fail) {
+	if (typeof Observable !== 'function') fail('expected to find Observable function imported');
 	if (typeof Observable.from !== 'function') fail('expected to find "from" function on Observable');
-
-	pass();
+	try {
+		Observable.some = 'prop';
+		if (Observable.some) fail('expected Observable to be frozen');
+		pass();
+	} catch (e) {
+		pass();
+	}
 });
 
 suite.addTest({name: 'negative tests - invalid parameters'}, function(pass, fail) {
@@ -133,6 +138,15 @@ suite.addTest({name: 'test observable APIs - nested objects/arrays have no obser
 	if (typeof aa[0].revoke === 'function' || typeof aa[0].observe === 'function' || typeof aa[0].unobserve === 'function') fail('expected to not see any APIs on the nested array of observable array');
 
 	pass();
+});
+
+suite.addTest({name: 'test observable APIs - Observable can not be used via constructor'}, function(pass, fail) {
+	try {
+		let o = new Observable();
+		fail('should not get to this point');
+	} catch (e) {
+		pass();
+	}
 });
 
 suite.run();

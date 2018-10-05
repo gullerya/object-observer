@@ -575,6 +575,10 @@ class ObjectObserver {
 }
 
 class Observable {
+	constructor() {
+		throw new Error('Observable MAY NOT be created via constructor, see "Observable.from" API');
+	}
+
 	static from(target) {
 		if (target && typeof target === 'object' && !nonObservables.hasOwnProperty(target.constructor.name) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
 			let observed = Array.isArray(target)
