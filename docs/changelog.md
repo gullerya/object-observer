@@ -1,5 +1,9 @@
 # Changelog
 
+- __1.1.2__
+  - hardening APIs + adding tests
+  - improving documentation
+
 - __1.1.1__
   - even more aggressive performance tightening
   - performance tests added to the test suites

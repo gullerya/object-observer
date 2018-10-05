@@ -1,4 +1,4 @@
-# `Observable`
+# `Observable` API
 
 `Observable` interface defines the APIs for the whole life cycle of object observation functionality.
 

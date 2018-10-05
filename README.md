@@ -37,10 +37,6 @@ Main aspects:
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
   - further performance improvements
 
-- __1.0.6__
-  - Performance improvements (plain objects for events, WeakMap instead of Map wherever possible, other tightens)
-  - Minor fixes on `1.0.4` and `1.0.5`
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
