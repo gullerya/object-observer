@@ -19,7 +19,7 @@ let person = { name: 'Aya', age: '1' },
 
 observablePerson = Observable.from(person);
 ```
-Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from the library.
+Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation.
 
 ### Instance methods
 
