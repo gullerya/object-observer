@@ -10,8 +10,7 @@
 
 Additionally, this API defines the `Change` object, list of which being a parameter of an observer/listener callback function.
 
-### Static methods
----
+## Static methods
 
 - __`from`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance.
 Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation.
@@ -22,8 +21,7 @@ let person = { name: 'Aya', age: '1' },
 observablePerson = Observable.from(person);
 ```
 
-### Instance methods
----
+## Instance methods
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
 Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
@@ -54,8 +52,7 @@ observablePerson.unobserve();
 observablePerson.revoke();
 ```
 
-### `Change` instance properties
----
+## `Change` instance properties
 
 - __`type`__ - one of the following: `insert`, `update`, `delete`, `shuffle` or `reverse`
 - __`path`__ - path to the changed property represented as an __Array__ of nodes (see examples below)
