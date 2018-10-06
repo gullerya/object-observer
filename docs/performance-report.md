@@ -83,7 +83,7 @@ for (let i = 0; i < mutationIterations; i++) {
 All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
 Below are results of those tests, where 'one' is the time of a single operation in average achieved with division of time for 'all' on the number of iterations.
-All times are given in 'ms', meaning that cost of a single operation on Chrome is usually half to few nanoseconds while climbing to a dozen/s of nanoseconds on Edge:
+All times are given in 'ms', meaning that cost of a single operation on Chrome is usually half to few nanoseconds while climbing to a dozen/s of nanoseconds on Edge (see remark below related to Edge):
 
 <table>
     <tr>
@@ -148,6 +148,25 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         <td>
             one: 0.01 ms<br>
             all: 10876 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>17</sub></td>
+        <td>
+            one: 0.014 ms<br>
+            all: 1433.1 ms
+        </td>
+        <td>
+            one: 0.0013 ms<br>
+            all: 1286.3 ms
+        </td>
+        <td>
+            one: 0.00187 ms<br>
+            all: 1870.3 ms
+        </td>
+        <td>
+            one: 0.002 ms<br>
+            all: 1987.8 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
@@ -262,9 +281,28 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>17</sub></td>
+        <td>
+            one: 0.017 ms<br>
+            all: 1683.7 ms
+        </td>
+        <td>
+            one: 0.025 ms<br>
+            all: 2477.1 ms
+        </td>
+        <td>
+            one: 0.02 ms<br>
+            all: 2007.7 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub></sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
     </tr>
 </table>
+
+* Edge has shown huge improvement from v13 to v17.
+This happens to be mostly due to the ability to preserve the console log when DevTools are closed.
+Seems like opened DevTools of Edge have vast negative impact on the page/s performance up to and including v17.
