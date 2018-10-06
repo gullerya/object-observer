@@ -11,19 +11,23 @@
 Additionally, this API defines the `Change` object, list of which being a parameter of an observer/listener callback function.
 
 ### Static methods
+---
 
 - __`from`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance.
+Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation.
 ```javascript
 let person = { name: 'Aya', age: '1' },
     observablePerson;
 
 observablePerson = Observable.from(person);
 ```
-Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation.
 
 ### Instance methods
+---
 
 - __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
+Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
+Each change is a defined, non-null object, see `Change` definition below.
 ```javascript
 function personUIObserver(changes) {
     changes.forEach(change => {
@@ -37,8 +41,6 @@ function personUIObserver(changes) {
 observablePerson = Observable.from(person);
 observablePerson.observe(personUIObserver);
 ```
-Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
-Each change is a defined, non-null object, see `Change` definition below.
 
 - __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed.
 ```javascript
@@ -53,6 +55,7 @@ observablePerson.revoke();
 ```
 
 ### `Change` instance properties
+---
 
 - __`type`__ - one of the following: `insert`, `update`, `delete`, `shuffle` or `reverse`
 - __`path`__ - path to the changed property represented as an __Array__ of nodes (see examples below)

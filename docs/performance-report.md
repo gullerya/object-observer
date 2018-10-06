@@ -303,6 +303,6 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     </tr>
 </table>
 
-* Edge has shown huge improvement from v13 to v17.
+> Edge has shown huge improvement from v13 to v17.
 This happens to be mostly due to the ability to preserve the console log when DevTools are closed.
 Seems like opened DevTools of Edge have vast negative impact on the page/s performance up to and including v17.
