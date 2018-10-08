@@ -8,16 +8,16 @@
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
 Main aspects:
-- implemented via native __Proxy__ (revokable)
-- observation is 'deep', yielding changes from a __sub-graphs__ too
-- changes delivered in a __synchronous__ way
-- original objects are __cloned__ while turned into `Observable`s
-- arrays specifics:
+* implemented via native __Proxy__ (revokable)
+* observation is 'deep', yielding changes from a __sub-graphs__ too
+* changes delivered in a __synchronous__ way
+* original objects are __cloned__ while turned into `Observable`s
+* arrays specifics:
   - generic object-like mutations supported
   - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
-- intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-- following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
+* intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
+* following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
 #### Support matrix: ![CHROME](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png)<sub>13+</sub> | ![NODE JS](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
@@ -25,15 +25,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
-- __1.1.2__
+* __1.1.2__
   - hardening APIs + adding tests
   - improving documentation
 
-- __1.1.1__
+* __1.1.1__
   - even more aggressive performance tightening
   - performance tests added to the test suites
 
-- __1.1.0__
+* __1.1.0__
   - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
   - further performance improvements
 
@@ -43,7 +43,7 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you). See examples below.
 
-Attention: in some (observable :-)) future non-module syntax flavor will be frozen in a stable state and only defect fixes will be done there.
+> Attention: in some (observable :-)) future non-module syntax flavor will be frozen in a stable state and only defect fixes will be done there.
 Active development will focus on the ES6 module code base, which is effectively raising the support matrix of Chrome to 61, FireFox to 60 and Edge to 16.
 
 * ES6 module (__preferred__):
@@ -189,6 +189,5 @@ oCustomer.orders.sort();
 oCustomer.orders.reverse();
 //  { type: 'reverse', path: ['orders'] }
 ```
-Arrays notes:
-- Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
+> Arrays notes: Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
 In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invokation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
