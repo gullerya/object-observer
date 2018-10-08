@@ -13,9 +13,9 @@ Main aspects:
 * changes delivered in a __synchronous__ way
 * original objects are __cloned__ while turned into `Observable`s
 * arrays specifics:
-  - generic object-like mutations supported
-  - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
-  - massive mutations delivered in a single callback, usually having an array of an atomic changes
+  * generic object-like mutations supported
+  * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
+  * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 * following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
@@ -26,16 +26,16 @@ Main aspects:
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
 * __1.1.2__
-  - hardening APIs + adding tests
-  - improving documentation
+  * hardening APIs + adding tests
+  * improving documentation
 
 * __1.1.1__
-  - even more aggressive performance tightening
-  - performance tests added to the test suites
+  * even more aggressive performance tightening
+  * performance tests added to the test suites
 
 * __1.1.0__
-  - `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
-  - further performance improvements
+  * `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
+  * further performance improvements
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
