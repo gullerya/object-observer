@@ -1,5 +1,8 @@
 # Changelog
 
+* __1.1.3__
+  * added `Observable.isObservable` API
+
 - __1.1.2__
   - hardening APIs + adding tests
   - improving documentation

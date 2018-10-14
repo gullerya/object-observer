@@ -5,14 +5,14 @@
 | static methods | instance methods |
 |----------------|------------------|
 | `from`         | `observe`        |
-|                | `unobserve`      |
+| `isObservable` | `unobserve`      |
 |                | `revoke`         |
 
 Additionally, this API defines the `Change` object, list of which being a parameter of an observer/listener callback function.
 
 ## Static methods
 
-- __`from`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance.
+* __`from(input)`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance.
 Clone is deep. Cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation.
 ```javascript
 let person = { name: 'Aya', age: '1' },
@@ -21,9 +21,23 @@ let person = { name: 'Aya', age: '1' },
 observablePerson = Observable.from(person);
 ```
 
+* __`isObservable(input)`__ - receives a _non-null object_ and returns `true` if it stands for implementation of `Observable` API as it is defined here.
+Validation is done by the 'duck-typing' method.
+```javascript
+Observable.isObservable({});                    //  false
+
+Observable.isObservable(observablePerson);      //  true
+
+Observable.isObservable({
+    revoke: function() {},
+    observe: function() {},
+    unobserve: function() {}
+});                                             //  true... yes, nothing smart here
+```
+
 ## Instance methods
 
-- __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
+* __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
 Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
 Each change is a defined, non-null object, see `Change` definition below.
 ```javascript

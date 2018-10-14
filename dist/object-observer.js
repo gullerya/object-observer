@@ -599,6 +599,13 @@
 				}
 			}
 		}
+
+		static isObservable(input) {
+			return typeof input === 'object' && input !== null &&
+				typeof input.revoke === 'function' &&
+				typeof input.observe === 'function' &&
+				typeof input.unobserve === 'function';
+		}
 	}
 
 	Object.freeze(Observable);

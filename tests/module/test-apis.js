@@ -2,9 +2,10 @@
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable APIs'});
 
-suite.addTest({name: 'ensure Observable object is frozen with only defined API'}, function(pass, fail) {
+suite.addTest({name: 'ensure Observable object is frozen with only defined API'}, (pass, fail) => {
 	if (typeof Observable !== 'function') fail('expected to find Observable function imported');
 	if (typeof Observable.from !== 'function') fail('expected to find "from" function on Observable');
+	if (typeof Observable.isObservable !== 'function') fail('expected to find "isObservable" function on Observable');
 	try {
 		Observable.some = 'prop';
 		if (Observable.some) fail('expected Observable to be frozen');
@@ -14,7 +15,7 @@ suite.addTest({name: 'ensure Observable object is frozen with only defined API'}
 	}
 });
 
-suite.addTest({name: 'negative tests - invalid parameters'}, function(pass, fail) {
+suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	let bo,
 		safeToContinue = false;
 	try {
@@ -94,7 +95,21 @@ suite.addTest({name: 'negative tests - invalid parameters'}, function(pass, fail
 	pass();
 });
 
-suite.addTest({name: 'test observable APIs presence on object/array'}, function(pass, fail) {
+suite.addTest({name: 'isObservable tests'}, (pass, fail) => {
+	if (Observable.isObservable('some')) fail('expected to have negative result when non-object tested');
+	if (Observable.isObservable(null)) fail('expected to have negative result when NULL object tested');
+	if (Observable.isObservable({})) fail('expected to have negative result when {} object tested');
+	if (!Observable.isObservable(Observable.from({}))) fail('expected to have positive result when truly Observable tested');
+	if (!Observable.isObservable({
+		revoke: function() {},
+		observe: function() {},
+		unobserve: function() {}
+	})) fail('expected to have positive result when Observable-like object tested');
+
+	pass();
+});
+
+suite.addTest({name: 'test observable APIs presence on object/array'}, (pass, fail) => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
@@ -112,7 +127,7 @@ suite.addTest({name: 'test observable APIs presence on object/array'}, function(
 	pass();
 });
 
-suite.addTest({name: 'test observable APIs - ensure APIs are not enumerables'}, function(pass, fail) {
+suite.addTest({name: 'test observable APIs - ensure APIs are not enumerables'}, (pass, fail) => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
@@ -126,7 +141,7 @@ suite.addTest({name: 'test observable APIs - ensure APIs are not enumerables'}, 
 	pass();
 });
 
-suite.addTest({name: 'test observable APIs - nested objects/arrays have no observable APIs'}, function(pass, fail) {
+suite.addTest({name: 'test observable APIs - nested objects/arrays have no observable APIs'}, (pass, fail) => {
 	let o = {n: {}}, a = [[]], oo, aa;
 
 	oo = Observable.from(o);
@@ -140,7 +155,7 @@ suite.addTest({name: 'test observable APIs - nested objects/arrays have no obser
 	pass();
 });
 
-suite.addTest({name: 'test observable APIs - Observable can not be used via constructor'}, function(pass, fail) {
+suite.addTest({name: 'test observable APIs - Observable can not be used via constructor'}, (pass, fail) => {
 	try {
 		let o = new Observable();
 		fail('should not get to this point');

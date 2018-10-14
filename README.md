@@ -27,6 +27,9 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+* __1.1.3__
+  * added `Observable.isObservable` API
+
 * __1.1.2__
   * hardening APIs + adding tests
   * improving documentation
@@ -34,10 +37,6 @@ Main aspects:
 * __1.1.1__
   * even more aggressive performance tightening
   * performance tests added to the test suites
-
-* __1.1.0__
-  * `reverse`/`shuffle` change events provided with a `path` (see this [enhancement proposal](https://github.com/gullerya/object-observer/issues/10))
-  * further performance improvements
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
