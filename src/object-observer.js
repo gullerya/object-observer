@@ -1,6 +1,8 @@
 (() => {
 	'use strict';
 
+	console.warn('You are using script-flavor distribution of "object-observer". It is HIGHLY recommended to switch to ES6-module-flavor distribution, since this version is not developed anymore, apart from critical defect fixes.');
+
 	const
 		scope = this || window,
 		INSERT = 'insert',
