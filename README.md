@@ -27,16 +27,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+* __1.1.4__
+  * added `object` property to the `Change` pointing the the immediate subject of change
+
 * __1.1.3__
   * added `Observable.isObservable` API
 
 * __1.1.2__
   * hardening APIs + adding tests
   * improving documentation
-
-* __1.1.1__
-  * even more aggressive performance tightening
-  * performance tests added to the test suites
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
@@ -103,22 +102,22 @@ observableOrder.observe(changes => {
 
 
 observableOrder.ammount = 7;
-//  { type: 'update', path: ['ammount'], value: 7, oldValue: 5 }
+//  { type: 'update', path: ['ammount'], value: 7, oldValue: 5, object: observableOrder }
 
 
 observableOrder.address = {
     street: 'Str 75',
     apt: 29
 };
-//  { type: "insert", path: ['address'], value: { ... } }
+//  { type: "insert", path: ['address'], value: { ... }, object: observableOrder }
 
 
 observableOrder.address.apt = 30;
-//  { type: "update", path: ['address','apt'], value: 30, oldValue: 29 }
+//  { type: "update", path: ['address','apt'], value: 30, oldValue: 29, object: observableOrder.address }
 
 
 delete observableOrder.remark;
-//  { type: "delete", path: ['remark'], oldValue: 'remove me' }
+//  { type: "delete", path: ['remark'], oldValue: 'remove me', object: observableOrder }
 ```
 
 ##### Arrays
@@ -135,48 +134,48 @@ observableA.observe(changes => {
 
 //  observableA = [ 1, 2, 3, 4, 5 ]
 observableA.pop();
-//  { type: 'delete', path: [4], oldValue: 5 }
+//  { type: 'delete', path: [4], oldValue: 5, object: observableA }
 
 
 //  now observableA = [ 1, 2, 3, 4 ]
 //  following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.push('a', 'b');
-//  { type: 'insert', path: [4], value: 'a' }
-//  { type: 'insert', path: [5], value: 'b' }
+//  { type: 'insert', path: [4], value: 'a', object: observableA }
+//  { type: 'insert', path: [5], value: 'b', object: observableA }
 
 
 //  now observableA = [1, 2, 3, 4, 'a', 'b']
 observableA.shift();
-//  { type: 'delete', path: [0], oldValue: 1 }
+//  { type: 'delete', path: [0], oldValue: 1, object: observableA }
 
 
 //  now observableA = [ 2, 3, 4, 'a', 'b' ]
 //  following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.unshift('x', 'y');
-//  { type: 'insert', path: [0], value: 'x' }
-//  { type: 'insert', path: [1], value: 'y' }
+//  { type: 'insert', path: [0], value: 'x', object: observableA }
+//  { type: 'insert', path: [1], value: 'y', object: observableA }
 
 
 //  now observableA = [ 2, 3, 4, 'a', 'b' ]
 observableA.reverse();
-//  { type: 'reverse', path: [] } (see below and exampe of this event for nested array)
+//  { type: 'reverse', path: [], object: observableA } (see below and exampe of this event for nested array)
 
 
 //  now observableA = [ 'b', 'a', 4, 3, 2 ]
 observableA.sort();
-//  { type: 'shuffle', path: [] } (see below and exampe of this event for nested array)
+//  { type: 'shuffle', path: [], object: observableA } (see below and exampe of this event for nested array)
 
 
 //  observableA = [ 2, 3, 4, 'a', 'b' ]
 observableA.fill(0, 0, 1);
-//  { type: 'update', path: [0], value: 0, oldValue: 2 }
+//  { type: 'update', path: [0], value: 0, oldValue: 2, object: observableA }
 
 
 //  observableA = [ 0, 3, 4, 'a', 'b' ]
 //  the following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.splice(0, 1, 'x', 'y');
-//  { type: 'update', path: [0], value: 'x', oldValue: 0 }
-//  { type: 'insert', path: [1], value: 'y' }
+//  { type: 'update', path: [0], value: 'x', oldValue: 0, object: observableA }
+//  { type: 'insert', path: [1], value: 'y', object: observableA }
 
 
 let customer = { orders: [ ... ] },
@@ -184,11 +183,11 @@ let customer = { orders: [ ... ] },
 
 //  sortin the orders array, pay attention to the path in the event
 oCustomer.orders.sort();
-//  { type: 'shuffle', path: ['orders'] }
+//  { type: 'shuffle', path: ['orders'], object: oCustomer.orders }
 
 
 oCustomer.orders.reverse();
-//  { type: 'reverse', path: ['orders'] }
+//  { type: 'reverse', path: ['orders'], object: oCustomer.orders }
 ```
 > Arrays notes: Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
 In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invocation, while leaving out the implicit outcomes like reindexing of the rest of the Array.

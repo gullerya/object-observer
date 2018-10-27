@@ -1,5 +1,8 @@
 # Changelog
 
+* __1.1.4__
+  * added `object` property to the `Change` pointing the the immediate subject of change
+
 * __1.1.3__
   * added `Observable.isObservable` API
 
