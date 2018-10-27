@@ -14,8 +14,8 @@ suite.addTest({name: 'inner object from observable should fire events as usual'}
 	iop.new = 'prop';
 
 	if (events.length !== 2) fail('expected 2 callbacks on inner observer graph (subgraph), but found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== 'inner.prop' || events[0].oldValue !== 'more' || events[0].value !== 'else') fail('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== 'inner.new' || typeof events[1].oldValue !== 'undefined' || events[1].value !== 'prop') fail('event 1 did not fire as expected');
+	if (events[0].type !== 'update' || events[0].path.join('.') !== 'inner.prop' || events[0].oldValue !== 'more' || events[0].value !== 'else' || events[0].object !== iop) fail('event 0 did not fire as expected');
+	if (events[1].type !== 'insert' || events[1].path.join('.') !== 'inner.new' || typeof events[1].oldValue !== 'undefined' || events[1].value !== 'prop' || events[1].object !== iop) fail('event 1 did not fire as expected');
 
 	pass();
 });
@@ -51,13 +51,13 @@ suite.addTest({name: 'replacement of inner object from observable should return 
 	oo.observe(changes => events.push.apply(events, changes));
 
 	oo.inner.prop = 'some';
-	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 2) {
+	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 2 || events[0].object !== oo.inner) {
 		fail('expected to have correct update event');
 	}
 	events = [];
 
 	oo.inner = {p: 'back'};
-	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 1) {
+	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 1 || events[0].object !== oo) {
 		fail('expected to have correct update event - metadata');
 	} else {
 		if (!events[0].oldValue || events[0].oldValue.prop !== 'some') {
@@ -80,7 +80,7 @@ suite.addTest({name: 'Object.assign on observable should raise an event/s of upd
 
 	Object.assign(observable, newData);
 
-	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.join('.') !== 'b') {
+	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.join('.') !== 'b' || events[0].object !== observable) {
 		fail('UPDATE event metadata NOT as expected');
 	} else if (!events[0].value || events[0].value.b1 !== 'z') {
 		fail('UPDATE event (new) value NOT as expected');

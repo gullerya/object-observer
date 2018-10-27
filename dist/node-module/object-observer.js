@@ -160,7 +160,12 @@ class ArrayObserver {
 				let ad = getAncestorInfo(observed);
 				if (ad.observers.length) {
 					ad.path.push(poppedIndex);
-					callObservers(ad.observers, [{type: DELETE, path: ad.path, oldValue: popResult}]);
+					callObservers(ad.observers, [{
+						type: DELETE,
+						path: ad.path,
+						oldValue: popResult,
+						object: observed.proxy
+					}]);
 				}
 				return popResult;
 			},
@@ -186,7 +191,12 @@ class ArrayObserver {
 					for (i = initialLength, l = target.length; i < l; i++) {
 						let path = ad.path.slice(0);
 						path.push(i);
-						changes[i - initialLength] = {type: INSERT, path: path, value: target[i]};
+						changes[i - initialLength] = {
+							type: INSERT,
+							path: path,
+							value: target[i],
+							object: observed.proxy
+						};
 					}
 					callObservers(ad.observers, changes);
 				}
@@ -218,7 +228,7 @@ class ArrayObserver {
 				ad = getAncestorInfo(observed);
 				if (ad.observers.length) {
 					ad.path.push(0);
-					changes = [{type: DELETE, path: ad.path, oldValue: shiftResult}];
+					changes = [{type: DELETE, path: ad.path, oldValue: shiftResult, object: observed.proxy}];
 					callObservers(ad.observers, changes);
 				}
 				return shiftResult;
@@ -253,7 +263,7 @@ class ArrayObserver {
 					for (let i = 0; i < l; i++) {
 						path = ad.path.slice(0);
 						path.push(i);
-						changes[i] = {type: INSERT, path: path, value: target[i]};
+						changes[i] = {type: INSERT, path: path, value: target[i], object: observed.proxy};
 					}
 					callObservers(ad.observers, changes);
 				}
@@ -275,7 +285,7 @@ class ArrayObserver {
 				//	publish changes
 				ad = getAncestorInfo(observed);
 				if (ad.observers.length) {
-					changes = [{type: REVERSE, path: ad.path}];
+					changes = [{type: REVERSE, path: ad.path, object: observed.proxy}];
 					callObservers(ad.observers, changes);
 				}
 				return observed.proxy;
@@ -296,7 +306,7 @@ class ArrayObserver {
 				//	publish changes
 				ad = getAncestorInfo(observed);
 				if (ad.observers.length) {
-					changes = [{type: SHUFFLE, path: ad.path}];
+					changes = [{type: SHUFFLE, path: ad.path, object: observed.proxy}];
 					callObservers(ad.observers, changes);
 				}
 				return observed.proxy;
@@ -330,11 +340,17 @@ class ArrayObserver {
 
 						path = ad.path.slice(0);
 						path.push(i);
-						changes.push({type: UPDATE, path: path, value: target[i], oldValue: tmpTarget});
+						changes.push({
+							type: UPDATE,
+							path: path,
+							value: target[i],
+							oldValue: tmpTarget,
+							object: observed.proxy
+						});
 					} else {
 						path = ad.path.slice(0);
 						path.push(i);
-						changes.push({type: INSERT, path: path, value: target[i]});
+						changes.push({type: INSERT, path: path, value: target[i], object: observed.proxy});
 					}
 				}
 
@@ -404,16 +420,27 @@ class ArrayObserver {
 								type: UPDATE,
 								path: path,
 								value: target[startIndex + index],
-								oldValue: spliceResult[index]
+								oldValue: spliceResult[index],
+								object: observed.proxy
 							});
 						} else {
-							changes.push({type: DELETE, path: path, oldValue: spliceResult[index]});
+							changes.push({
+								type: DELETE,
+								path: path,
+								oldValue: spliceResult[index],
+								object: observed.proxy
+							});
 						}
 					}
 					for (; index < inserted; index++) {
 						path = ad.path.slice(0);
 						path.push(startIndex + index);
-						changes.push({type: INSERT, path: path, value: target[startIndex + index]});
+						changes.push({
+							type: INSERT,
+							path: path,
+							value: target[startIndex + index],
+							object: observed.proxy
+						});
 					}
 					callObservers(ad.observers, changes);
 				}
@@ -450,8 +477,8 @@ class ArrayObserver {
 		if (ad.observers.length) {
 			ad.path.push(key);
 			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue}];
+				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
+				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
 			callObservers(ad.observers, changes);
 		}
 		return true;
@@ -472,7 +499,7 @@ class ArrayObserver {
 			ad = getAncestorInfo(this);
 			if (ad.observers.length) {
 				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue}];
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
 				callObservers(ad.observers, changes);
 			}
 			return true;
@@ -542,8 +569,8 @@ class ObjectObserver {
 		if (ad.observers.length) {
 			ad.path.push(key);
 			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue}];
+				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
+				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
 			callObservers(ad.observers, changes);
 		}
 		return true;
@@ -564,7 +591,7 @@ class ObjectObserver {
 			ad = getAncestorInfo(this);
 			if (ad.observers.length) {
 				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue}];
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
 				callObservers(ad.observers, changes);
 			}
 			return true;
