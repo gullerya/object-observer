@@ -28,7 +28,7 @@ Main aspects:
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
 * __1.1.4__
-  * added `object` property to the `Change` pointing the the immediate subject of change
+  * added `object` property to the `Change` pointing the the immediate subject of change; [Issue no. 12](https://github.com/gullerya/object-observer/issues/12). Attention: this change is found only in ES6-module flavor distribution.
 
 * __1.1.3__
   * added `Observable.isObservable` API

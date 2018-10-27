@@ -72,4 +72,4 @@ observablePerson.revoke();
 * __`path`__        - path to the changed property represented as an __Array__ of nodes
 * __`value`__       - new value; not available in `delete`, `shuffle` and `reverse` changes
 * __`oldValue`__    - old value; not available in `insert`, `shuffle` or `reverse` changes
-* __`object`__      - an immediate subject of change, property of which has been changed
+* __`object`__      - an immediate subject of change, property of which has been changed (ES6 module distro ONLY)
