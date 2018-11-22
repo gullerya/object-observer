@@ -23,7 +23,10 @@ const
 		revoke: {
 			value: function() {
 				this[sysObsKey].revoke();
-			}
+			},
+			enumerable: false,
+			configurable: true,
+			writable: false
 		},
 		observe: {
 			value: function(observer) {
@@ -37,7 +40,10 @@ const
 				} else {
 					console.info('observer may be bound to an observable only once');
 				}
-			}
+			},
+			enumerable: false,
+			configurable: true,
+			writable: false
 		},
 		unobserve: {
 			value: function() {
@@ -54,7 +60,10 @@ const
 				} else {
 					observers.splice(0);
 				}
-			}
+			},
+			enumerable: false,
+			configurable: true,
+			writable: false
 		}
 	},
 	prepareArray = function(origin, destination, observer) {
