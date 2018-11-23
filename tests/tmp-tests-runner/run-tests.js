@@ -1,13 +1,26 @@
-const puppeteer = require('puppeteer');
+const
+	puppeteer = require('puppeteer'),
+	autServer = require('./aut-server');
+
+let
+	port = 3000;
+
+autServer.launchServer(port);
 
 (async () => {
-	const browser = await puppeteer.launch();
+	const browser = await puppeteer.launch({
+		headless: true,
+		args: ['--disable-web-security']
+	});
 
 	const page = await browser.newPage();
 
 	await page.coverage.startJSCoverage();
 
-	await page.goto('http://localhost:63342/object-observer/tests/module/test.html?_ijt=80p3l3otved9c1ab8q8fh4oiqp');
+	await page.goto('http://localhost:' + port + '/tests/module/test.html');
+
+	//	TODO: do some smarter await here, based on the tests statuses (nothing is running anymore)
+	await new Promise(res => setTimeout(res, 10000));
 
 	const jsCoverage = await page.coverage.stopJSCoverage();
 
@@ -38,13 +51,23 @@ const puppeteer = require('puppeteer');
 		}
 
 		console.info('COVERAGE of ' + entry.url + ':');
-		console.info('total: ' + totalBytes + ' (neto: ' + totalNeto + ')');
-		console.info('used: ' + usedBytes);
-		console.info('missed: ' + (totalBytes - usedBytes) + ' (from neto: ' + (totalNeto - usedBytes) + ')');
-		console.info('covered ' + (usedBytes / totalBytes * 100) + ' (from neto: ' + (usedBytes / totalNeto * 100) + ')');
+		console.info('total: ' + totalBytes);
+		console.info('coverable: ' + totalNeto);
+		console.info('covered: ' + usedBytes);
+		console.info('missed: ' + (totalBytes - usedBytes));
+		console.info('covered ' + (usedBytes / totalNeto * 100));
 
 		console.dir(missedLines);
 	}
 
 	await browser.close();
-})();
+	autServer.closeServer();
+})()
+	.then(() => {
+		console.info('test suite/s done, no errors');
+		process.exitCode = 0;
+	})
+	.catch(error => {
+		console.error('test suite/s done with error', error);
+		process.exitCode = 1;
+	});

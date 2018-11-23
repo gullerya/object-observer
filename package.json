@@ -37,17 +37,22 @@
   },
   "scripts": {
     "eslint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
-    "build": "node ./build/tools/build-dist.js"
+    "build": "node ./build/tools/build-dist.js",
+    "test": "node ./tests/tmp-tests-runner/run-tests.js"
   },
   "devDependencies": {
-    "eslint": "^5.8.0",
-    "eslint-plugin-node": "^7.0.1",
+    "eslint": "^5.9.0",
+    "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-config-standard": "^12.0.0",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^7.0.1",
     "uglify-es": "^3.3.9",
-    "just-test": "^0.1.0"
+    "just-test": "^0.1.0",
+    "puppeteer": "^1.10.0"
+  },
+  "dependencies": {
+    "npm": "^6.4.1"
   }
 }
