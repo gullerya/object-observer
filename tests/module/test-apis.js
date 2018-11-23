@@ -100,11 +100,6 @@ suite.addTest({name: 'isObservable tests'}, (pass, fail) => {
 	if (Observable.isObservable(null)) fail('expected to have negative result when NULL object tested');
 	if (Observable.isObservable({})) fail('expected to have negative result when {} object tested');
 	if (!Observable.isObservable(Observable.from({}))) fail('expected to have positive result when truly Observable tested');
-	if (!Observable.isObservable({
-		revoke: function() {},
-		observe: function() {},
-		unobserve: function() {}
-	})) fail('expected to have positive result when Observable-like object tested');
 
 	pass();
 });
