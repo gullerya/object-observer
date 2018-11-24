@@ -43,9 +43,11 @@ let
 		};
 	for (const entry of jsCoverage) {
 		if (entry.url.indexOf('object-observer.js') < 0) continue;
+
 		let fileCoverage = {
 			path: entry.url.replace('http://localhost:' + port, ''),
-			lines: {}
+			lines: {},
+			ranges: []
 		};
 
 		//	existing ranges are a COVERED sections
@@ -53,6 +55,8 @@ let
 		let positionInCode = 0,
 			currentLine = 1;
 		entry.ranges.forEach(range => {
+			fileCoverage.ranges.push(range);
+
 			//	handle missed section
 			if (range.start > positionInCode) {
 				let missedCode = entry.text.substring(positionInCode, range.start);
