@@ -64,6 +64,7 @@ let
 						}
 						currentLine++;
 					});
+					currentLine--;
 				}
 			}
 
@@ -71,11 +72,15 @@ let
 			let hitCode = entry.text.substring(range.start, range.end);
 			if (hitCode.indexOf(os.EOL) >= 0) {
 				let hitLines = hitCode.split(os.EOL);
-				if (hitLines[0] === '') hitLines.shift();
+				if (hitLines[0] === '') {
+					hitLines.shift();
+					currentLine++;
+				}
 				hitLines.forEach(line => {
 					fileCoverage.lines[currentLine] = {hits: 1};
 					currentLine++;
 				});
+				currentLine--;
 			} else {
 				fileCoverage.lines[currentLine].hits++;
 			}
