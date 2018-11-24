@@ -69,6 +69,10 @@ let
 						currentLine++;
 					});
 					currentLine--;
+				} else {
+					if (!fileCoverage.lines[currentLine] && !/^\s*$/.test(missedCode)) {
+						fileCoverage.lines[currentLine] = {hits: 0};
+					}
 				}
 			}
 
