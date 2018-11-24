@@ -7,7 +7,7 @@ install:
 
 script:
 - npm run eslint
-- node tests/tmp-tests-runner/run-tests.js
+- npm run tests
 
 cache:
   directories:

@@ -37,8 +37,8 @@
   },
   "scripts": {
     "eslint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
-    "build": "node ./build/tools/build-dist.js",
-    "test": "node ./tests/tmp-tests-runner/run-tests.js"
+    "tests": "node ./tests/tmp-tests-runner/run-tests.js",
+    "build": "node ./build/tools/build-dist.js"
   },
   "devDependencies": {
     "eslint": "^5.9.0",
