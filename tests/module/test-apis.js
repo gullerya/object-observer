@@ -3,8 +3,6 @@
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable APIs'});
 
 suite.addTest({name: 'ensure Observable object is frozen with only defined API'}, (pass, fail) => {
-	fail();
-
 	if (typeof Observable !== 'function') fail('expected to find Observable function imported');
 	if (typeof Observable.from !== 'function') fail('expected to find "from" function on Observable');
 	if (typeof Observable.isObservable !== 'function') fail('expected to find "isObservable" function on Observable');
