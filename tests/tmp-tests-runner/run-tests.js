@@ -1,4 +1,5 @@
 const
+	{performance} = require('perf_hooks'),
 	puppeteer = require('puppeteer'),
 	autServer = require('./aut-server'),
 	coverageToLcov = require('./coverage-to-lcov');
