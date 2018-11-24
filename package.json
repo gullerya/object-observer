@@ -51,8 +51,5 @@
     "uglify-es": "^3.3.9",
     "just-test": "^0.1.0",
     "puppeteer": "^1.10.0"
-  },
-  "dependencies": {
-    "npm": "^6.4.1"
   }
 }

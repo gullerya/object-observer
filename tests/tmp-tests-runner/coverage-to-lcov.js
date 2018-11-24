@@ -13,6 +13,26 @@
 //	LH:<total of hit lines>
 //	end_of_record							--	designates end of section
 
+// let inputStructureExample = {
+// 	tests: [
+// 		{
+// 			testName: 'some full test name',
+// 			coverage: {
+// 				files: [
+// 					{
+// 						path: '/some/full/path/to/file.js',
+// 						lines: {
+// 							7: {hits: 0},
+// 							8: {hits: 2},
+// 							9: {hits: 1}
+// 						}
+// 					}
+// 				]
+// 			}
+// 		}
+// 	]
+// };
+
 const
 	os = require('os');
 
@@ -21,17 +41,47 @@ module.exports = {
 };
 
 function convert(coverageData) {
-	let result = '';
-	result += 'SF:' + filename + os.EOL;
+	verifyCoverageData(coverageData);
 
-	data.source.forEach(line, num => {
-		num++;
+	let testReports = [];
+	coverageData.tests.forEach(test => {
+		//	test name
+		let testReport = 'TN:' + test.testName + os.EOL + os.EOL;
 
-		if (data[num] !== undefined) {
-			result += 'DA:' + num + ',' + data[num] + os.EOL;
-		}
+		//	files
+		test.coverage.files.forEach(file => {
+
+			//	file name
+			testReport += 'SF:' + file.path + os.EOL;
+
+			//	lines
+			let coverableLines = 0,
+				hitLines = 0;
+			Object.keys(file.lines).forEach(lineNumber => {
+				testReport += 'DA:' + lineNumber + ',' + file.lines[lineNumber].hits + os.EOL;
+				coverableLines++;
+				hitLines += file.lines[lineNumber].hits > 0 ? 1 : 0;
+			});
+
+			testReport += 'LF:' + coverableLines + os.EOL;
+			testReport += 'LH:' + hitLines + os.EOL;
+		});
+
+		//	end of record
+		testReport += 'end_of_record';
+		testReports.push(testReport);
 	});
 
-	result += 'end_of_record';
-	return result;
+	return testReports.join(os.EOL + os.EOL + os.EOL);
+}
+
+//	TODO: enhance the verifications
+function verifyCoverageData(coverageData) {
+	if (!coverageData || typeof coverageData !== 'object' ||
+		!Array.isArray(coverageData.tests) || !coverageData.tests.length ||
+		coverageData.tests.some(test => !test.testName || !/^[a-zA-Z._]+$/.test(test.testName) ||
+			!test.coverage || !Array.isArray(test.coverage.files) || !test.coverage.files.length)
+	) {
+		throw new Error('coverage data is corrupted or incomplete');
+	}
 }
