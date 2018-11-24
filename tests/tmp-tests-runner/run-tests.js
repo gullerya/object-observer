@@ -116,7 +116,7 @@ let
 		// console.dir(missedLines);
 	}
 	let lcovReport = coverageToLcov.convert(coverageData);
-	fsExtra.outputFileSync(__dirname + '/../reports/lcov.data', lcovReport);
+	fsExtra.outputFileSync(__dirname + '/../reports/coverage.lcov', lcovReport);
 
 	await browser.close();
 })()
