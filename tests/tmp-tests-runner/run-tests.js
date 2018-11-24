@@ -1,6 +1,7 @@
 const
 	puppeteer = require('puppeteer'),
-	autServer = require('./aut-server');
+	autServer = require('./aut-server'),
+	coverageToLcov = require('./coverage-to-lcov');
 
 let
 	port = 3000;
@@ -8,19 +9,22 @@ let
 autServer.launchServer(port);
 
 (async () => {
-	const browser = await puppeteer.launch({
-		headless: true,
-		args: ['--disable-web-security']
-	});
+	const browser = await puppeteer.launch();
 
 	const page = await browser.newPage();
 
 	await page.coverage.startJSCoverage();
 
+	//	open the page
 	await page.goto('http://localhost:' + port + '/tests/module/test.html');
 
-	//	TODO: do some smarter await here, based on the tests statuses (nothing is running anymore)
-	await new Promise(res => setTimeout(res, 10000));
+	//	wait till all of the tests settled (no running classes), TODO: configurable timeout
+	await waitTestsToFinish(page, 0);
+
+	//	analyze test results, create report
+	await processTestResults(page);
+
+	//	analyze coverage, create report
 
 	const jsCoverage = await page.coverage.stopJSCoverage();
 
@@ -71,3 +75,31 @@ autServer.launchServer(port);
 		console.error('test suite/s done with error', error);
 		process.exitCode = 1;
 	});
+
+async function waitTestsToFinish(page, timeoutInMillis) {
+	let started = process.hrtime(),
+		passed,
+		stillRunning;
+
+	console.info('waiting for tests to finish...');
+	do {
+		stillRunning = (await page.$$('.status.running')).length;
+		console.info('found ' + stillRunning.length + ' running tests');
+		await new Promise(resolve => setTimeout(resolve, 100));
+		passed = process.hrtime(started) / 1000;
+	} while (stillRunning > 0 && passed < timeoutInMillis);
+
+	if (!stillRunning) {
+		console.info('tests done in ' + passed + 'ms');
+	} else {
+		console.error('timed out after ' + passed + 'ms');
+	}
+}
+
+async function processTestResults(page) {
+	let passed = (await page.$$('.status.passed')).length,
+		failed = (await page.$$('.status.failed')).length;
+
+	console.info('passed: ' + passed);
+	console.info('failed: ' + failed);
+}
