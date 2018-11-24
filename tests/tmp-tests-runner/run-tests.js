@@ -71,6 +71,7 @@ let
 			let hitCode = entry.text.substring(range.start, range.end);
 			if (hitCode.indexOf(os.EOL) >= 0) {
 				let hitLines = hitCode.split(os.EOL);
+				if (hitLines[0] === '') hitLines.shift();
 				hitLines.forEach(line => {
 					fileCoverage.lines[currentLine] = {hits: 1};
 					currentLine++;
@@ -82,38 +83,6 @@ let
 			positionInCode = range.end;
 		});
 		coverageData.tests[0].coverage.files.push(fileCoverage);
-
-		// let totalBytes = entry.text.length;
-		// let totalNeto = totalBytes;
-		// let usedBytes = 0;
-		// let missedLines = [];
-		// for (let i = 0, l = entry.ranges.length; i < l; i++) {
-		// 	let range = entry.ranges[i];
-		// 	let prevRange = i > 0 ? entry.ranges[i - 1] : null;
-		// 	usedBytes += range.end - range.start;
-		// 	if (i === 0 && range.start > 0) {
-		// 		missedLines.push(entry.text.substr(0, range.start));
-		// 	}
-		// 	if (i === l - 1 && range.end < entry.text.length) {
-		// 		missedLines.push(entry.text.substr(range.end, entry.text.length - range.end));
-		// 	}
-		// 	if (prevRange && range.start - entry.ranges[i - 1].end > 1) {
-		// 		let missedTextCandidate = entry.text.substr(prevRange.end, range.start - prevRange.end);
-		// 		if (/^\s*$/.test(missedTextCandidate)) {
-		// 			totalNeto -= missedTextCandidate.length;
-		// 		} else {
-		// 			missedLines.push(missedTextCandidate);
-		// 		}
-		// 	}
-		// }
-		// console.info('COVERAGE of ' + entry.url + ':');
-		// console.info('total: ' + totalBytes);
-		// console.info('coverable: ' + totalNeto);
-		// console.info('covered: ' + usedBytes);
-		// console.info('missed: ' + (totalBytes - usedBytes));
-		// console.info('covered ' + (usedBytes / totalNeto * 100));
-		//
-		// console.dir(missedLines);
 	}
 	let lcovReport = coverageToLcov.convert(coverageData);
 	fsExtra.outputFileSync(__dirname + '/../reports/coverage.lcov', lcovReport);
