@@ -41,6 +41,7 @@
     "build": "node ./build/tools/build-dist.js"
   },
   "devDependencies": {
+    "npm": "^6.4.1",
     "eslint": "^5.9.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-import": "^2.14.0",
