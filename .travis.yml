@@ -7,6 +7,7 @@ install:
 
 script:
 - npm run eslint
+- npm run test
 
 cache:
   directories:
