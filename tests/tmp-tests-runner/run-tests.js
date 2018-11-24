@@ -59,7 +59,7 @@ let
 				if (missedCode.indexOf(os.EOL) >= 0) {
 					let missedLines = missedCode.split(os.EOL);
 					missedLines.forEach(line => {
-						if (!/^\s*$/.test(line)) {
+						if (!/^\s*$/.test(line) && (!fileCoverage.lines[currentLine] || !fileCoverage.lines[currentLine].hits)) {
 							fileCoverage.lines[currentLine] = {hits: 0};
 						}
 						currentLine++;
@@ -77,7 +77,9 @@ let
 					currentLine++;
 				}
 				hitLines.forEach(line => {
-					fileCoverage.lines[currentLine] = {hits: 1};
+					if (!/^\s*$/.test(line)) {
+						fileCoverage.lines[currentLine] = {hits: 1};
+					}
 					currentLine++;
 				});
 				currentLine--;
