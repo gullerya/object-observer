@@ -4,7 +4,8 @@ const
 	coverageToLcov = require('./coverage-to-lcov');
 
 let
-	port = 3000;
+	port = 3000,
+	testResults = {};
 
 autServer.launchServer(port);
 
@@ -69,7 +70,7 @@ autServer.launchServer(port);
 })()
 	.then(() => {
 		console.info('test suite/s done, no errors');
-		process.exitCode = 0;
+		process.exitCode = testResults.failed ? 1 : 0;
 	})
 	.catch(error => {
 		console.error('test suite/s done with error', error);
@@ -77,7 +78,7 @@ autServer.launchServer(port);
 	});
 
 async function waitTestsToFinish(page, timeoutInMillis) {
-	let started = process.hrtime(),
+	let started = performance.now(),
 		passed,
 		stillRunning;
 
@@ -86,7 +87,7 @@ async function waitTestsToFinish(page, timeoutInMillis) {
 		stillRunning = (await page.$$('.status.running')).length;
 		console.info('found ' + stillRunning.length + ' running tests');
 		await new Promise(resolve => setTimeout(resolve, 100));
-		passed = process.hrtime(started) / 1000;
+		passed = performance.now() - started;
 	} while (stillRunning > 0 && passed < timeoutInMillis);
 
 	if (!stillRunning) {
@@ -97,9 +98,9 @@ async function waitTestsToFinish(page, timeoutInMillis) {
 }
 
 async function processTestResults(page) {
-	let passed = (await page.$$('.status.passed')).length,
-		failed = (await page.$$('.status.failed')).length;
+	testResults.passed = (await page.$$('.status.passed')).length;
+	testResults.failed = (await page.$$('.status.failed')).length;
 
-	console.info('passed: ' + passed);
-	console.info('failed: ' + failed);
+	console.info('passed: ' + testResults.passed);
+	console.info('failed: ' + testResults.failed);
 }
