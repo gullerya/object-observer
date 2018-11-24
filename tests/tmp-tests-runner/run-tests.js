@@ -66,13 +66,14 @@ autServer.launchServer(port);
 	}
 
 	await browser.close();
-	autServer.closeServer();
 })()
 	.then(() => {
+		autServer.closeServer();
 		console.info('test suite/s done, no errors');
 		process.exitCode = testResults.failed ? 1 : 0;
 	})
 	.catch(error => {
+		autServer.closeServer();
 		console.error('test suite/s done with error', error);
 		process.exitCode = 1;
 	});
