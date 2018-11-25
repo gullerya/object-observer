@@ -28,15 +28,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+* __1.1.5__
+  * implemented improvement as suggested in [Issue no. 13](https://github.com/gullerya/object-observer/issues/13)
+  * added tests to CI + coverage report
+
 * __1.1.4__
   * added `object` property to the `Change` pointing the the immediate subject of change; [Issue no. 12](https://github.com/gullerya/object-observer/issues/12). Attention: this change is found only in ES6-module flavor distribution.
 
 * __1.1.3__
   * added `Observable.isObservable` API
-
-* __1.1.2__
-  * hardening APIs + adding tests
-  * improving documentation
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 

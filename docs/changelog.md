@@ -1,5 +1,9 @@
 # Changelog
 
+* __1.1.5__
+  * implemented improvement as suggested in [Issue no. 13](https://github.com/gullerya/object-observer/issues/13)
+  * added tests to CI + coverage report
+
 * __1.1.4__
   * added `object` property to the `Change` pointing the the immediate subject of change; [Issue no. 12](https://github.com/gullerya/object-observer/issues/12). Attention: this change is found only in ES6-module flavor distribution.
 
