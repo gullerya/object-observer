@@ -110,8 +110,65 @@ const
 		return {observers: self.observers, path: result};
 	};
 
-class ArrayObserver {
+class ObserverBase {
+	set(target, key, value) {
+		let oldValue = target[key], ad, changes;
+
+		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
+			target[key] = Array.isArray(value)
+				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
+				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
+		} else {
+			target[key] = value;
+		}
+
+		if (oldValue && typeof oldValue === 'object') {
+			let tmpObserved = oldValue[sysObsKey];
+			if (tmpObserved) {
+				oldValue = tmpObserved.revoke();
+			}
+		}
+
+		//	publish changes
+		ad = getAncestorInfo(this);
+		if (ad.observers.length) {
+			ad.path.push(key);
+			changes = typeof oldValue === 'undefined'
+				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
+				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
+			callObservers(ad.observers, changes);
+		}
+		return true;
+	}
+
+	deleteProperty(target, key) {
+		let oldValue = target[key], ad, changes;
+
+		if (delete target[key]) {
+			if (oldValue && typeof oldValue === 'object') {
+				let tmpObserved = oldValue[sysObsKey];
+				if (tmpObserved) {
+					oldValue = tmpObserved.revoke();
+				}
+			}
+
+			//	publish changes
+			ad = getAncestorInfo(this);
+			if (ad.observers.length) {
+				ad.path.push(key);
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
+				callObservers(ad.observers, changes);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+class ArrayObserver extends ObserverBase {
 	constructor(properties) {
+		super();
 		let source = properties.target,
 			target = prepareArray(source, this);
 		if (properties.parent === null) {
@@ -456,64 +513,11 @@ class ArrayObserver {
 			return target[key];
 		}
 	}
-
-	set(target, key, value) {
-		let oldValue = target[key], ad, changes;
-
-		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = Array.isArray(value)
-				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
-				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
-		} else {
-			target[key] = value;
-		}
-
-		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = oldValue[sysObsKey];
-			if (tmpObserved) {
-				oldValue = tmpObserved.revoke();
-			}
-		}
-
-		//	publish changes
-		ad = getAncestorInfo(this);
-		if (ad.observers.length) {
-			ad.path.push(key);
-			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
-			callObservers(ad.observers, changes);
-		}
-		return true;
-	}
-
-	deleteProperty(target, key) {
-		let oldValue = target[key], ad, changes;
-
-		if (delete target[key]) {
-			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = oldValue[sysObsKey];
-				if (tmpObserved) {
-					oldValue = tmpObserved.revoke();
-				}
-			}
-
-			//	publish changes
-			ad = getAncestorInfo(this);
-			if (ad.observers.length) {
-				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
-				callObservers(ad.observers, changes);
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
 }
 
-class ObjectObserver {
+class ObjectObserver extends ObserverBase {
 	constructor(properties) {
+		super();
 		let origin = properties.target,
 			clone = prepareObject(origin, this);
 		if (properties.parent === null) {
@@ -547,60 +551,6 @@ class ObjectObserver {
 			}
 		}
 		return target;
-	}
-
-	set(target, key, value) {
-		let oldValue = target[key], ad, changes;
-
-		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = Array.isArray(value)
-				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
-				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
-		} else {
-			target[key] = value;
-		}
-
-		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = oldValue[sysObsKey];
-			if (tmpObserved) {
-				oldValue = tmpObserved.revoke();
-			}
-		}
-
-		//	publish changes
-		ad = getAncestorInfo(this);
-		if (ad.observers.length) {
-			ad.path.push(key);
-			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
-			callObservers(ad.observers, changes);
-		}
-		return true;
-	}
-
-	deleteProperty(target, key) {
-		let oldValue = target[key], ad, changes;
-
-		if (delete target[key]) {
-			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = oldValue[sysObsKey];
-				if (tmpObserved) {
-					oldValue = tmpObserved.revoke();
-				}
-			}
-
-			//	publish changes
-			ad = getAncestorInfo(this);
-			if (ad.observers.length) {
-				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
-				callObservers(ad.observers, changes);
-			}
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
 
