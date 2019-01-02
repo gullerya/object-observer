@@ -57,34 +57,37 @@ const
 			}
 		}
 	},
-	prepareArray = function(origin, destination, observer) {
-		let l = origin.length, item;
-		destination[sysObsKey] = observer;
+	prepareArray = function(source, observer) {
+		let l = source.length, item;
+		let target = new Array(source.length);
+		target[sysObsKey] = observer;
 		while (l--) {
-			item = origin[l];
+			item = source[l];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				destination[l] = Array.isArray(item)
+				target[l] = Array.isArray(item)
 					? new ArrayObserver({target: item, ownKey: l, parent: observer}).proxy
 					: new ObjectObserver({target: item, ownKey: l, parent: observer}).proxy;
 			} else {
-				destination[l] = item;
+				target[l] = item;
 			}
 		}
+		return target;
 	},
-	prepareObject = function(origin, destination, observer) {
-		let keys = Object.keys(origin), l = keys.length, key, item;
-		destination[sysObsKey] = observer;
+	prepareObject = function(source, observer) {
+		let keys = Object.keys(source), l = keys.length, key, item;
+		let target = {[sysObsKey]: observer};
 		while (l--) {
 			key = keys[l];
-			item = origin[key];
+			item = source[key];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				destination[key] = Array.isArray(item)
+				target[key] = Array.isArray(item)
 					? new ArrayObserver({target: item, ownKey: key, parent: observer}).proxy
 					: new ObjectObserver({target: item, ownKey: key, parent: observer}).proxy;
 			} else {
-				destination[key] = item;
+				target[key] = item;
 			}
 		}
+		return target;
 	},
 	callObservers = function(observers, changes) {
 		let l = observers.length;
@@ -109,19 +112,19 @@ const
 
 class ArrayObserver {
 	constructor(properties) {
-		let origin = properties.target, clone = new Array(origin.length);
+		let source = properties.target,
+			target = prepareArray(source, this);
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			this.observers = [];
-			Object.defineProperties(clone, observableDefinition);
+			Object.defineProperties(target, observableDefinition);
 		} else {
 			this.parent = properties.parent;
 			this.ownKey = properties.ownKey;
 		}
-		prepareArray(origin, clone, this);
-		this.revokable = Proxy.revocable(clone, this);
+		this.revokable = Proxy.revocable(target, this);
 		this.proxy = this.revokable.proxy;
-		this.target = clone;
+		this.target = target;
 	}
 
 	//	returns an unobserved graph (effectively this is an opposite of an ArrayObserver constructor logic)
@@ -511,7 +514,8 @@ class ArrayObserver {
 
 class ObjectObserver {
 	constructor(properties) {
-		let origin = properties.target, clone = {};
+		let origin = properties.target,
+			clone = prepareObject(origin, this);
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			this.observers = [];
@@ -520,7 +524,6 @@ class ObjectObserver {
 			this.parent = properties.parent;
 			this.ownKey = properties.ownKey;
 		}
-		prepareObject(origin, clone, this);
 		this.revokable = Proxy.revocable(clone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = clone;
@@ -624,7 +627,7 @@ class Observable {
 	}
 
 	static isObservable(input) {
-		return input && input[sysObsKey];
+		return !!(input && input[sysObsKey]);
 	}
 }
 

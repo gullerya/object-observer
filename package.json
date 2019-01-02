@@ -37,12 +37,12 @@
   },
   "scripts": {
     "eslint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
-    "tests": "node ./tests/tmp-tests-runner/run-tests.js",
-    "build": "node ./build/tools/build-dist.js"
+    "build": "node ./build/tools/build-dist.js",
+    "test": "node ./tests/tmp-tests-runner/run-tests.js"
   },
   "devDependencies": {
-    "npm": "^6.4.1",
-    "eslint": "^5.9.0",
+    "npm": "^6.5.0",
+    "eslint": "^5.11.1",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-promise": "^4.0.1",
@@ -51,7 +51,7 @@
     "fs-extra": "^7.0.1",
     "uglify-es": "^3.3.9",
     "just-test": "^0.1.0",
-    "puppeteer": "^1.10.0",
+    "puppeteer": "^1.11.0",
     "codecov": "^3.1.0"
   }
 }
