@@ -21,16 +21,20 @@ const
 	},
 	observableDefinition = {
 		revoke: {
-			value: function() {
+			value: function () {
 				this[sysObsKey].revoke();
 			}
 		},
 		observe: {
-			value: function(observer) {
+			value: function (observer) {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
-				if (typeof observer !== 'function') { throw new Error('observer parameter MUST be a function'); }
+				if (systemObserver.isRevoked) {
+					throw new TypeError('revoked Observable MAY NOT be observed anymore');
+				}
+				if (typeof observer !== 'function') {
+					throw new Error('observer parameter MUST be a function');
+				}
 
 				if (observers.indexOf(observer) < 0) {
 					observers.push(observer);
@@ -40,11 +44,13 @@ const
 			}
 		},
 		unobserve: {
-			value: function() {
+			value: function () {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers,
 					l, idx;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
+				if (systemObserver.isRevoked) {
+					throw new TypeError('revoked Observable MAY NOT be unobserved anymore');
+				}
 				l = arguments.length;
 				if (l) {
 					while (l--) {
@@ -57,7 +63,7 @@ const
 			}
 		}
 	},
-	prepareArray = function(source, observer) {
+	prepareArray = function (source, observer) {
 		let l = source.length, item;
 		let target = new Array(source.length);
 		target[sysObsKey] = observer;
@@ -73,7 +79,7 @@ const
 		}
 		return target;
 	},
-	prepareObject = function(source, observer) {
+	prepareObject = function (source, observer) {
 		let keys = Object.keys(source), l = keys.length, key, item;
 		let target = {[sysObsKey]: observer};
 		while (l--) {
@@ -89,7 +95,7 @@ const
 		}
 		return target;
 	},
-	callObservers = function(observers, changes) {
+	callObservers = function (observers, changes) {
 		let l = observers.length;
 		while (l--) {
 			try {
@@ -99,7 +105,7 @@ const
 			}
 		}
 	},
-	getAncestorInfo = function(self) {
+	getAncestorInfo = function (self) {
 		let tmp = [], result, l1 = 0, l2 = 0;
 		while (self.parent) {
 			tmp[l1++] = self.ownKey;
@@ -112,15 +118,16 @@ const
 
 class ObserverBase {
 	set(target, key, value) {
-		let oldValue = target[key], ad, changes;
+		let newValue, oldValue = target[key], ad, changes;
 
 		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = Array.isArray(value)
+			newValue = Array.isArray(value)
 				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
 				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
 		} else {
-			target[key] = value;
+			newValue = value;
 		}
+		target[key] = newValue;
 
 		if (oldValue && typeof oldValue === 'object') {
 			let tmpObserved = oldValue[sysObsKey];
@@ -134,8 +141,8 @@ class ObserverBase {
 		if (ad.observers.length) {
 			ad.path.push(key);
 			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
+				? [{type: INSERT, path: ad.path, value: newValue, object: this.proxy}]
+				: [{type: UPDATE, path: ad.path, value: newValue, oldValue: oldValue, object: this.proxy}];
 			callObservers(ad.observers, changes);
 		}
 		return true;
