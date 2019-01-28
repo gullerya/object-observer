@@ -21,16 +21,20 @@ const
 	},
 	observableDefinition = {
 		revoke: {
-			value: function() {
+			value: function () {
 				this[sysObsKey].revoke();
 			}
 		},
 		observe: {
-			value: function(observer) {
+			value: function (observer) {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be observed anymore'); }
-				if (typeof observer !== 'function') { throw new Error('observer parameter MUST be a function'); }
+				if (systemObserver.isRevoked) {
+					throw new TypeError('revoked Observable MAY NOT be observed anymore');
+				}
+				if (typeof observer !== 'function') {
+					throw new Error('observer parameter MUST be a function');
+				}
 
 				if (observers.indexOf(observer) < 0) {
 					observers.push(observer);
@@ -40,11 +44,13 @@ const
 			}
 		},
 		unobserve: {
-			value: function() {
+			value: function () {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers,
 					l, idx;
-				if (systemObserver.isRevoked) { throw new TypeError('revoked Observable MAY NOT be unobserved anymore'); }
+				if (systemObserver.isRevoked) {
+					throw new TypeError('revoked Observable MAY NOT be unobserved anymore');
+				}
 				l = arguments.length;
 				if (l) {
 					while (l--) {
@@ -57,36 +63,39 @@ const
 			}
 		}
 	},
-	prepareArray = function(origin, destination, observer) {
-		let l = origin.length, item;
-		destination[sysObsKey] = observer;
+	prepareArray = function (source, observer) {
+		let l = source.length, item;
+		let target = new Array(source.length);
+		target[sysObsKey] = observer;
 		while (l--) {
-			item = origin[l];
+			item = source[l];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				destination[l] = Array.isArray(item)
+				target[l] = Array.isArray(item)
 					? new ArrayObserver({target: item, ownKey: l, parent: observer}).proxy
 					: new ObjectObserver({target: item, ownKey: l, parent: observer}).proxy;
 			} else {
-				destination[l] = item;
+				target[l] = item;
 			}
 		}
+		return target;
 	},
-	prepareObject = function(origin, destination, observer) {
-		let keys = Object.keys(origin), l = keys.length, key, item;
-		destination[sysObsKey] = observer;
+	prepareObject = function (source, observer) {
+		let keys = Object.keys(source), l = keys.length, key, item;
+		let target = {[sysObsKey]: observer};
 		while (l--) {
 			key = keys[l];
-			item = origin[key];
+			item = source[key];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
-				destination[key] = Array.isArray(item)
+				target[key] = Array.isArray(item)
 					? new ArrayObserver({target: item, ownKey: key, parent: observer}).proxy
 					: new ObjectObserver({target: item, ownKey: key, parent: observer}).proxy;
 			} else {
-				destination[key] = item;
+				target[key] = item;
 			}
 		}
+		return target;
 	},
-	callObservers = function(observers, changes) {
+	callObservers = function (observers, changes) {
 		let l = observers.length;
 		while (l--) {
 			try {
@@ -96,7 +105,7 @@ const
 			}
 		}
 	},
-	getAncestorInfo = function(self) {
+	getAncestorInfo = function (self) {
 		let tmp = [], result, l1 = 0, l2 = 0;
 		while (self.parent) {
 			tmp[l1++] = self.ownKey;
@@ -107,21 +116,79 @@ const
 		return {observers: self.observers, path: result};
 	};
 
-class ArrayObserver {
+class ObserverBase {
+	set(target, key, value) {
+		let newValue, oldValue = target[key], ad, changes;
+
+		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
+			newValue = Array.isArray(value)
+				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
+				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
+		} else {
+			newValue = value;
+		}
+		target[key] = newValue;
+
+		if (oldValue && typeof oldValue === 'object') {
+			let tmpObserved = oldValue[sysObsKey];
+			if (tmpObserved) {
+				oldValue = tmpObserved.revoke();
+			}
+		}
+
+		//	publish changes
+		ad = getAncestorInfo(this);
+		if (ad.observers.length) {
+			ad.path.push(key);
+			changes = typeof oldValue === 'undefined'
+				? [{type: INSERT, path: ad.path, value: newValue, object: this.proxy}]
+				: [{type: UPDATE, path: ad.path, value: newValue, oldValue: oldValue, object: this.proxy}];
+			callObservers(ad.observers, changes);
+		}
+		return true;
+	}
+
+	deleteProperty(target, key) {
+		let oldValue = target[key], ad, changes;
+
+		if (delete target[key]) {
+			if (oldValue && typeof oldValue === 'object') {
+				let tmpObserved = oldValue[sysObsKey];
+				if (tmpObserved) {
+					oldValue = tmpObserved.revoke();
+				}
+			}
+
+			//	publish changes
+			ad = getAncestorInfo(this);
+			if (ad.observers.length) {
+				ad.path.push(key);
+				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
+				callObservers(ad.observers, changes);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+class ArrayObserver extends ObserverBase {
 	constructor(properties) {
-		let origin = properties.target, clone = new Array(origin.length);
+		super();
+		let source = properties.target,
+			target = prepareArray(source, this);
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			this.observers = [];
-			Object.defineProperties(clone, observableDefinition);
+			Object.defineProperties(target, observableDefinition);
 		} else {
 			this.parent = properties.parent;
 			this.ownKey = properties.ownKey;
 		}
-		prepareArray(origin, clone, this);
-		this.revokable = Proxy.revocable(clone, this);
+		this.revokable = Proxy.revocable(target, this);
 		this.proxy = this.revokable.proxy;
-		this.target = clone;
+		this.target = target;
 	}
 
 	//	returns an unobserved graph (effectively this is an opposite of an ArrayObserver constructor logic)
@@ -453,65 +520,13 @@ class ArrayObserver {
 			return target[key];
 		}
 	}
-
-	set(target, key, value) {
-		let oldValue = target[key], ad, changes;
-
-		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = Array.isArray(value)
-				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
-				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
-		} else {
-			target[key] = value;
-		}
-
-		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = oldValue[sysObsKey];
-			if (tmpObserved) {
-				oldValue = tmpObserved.revoke();
-			}
-		}
-
-		//	publish changes
-		ad = getAncestorInfo(this);
-		if (ad.observers.length) {
-			ad.path.push(key);
-			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
-			callObservers(ad.observers, changes);
-		}
-		return true;
-	}
-
-	deleteProperty(target, key) {
-		let oldValue = target[key], ad, changes;
-
-		if (delete target[key]) {
-			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = oldValue[sysObsKey];
-				if (tmpObserved) {
-					oldValue = tmpObserved.revoke();
-				}
-			}
-
-			//	publish changes
-			ad = getAncestorInfo(this);
-			if (ad.observers.length) {
-				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
-				callObservers(ad.observers, changes);
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
 }
 
-class ObjectObserver {
+class ObjectObserver extends ObserverBase {
 	constructor(properties) {
-		let origin = properties.target, clone = {};
+		super();
+		let origin = properties.target,
+			clone = prepareObject(origin, this);
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			this.observers = [];
@@ -520,7 +535,6 @@ class ObjectObserver {
 			this.parent = properties.parent;
 			this.ownKey = properties.ownKey;
 		}
-		prepareObject(origin, clone, this);
 		this.revokable = Proxy.revocable(clone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = clone;
@@ -544,60 +558,6 @@ class ObjectObserver {
 			}
 		}
 		return target;
-	}
-
-	set(target, key, value) {
-		let oldValue = target[key], ad, changes;
-
-		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
-			target[key] = Array.isArray(value)
-				? new ArrayObserver({target: value, ownKey: key, parent: this}).proxy
-				: new ObjectObserver({target: value, ownKey: key, parent: this}).proxy;
-		} else {
-			target[key] = value;
-		}
-
-		if (oldValue && typeof oldValue === 'object') {
-			let tmpObserved = oldValue[sysObsKey];
-			if (tmpObserved) {
-				oldValue = tmpObserved.revoke();
-			}
-		}
-
-		//	publish changes
-		ad = getAncestorInfo(this);
-		if (ad.observers.length) {
-			ad.path.push(key);
-			changes = typeof oldValue === 'undefined'
-				? [{type: INSERT, path: ad.path, value: value, object: this.proxy}]
-				: [{type: UPDATE, path: ad.path, value: value, oldValue: oldValue, object: this.proxy}];
-			callObservers(ad.observers, changes);
-		}
-		return true;
-	}
-
-	deleteProperty(target, key) {
-		let oldValue = target[key], ad, changes;
-
-		if (delete target[key]) {
-			if (oldValue && typeof oldValue === 'object') {
-				let tmpObserved = oldValue[sysObsKey];
-				if (tmpObserved) {
-					oldValue = tmpObserved.revoke();
-				}
-			}
-
-			//	publish changes
-			ad = getAncestorInfo(this);
-			if (ad.observers.length) {
-				ad.path.push(key);
-				changes = [{type: DELETE, path: ad.path, oldValue: oldValue, object: this.proxy}];
-				callObservers(ad.observers, changes);
-			}
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
 
@@ -624,7 +584,7 @@ class Observable {
 	}
 
 	static isObservable(input) {
-		return input && input[sysObsKey];
+		return !!(input && input[sysObsKey]);
 	}
 }
 
