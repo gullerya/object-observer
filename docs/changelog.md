@@ -1,5 +1,8 @@
 # Changelog
 
+* __1.2.0__
+  * fixed [Issue no. 18](https://github.com/gullerya/object-observer/issues/18)
+
 * __1.1.5__
   * implemented improvement as suggested in [Issue no. 13](https://github.com/gullerya/object-observer/issues/13)
   * added tests to CI + coverage report
