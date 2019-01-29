@@ -20,13 +20,15 @@ Main aspects:
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 * following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `SyntaxError`, `TypeError`, `URIError`, `Function`, `Promise`, `RegExp`
 
-#### Support matrix: ![CHROME](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png)<sub>49+</sub> | ![FIREFOX](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png)<sub>42+</sub> | ![EDGE](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png)<sub>13+</sub> | ![NODE JS](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
-
-> ES6 module flavor distribution of the library have a higher versions in it's browser support matrix: Chrome 61, FireFox 60 and Edge 16.
+#### Support matrix: ![CHROME](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png)<sub>61+</sub> | ![FIREFOX](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png)<sub>60+</sub> | ![EDGE](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png)<sub>16+</sub> | ![NODE JS](https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Performance report can be found [here](https://github.com/gullerya/object-observer/blob/master/docs/performance-report.md)
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
+
+* __2.0.0__
+  * implemented [Issue no. 16](https://github.com/gullerya/object-observer/issues/16) - explicit naming in export instead of default (!!! breaking change)
+  * implemented [Issue no. 17](https://github.com/gullerya/object-observer/issues/17) - removed non-ES6 like module and adjusted folder structure (!!! breaking change)
 
 * __1.2.0__
   * fixed [Issue no. 18](https://github.com/gullerya/object-observer/issues/18)
@@ -35,53 +37,19 @@ Main aspects:
   * implemented improvement as suggested in [Issue no. 13](https://github.com/gullerya/object-observer/issues/13)
   * added tests to CI + coverage report
 
-* __1.1.4__
-  * added `object` property to the `Change` pointing the the immediate subject of change; [Issue no. 12](https://github.com/gullerya/object-observer/issues/12). Attention: this change is found only in ES6-module flavor distribution.
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
 
 You have few ways to load the library: as an __ES6 module__ (pay attention to the __`module`__ / __`node-module`__ in the path) or as a __regular script__ (into a 'window' global scope, or a custom scope provided by you). See examples below.
 
-> Attention: in some (observable :-)) future non-module syntax flavor will be frozen in a stable state and only defect fixes will be done there.
-Active development will focus on the ES6 module code base, which is effectively raising the support matrix of Chrome to 61, FireFox to 60 and Edge to 16.
-
-* ES6 module (__preferred__):
+* ES6 module:
 ```javascript
 //  browser
-import Observable from 'dist/module/object-observer.min.js';
+import { Observable } from 'dist/object-observer.min.js';
 
-//  NodeJS
-let Observable = require('./dist/node-module/object-observer');
-```
-
-* Simple a reference (script tag) to the `object-observer.min.js`/`object-observer.js` in your `HTML` will load it into the __global scope__:
-```html
-<script src="dist/object-observer.min.js"></script>
-<script>
-    let person = { name: 'Uria', age: 8 },
-        observablePerson;
-    observablePerson = Observable.from(person);
-</script>
-```
-
-* Following loader exemplifies how to load the library into a __custom scope__ (add error handling as appropriate):
-```javascript
-let customNamespace = {},
-    person = { name: 'Nava', age: 6 },
-    observablePerson;
-
-fetch('dist/object-observer.min.js').then(function (response) {
-    if (response.status === 200) {
-        response.text().then(function (code) {
-            Function(code).call(customNamespace);
-
-            //	the below code is an example of consumption, locate it in your app lifecycle/flow as appropriate
-            observablePerson = customNamespace.Observable.from(person);
-        });
-    }
-});
+//  NodeJS (when NodeJS will fully support ES6 modules syntax - this one will be removed)
+let Observable = require('./dist/node/object-observer').Observable;
 ```
 
 # API

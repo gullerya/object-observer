@@ -1,5 +1,9 @@
 # Changelog
 
+* __2.0.0__
+  * implemented [Issue no. 16](https://github.com/gullerya/object-observer/issues/16) - explicit naming in export instead of default (!!! breaking change)
+  * implemented [Issue no. 17](https://github.com/gullerya/object-observer/issues/17) - removed non-ES6 like module and adjusted folder structure (!!! breaking change)
+
 * __1.2.0__
   * fixed [Issue no. 18](https://github.com/gullerya/object-observer/issues/18)
 
