@@ -29,9 +29,6 @@ const
 			value: function (observer) {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers;
-				if (systemObserver.isRevoked) {
-					throw new TypeError('revoked Observable MAY NOT be observed anymore');
-				}
 				if (typeof observer !== 'function') {
 					throw new Error('observer parameter MUST be a function');
 				}
@@ -48,9 +45,6 @@ const
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers,
 					l, idx;
-				if (systemObserver.isRevoked) {
-					throw new TypeError('revoked Observable MAY NOT be unobserved anymore');
-				}
 				l = arguments.length;
 				if (l) {
 					while (l--) {
@@ -589,3 +583,5 @@ class Observable {
 }
 
 Object.freeze(Observable);
+
+exports.Observable = Observable;

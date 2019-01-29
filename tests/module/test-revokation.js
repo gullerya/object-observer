@@ -1,8 +1,8 @@
-﻿import Observable from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing revokation of removed/replaced objects'});
 
-suite.addTest({name: 'test revokation of replaced objects - simple set'}, function (pass, fail) {
+suite.addTest({name: 'test revokation of replaced objects - simple set'}, (pass, fail) => {
 	let g = {
 		a: {
 			b: {
@@ -26,7 +26,7 @@ suite.addTest({name: 'test revokation of replaced objects - simple set'}, functi
 	pass();
 });
 
-suite.addTest({name: 'test revokation of replaced objects - splice in array'}, function (pass, fail) {
+suite.addTest({name: 'test revokation of replaced objects - splice in array'}, (pass, fail) => {
 	let g = [
 		{
 			child: {

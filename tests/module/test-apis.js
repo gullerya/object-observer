@@ -1,4 +1,4 @@
-﻿import Observable from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable APIs'});
 
@@ -61,7 +61,8 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	}
 	if (!safeToContinue) fail('expected to catch error on string parameter');
 
-	bo = function() { };
+	bo = function () {
+	};
 	safeToContinue = false;
 	try {
 		Observable.from(bo);

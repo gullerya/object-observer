@@ -1,13 +1,15 @@
-﻿import Obser from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable - subgraphs'});
 
-suite.addTest({name: 'inner object from observable should fire events as usual'}, function(pass, fail) {
+suite.addTest({name: 'inner object from observable should fire events as usual'}, (pass, fail) => {
 	let o = {inner: {prop: 'more'}},
-		oo = Obser.from(o),
+		oo = Observable.from(o),
 		iop = oo.inner,
 		events = [],
-		observer = function(changes) { events.push.apply(events, changes); };
+		observer = function (changes) {
+			events.push.apply(events, changes);
+		};
 
 	oo.observe(observer);
 	iop.prop = 'else';
@@ -20,12 +22,14 @@ suite.addTest({name: 'inner object from observable should fire events as usual'}
 	pass();
 });
 
-suite.addTest({name: 'removal (detaching) of inner object from observable should disable it\'s proxy/events generating'}, function(pass, fail) {
+suite.addTest({name: 'removal (detaching) of inner object from observable should disable it\'s proxy/events generating'}, (pass, fail) => {
 	let o = {inner: {prop: 'more'}},
-		oo = Obser.from(o),
+		oo = Observable.from(o),
 		iop = oo.inner,
 		cntr = 0,
-		observer = function() { cntr++; };
+		observer = function () {
+			cntr++;
+		};
 
 	oo.observe(observer);
 	iop.prop = 'text';
@@ -44,9 +48,9 @@ suite.addTest({name: 'removal (detaching) of inner object from observable should
 	pass();
 });
 
-suite.addTest({name: 'replacement of inner object from observable should return non-proxified original object'}, function(pass, fail) {
+suite.addTest({name: 'replacement of inner object from observable should return non-proxified original object'}, (pass, fail) => {
 	let o = {inner: {prop: 'more', nested: {text: 'text'}}},
-		oo = Obser.from(o),
+		oo = Observable.from(o),
 		events = [];
 	oo.observe(changes => events.push.apply(events, changes));
 
@@ -71,10 +75,10 @@ suite.addTest({name: 'replacement of inner object from observable should return 
 	pass();
 });
 
-suite.addTest({name: 'Object.assign on observable should raise an event/s of update with non-proxified original object'}, function(pass, fail) {
+suite.addTest({name: 'Object.assign on observable should raise an event/s of update with non-proxified original object'}, (pass, fail) => {
 	let oldData = {b: {b1: "x", b2: "y"}},
 		newData = {b: {b1: "z"}},
-		observable = Obser.from(oldData),
+		observable = Observable.from(oldData),
 		events = [];
 	observable.observe(changes => events.push.apply(events, changes));
 

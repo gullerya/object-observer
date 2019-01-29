@@ -1,12 +1,14 @@
-﻿import Observable from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing unobserving/removal of observed object'});
 
-suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, (pass, fail) => {
 	let o = {some: 'text'},
 		oo = Observable.from(o),
 		cntr = 0,
-		observer = function() { cntr++; };
+		observer = function () {
+			cntr++;
+		};
 
 	oo.observe(observer);
 
@@ -21,13 +23,17 @@ suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, f
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, (pass, fail) => {
 	let o = {some: 'text'},
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
-		observerA = function() { cntrA++; },
-		observerB = function() { cntrB++; };
+		observerA = function () {
+			cntrA++;
+		},
+		observerB = function () {
+			cntrB++;
+		};
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -53,13 +59,17 @@ suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, fun
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - unobserve few'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - unobserve few'}, (pass, fail) => {
 	let o = {some: 'text'},
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
-		observerA = function() { cntrA++; },
-		observerB = function() { cntrB++; };
+		observerA = function () {
+			cntrA++;
+		},
+		observerB = function () {
+			cntrB++;
+		};
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -78,13 +88,17 @@ suite.addTest({name: 'test unobserve - unobserve few'}, function(pass, fail) {
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - unobserve all'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - unobserve all'}, (pass, fail) => {
 	let o = {some: 'text'},
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
-		observerA = function() { cntrA++; },
-		observerB = function() { cntrB++; };
+		observerA = function () {
+			cntrA++;
+		},
+		observerB = function () {
+			cntrB++;
+		};
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -103,11 +117,13 @@ suite.addTest({name: 'test unobserve - unobserve all'}, function(pass, fail) {
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, (pass, fail) => {
 	let o = {some: 'text'},
 		oo = Observable.from(o),
 		cntr = 0,
-		observer = function() { cntr++; };
+		observer = function () {
+			cntr++;
+		};
 
 	oo.observe(observer);
 	oo.some = 'thing';
@@ -124,12 +140,14 @@ suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, f
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, (pass, fail) => {
 	let o = {some: 'text', inner: {more: 'text'}},
 		oo = Observable.from(o),
 		ooi = oo.inner,
 		cntr = 0,
-		observer = function() { cntr++; };
+		observer = function () {
+			cntr++;
+		};
 
 	oo.observe(observer);
 	oo.some = 'thing';
@@ -153,13 +171,15 @@ suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, functio
 	pass();
 });
 
-suite.addTest({name: 'test unobserve - revoke the observable (Array)'}, function(pass, fail) {
+suite.addTest({name: 'test unobserve - revoke the observable (Array)'}, (pass, fail) => {
 	let o = [{some: 'text'}, {inner: {more: 'text', arr: ['a', 'b', 'c']}}],
 		oo = Observable.from(o),
 		ooi = oo[1],
 		ooia = ooi.inner.arr,
 		cntr = 0,
-		observer = function() { cntr++; };
+		observer = function () {
+			cntr++;
+		};
 
 	oo.observe(observer);
 	oo.push({});

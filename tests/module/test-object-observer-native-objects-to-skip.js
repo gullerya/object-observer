@@ -1,8 +1,8 @@
-﻿import Observable from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable - non-observables'});
 
-suite.addTest({name: 'creating observable from non-observable should throw an error'}, function(pass, fail) {
+suite.addTest({name: 'creating observable from non-observable should throw an error'}, (pass, fail) => {
 	let objectsToTest = [
 			new Date(),
 			new Blob(),
@@ -12,10 +12,11 @@ suite.addTest({name: 'creating observable from non-observable should throw an er
 			new Error(),
 			new Function(),
 			new RegExp(),
-			new Promise(function() { })],
+			new Promise(function () {
+			})],
 		o;
 
-	objectsToTest.forEach(function(one) {
+	objectsToTest.forEach(function (one) {
 		try {
 			o = Observable.from(one);
 			fail('should not get to this point');
@@ -27,7 +28,7 @@ suite.addTest({name: 'creating observable from non-observable should throw an er
 	pass();
 });
 
-suite.addTest({name: 'non-observable in an object subgraph should stay unchanged'}, function(pass, fail) {
+suite.addTest({name: 'non-observable in an object subgraph should stay unchanged'}, (pass, fail) => {
 	let o = {
 		data: new Date(),
 		blob: new Blob(),
@@ -37,12 +38,13 @@ suite.addTest({name: 'non-observable in an object subgraph should stay unchanged
 		error: new Error(),
 		func: new Function(),
 		regexp: new RegExp(),
-		promise: new Promise(function() { }),
+		promise: new Promise(function () {
+		}),
 		object: {}
 	}, po;
 
 	po = Observable.from(o);
-	Object.keys(o).forEach(function(key) {
+	Object.keys(o).forEach(function (key) {
 		if (key === 'object') {
 			if (o[key] === po[key]) fail('proxification on regular object failed - test is malfunctioning');
 		} else {
@@ -53,7 +55,7 @@ suite.addTest({name: 'non-observable in an object subgraph should stay unchanged
 	pass();
 });
 
-suite.addTest({name: 'non-observable in an array subgraph should stay unchanged'}, function(pass, fail) {
+suite.addTest({name: 'non-observable in an array subgraph should stay unchanged'}, (pass, fail) => {
 	let a = [
 			{},
 			new Date(),
@@ -64,11 +66,12 @@ suite.addTest({name: 'non-observable in an array subgraph should stay unchanged'
 			new Error(),
 			new Function(),
 			new RegExp(),
-			new Promise(function() { })],
+			new Promise(function () {
+			})],
 		o;
 
 	o = Observable.from(a);
-	a.forEach(function(elem, index) {
+	a.forEach(function (elem, index) {
 		if (index === 0) {
 			if (a[index] === o[index]) fail('proxification on regular object failed - test is malfunctioning');
 		} else {
@@ -79,23 +82,25 @@ suite.addTest({name: 'non-observable in an array subgraph should stay unchanged'
 	pass();
 });
 
-suite.addTest({name: 'non-observable should be handled correctly when replaced'}, function(pass, fail) {
+suite.addTest({name: 'non-observable should be handled correctly when replaced'}, (pass, fail) => {
 	let o = {
 		date: new Date()
 	}, oo = Observable.from(o);
 
-	oo.observe(function() { });
+	oo.observe(function () {
+	});
 	oo.date = null;
 
 	pass();
 });
 
-suite.addTest({name: 'non-observable should be handled correctly when deleted'}, function(pass, fail) {
+suite.addTest({name: 'non-observable should be handled correctly when deleted'}, (pass, fail) => {
 	let o = {
 		date: new Date()
 	}, oo = Observable.from(o);
 
-	oo.observe(function() { });
+	oo.observe(function () {
+	});
 	delete oo.date;
 
 	pass();

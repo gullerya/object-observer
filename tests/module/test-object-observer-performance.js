@@ -1,8 +1,8 @@
-﻿import Observable from '../../dist/module/object-observer.js';
+﻿import {Observable} from '../../dist/object-observer.js';
 
 let suite = Utils.JustTest.createSuite({name: 'Testing Observable Load'});
 
-suite.addTest({name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations'}, function(pass, fail) {
+suite.addTest({name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations'}, (pass, fail) => {
 	let creationIterations = 100000,
 		mutationIterations = 1000000,
 		o = {
@@ -85,7 +85,7 @@ suite.addTest({name: 'creating 100,000 observables, 1,000,000 deep (x3) mutation
 	pass();
 });
 
-suite.addTest({name: 'push 100,000 observables to an array, mutate them and pop them back'}, function(pass, fail) {
+suite.addTest({name: 'push 100,000 observables to an array, mutate them and pop them back'}, (pass, fail) => {
 	let mutationIterations = 100000,
 		o = {
 			name: 'Anna Guller',
