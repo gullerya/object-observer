@@ -578,7 +578,7 @@ class Observable {
 	}
 
 	static isObservable(input) {
-		return !!(input && input[sysObsKey]);
+		return !!(input && input[sysObsKey] && input.observe);
 	}
 }
 

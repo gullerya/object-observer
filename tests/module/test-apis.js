@@ -102,6 +102,10 @@ suite.addTest({name: 'isObservable tests'}, (pass, fail) => {
 	if (Observable.isObservable({})) fail('expected to have negative result when {} object tested');
 	if (!Observable.isObservable(Observable.from({}))) fail('expected to have positive result when truly Observable tested');
 
+	let oo = Observable.from({nested: {}});
+	if (!Observable.isObservable(oo)) fail('expected Observable to be detected as indeed Observable');
+	if (Observable.isObservable(oo.nested)) fail('inner objects from observable graph should not be considered as observables themselves');
+
 	pass();
 });
 
