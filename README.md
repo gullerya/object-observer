@@ -26,16 +26,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+* __2.0.2
+  * fixed [Issue no. 20](https://github.com/gullerya/object-observer/issues/20) - fixing `isObservable` API
+
 * __2.0.0__
   * implemented [Issue no. 16](https://github.com/gullerya/object-observer/issues/16) - explicit naming in export instead of default (!!! breaking change)
   * implemented [Issue no. 17](https://github.com/gullerya/object-observer/issues/17) - removed non-ES6 like module and adjusted folder structure (!!! breaking change)
 
 * __1.2.0__
   * fixed [Issue no. 18](https://github.com/gullerya/object-observer/issues/18)
-
-* __1.1.5__
-  * implemented improvement as suggested in [Issue no. 13](https://github.com/gullerya/object-observer/issues/13)
-  * added tests to CI + coverage report
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
