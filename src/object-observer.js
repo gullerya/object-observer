@@ -99,13 +99,12 @@ const
 			try {
 				const target = observers[l]
 				const { path } = target.options
-				
-				if (path && path.split(".").every((value, index) => changes[0].path[index] === value)) {
+
+				if (path && changes.every((change) => change.path.join('.').startsWith(path))) {
 					target.observer(changes);
-				} else if(!path) {
+				} else if (!path) {
 					target.observer(changes);
 				}
-				
 			} catch (e) {
 				console.error('failed to deliver changes to listener' + observers[l], e);
 			}
