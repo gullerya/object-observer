@@ -99,10 +99,12 @@ const
 			try {
 				const target = observers[l]
 				const { path } = target.options
-
-				if (path && changes.every((change) => change.path.join('.').startsWith(path))) {
-					target.observer(changes);
-				} else if (!path) {
+				if (path) {
+					let relevantChanges = changes.every((change) => change.path.join('.').startsWith(path))
+					if (relevantChanges) {
+						target.observer(changes);
+					}
+				} else {
 					target.observer(changes);
 				}
 			} catch (e) {
