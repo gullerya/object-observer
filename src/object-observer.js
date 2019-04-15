@@ -26,15 +26,19 @@ const
 			}
 		},
 		observe: {
-			value: function (observer) {
+			value: function (observer, options = {}) {
 				let systemObserver = this[sysObsKey],
 					observers = systemObserver.observers;
+
 				if (typeof observer !== 'function') {
 					throw new Error('observer parameter MUST be a function');
 				}
 
 				if (observers.indexOf(observer) < 0) {
-					observers.push(observer);
+					observers.push({
+						observer,
+						options
+					});
 				} else {
 					console.info('observer may be bound to an observable only once');
 				}
@@ -93,7 +97,16 @@ const
 		let l = observers.length;
 		while (l--) {
 			try {
-				observers[l](changes);
+				const target = observers[l]
+				const { path } = target.options
+				if (path) {
+					let relevantChanges = changes.filter((change) => change.path.join('.').startsWith(path))
+					if (relevantChanges.length) {
+						target.observer(changes);
+					}
+				} else {
+					target.observer(changes);
+				}
 			} catch (e) {
 				console.error('failed to deliver changes to listener' + observers[l], e);
 			}
