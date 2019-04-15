@@ -100,8 +100,8 @@ const
 				const target = observers[l]
 				const { path } = target.options
 				if (path) {
-					let relevantChanges = changes.every((change) => change.path.join('.').startsWith(path))
-					if (relevantChanges) {
+					let relevantChanges = changes.filter((change) => change.path.join('.').startsWith(path))
+					if (relevantChanges.length) {
 						target.observer(changes);
 					}
 				} else {
