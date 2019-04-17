@@ -19,6 +19,7 @@ const
 		Promise: true,
 		RegExp: true
 	},
+	validOptionsKeys = ['path', 'pathsFrom'],
 	observableDefinition = {
 		revoke: {
 			value: function () {
@@ -33,9 +34,24 @@ const
 				if (typeof observer !== 'function') {
 					throw new Error('observer parameter MUST be a function');
 				}
+				if (options) {
+					if ('path' in options && (typeof options.path !== 'string' || !options.path)) {
+						throw new Error('"path" option, if/when provided, MUST be a non-empty string');
+					}
+					if ('pathsFrom' in options && options.path) {
+						throw new Error('"pathsFrom" option MAY NOT be specified together with "path" option');
+					}
+					if ('pathsFrom' in options && (typeof options.pathsFrom !== 'string' || !options.pathsFrom)) {
+						throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
+					}
+					let invalidOption = Object.keys(options).find(option => !validOptionsKeys.includes(option));
+					if (invalidOption) {
+						throw new Error('"' + invalidOption + '" is not a one of the valid options (' + validOptionsKeys.join(', ') + ')');
+					}
+				}
 
 				if (!observers.has(observer)) {
-					observers.set(observer, options);
+					observers.set(observer, Object.assign({}, options));
 				} else {
 					console.info('observer may be bound to an observable only once');
 				}
@@ -94,16 +110,16 @@ const
 	callObservers = function (observers, changes) {
 		for (let target of observers.keys()) {
 			try {
-				let options = observers.get(target);
-				if (options && options.path) {
-					let oPath = options.path,
-						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPath));
-					if (relevantChanges.length) {
-						target(changes);
-					}
-				} else {
-					target(changes);
+				let relevantChanges = changes,
+					options = observers.get(target);
+				if (options.path) {
+					let oPath = options.path;
+					relevantChanges = changes.filter(change => change.path.join('.') === oPath);
+				} else if (options.pathsFrom) {
+					let oPaths = options.pathsFrom;
+					relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
 				}
+				target(relevantChanges);
 			} catch (e) {
 				console.error('failed to deliver changes to listener ' + target, e);
 			}
