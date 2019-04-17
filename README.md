@@ -158,6 +158,9 @@ oCustomer.orders.reverse();
 //  { type: 'reverse', path: ['orders'], object: oCustomer.orders }
 ```
 
+> Arrays notes: Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
+In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invocation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
+
 ##### Observation options
 
 ```javascript
@@ -172,12 +175,9 @@ let user = {
     },
     oUser = Observable.from(user);
 
-//  going to observe specifically changes of 'firstName'
+//  going to observe ONLY the changes of 'firstName'
 oUser.observe(changes => {}, {path: 'firstName'});
 
-//  going to observe ONLY the changes from 'address' and deeper
+//  going to observe the changes from 'address' and deeper
 oUser.observe(changes => {}, {pathsFrom: 'address'});
 ```
-
-> Arrays notes: Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
-In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invocation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
