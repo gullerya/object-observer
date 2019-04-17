@@ -1,6 +1,9 @@
 # Changelog
 
-* __2.0.2
+* __2.1.0__
+  * implemented [Issue no. 21](https://github.com/gullerya/object-observer/issues/21) - implemented 'partial paths observation' functionality (thanks [tonis2](https://github.com/tonis2)!)
+
+* __2.0.2__
   * fixed [Issue no. 20](https://github.com/gullerya/object-observer/issues/20) - fixing `isObservable` API
 
 * __2.0.0__

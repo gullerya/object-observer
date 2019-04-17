@@ -37,11 +37,13 @@ Observable.isObservable({
 
 ## Instance methods
 
-* __`observe`__ - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
+* __`observe`__
+    - receives a _function_, which will be added to the list of observers subscribed for a changes of this observable.
 Changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects.
 Each change is a defined, non-null object, see `Change` definition below.
+    - receives an options _object_, optional.
 ```javascript
-function personUIObserver(changes) {
+function personUIObserver(changes, options) {
     changes.forEach(change => {
         console.log(change.type);
         console.log(change.path);
@@ -65,6 +67,17 @@ observablePerson.unobserve();
 ```javascript
 observablePerson.revoke();
 ```
+
+## Observation options
+`options` parameter MAY be not provided at all, it also MAY be null.
+If/When provided, `options` parameter MUST contain ONLY one/some of the properties below, no 'foreign' property allowed.
+
+* __`path`__        - non-empty string, specific path to observe; only a changes to this path will be delivered to the observer
+> if specified path `firstName` when observing `{ firstName: 'some', lastName: 'name' }`, ONLY and ONLY changes of `firstName` will be observed.
+In the same fashion if specified path `address` when observing `{ address: { city: 'city', street: 'street' } }`, ONLY and ONLY changes of `address` will be observed, BUT NOT, for instance, changes of `city` or `street`. 
+
+* __`pathsFrom`__   - non-empty string, any changes from the specified starting path and deeper will be delivered to the observer; this options MAY NOT be used together with `path` option
+> if specified path `address` when observing `{ addressNew: {...}, addressOld: {...} }`, ALL of the changes to `addressNew` and `addressOld` and their nested properties of any level of depth will be observed.
 
 ## `Change` instance properties
 

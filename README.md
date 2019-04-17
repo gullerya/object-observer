@@ -26,15 +26,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
-* __2.0.2
+* __2.1.0__
+  * implemented [Issue no. 21](https://github.com/gullerya/object-observer/issues/21) - implemented 'partial paths observation' functionality (thanks [tonis2](https://github.com/tonis2)!)
+
+* __2.0.2__
   * fixed [Issue no. 20](https://github.com/gullerya/object-observer/issues/20) - fixing `isObservable` API
 
 * __2.0.0__
   * implemented [Issue no. 16](https://github.com/gullerya/object-observer/issues/16) - explicit naming in export instead of default (!!! breaking change)
   * implemented [Issue no. 17](https://github.com/gullerya/object-observer/issues/17) - removed non-ES6 like module and adjusted folder structure (!!! breaking change)
-
-* __1.2.0__
-  * fixed [Issue no. 18](https://github.com/gullerya/object-observer/issues/18)
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
@@ -149,7 +149,7 @@ observableA.splice(0, 1, 'x', 'y');
 let customer = { orders: [ ... ] },
     oCustomer = Observable.from(customer);
 
-//  sortin the orders array, pay attention to the path in the event
+//  sorting the orders array, pay attention to the path in the event
 oCustomer.orders.sort();
 //  { type: 'shuffle', path: ['orders'], object: oCustomer.orders }
 
@@ -157,5 +157,27 @@ oCustomer.orders.sort();
 oCustomer.orders.reverse();
 //  { type: 'reverse', path: ['orders'], object: oCustomer.orders }
 ```
+
+##### Observation options
+
+```javascript
+let user = {
+	    firstName: 'Aya',
+	    lastName: 'Guller',
+	    address: {
+	    	city: 'of mountaineers',
+	    	street: 'of the top ridges',
+	    	block: 123
+	    }
+    },
+    oUser = Observable.from(user);
+
+//  going to observe specifically changes of 'firstName'
+oUser.observe(changes => {}, {path: 'firstName'});
+
+//  going to observe ONLY the changes from 'address' and deeper
+oUser.observe(changes => {}, {pathsFrom: 'address'});
+```
+
 > Arrays notes: Some of array operations are effectively moving/reindexing the whole array (shift, unshift, splice, reverse, sort).
 In cases of massive changes touching presumably the whole array I took a pessimistic approach with a special non-detailed events: 'reverse' for `reverse`, 'shuffle' for `sort`. The rest of these methods I'm handling in an optimistic way delivering the changes that are directly related to the method invocation, while leaving out the implicit outcomes like reindexing of the rest of the Array.
