@@ -43,7 +43,7 @@ Changes delivered always as a never-null-nor-empty array of [__`Change`__](#chan
 Each change is a defined, non-null object, see `Change` definition below.
     - receives an options _object_, optional.
 ```javascript
-function personUIObserver(changes, options) {
+function personUIObserver(changes) {
     changes.forEach(change => {
         console.log(change.type);
         console.log(change.path);
@@ -53,7 +53,7 @@ function personUIObserver(changes, options) {
 }
 ...
 observablePerson = Observable.from(person);
-observablePerson.observe(personUIObserver);
+observablePerson.observe(personUIObserver, options);        //  options is optional
 ```
 
 * __`unobserve`__ - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed.
