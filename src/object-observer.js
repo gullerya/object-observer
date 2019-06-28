@@ -221,7 +221,8 @@ class ArrayObserver extends ObserverBase {
 
 		//	roll back observed array to an unobserved one
 		let target = this.target, l = target.length, item;
-		while (l--) {
+		while (l) {
+			l--;
 			item = target[l];
 			if (item && typeof item === 'object') {
 				let tmpObserved = item[sysObsKey];
