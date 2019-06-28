@@ -132,7 +132,7 @@ const
 			self = self.parent;
 		}
 		result = new Array(l1);
-		while (l1--) result[l2++] = tmp[l1];
+		while (l1) result[l2++] = tmp[--l1];
 		return {observers: self.observers, path: result};
 	};
 
@@ -557,8 +557,8 @@ class ObjectObserver extends ObserverBase {
 
 		//	roll back observed graph to an unobserved one
 		let target = this.target, keys = Object.keys(target), l = keys.length, key, item;
-		while (l--) {
-			key = keys[l];
+		while (l) {
+			key = keys[--l];
 			item = target[key];
 			if (item && typeof item === 'object') {
 				let tmpObserved = item[sysObsKey];
