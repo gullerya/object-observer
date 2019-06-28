@@ -5,8 +5,6 @@
 [![Codecov](https://img.shields.io/codecov/c/github/gullerya/object-observer/master.svg)](https://codecov.io/gh/gullerya/object-observer/branch/master)
 [![Codacy](https://img.shields.io/codacy/grade/a3879d7077eb4eef83a591733ad7c579.svg?logo=codacy)](https://www.codacy.com/app/gullerya/object-observer)
 
-
-
 # Summary
 
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
