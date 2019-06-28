@@ -1,8 +1,11 @@
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 [![npm](https://img.shields.io/npm/v/object-observer.svg?label=npm%20object-observer)](https://www.npmjs.com/package/object-observer)
 [![npm](https://img.shields.io/npm/v/@gullerya/observable.svg?label=npm%20@gullerya/observable)](https://www.npmjs.com/package/@gullerya/observable)
-[![Build Status](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
-[![Codecov master](https://img.shields.io/codecov/c/github/gullerya/object-observer/master.svg)](https://codecov.io/gh/gullerya/object-observer/branch/master)
+[![Travis](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
+[![Codecov](https://img.shields.io/codecov/c/github/gullerya/object-observer/master.svg)](https://codecov.io/gh/gullerya/object-observer/branch/master)
+[![Codacy](https://img.shields.io/codacy/grade/a3879d7077eb4eef83a591733ad7c579.svg?logo=codacy)](https://www.codacy.com/app/gullerya/object-observer)
+
+
 
 # Summary
 
