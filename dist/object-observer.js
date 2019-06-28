@@ -65,8 +65,8 @@ const
 				if (observers.size) {
 					l = arguments.length;
 					if (l) {
-						while (l--) {
-							observers.delete(arguments[l]);
+						while (l) {
+							observers.delete(arguments[--l]);
 						}
 					} else {
 						observers.clear();
@@ -79,7 +79,8 @@ const
 		let l = source.length, item;
 		let target = new Array(source.length);
 		target[sysObsKey] = observer;
-		while (l--) {
+		while (l) {
+			l--;
 			item = source[l];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
 				target[l] = Array.isArray(item)
@@ -94,7 +95,8 @@ const
 	prepareObject = function (source, observer) {
 		let keys = Object.keys(source), l = keys.length, key, item;
 		let target = {[sysObsKey]: observer};
-		while (l--) {
+		while (l) {
+			l--;
 			key = keys[l];
 			item = source[key];
 			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
