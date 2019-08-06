@@ -27,15 +27,14 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
+* __2.2.0__
+  * implemented [Issue no. 25](https://github.com/gullerya/object-observer/issues/25) - not dispathing events when strictly equal values reassigned (except `object`, which is never equal due to cloning)
+
 * __2.1.0__
   * implemented [Issue no. 21](https://github.com/gullerya/object-observer/issues/21) - implemented 'partial paths observation' functionality (thanks [tonis2](https://github.com/tonis2)!)
 
 * __2.0.2__
   * fixed [Issue no. 20](https://github.com/gullerya/object-observer/issues/20) - fixing `isObservable` API
-
-* __2.0.0__
-  * implemented [Issue no. 16](https://github.com/gullerya/object-observer/issues/16) - explicit naming in export instead of default (!!! breaking change)
-  * implemented [Issue no. 17](https://github.com/gullerya/object-observer/issues/17) - removed non-ES6 like module and adjusted folder structure (!!! breaking change)
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 

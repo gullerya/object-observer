@@ -1,14 +1,14 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing Observable - objects'});
+let suite = Utils.JustTest.createSuite({ name: 'Testing Observable - objects' });
 
-suite.addTest({name: 'creating observable leaves original object as is'}, (pass, fail) => {
+suite.addTest({ name: 'creating observable leaves original object as is' }, (pass, fail) => {
 	let person = {
-			name: 'name',
-			age: 7
-		},
-		address = {city: 'city'},
-		street = {name: 'street', apt: 234},
+		name: 'name',
+		age: 7
+	},
+		address = { city: 'city' },
+		street = { name: 'street', apt: 234 },
 		po;
 
 	address.street = street;
@@ -26,12 +26,12 @@ suite.addTest({name: 'creating observable leaves original object as is'}, (pass,
 	pass();
 });
 
-suite.addTest({name: 'plain object operations'}, (pass, fail) => {
+suite.addTest({ name: 'plain object operations' }, (pass, fail) => {
 	let o = {
 		name: 'name',
 		age: 7,
 		address: null
-	}, po, events = [], tmpAddress = {street: 'some'};
+	}, po, events = [], tmpAddress = { street: 'some' };
 
 	po = Observable.from(o);
 	po.observe(changes => {
@@ -57,7 +57,7 @@ suite.addTest({name: 'plain object operations'}, (pass, fail) => {
 	pass();
 });
 
-suite.addTest({name: 'sub tree object operations'}, (pass, fail) => {
+suite.addTest({ name: 'sub tree object operations' }, (pass, fail) => {
 	let person = {
 		name: 'name',
 		age: 7,
@@ -88,10 +88,10 @@ suite.addTest({name: 'sub tree object operations'}, (pass, fail) => {
 	pass();
 });
 
-suite.addTest({name: 'subgraph proxy correctly revoked when replaced'}, (pass, fail) => {
+suite.addTest({ name: 'subgraph proxy correctly revoked when replaced' }, (pass, fail) => {
 	let o = {
-			inner: {}
-		}, oo = Observable.from(o),
+		inner: {}
+	}, oo = Observable.from(o),
 		events = [],
 		tmp;
 
@@ -116,10 +116,10 @@ suite.addTest({name: 'subgraph proxy correctly revoked when replaced'}, (pass, f
 	pass();
 });
 
-suite.addTest({name: 'subgraph proxy correctly revoked when deleted'}, (pass, fail) => {
+suite.addTest({ name: 'subgraph proxy correctly revoked when deleted' }, (pass, fail) => {
 	let o = {
-			inner: {}
-		}, oo = Observable.from(o),
+		inner: {}
+	}, oo = Observable.from(o),
 		events = [],
 		tmp;
 
@@ -144,10 +144,10 @@ suite.addTest({name: 'subgraph proxy correctly revoked when deleted'}, (pass, fa
 	pass();
 });
 
-suite.addTest({name: 'subgraph proxy correctly processed when callbacks not yet set'}, (pass, fail) => {
+suite.addTest({ name: 'subgraph proxy correctly processed when callbacks not yet set' }, (pass, fail) => {
 	let o = {
-			inner: {}
-		}, oo = Observable.from(o),
+		inner: {}
+	}, oo = Observable.from(o),
 		events = [],
 		callback = function (changes) {
 			[].push.apply(events, changes);
@@ -167,9 +167,9 @@ suite.addTest({name: 'subgraph proxy correctly processed when callbacks not yet 
 	pass();
 });
 
-suite.addTest({name: 'subgraph objects pointing to the same object few times', skip: true}, (pass, fail) => {
-	let childObj = {prop: 'A'},
-		mainObj = {childA: childObj, childB: childObj};
+suite.addTest({ name: 'subgraph objects pointing to the same object few times', skip: true }, (pass, fail) => {
+	let childObj = { prop: 'A' },
+		mainObj = { childA: childObj, childB: childObj };
 
 	let obsMainObj = Observable.from(mainObj);
 	obsMainObj.observe(changes => console.dir(changes));

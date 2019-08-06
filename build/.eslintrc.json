@@ -18,6 +18,7 @@
     "space-before-function-paren": "off",
     "object-curly-spacing": "off",
     "eol-last": "off",
-    "one-var": "off"
+    "one-var": "off",
+    "no-prototype-builtins": "off"
   }
 }
