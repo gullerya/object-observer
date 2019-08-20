@@ -41,15 +41,15 @@
     "test": "node ./tests/tmp-tests-runner/run-tests.js"
   },
   "devDependencies": {
-    "eslint": "^6.1.0",
-    "eslint-config-standard": "^13.0.1",
+    "eslint": "6.2.1",
+    "eslint-config-standard": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-standard": "^4.0.1",
     "fs-extra": "^8.1.0",
     "just-test": "^0.1.0",
-    "npm": "^6.10.2",
+    "npm": "^6.10.3",
     "puppeteer": "^1.19.0",
     "uglify-es": "^3.3.9",
     "codecov": "^3.5.0"

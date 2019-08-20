@@ -127,7 +127,9 @@ const
 					oPaths = options.pathsFrom;
 					relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
 				}
-				target(relevantChanges);
+				if (relevantChanges.length) {
+					target(relevantChanges);
+				}
 			} catch (e) {
 				console.error('failed to deliver changes to listener ' + target, e);
 			}
