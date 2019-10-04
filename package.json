@@ -26,7 +26,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/object-observer.min.js",
+  "main": "dist/node/object-observer.min.js",
   "type": "module",
   "author": {
     "name": "Guller Yuri",
