@@ -27,7 +27,7 @@ Main aspects:
 
 #### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
 
-* __2.4.0__
+* __2.4.1__
   * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
   * updated dependencies
 

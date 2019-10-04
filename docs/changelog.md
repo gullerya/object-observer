@@ -1,6 +1,6 @@
 # Changelog
 
-* __2.4.0__
+* __2.4.1__
   * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
   * updated dependencies
 
