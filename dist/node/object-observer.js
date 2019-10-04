@@ -629,4 +629,4 @@ class Observable {
 
 Object.freeze(Observable);
 
-export { Observable };
+exports.Observable = Observable;

@@ -1,5 +1,9 @@
 # Changelog
 
+* __2.4.0__
+  * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
+  * updated dependencies
+
 * __2.3.0__
   * fixed [Issue no. 26](https://github.com/gullerya/object-observer/issues/26) - callbacks/observers are being called with an empty changes array when set for a specific path/paths
 
