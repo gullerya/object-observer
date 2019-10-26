@@ -1,6 +1,7 @@
-﻿import { Observable } from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({ name: 'Testing Observable - objects' });
+const suite = createSuite({ name: 'Testing Observable - objects' });
 
 suite.addTest({ name: 'creating observable leaves original object as is' }, (pass, fail) => {
 	let person = {

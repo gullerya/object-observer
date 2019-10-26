@@ -1,8 +1,9 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing revokation of removed/replaced objects'});
+const suite = createSuite({ name: 'Testing revokation of removed/replaced objects' });
 
-suite.addTest({name: 'test revokation of replaced objects - simple set'}, (pass, fail) => {
+suite.runTest({ name: 'test revokation of replaced objects - simple set' }, () => {
 	let g = {
 		a: {
 			b: {
@@ -15,18 +16,16 @@ suite.addTest({name: 'test revokation of replaced objects - simple set'}, (pass,
 	let og = Observable.from(g);
 	og.observe(changes => {
 		eventsCollector = eventsCollector.concat(changes);
-		if (changes.length !== 1 || changes[0].type !== 'update') fail('expected to track one update change');
-		if (changes[0].oldValue.prop !== 'text') fail('expected the old value to still be readable');
-		if (changes[0].value.prop !== 'text') fail('expected the new value to be readable');
+		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');
+		if (changes[0].oldValue.prop !== 'text') throw new Error('expected the old value to still be readable');
+		if (changes[0].value.prop !== 'text') throw new Error('expected the new value to be readable');
 	});
 
 	og.a = og.a.b;
-	if (og.a.prop !== 'text') fail('expected the new value on the observed graph to be accessible');
-
-	pass();
+	if (og.a.prop !== 'text') throw new Error('expected the new value on the observed graph to be accessible');
 });
 
-suite.addTest({name: 'test revokation of replaced objects - splice in array'}, (pass, fail) => {
+suite.runTest({ name: 'test revokation of replaced objects - splice in array' }, () => {
 	let g = [
 		{
 			child: {
@@ -39,15 +38,11 @@ suite.addTest({name: 'test revokation of replaced objects - splice in array'}, (
 	let og = Observable.from(g);
 	og.observe(changes => {
 		eventsCollector = eventsCollector.concat(changes);
-		if (changes.length !== 1 || changes[0].type !== 'update') fail('expected to track one update change');
-		if (changes[0].oldValue.prop !== 'text') fail('expected the old value to still be readable');
-		if (changes[0].value.prop !== 'text') fail('expected the new value to be readable');
+		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');
+		if (changes[0].oldValue.prop !== 'text') throw new Error('expected the old value to still be readable');
+		if (changes[0].value.prop !== 'text') throw new Error('expected the new value to be readable');
 	});
 
 	og.splice(0, 1, og[0].child);
-	if (og[0].prop !== 'text') fail('expected the new value on the observed graph to be accessible');
-
-	pass();
+	if (og[0].prop !== 'text') throw new Error('expected the new value on the observed graph to be accessible');
 });
-
-suite.run();

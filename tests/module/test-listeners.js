@@ -1,8 +1,9 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing listeners APIs'});
+const suite = createSuite({ name: 'Testing listeners APIs' });
 
-suite.addTest({name: 'test listeners invocation - single listener'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
 	let o = {}, oo = Observable.from(o);
 	let events = [];
 
@@ -19,7 +20,7 @@ suite.addTest({name: 'test listeners invocation - single listener'}, (pass, fail
 		events[0].value !== 'test' ||
 		events[0].object !== oo
 	) {
-		fail('event 0 is not as expected');
+		throw new Error('event 0 is not as expected');
 	}
 	if (events[1].type !== 'update' ||
 		events[1].path[0] !== 'some' ||
@@ -27,7 +28,7 @@ suite.addTest({name: 'test listeners invocation - single listener'}, (pass, fail
 		events[1].value !== 'else' ||
 		events[1].object !== oo
 	) {
-		fail('event 1 is not as expected');
+		throw new Error('event 1 is not as expected');
 	}
 	if (events[2].type !== 'delete' ||
 		events[2].path[0] !== 'some' ||
@@ -35,13 +36,11 @@ suite.addTest({name: 'test listeners invocation - single listener'}, (pass, fail
 		typeof events[2].value !== 'undefined' ||
 		events[2].object !== oo
 	) {
-		fail('event 2 is not as expected');
+		throw new Error('event 2 is not as expected');
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test listeners invocation - multiple listeners'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - multiple listeners' }, () => {
 	let o = {}, oo = Observable.from(o);
 	let eventsA = [], eventsB = [], eventsC = [];
 
@@ -54,13 +53,11 @@ suite.addTest({name: 'test listeners invocation - multiple listeners'}, (pass, f
 	delete oo.some;
 
 	if (eventsA.length !== 3 || eventsB.length !== 3 || eventsC.length !== 3) {
-		fail('some of events listeners got wrong number of events');
+		throw new Error('some of events listeners got wrong number of events');
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test listeners invocation - multiple listeners and one is throwing'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - multiple listeners and one is throwing' }, () => {
 	let o = {}, oo = Observable.from(o);
 	let eventsA = [], eventsB = [];
 
@@ -75,13 +72,11 @@ suite.addTest({name: 'test listeners invocation - multiple listeners and one is 
 	delete oo.some;
 
 	if (eventsA.length !== 3 || eventsB.length !== 3) {
-		fail('some of events listeners got wrong number of events');
+		throw new Error('some of events listeners got wrong number of events');
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test listeners invocation - multiple times same listener'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - multiple times same listener' }, () => {
 	let o = {}, oo = Observable.from(o);
 	let eventsA = [];
 	let listener = changes => eventsA = eventsA.concat(changes);
@@ -94,43 +89,34 @@ suite.addTest({name: 'test listeners invocation - multiple times same listener'}
 	delete oo.some;
 
 	if (eventsA.length !== 3) {
-		fail('some of events listeners got wrong number of events');
+		throw new Error('some of events listeners got wrong number of events');
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test listeners invocation - listener is corrupted'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - listener is corrupted' }, () => {
 	let o = {}, oo = Observable.from(o);
 
 	try {
 		oo.observe(null);
-		fail('the flow should fail due to listener being NULL');
+		throw new Error('the flow should fail due to listener being NULL');
 	} catch (e) {
 	}
 
 	try {
 		oo.observe('some non function');
-		fail('the flow should fail due to listener being STRING');
+		throw new Error('the flow should fail due to listener being STRING');
 	} catch (e) {
-
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test listeners invocation - observing revoked Observable should throw'}, (pass, fail) => {
+suite.runTest({ name: 'test listeners invocation - observing revoked Observable should throw' }, () => {
 	let o = {}, oo = Observable.from(o);
 
 	oo.revoke();
 	try {
 		oo.observe(() => {
 		});
-		fail('the flow should fail due to listener being NULL');
+		throw new Error('the flow should fail due to listener being NULL');
 	} catch (e) {
 	}
-
-	pass();
 });
-
-suite.run();

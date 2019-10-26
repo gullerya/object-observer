@@ -1,0 +1,17 @@
+{
+	"tests": {
+		"url": "/tests/module/test.html"
+	},
+	"coverage": {
+		"include": [
+			"^\/dist\/.+"
+		],
+		"exclude": [
+			"^\/dist\/node\/.+",
+			".+\\.min\\.js$"
+		]
+	},
+	"reports": {
+		"folder": "./reports"
+	}
+}

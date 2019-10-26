@@ -1,21 +1,21 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing Observable APIs'});
+const suite = createSuite({ name: 'Testing Observable APIs' });
 
-suite.addTest({name: 'ensure Observable object is frozen with only defined API'}, (pass, fail) => {
-	if (typeof Observable !== 'function') fail('expected to find Observable function imported');
-	if (typeof Observable.from !== 'function') fail('expected to find "from" function on Observable');
-	if (typeof Observable.isObservable !== 'function') fail('expected to find "isObservable" function on Observable');
+suite.runTest('ensure Observable object is frozen with only defined API', test => {
+	test.assertEqual(typeof Observable, 'function');
+	test.assertEqual(typeof Observable.from, 'function');
+	test.assertEqual(typeof Observable.isObservable, 'function');
+
 	try {
 		Observable.some = 'prop';
-		if (Observable.some) fail('expected Observable to be frozen');
-		pass();
+		test.assertFalse(Observable.some);
 	} catch (e) {
-		pass();
 	}
 });
 
-suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
+suite.runTest('negative tests - invalid parameters', test => {
 	let bo,
 		safeToContinue = false;
 	try {
@@ -23,7 +23,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on undefined parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = null;
 	safeToContinue = false;
@@ -32,7 +32,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on null parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = true;
 	safeToContinue = false;
@@ -41,7 +41,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on boolean parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = 1;
 	safeToContinue = false;
@@ -50,7 +50,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on number parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = 'string';
 	safeToContinue = false;
@@ -59,7 +59,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on string parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = function () {
 	};
@@ -69,7 +69,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on function parameter');
+	test.assertTrue(safeToContinue);
 
 	bo = {
 		observe: null
@@ -80,7 +80,7 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on object parameter having "observe" key defined');
+	test.assertTrue(safeToContinue);
 
 	bo = {
 		unobserve: null
@@ -91,77 +91,68 @@ suite.addTest({name: 'negative tests - invalid parameters'}, (pass, fail) => {
 	} catch (e) {
 		safeToContinue = true;
 	}
-	if (!safeToContinue) fail('expected to catch error on object parameter having "unobserve" key defined');
-
-	pass();
+	test.assertTrue(safeToContinue);
 });
 
-suite.addTest({name: 'isObservable tests'}, (pass, fail) => {
-	if (Observable.isObservable('some')) fail('expected to have negative result when non-object tested');
-	if (Observable.isObservable(null)) fail('expected to have negative result when NULL object tested');
-	if (Observable.isObservable({})) fail('expected to have negative result when {} object tested');
-	if (!Observable.isObservable(Observable.from({}))) fail('expected to have positive result when truly Observable tested');
+suite.runTest('isObservable tests', test => {
+	test.assertFalse(Observable.isObservable('some'));
+	test.assertFalse(Observable.isObservable(null));
+	test.assertFalse(Observable.isObservable({}));
+	test.assertTrue(Observable.isObservable(Observable.from({})));
 
-	let oo = Observable.from({nested: {}});
-	if (!Observable.isObservable(oo)) fail('expected Observable to be detected as indeed Observable');
-	if (Observable.isObservable(oo.nested)) fail('inner objects from observable graph should not be considered as observables themselves');
-
-	pass();
+	let oo = Observable.from({ nested: {} });
+	test.assertTrue(Observable.isObservable(oo));
+	test.assertFalse(Observable.isObservable(oo.nested));
 });
 
-suite.addTest({name: 'test observable APIs presence on object/array'}, (pass, fail) => {
+suite.runTest('test observable APIs presence on object/array', test => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
 
-	if (typeof oo.revoke !== 'function') fail('expected to find "revoke" function on the created Observable');
-	if (typeof oo.observe !== 'function') fail('expected to find "observe" function on the created Observable');
-	if (typeof oo.unobserve !== 'function') fail('expected to find "unobserve" function on the created Observable');
+	test.assertEqual(typeof oo.revoke, 'function');
+	test.assertEqual(typeof oo.observe, 'function');
+	test.assertEqual(typeof oo.unobserve, 'function');
 
 	aa = Observable.from(a);
 
-	if (typeof aa.revoke !== 'function') fail('expected to find "revoke" function on the created Observable');
-	if (typeof aa.observe !== 'function') fail('expected to find "observe" function on the created Observable');
-	if (typeof aa.unobserve !== 'function') fail('expected to find "unobserve" function on the created Observable');
-
-	pass();
+	test.assertEqual(typeof aa.revoke, 'function');
+	test.assertEqual(typeof aa.observe, 'function');
+	test.assertEqual(typeof aa.unobserve, 'function');
 });
 
-suite.addTest({name: 'test observable APIs - ensure APIs are not enumerables'}, (pass, fail) => {
+suite.runTest('test observable APIs - ensure APIs are not enumerables', test => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
 
-	if (Object.keys(oo).length) fail('expected to not see any enumerable keys on the empty observable object');
+	test.assertEqual(Object.keys(oo).length, 0);
 
 	aa = Observable.from(a);
 
-	if (Object.keys(aa).length) fail('expected to not see any enumerable keys on the empty observable array');
-
-	pass();
+	test.assertEqual(Object.keys(aa).length, 0);
 });
 
-suite.addTest({name: 'test observable APIs - nested objects/arrays have no observable APIs'}, (pass, fail) => {
-	let o = {n: {}}, a = [[]], oo, aa;
+suite.runTest('test observable APIs - nested objects/arrays have no observable APIs', test => {
+	let o = { n: {} }, a = [[]], oo, aa;
 
 	oo = Observable.from(o);
 
-	if (typeof oo.n.revoke === 'function' || typeof oo.n.observe === 'function' || typeof oo.n.unobserve === 'function') fail('expected to not see any APIs on the nested object of observable object');
+	test.assertFalse(
+		typeof oo.n.revoke === 'function' || typeof oo.n.observe === 'function' || typeof oo.n.unobserve === 'function'
+	);
 
 	aa = Observable.from(a);
 
-	if (typeof aa[0].revoke === 'function' || typeof aa[0].observe === 'function' || typeof aa[0].unobserve === 'function') fail('expected to not see any APIs on the nested array of observable array');
-
-	pass();
+	test.assertFalse(
+		typeof aa[0].revoke === 'function' || typeof aa[0].observe === 'function' || typeof aa[0].unobserve === 'function'
+	);
 });
 
-suite.addTest({name: 'test observable APIs - Observable can not be used via constructor'}, (pass, fail) => {
+suite.runTest('test observable APIs - Observable can not be used via constructor', test => {
 	try {
 		let o = new Observable();
-		fail('should not get to this point');
+		test.assertTrue(false);
 	} catch (e) {
-		pass();
 	}
 });
-
-suite.run();

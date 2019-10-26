@@ -1,9 +1,10 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing unobserving/removal of observed object'});
+const suite = createSuite({ name: 'Testing unobserving/removal of observed object' });
 
-suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, (pass, fail) => {
-	let o = {some: 'text'},
+suite.runTest({ name: 'test unobserve - single observer - explicit unobserve' }, () => {
+	let o = { some: 'text' },
 		oo = Observable.from(o),
 		cntr = 0,
 		observer = function () {
@@ -13,18 +14,16 @@ suite.addTest({name: 'test unobserve - single observer - explicit unobserve'}, (
 	oo.observe(observer);
 
 	oo.some = 'thing';
-	if (cntr !== 1) fail('preliminary check failed - observer was not invoked');
+	if (cntr !== 1) throw new Error('preliminary check failed - observer was not invoked');
 
 	cntr = 0;
 	oo.unobserve(observer);
 	oo.some = 'true';
-	if (cntr > 0) fail('unobserve failed, expected 0 callbacks, found ' + cntr);
-
-	pass();
+	if (cntr > 0) throw new Error('unobserve failed, expected 0 callbacks, found ' + cntr);
 });
 
-suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, (pass, fail) => {
-	let o = {some: 'text'},
+suite.runTest({ name: 'test unobserve - few observers - explicit unobserve' }, () => {
+	let o = { some: 'text' },
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
@@ -39,28 +38,26 @@ suite.addTest({name: 'test unobserve - few observers - explicit unobserve'}, (pa
 	oo.observe(observerB);
 
 	oo.some = 'thing';
-	if (cntrA !== 1) fail('preliminary check failed - observerA was not invoked');
-	if (cntrB !== 1) fail('preliminary check failed - observerB was not invoked');
+	if (cntrA !== 1) throw new Error('preliminary check failed - observerA was not invoked');
+	if (cntrB !== 1) throw new Error('preliminary check failed - observerB was not invoked');
 
 	cntrA = 0;
 	cntrB = 0;
 	oo.unobserve(observerA);
 	oo.some = 'true';
-	if (cntrA > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB !== 1) fail('unobserve failed, expected 1 callback for the left alone after unobserve, found ' + cntr);
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrB !== 1) throw new Error('unobserve failed, expected 1 callback for the left alone after unobserve, found ' + cntr);
 
 	cntrA = 0;
 	cntrB = 0;
 	oo.unobserve(observerB);
 	oo.some = 'back';
-	if (cntrA > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-
-	pass();
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
 });
 
-suite.addTest({name: 'test unobserve - unobserve few'}, (pass, fail) => {
-	let o = {some: 'text'},
+suite.runTest({ name: 'test unobserve - unobserve few' }, () => {
+	let o = { some: 'text' },
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
@@ -75,21 +72,19 @@ suite.addTest({name: 'test unobserve - unobserve few'}, (pass, fail) => {
 	oo.observe(observerB);
 
 	oo.some = 'thing';
-	if (cntrA !== 1) fail('preliminary check failed - observerA was not invoked');
-	if (cntrB !== 1) fail('preliminary check failed - observerB was not invoked');
+	if (cntrA !== 1) throw new Error('preliminary check failed - observerA was not invoked');
+	if (cntrB !== 1) throw new Error('preliminary check failed - observerB was not invoked');
 
 	cntrA = 0;
 	cntrB = 0;
 	oo.unobserve(observerA, observerB);
 	oo.some = 'true';
-	if (cntrA > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-
-	pass();
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
 });
 
-suite.addTest({name: 'test unobserve - unobserve all'}, (pass, fail) => {
-	let o = {some: 'text'},
+suite.runTest({ name: 'test unobserve - unobserve all' }, () => {
+	let o = { some: 'text' },
 		oo = Observable.from(o),
 		cntrA = 0,
 		cntrB = 0,
@@ -104,21 +99,19 @@ suite.addTest({name: 'test unobserve - unobserve all'}, (pass, fail) => {
 	oo.observe(observerB);
 
 	oo.some = 'thing';
-	if (cntrA !== 1) fail('preliminary check failed - observerA was not invoked');
-	if (cntrB !== 1) fail('preliminary check failed - observerB was not invoked');
+	if (cntrA !== 1) throw new Error('preliminary check failed - observerA was not invoked');
+	if (cntrB !== 1) throw new Error('preliminary check failed - observerB was not invoked');
 
 	cntrA = 0;
 	cntrB = 0;
 	oo.unobserve();
 	oo.some = 'true';
-	if (cntrA > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) fail('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-
-	pass();
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
 });
 
-suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, (pass, fail) => {
-	let o = {some: 'text'},
+suite.runTest({ name: 'test unobserve - observe, unobserve and observe again' }, () => {
+	let o = { some: 'text' },
 		oo = Observable.from(o),
 		cntr = 0,
 		observer = function () {
@@ -127,21 +120,19 @@ suite.addTest({name: 'test unobserve - observe, unobserve and observe again'}, (
 
 	oo.observe(observer);
 	oo.some = 'thing';
-	if (cntr !== 1) fail('preliminary check failed - observer was not invoked');
+	if (cntr !== 1) throw new Error('preliminary check failed - observer was not invoked');
 
 	oo.unobserve();
 	oo.some = 'true';
-	if (cntr !== 1) fail('unobserve failed, expected callbacks for unobserved to remain 1, found ' + cntr);
+	if (cntr !== 1) throw new Error('unobserve failed, expected callbacks for unobserved to remain 1, found ' + cntr);
 
 	oo.observe(observer);
 	oo.some = 'again';
-	if (cntr !== 2) fail('preliminary check failed - observer was not invoked being added anew');
-
-	pass();
+	if (cntr !== 2) throw new Error('preliminary check failed - observer was not invoked being added anew');
 });
 
-suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, (pass, fail) => {
-	let o = {some: 'text', inner: {more: 'text'}},
+suite.runTest({ name: 'test unobserve - revoke the observable (Object)' }, () => {
+	let o = { some: 'text', inner: { more: 'text' } },
 		oo = Observable.from(o),
 		ooi = oo.inner,
 		cntr = 0,
@@ -152,27 +143,25 @@ suite.addTest({name: 'test unobserve - revoke the observable (Object)'}, (pass, 
 	oo.observe(observer);
 	oo.some = 'thing';
 	ooi.more = 'stuff';
-	if (cntr !== 2) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 2');
+	if (cntr !== 2) throw new Error('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 2');
 
 	oo.revoke();
 	try {
 		oo.some = 'true';
-		fail(' execution should not get here');
+		throw new Error(' execution should not get here');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
 	try {
 		ooi.more = 'test';
-		fail(' execution should not get here');
+		throw new Error(' execution should not get here');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
-
-	pass();
 });
 
-suite.addTest({name: 'test unobserve - revoke the observable (Array)'}, (pass, fail) => {
-	let o = [{some: 'text'}, {inner: {more: 'text', arr: ['a', 'b', 'c']}}],
+suite.runTest({ name: 'test unobserve - revoke the observable (Array)' }, () => {
+	let o = [{ some: 'text' }, { inner: { more: 'text', arr: ['a', 'b', 'c'] } }],
 		oo = Observable.from(o),
 		ooi = oo[1],
 		ooia = ooi.inner.arr,
@@ -187,38 +176,34 @@ suite.addTest({name: 'test unobserve - revoke the observable (Array)'}, (pass, f
 	ooi.adding = 'new';
 	ooi.inner.more = 'stuff';
 	ooia.pop();
-	if (cntr !== 5) fail('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
+	if (cntr !== 5) throw new Error('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
 
 	oo.revoke();
 
 	try {
 		oo.pop();
-		fail(' execution should not get here (A)');
+		throw new Error(' execution should not get here (A)');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
 	try {
 		oo[0].some = 'test';
-		fail(' execution should not get here (B)');
+		throw new Error(' execution should not get here (B)');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
 	try {
 		ooi.more = 'true';
-		if (cntr > 5) fail('expected to not have any new callbacks');
+		if (cntr > 5) throw new Error('expected to not have any new callbacks');
 		ooi.inner.more = 'again';
-		fail(' execution should not get here (C)');
+		throw new Error(' execution should not get here (C)');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
 	try {
 		ooia.push('d');
-		fail(' execution should not get here (D)');
+		throw new Error(' execution should not get here (D)');
 	} catch (e) {
-		if (!(e instanceof TypeError)) fail('expected to catch TypeError');
+		if (!(e instanceof TypeError)) throw new Error('expected to catch TypeError');
 	}
-
-	pass();
 });
-
-suite.run();

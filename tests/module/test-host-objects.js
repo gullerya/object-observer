@@ -1,8 +1,9 @@
-﻿import {Observable} from '../../dist/object-observer.js';
+﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+import { Observable } from '../../dist/object-observer.js';
 
-let suite = Utils.JustTest.createSuite({name: 'Testing host object (native)'});
+const suite = createSuite({ name: 'Testing host object (native)' });
 
-suite.addTest({name: 'test DOMStringMap'}, function (pass, fail) {
+suite.runTest('test DOMStringMap', test => {
 	let e = document.createElement('div'),
 		oo = Observable.from(e.dataset),
 		events = [],
@@ -11,10 +12,6 @@ suite.addTest({name: 'test DOMStringMap'}, function (pass, fail) {
 		};
 
 	oo.observe(observer);
-
 	oo.some = 'thing';
-
-	pass();
+	test.assertEqual(events.length, 1);
 });
-
-suite.run();
