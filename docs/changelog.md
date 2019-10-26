@@ -1,5 +1,8 @@
 # Changelog
 
+* __2.4.2__
+  * minor improvenent in the CI part of the library due to newer/better version of the test runner
+
 * __2.4.1__
   * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
   * updated dependencies
