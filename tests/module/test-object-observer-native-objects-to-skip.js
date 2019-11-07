@@ -77,7 +77,7 @@ suite.runTest({ name: 'non-observable in an array subgraph should stay unchanged
 	});
 });
 
-suite.runTest({ name: 'non-observable should be handled correctly when replaced' }, () => {
+suite.runTest({ name: 'non-observable should be handled correctly when nullified' }, () => {
 	let o = {
 		date: new Date()
 	}, oo = Observable.from(o);
@@ -85,6 +85,24 @@ suite.runTest({ name: 'non-observable should be handled correctly when replaced'
 	oo.observe(function () {
 	});
 	oo.date = null;
+});
+
+suite.runTest({ name: 'non-observable should be handled correctly when replaced' }, test => {
+	let o = {
+		error: new Error('error message')
+	}, oo = Observable.from(o);
+
+	test.assertTrue(oo.error instanceof Error);
+	test.assertTrue('name' in oo.error);
+	test.assertTrue('message' in oo.error);
+	test.assertTrue('stack' in oo.error);
+
+	oo.error = new Error('new error message');
+
+	test.assertTrue(oo.error instanceof Error);
+	test.assertTrue('name' in oo.error);
+	test.assertTrue('message' in oo.error);
+	test.assertTrue('stack' in oo.error);
 });
 
 suite.runTest({ name: 'non-observable should be handled correctly when deleted' }, () => {

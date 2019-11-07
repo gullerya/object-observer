@@ -5,20 +5,6 @@ const
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
 	sysObsKey = Symbol('system-observer-key'),
-	nonObservables = {
-		Date: true,
-		Blob: true,
-		Number: true,
-		String: true,
-		Boolean: true,
-		Error: true,
-		SyntaxError: true,
-		TypeError: true,
-		URIError: true,
-		Function: true,
-		Promise: true,
-		RegExp: true
-	},
 	validOptionsKeys = ['path', 'pathsFrom'],
 	observableDefinition = {
 		revoke: {
@@ -84,7 +70,7 @@ const
 		while (l) {
 			l--;
 			item = source[l];
-			if (item && typeof item === 'object' && !Object.prototype.hasOwnProperty.call(nonObservables, item.constructor.name)) {
+			if (item && typeof item === 'object' && isObservableType(item)) {
 				target[l] = Array.isArray(item)
 					? new ArrayObserver({ target: item, ownKey: l, parent: observer }).proxy
 					: new ObjectObserver({ target: item, ownKey: l, parent: observer }).proxy;
@@ -103,7 +89,7 @@ const
 			l--;
 			key = keys[l];
 			item = source[key];
-			if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+			if (item && typeof item === 'object' && isObservableType(item)) {
 				target[key] = Array.isArray(item)
 					? new ArrayObserver({ target: item, ownKey: key, parent: observer }).proxy
 					: new ObjectObserver({ target: item, ownKey: key, parent: observer }).proxy;
@@ -145,6 +131,10 @@ const
 		const result = new Array(l1);
 		while (l1) result[l2++] = tmp[--l1];
 		return { observers: self.observers, path: result };
+	},
+	nonObservableTypes = [Date, Blob, Number, String, Boolean, Error, Function, Promise, RegExp],
+	isObservableType = function (candidate) {
+		return !nonObservableTypes.some(type => candidate instanceof type);
 	};
 
 class ObserverBase {
@@ -172,7 +162,7 @@ class ObserverBase {
 			return true;
 		}
 
-		if (value && typeof value === 'object' && !nonObservables.hasOwnProperty(value.constructor.name)) {
+		if (value && typeof value === 'object' && isObservableType(value)) {
 			newValue = Array.isArray(value)
 				? new ArrayObserver({ target: value, ownKey: key, parent: this }).proxy
 				: new ObjectObserver({ target: value, ownKey: key, parent: this }).proxy;
@@ -283,7 +273,7 @@ class ArrayObserver extends ObserverBase {
 
 				for (i = 0; i < l; i++) {
 					item = arguments[i + 2];
-					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+					if (item && typeof item === 'object' && isObservableType(item)) {
 						item = Array.isArray(item)
 							? new ArrayObserver({ target: item, ownKey: initialLength + i, parent: observed }).proxy
 							: new ObjectObserver({ target: item, ownKey: initialLength + i, parent: observed }).proxy;
@@ -346,7 +336,7 @@ class ArrayObserver extends ObserverBase {
 				let changes;
 				unshiftContent.splice(0, 2);
 				unshiftContent.forEach((item, index) => {
-					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+					if (item && typeof item === 'object' && isObservableType(item)) {
 						unshiftContent[index] = Array.isArray(item)
 							? new ArrayObserver({ target: item, ownKey: index, parent: observed }).proxy
 							: new ObjectObserver({ target: item, ownKey: index, parent: observed }).proxy;
@@ -437,7 +427,7 @@ class ArrayObserver extends ObserverBase {
 				let tmpObserved, path;
 				for (let i = start, item, tmpTarget; i < end; i++) {
 					item = target[i];
-					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+					if (item && typeof item === 'object' && isObservableType(item)) {
 						target[i] = Array.isArray(item)
 							? new ArrayObserver({ target: item, ownKey: i, parent: observed }).proxy
 							: new ObjectObserver({ target: item, ownKey: i, parent: observed }).proxy;
@@ -486,7 +476,7 @@ class ArrayObserver extends ObserverBase {
 				//	observify the newcomers
 				for (let i = 2, item; i < splLen; i++) {
 					item = spliceContent[i];
-					if (item && typeof item === 'object' && !nonObservables.hasOwnProperty(item.constructor.name)) {
+					if (item && typeof item === 'object' && isObservableType(item)) {
 						spliceContent[i] = Array.isArray(item)
 							? new ArrayObserver({ target: item, ownKey: i, parent: observed }).proxy
 							: new ObjectObserver({ target: item, ownKey: i, parent: observed }).proxy;
@@ -606,7 +596,7 @@ class Observable {
 	}
 
 	static from(target) {
-		if (target && typeof target === 'object' && !nonObservables.hasOwnProperty(target.constructor.name) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
+		if (target && typeof target === 'object' && isObservableType(target) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
 			const observed = Array.isArray(target)
 				? new ArrayObserver({ target: target, ownKey: null, parent: null })
 				: new ObjectObserver({ target: target, ownKey: null, parent: null });
@@ -616,8 +606,8 @@ class Observable {
 				throw new Error('observable MAY ONLY be created from non-null object only');
 			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
 				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
-			} else if (nonObservables.hasOwnProperty(target.constructor.name)) {
-				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservables);
+			} else if (!isObservableType(target)) {
+				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservableTypes);
 			}
 		}
 	}
