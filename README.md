@@ -23,9 +23,12 @@ Main aspects:
 
 #### Support matrix: ![CHROME](docs/browser_icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser_icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser_icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
-#### Performance report can be found [here](https://github.com/gullerya/object-observer/blob/master/docs/performance-report.md)
+#### Performance report can be found [here](docs/performance-report.md)
 
-#### Last versions (full changelog is [here](https://github.com/gullerya/object-observer/blob/master/docs/changelog.md))
+#### Last versions (full changelog is [here](docs/changelog.md))
+
+* __2.5.0__
+  * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
 
 * __2.4.2__
   * minor improvenent in the CI part of the library due to newer/better version of the test runner
@@ -33,10 +36,6 @@ Main aspects:
 * __2.4.1__
   * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
   * updated dependencies
-
-* __2.3.0__
-  * fixed [Issue no. 26](https://github.com/gullerya/object-observer/issues/26) - callbacks/observers are being called with an empty changes array when set for a specific path/paths
-
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
