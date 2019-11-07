@@ -134,7 +134,7 @@ const
 	},
 	nonObservableTypes = [Date, Blob, Number, String, Boolean, Error, Function, Promise, RegExp],
 	isObservableType = function (candidate) {
-		return !nonObservableTypes.some(type => candidate instanceof type);
+		return !nonObservableTypes.some(t => candidate instanceof t);
 	};
 
 class ObserverBase {
