@@ -19,7 +19,7 @@ Main aspects:
   * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-* following host objects __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `Function`, `Promise`, `RegExp`
+* following host objects (and their extensions) __are not__ observed, but left as they are: `Date`, `Blob`, `Number`, `String`, `Boolean`, `Error`, `Function`, `Promise`, `RegExp`
 
 #### Support matrix: ![CHROME](docs/browser_icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser_icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser_icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 

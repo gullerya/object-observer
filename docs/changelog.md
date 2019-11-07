@@ -1,5 +1,8 @@
 # Changelog
 
+* __2.5.0__
+  * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
+
 * __2.4.2__
   * minor improvenent in the CI part of the library due to newer/better version of the test runner
 
