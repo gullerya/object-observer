@@ -1,6 +1,7 @@
 {
 	"tests": {
-		"url": "/tests/module/test.html"
+		"url": "/tests/module/test.html",
+		"maxSkip": 1
 	},
 	"coverage": {
 		"include": [
