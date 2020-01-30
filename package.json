@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
@@ -26,12 +26,13 @@
   "files": [
     "dist"
   ],
-  "main": "dist/node/object-observer.min.js",
+  "browser": "dist/node/object-observer.min.js",
   "type": "module",
   "author": {
     "name": "Guller Yuri",
     "email": "gullerya@gmail.com"
   },
+  "funding": "https://paypal.me/gullerya?locale.x=en_US",
   "repository": {
     "type": "git",
     "url": "https://github.com/gullerya/object-observer"
@@ -42,14 +43,14 @@
     "test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/jt-runner-config.json"
   },
   "devDependencies": {
-    "eslint": "^6.6.0",
+    "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-node": "^11.0.0",
     "fs-extra": "^8.1.0",
-    "just-test": "^1.6.0",
+    "just-test": "^2.1.3",
     "uglify-es": "^3.3.9"
   }
 }
