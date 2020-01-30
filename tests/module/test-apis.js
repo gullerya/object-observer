@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = createSuite({ name: 'Testing Observable APIs' });
 
-suite.runTest('ensure Observable object is frozen with only defined API', test => {
+suite.runTest({ name: 'ensure Observable object is frozen with only defined API' }, test => {
 	test.assertEqual(typeof Observable, 'function');
 	test.assertEqual(typeof Observable.from, 'function');
 	test.assertEqual(typeof Observable.isObservable, 'function');
@@ -15,7 +15,7 @@ suite.runTest('ensure Observable object is frozen with only defined API', test =
 	}
 });
 
-suite.runTest('negative tests - invalid parameters', test => {
+suite.runTest({ name: 'negative tests - invalid parameters' }, test => {
 	let bo,
 		safeToContinue = false;
 	try {
@@ -94,7 +94,7 @@ suite.runTest('negative tests - invalid parameters', test => {
 	test.assertTrue(safeToContinue);
 });
 
-suite.runTest('isObservable tests', test => {
+suite.runTest({ name: 'isObservable tests' }, test => {
 	test.assertFalse(Observable.isObservable('some'));
 	test.assertFalse(Observable.isObservable(null));
 	test.assertFalse(Observable.isObservable({}));
@@ -105,7 +105,7 @@ suite.runTest('isObservable tests', test => {
 	test.assertFalse(Observable.isObservable(oo.nested));
 });
 
-suite.runTest('test observable APIs presence on object/array', test => {
+suite.runTest({ name: 'test observable APIs presence on object/array' }, test => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
@@ -121,7 +121,7 @@ suite.runTest('test observable APIs presence on object/array', test => {
 	test.assertEqual(typeof aa.unobserve, 'function');
 });
 
-suite.runTest('test observable APIs - ensure APIs are not enumerables', test => {
+suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }, test => {
 	let o = {}, a = [], oo, aa;
 
 	oo = Observable.from(o);
@@ -133,7 +133,7 @@ suite.runTest('test observable APIs - ensure APIs are not enumerables', test => 
 	test.assertEqual(Object.keys(aa).length, 0);
 });
 
-suite.runTest('test observable APIs - nested objects/arrays have no observable APIs', test => {
+suite.runTest({ name: 'test observable APIs - nested objects/arrays have no observable APIs' }, test => {
 	let o = { n: {} }, a = [[]], oo, aa;
 
 	oo = Observable.from(o);
@@ -149,7 +149,7 @@ suite.runTest('test observable APIs - nested objects/arrays have no observable A
 	);
 });
 
-suite.runTest('test observable APIs - Observable can not be used via constructor', test => {
+suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor' }, test => {
 	try {
 		let o = new Observable();
 		test.assertTrue(false);

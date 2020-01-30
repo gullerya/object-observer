@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = createSuite({ name: 'Testing host object (native)' });
 
-suite.runTest('test DOMStringMap', test => {
+suite.runTest({ name: 'test DOMStringMap' }, test => {
 	let e = document.createElement('div'),
 		oo = Observable.from(e.dataset),
 		events = [],
