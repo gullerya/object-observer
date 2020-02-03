@@ -1,6 +1,5 @@
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 [![npm](https://img.shields.io/npm/v/object-observer.svg?label=npm%20object-observer)](https://www.npmjs.com/package/object-observer)
-[![npm](https://img.shields.io/npm/v/@gullerya/observable.svg?label=npm%20@gullerya/observable)](https://www.npmjs.com/package/@gullerya/observable)
 [![Travis](https://travis-ci.org/gullerya/object-observer.svg?branch=master)](https://travis-ci.org/gullerya/object-observer)
 [![Codecov](https://img.shields.io/codecov/c/github/gullerya/object-observer/master.svg)](https://codecov.io/gh/gullerya/object-observer/branch/master)
 [![Codacy](https://img.shields.io/codacy/grade/a3879d7077eb4eef83a591733ad7c579.svg?logo=codacy)](https://www.codacy.com/app/gullerya/object-observer)
@@ -26,6 +25,10 @@ Main aspects:
 #### Performance report can be found [here](docs/performance-report.md)
 
 #### Last versions (full changelog is [here](docs/changelog.md))
+
+* __2.5.2__
+  * updated readme.md
+  * added funding info
 
 * __2.5.0__
   * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
