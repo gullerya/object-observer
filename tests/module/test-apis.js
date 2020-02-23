@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing Observable APIs' });
+const suite = getSuite({ name: 'Testing Observable APIs' });
 
 suite.runTest({ name: 'ensure Observable object is frozen with only defined API' }, test => {
 	test.assertEqual(typeof Observable, 'function');
@@ -70,28 +70,6 @@ suite.runTest({ name: 'negative tests - invalid parameters' }, test => {
 		safeToContinue = true;
 	}
 	test.assertTrue(safeToContinue);
-
-	bo = {
-		observe: null
-	};
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	test.assertTrue(safeToContinue);
-
-	bo = {
-		unobserve: null
-	};
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	test.assertTrue(safeToContinue);
 });
 
 suite.runTest({ name: 'isObservable tests' }, test => {
@@ -102,7 +80,6 @@ suite.runTest({ name: 'isObservable tests' }, test => {
 
 	let oo = Observable.from({ nested: {} });
 	test.assertTrue(Observable.isObservable(oo));
-	test.assertFalse(Observable.isObservable(oo.nested));
 });
 
 suite.runTest({ name: 'test observable APIs presence on object/array' }, test => {
@@ -131,22 +108,6 @@ suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }
 	aa = Observable.from(a);
 
 	test.assertEqual(Object.keys(aa).length, 0);
-});
-
-suite.runTest({ name: 'test observable APIs - nested objects/arrays have no observable APIs' }, test => {
-	let o = { n: {} }, a = [[]], oo, aa;
-
-	oo = Observable.from(o);
-
-	test.assertFalse(
-		typeof oo.n.revoke === 'function' || typeof oo.n.observe === 'function' || typeof oo.n.unobserve === 'function'
-	);
-
-	aa = Observable.from(a);
-
-	test.assertFalse(
-		typeof aa[0].revoke === 'function' || typeof aa[0].observe === 'function' || typeof aa[0].unobserve === 'function'
-	);
 });
 
 suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor' }, test => {

@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing Observable - objects' });
+const suite = getSuite({ name: 'Testing Observable - objects' });
 
 suite.runTest({ name: 'creating observable leaves original object as is' }, test => {
 	let person = {

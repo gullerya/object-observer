@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing listeners APIs' });
+const suite = getSuite({ name: 'Testing listeners APIs' });
 
 suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
 	let o = {}, oo = Observable.from(o);

@@ -1,53 +1,45 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Test observing specific path/s' });
+const suite = getSuite({ name: 'Test observing specific path/s' });
 
 suite.runTest({ name: 'baseline - negative' }, () => {
 	let o = { inner: { prop: 'more' } },
-		oo = Observable.from(o),
-		events,
-		observer = changes => events.push.apply(events, changes);
+		oo = Observable.from(o);
 
 	//  wrong 'path' option
 	try {
-		oo.observe(observer, { path: 4 });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { path: 4 });
 	} catch (e) {
 	}
 
 	//  empty 'path' option
 	try {
-		oo.observe(observer, { path: '' });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { path: '' });
 	} catch (e) {
 	}
 
 	//  wrong 'pathsFrom' option
 	try {
-		oo.observe(observer, { pathsFrom: 4 });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { pathsFrom: 4 });
 	} catch (e) {
 	}
 
 	//  empty 'pathsFrom' option
 	try {
-		oo.observe(observer, { pathsFrom: '' });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { pathsFrom: '' });
 	} catch (e) {
 	}
 
 	//  no 'pathsFrom' allowed when 'path' is present
 	try {
-		oo.observe(observer, { path: 'some', pathsFrom: 'else' });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { path: 'some', pathsFrom: 'else' });
 	} catch (e) {
 	}
 
 	//  no 'foreign' options allowed (pay attention, using an invalid 'pathFrom', not a valid 'pathsFrom')
 	try {
-		oo.observe(observer, { pathFrom: 'something' });
-		throw new Error('should not get to this point');
+		oo.observe(() => { }, { pathFrom: 'something' });
 	} catch (e) {
 	}
 });

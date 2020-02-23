@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing ObjectObserver - arrays' });
+const suite = getSuite({ name: 'Testing ObjectObserver - arrays' });
 
 suite.runTest({ name: 'array push operation - primitives' }, () => {
 	let a = [1, 2, 3, 4],

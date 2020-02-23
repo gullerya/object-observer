@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing host object (native)' });
+const suite = getSuite({ name: 'Testing host object (native)' });
 
 suite.runTest({ name: 'test DOMStringMap' }, test => {
 	let e = document.createElement('div'),

@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing revokation of removed/replaced objects' });
+const suite = getSuite({ name: 'Testing revokation of removed/replaced objects' });
 
 suite.runTest({ name: 'test revokation of replaced objects - simple set' }, () => {
 	let g = {

@@ -1,20 +1,14 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing Observable - non-observables' });
+const suite = getSuite({ name: 'Testing Observable - non-observables' });
 
 suite.runTest({ name: 'creating observable from non-observable should throw an error' }, test => {
 	let objectsToTest = [
 		new Date(),
 		new Blob(),
-		new Number(),
-		new String(),
-		new Boolean(),
-		new Error(),
-		new Function(),
-		new RegExp(),
-		new Promise(function () {
-		})];
+		new Error()
+	];
 
 	objectsToTest.forEach(function (one) {
 		try {
@@ -33,14 +27,7 @@ suite.runTest({ name: 'non-observable in an object subgraph should stay unchange
 	let o = {
 		data: new Date(),
 		blob: new Blob(),
-		number: new Number(),
-		string: new String(),
-		boolean: new Boolean(),
 		error: new Error(),
-		func: new Function(),
-		regexp: new RegExp(),
-		promise: new Promise(function () {
-		}),
 		object: {}
 	}, po;
 
@@ -59,14 +46,8 @@ suite.runTest({ name: 'non-observable in an array subgraph should stay unchanged
 		{},
 		new Date(),
 		new Blob(),
-		new Number(),
-		new String(),
-		new Boolean(),
-		new Error(),
-		new Function(),
-		new RegExp(),
-		new Promise(function () {
-		})],
+		new Error()
+	],
 		o;
 
 	o = Observable.from(a);

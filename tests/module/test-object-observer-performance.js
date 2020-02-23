@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing Observable Load' });
+const suite = getSuite({ name: 'Testing Observable Load' });
 
 suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations' }, () => {
 	let creationIterations = 100000,

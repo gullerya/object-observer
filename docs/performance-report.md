@@ -18,9 +18,9 @@ Tests described below are covering most of those flows.
 </span>
 
 ### Hardware
-All of the benchmarks below were performed on EliteBook 8570w:
-- CPU i7-3720QM: 2.60GHz, 4 Cores, 8 Logical processors
-- 16GB physical memory
+All of the benchmarks below were performed on __Lenovo ThinkPad E590__ (model 2019), plugged in at the moment of tests:
+- CPU i7-8565U 1.80GHz, 4 Cores, 8 Logical processors
+- 32GB physical memory
 
 ### Tests
 
@@ -83,7 +83,7 @@ for (let i = 0; i < mutationIterations; i++) {
 All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
 Below are results of those tests, where 'one' is the time of a single operation in average achieved with division of time for 'all' on the number of iterations.
-All times are given in 'ms', meaning that cost of a single operation on Chrome is usually half to few nanoseconds while climbing to a dozen/s of nanoseconds on Edge (see remark below related to Edge):
+All times are given in 'ms', meaning that cost of a single operation on Chrome and Chromium-Edge is usually half to few nanoseconds. Firefox values are slightly higher (worse). Old Edge results are brough for historical reasons only.
 
 <table>
     <tr>
@@ -94,45 +94,64 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         <th>delete primitive<br>deep L3; 1M times</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.00495 ms<br>
-            all: 459 ms
+            one: 0.0048 ms<br>
+            all: 485.0 ms
         </td>
         <td>
-            one: 0.00048 ms<br>
-            all: 482.4 ms
+            one: 0.00039 ms<br>
+            all: 393.41 ms
         </td>
         <td>
-            one: 0.000922 ms<br>
-            all: 922.4 ms
+            one: 0.00077 ms<br>
+            all: 772.33 ms
         </td>
         <td>
-            one: 0.00096 ms<br>
-            all: 963.6 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
-        <td>
-            one: 0.0148 ms<br>
-            all: 1482 ms
-        </td>
-        <td>
-            one: 0.0008 ms<br>
-            all: 799 ms
-        </td>
-        <td>
-            one: 0.00148 ms<br>
-            all: 1475 ms
-        </td>
-        <td>
-            one: 0.0017 ms<br>
-            all: 1708 ms
+            one: 0.00065 ms<br>
+            all: 655.45 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
+        <td>
+            one: 0.0041 ms<br>
+            all: 417.95 ms
+        </td>
+        <td>
+            one: 0.00035 ms<br>
+            all: 352.01 ms
+        </td>
+        <td>
+            one: 0.0007 ms<br>
+            all: 693.65 ms
+        </td>
+        <td>
+            one: 0.0006 ms<br>
+            all: 599.66 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
+        <td>
+            one: 0.016 ms<br>
+            all: 1646 ms
+        </td>
+        <td>
+            one: 0.001 ms<br>
+            all: 1061 ms
+        </td>
+        <td>
+            one: 0.001 ms<br>
+            all: 1181 ms
+        </td>
+        <td>
+            one: 0.0016 ms<br>
+            all: 1667 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.025 ms<br>
             all: 2530 ms
@@ -151,7 +170,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>17</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>17</sub></td>
         <td>
             one: 0.014 ms<br>
             all: 1433.1 ms
@@ -170,7 +189,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome i
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub></sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>
@@ -236,37 +255,52 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         <th>pop 100,000 objects</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/chrome.png"><sub>69</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.0044 ms<br>
-            all: 442.4 ms
+            one: 0.0043 ms<br>
+            all: 426.94 ms
         </td>
         <td>
-            one: 0.0056 ms<br>
-            all: 560 ms
+            one: 0.0046 ms<br>
+            all: 459.07 ms
         </td>
         <td>
-            one: 0.0033 ms<br>
-            all: 326.6 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/firefox.png"><sub>62.0.2</sub></td>
-        <td>
-            one: 0.016 ms<br>
-            all: 1590 ms
-        </td>
-        <td>
-            one: 0.02 ms<br>
-            all: 2129 ms
-        </td>
-        <td>
-            one: 0.011ms<br>
-            all: 1129 ms
+            one: 0.002 ms<br>
+            all: 199.1 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
+        <td>
+            one: 0.0039 ms<br>
+            all: 389.58 ms
+        </td>
+        <td>
+            one: 0.0043 ms<br>
+            all: 427.93 ms
+        </td>
+        <td>
+            one: 0.0018 ms<br>
+            all: 182.58 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
+        <td>
+            one: 0.018 ms<br>
+            all: 1869 ms
+        </td>
+        <td>
+            one: 0.025 ms<br>
+            all: 2541 ms
+        </td>
+        <td>
+            one: 0.009 ms<br>
+            all: 984 ms
+        </td>
+    </tr>
+    <tr style="font-family:monospace">
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.034 ms<br>
             all: 3425 ms
@@ -281,7 +315,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/edge.png"><sub>17</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>17</sub></td>
         <td>
             one: 0.017 ms<br>
             all: 1683.7 ms
@@ -296,7 +330,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="https://github.com/gullerya/object-observer/raw/master/docs/browser_icons/nodejs.png"><sub></sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
         <td>--</td>
         <td>--</td>
         <td>--</td>

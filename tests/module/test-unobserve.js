@@ -1,7 +1,7 @@
-﻿import { createSuite } from '../../node_modules/just-test/dist/just-test.min.js';
+﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.min.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = createSuite({ name: 'Testing unobserving/removal of observed object' });
+const suite = getSuite({ name: 'Testing unobserving/removal of observed object' });
 
 suite.runTest({ name: 'test unobserve - single observer - explicit unobserve' }, () => {
 	let o = { some: 'text' },

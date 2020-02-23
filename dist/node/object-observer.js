@@ -6,7 +6,44 @@ const
 	SHUFFLE = 'shuffle',
 	sysObsKey = Symbol('system-observer-key'),
 	validOptionsKeys = ['path', 'pathsFrom'],
-	observableDefinition = {
+	processObserveOptions = function (options) {
+		const result = {};
+		if (options.path && typeof options.path !== 'string') {
+			console.error('"path" option, if/when provided, MUST be a non-empty string');
+		} else {
+			result.path = options.path;
+		}
+		if (options.pathsFrom) {
+			if (options.path) {
+				console.error('"pathsFrom" option MAY NOT be specified together with "path" option');
+			} else if (typeof options.pathsFrom !== 'string') {
+				console.error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
+			} else {
+				result.pathsFrom = options.pathsFrom;
+			}
+		}
+		const invalidOptions = Object.keys(options).filter(option => validOptionsKeys.indexOf(option) < 0);
+		if (invalidOptions.length) {
+			console.error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
+		}
+		return result;
+	},
+	unobserve = function () {
+		const
+			systemObserver = this[sysObsKey],
+			observers = systemObserver.observers;
+		if (observers.size) {
+			let l = arguments.length;
+			if (l) {
+				while (l) {
+					observers.delete(arguments[--l]);
+				}
+			} else {
+				observers.clear();
+			}
+		}
+	},
+	rootObsDefs = {
 		revoke: {
 			value: function () {
 				this[sysObsKey].revoke();
@@ -14,68 +51,68 @@ const
 		},
 		observe: {
 			value: function (observer, options) {
-				const
-					systemObserver = this[sysObsKey],
-					observers = systemObserver.observers;
-
 				if (typeof observer !== 'function') {
 					throw new Error('observer parameter MUST be a function');
 				}
-				if (options) {
-					if ('path' in options && (typeof options.path !== 'string' || !options.path)) {
-						throw new Error('"path" option, if/when provided, MUST be a non-empty string');
-					}
-					if ('pathsFrom' in options && options.path) {
-						throw new Error('"pathsFrom" option MAY NOT be specified together with "path" option');
-					}
-					if ('pathsFrom' in options && (typeof options.pathsFrom !== 'string' || !options.pathsFrom)) {
-						throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
-					}
-					const invalidOption = Object.keys(options).find(option => !validOptionsKeys.includes(option));
-					if (invalidOption) {
-						throw new Error('"' + invalidOption + '" is not a one of the valid options (' + validOptionsKeys.join(', ') + ')');
-					}
-				}
 
+				const
+					systemObserver = this[sysObsKey],
+					observers = systemObserver.observers;
 				if (!observers.has(observer)) {
-					observers.set(observer, Object.assign({}, options));
+					let opts;
+					if (options) {
+						opts = processObserveOptions(options);
+					} else {
+						opts = {};
+					}
+					observers.set(observer, opts);
 				} else {
 					console.info('observer may be bound to an observable only once');
 				}
 			}
 		},
 		unobserve: {
-			value: function () {
+			value: unobserve
+		}
+	},
+	innerObsDefs = {
+		observe: {
+			value: function (observer, options) {
+				if (typeof observer !== 'function') {
+					throw new Error('observer parameter MUST be a function');
+				}
+
 				const
 					systemObserver = this[sysObsKey],
 					observers = systemObserver.observers;
-				let l;
-				if (observers.size) {
-					l = arguments.length;
-					if (l) {
-						while (l) {
-							observers.delete(arguments[--l]);
-						}
+				if (!observers.has(observer)) {
+					let opts;
+					if (options) {
+						opts = processObserveOptions(options);
 					} else {
-						observers.clear();
+						opts = {};
 					}
+					observers.set(observer, opts);
+				} else {
+					console.info('observer may be bound to an observable only once');
 				}
 			}
+		},
+		unobserve: {
+			value: unobserve
 		}
 	},
 	prepareArray = function (source, observer) {
 		let l = source.length, item;
 		const target = new Array(l);
-		target[sysObsKey] = observer;
+		Object.defineProperty(target, sysObsKey, { value: observer });
 		while (l) {
 			l--;
 			item = source[l];
-			if (item && typeof item === 'object' && isObservableType(item)) {
-				target[l] = Array.isArray(item)
-					? new ArrayObserver({ target: item, ownKey: l, parent: observer }).proxy
-					: new ObjectObserver({ target: item, ownKey: l, parent: observer }).proxy;
-			} else {
+			if (!item || typeof item !== 'object') {
 				target[l] = item;
+			} else {
+				target[l] = getObservedOf(item, l, observer);
 			}
 		}
 		return target;
@@ -83,18 +120,17 @@ const
 	prepareObject = function (source, observer) {
 		const
 			keys = Object.keys(source),
-			target = { [sysObsKey]: observer };
+			target = {};
+		Object.defineProperty(target, sysObsKey, { value: observer });
 		let l = keys.length, key, item;
 		while (l) {
 			l--;
 			key = keys[l];
 			item = source[key];
-			if (item && typeof item === 'object' && isObservableType(item)) {
-				target[key] = Array.isArray(item)
-					? new ArrayObserver({ target: item, ownKey: key, parent: observer }).proxy
-					: new ObjectObserver({ target: item, ownKey: key, parent: observer }).proxy;
-			} else {
+			if (!item || typeof item !== 'object') {
 				target[key] = item;
+			} else {
+				target[key] = getObservedOf(item, key, observer);
 			}
 		}
 		return target;
@@ -117,7 +153,7 @@ const
 					target(relevantChanges);
 				}
 			} catch (e) {
-				console.error('failed to deliver changes to listener ' + target, e);
+				console.error(`failed to deliver changes to listener ${target}`, e);
 			}
 		}
 	},
@@ -132,9 +168,16 @@ const
 		while (l1) result[l2++] = tmp[--l1];
 		return { observers: self.observers, path: result };
 	},
-	nonObservableTypes = [Date, Blob, Number, String, Boolean, Error, Function, Promise, RegExp],
-	isObservableType = function (candidate) {
-		return !nonObservableTypes.some(t => candidate instanceof t);
+	getObservedOf = function (item, key, parent) {
+		if (!item || typeof item !== 'object') {
+			return item;
+		} else if (Array.isArray(item)) {
+			return new ArrayObserver({ target: item, ownKey: key, parent: parent }).proxy;
+		} else if (!(item instanceof Date || item instanceof Blob || item instanceof Error)) {
+			return new ObjectObserver({ target: item, ownKey: key, parent: parent }).proxy;
+		} else {
+			return item;
+		}
 	};
 
 class ObserverBase {
@@ -145,10 +188,11 @@ class ObserverBase {
 		if (properties.parent === null) {
 			this.isRevoked = false;
 			Object.defineProperty(this, 'observers', { value: new Map() });
-			Object.defineProperties(targetClone, observableDefinition);
+			Object.defineProperties(targetClone, rootObsDefs);
 		} else {
 			this.parent = properties.parent;
 			this.ownKey = properties.ownKey;
+			Object.defineProperties(targetClone, innerObsDefs);
 		}
 		this.revokable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revokable.proxy;
@@ -156,19 +200,13 @@ class ObserverBase {
 	}
 
 	set(target, key, value) {
-		let newValue, oldValue = target[key], changes;
+		let oldValue = target[key], changes;
 
 		if (value === oldValue) {
 			return true;
 		}
 
-		if (value && typeof value === 'object' && isObservableType(value)) {
-			newValue = Array.isArray(value)
-				? new ArrayObserver({ target: value, ownKey: key, parent: this }).proxy
-				: new ObjectObserver({ target: value, ownKey: key, parent: this }).proxy;
-		} else {
-			newValue = value;
-		}
+		const newValue = getObservedOf(value, key, this);
 		target[key] = newValue;
 
 		if (oldValue && typeof oldValue === 'object') {
@@ -273,12 +311,7 @@ class ArrayObserver extends ObserverBase {
 
 				for (i = 0; i < l; i++) {
 					item = arguments[i + 2];
-					if (item && typeof item === 'object' && isObservableType(item)) {
-						item = Array.isArray(item)
-							? new ArrayObserver({ target: item, ownKey: initialLength + i, parent: observed }).proxy
-							: new ObjectObserver({ target: item, ownKey: initialLength + i, parent: observed }).proxy;
-					}
-					pushContent[i] = item;
+					pushContent[i] = getObservedOf(item, initialLength + i, observed);
 				}
 				const pushResult = Reflect.apply(target.push, target, pushContent);
 
@@ -336,11 +369,7 @@ class ArrayObserver extends ObserverBase {
 				let changes;
 				unshiftContent.splice(0, 2);
 				unshiftContent.forEach((item, index) => {
-					if (item && typeof item === 'object' && isObservableType(item)) {
-						unshiftContent[index] = Array.isArray(item)
-							? new ArrayObserver({ target: item, ownKey: index, parent: observed }).proxy
-							: new ObjectObserver({ target: item, ownKey: index, parent: observed }).proxy;
-					}
+					unshiftContent[index] = getObservedOf(item, index, observed);
 				});
 				const unshiftResult = Reflect.apply(target.unshift, target, unshiftContent);
 				for (let i = 0, l = target.length, item; i < l; i++) {
@@ -427,11 +456,7 @@ class ArrayObserver extends ObserverBase {
 				let tmpObserved, path;
 				for (let i = start, item, tmpTarget; i < end; i++) {
 					item = target[i];
-					if (item && typeof item === 'object' && isObservableType(item)) {
-						target[i] = Array.isArray(item)
-							? new ArrayObserver({ target: item, ownKey: i, parent: observed }).proxy
-							: new ObjectObserver({ target: item, ownKey: i, parent: observed }).proxy;
-					}
+					target[i] = getObservedOf(item, i, observed);
 					if (prev.hasOwnProperty(i)) {
 						tmpTarget = prev[i];
 						if (tmpTarget && typeof tmpTarget === 'object') {
@@ -476,11 +501,7 @@ class ArrayObserver extends ObserverBase {
 				//	observify the newcomers
 				for (let i = 2, item; i < splLen; i++) {
 					item = spliceContent[i];
-					if (item && typeof item === 'object' && isObservableType(item)) {
-						spliceContent[i] = Array.isArray(item)
-							? new ArrayObserver({ target: item, ownKey: i, parent: observed }).proxy
-							: new ObjectObserver({ target: item, ownKey: i, parent: observed }).proxy;
-					}
+					spliceContent[i] = getObservedOf(item, i, observed);
 				}
 
 				//	calculate pointers
@@ -596,24 +617,21 @@ class Observable {
 	}
 
 	static from(target) {
-		if (target && typeof target === 'object' && isObservableType(target) && !('observe' in target) && !('unobserve' in target) && !('revoke' in target)) {
-			const observed = Array.isArray(target)
-				? new ArrayObserver({ target: target, ownKey: null, parent: null })
-				: new ObjectObserver({ target: target, ownKey: null, parent: null });
-			return observed.proxy;
+		if (!target || typeof target !== 'object') {
+			throw new Error('observable MAY ONLY be created from a non-null object');
+		} else if (target[sysObsKey]) {
+			return target;
+		} else if (Array.isArray(target)) {
+			return new ArrayObserver({ target: target, ownKey: null, parent: null }).proxy;
+		} else if (target instanceof Date || target instanceof Blob || target instanceof Error) {
+			throw new Error(`${target} found to be one of non-observable types`);
 		} else {
-			if (!target || typeof target !== 'object') {
-				throw new Error('observable MAY ONLY be created from non-null object only');
-			} else if ('observe' in target || 'unobserve' in target || 'revoke' in target) {
-				throw new Error('target object MUST NOT have nor own neither inherited properties from the following list: "observe", "unobserve", "revoke"');
-			} else if (!isObservableType(target)) {
-				throw new Error(target + ' found to be one of non-observable object types: ' + nonObservableTypes);
-			}
+			return new ObjectObserver({ target: target, ownKey: null, parent: null }).proxy;
 		}
 	}
 
 	static isObservable(input) {
-		return !!(input && input[sysObsKey] && input.observe);
+		return !!(input && input[sysObsKey]);
 	}
 }
 
