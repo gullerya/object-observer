@@ -29,9 +29,13 @@ const
 		return result;
 	},
 	unobserve = function () {
-		const
-			systemObserver = this[sysObsKey],
+		const systemObserver = this[sysObsKey];
+		let observers;
+		if (systemObserver.parent) {
+			observers = getAncestorInfo(systemObserver).observers;
+		} else {
 			observers = systemObserver.observers;
+		}
 		if (observers.size) {
 			let l = arguments.length;
 			if (l) {
@@ -84,13 +88,20 @@ const
 
 				const
 					systemObserver = this[sysObsKey],
-					observers = systemObserver.observers;
+					ancInfo = getAncestorInfo(systemObserver),
+					basePath = ancInfo.path.join('.'),
+					observers = ancInfo.observers;
 				if (!observers.has(observer)) {
 					let opts;
 					if (options) {
 						opts = processObserveOptions(options);
 					} else {
 						opts = {};
+					}
+					if (opts.path) {
+						opts.path = basePath + '.' + opts.path;
+					} else {
+						opts.pathsFrom = basePath + '.' + (opts.pathsFrom ? opts.pathsFrom : '');
 					}
 					observers.set(observer, opts);
 				} else {

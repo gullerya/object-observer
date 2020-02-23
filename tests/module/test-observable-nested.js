@@ -59,4 +59,37 @@ suite.runTest({ name: 'observable from nested can be observed' }, test => {
 	test.assertTrue('unobserve' in oou);
 	test.assertTrue('observe' in ooua);
 	test.assertTrue('unobserve' in ooua);
+
+	const rootEvents = [];
+	const rootObs = changes => Array.prototype.push.apply(rootEvents, changes);
+	const nestedEvents = [];
+	const nestedObs = changes => Array.prototype.push.apply(nestedEvents, changes);
+
+	oou.observe(nestedObs);
+	oou.address.city = 'cityA';
+	test.assertEqual(1, nestedEvents.length);
+
+	oo.observe(rootObs);
+	oo.user.address.city = 'cityB';
+	test.assertEqual(1, rootEvents.length);
+	test.assertEqual(2, nestedEvents.length);
+
+	oou.address.city = 'cityC';
+	test.assertEqual(2, rootEvents.length);
+	test.assertEqual(3, nestedEvents.length);
+
+	oou.unobserve(nestedObs);
+	oou.address.city = 'cityD';
+	test.assertEqual(3, rootEvents.length);
+	test.assertEqual(3, nestedEvents.length);
+
+	oou.observe(nestedObs);
+	oou.address.city = 'cityE';
+	test.assertEqual(4, rootEvents.length);
+	test.assertEqual(4, nestedEvents.length);
+
+	oou.unobserve();
+	oou.address.city = 'cityF';
+	test.assertEqual(5, rootEvents.length);
+	test.assertEqual(4, nestedEvents.length);
 });
