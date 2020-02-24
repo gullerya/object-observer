@@ -96,58 +96,58 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.0048 ms<br>
-            all: 485.0 ms
+            one: 0.0079 ms<br>
+            all: 793.93 ms
         </td>
         <td>
-            one: 0.00039 ms<br>
-            all: 393.41 ms
+            one: 0.00034 ms<br>
+            all: 344.79 ms
         </td>
         <td>
-            one: 0.00077 ms<br>
-            all: 772.33 ms
+            one: 0.00069 ms<br>
+            all: 693.55 ms
         </td>
         <td>
-            one: 0.00065 ms<br>
-            all: 655.45 ms
+            one: 0.00058 ms<br>
+            all: 580.07 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
         <td>
-            one: 0.0041 ms<br>
-            all: 417.95 ms
+            one: 0.0076 ms<br>
+            all: 763.61 ms
         </td>
         <td>
-            one: 0.00035 ms<br>
-            all: 352.01 ms
+            one: 0.00033 ms<br>
+            all: 333.86 ms
         </td>
         <td>
-            one: 0.0007 ms<br>
-            all: 693.65 ms
+            one: 0.00068 ms<br>
+            all: 680.43 ms
         </td>
         <td>
-            one: 0.0006 ms<br>
-            all: 599.66 ms
+            one: 0.00057 ms<br>
+            all: 577.86 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
         <td>
-            one: 0.016 ms<br>
-            all: 1646 ms
+            one: 0.018 ms<br>
+            all: 1888 ms
         </td>
         <td>
-            one: 0.001 ms<br>
-            all: 1061 ms
+            one: 0.0007 ms<br>
+            all: 705 ms
         </td>
         <td>
-            one: 0.001 ms<br>
-            all: 1181 ms
+            one: 0.00076 ms<br>
+            all: 762 ms
         </td>
         <td>
-            one: 0.0016 ms<br>
-            all: 1667 ms
+            one: 0.0011 ms<br>
+            all: 1163 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
@@ -190,10 +190,22 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
-        <td>--</td>
-        <td>--</td>
-        <td>--</td>
-        <td>--</td>
+        <td>
+            one: 0.0084 ms<br>
+            all: 841.73 ms
+        </td>
+        <td>
+            one: 0.0005 ms<br>
+            all: 573.27 ms
+        </td>
+        <td>
+            one: 0.0009 ms<br>
+            all: 926.32 ms
+        </td>
+        <td>
+            one: 0.0008 ms<br>
+            all: 790.70 ms
+        </td>
     </tr>
 </table>
 
@@ -257,46 +269,46 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.0043 ms<br>
-            all: 426.94 ms
+            one: 0.009 ms<br>
+            all: 902.10 ms
         </td>
         <td>
-            one: 0.0046 ms<br>
-            all: 459.07 ms
+            one: 0.0094 ms<br>
+            all: 943.97 ms
         </td>
         <td>
-            one: 0.002 ms<br>
-            all: 199.1 ms
+            one: 0.0018 ms<br>
+            all: 185.20 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
         <td>
-            one: 0.0039 ms<br>
-            all: 389.58 ms
+            one: 0.0086 ms<br>
+            all: 863.00 ms
         </td>
         <td>
-            one: 0.0043 ms<br>
-            all: 427.93 ms
+            one: 0.009 ms<br>
+            all: 906.12 ms
         </td>
         <td>
             one: 0.0018 ms<br>
-            all: 182.58 ms
+            all: 183.75 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
         <td>
-            one: 0.018 ms<br>
-            all: 1869 ms
+            one: 0.021 ms<br>
+            all: 2119 ms
         </td>
         <td>
-            one: 0.025 ms<br>
-            all: 2541 ms
+            one: 0.026 ms<br>
+            all: 2686 ms
         </td>
         <td>
-            one: 0.009 ms<br>
-            all: 984 ms
+            one: 0.0085 ms<br>
+            all: 853 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
@@ -331,9 +343,18 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
-        <td>--</td>
-        <td>--</td>
-        <td>--</td>
+        <td>
+            one: 0.0095 ms<br>
+            all: 955.73 ms
+        </td>
+        <td>
+            one: 0.0108 ms<br>
+            all: 1088.51 ms
+        </td>
+        <td>
+            one: 0.0024 ms<br>
+            all: 244.38 ms
+        </td>
     </tr>
 </table>
 

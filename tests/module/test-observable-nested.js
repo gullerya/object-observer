@@ -31,8 +31,8 @@ suite.runTest({ name: 'observable from nested stays the same object reference' }
 				}
 			}
 		}),
-		oou = Observable.from(oo.user, { experiments: { nestedObservable: true } }),
-		ooua = Observable.from(oo.user.address, { experiments: { nestedObservable: true } });
+		oou = Observable.from(oo.user),
+		ooua = Observable.from(oo.user.address);
 
 	test.assertEqual(oo.user, oou);
 	test.assertEqual(oo.user.address, oou.address);
@@ -50,10 +50,9 @@ suite.runTest({ name: 'observable from nested can be observed' }, test => {
 					city: 'city'
 				}
 			}
-		}, { experiments: { nestedObservable: true } }
-	),
-		oou = Observable.from(oo.user, { experiments: { nestedObservable: true } }),
-		ooua = Observable.from(oo.user.address, { experiments: { nestedObservable: true } });
+		}),
+		oou = Observable.from(oo.user),
+		ooua = Observable.from(oo.user.address);
 
 	test.assertTrue('observe' in oou);
 	test.assertTrue('unobserve' in oou);
@@ -92,4 +91,41 @@ suite.runTest({ name: 'observable from nested can be observed' }, test => {
 	oou.address.city = 'cityF';
 	test.assertEqual(5, rootEvents.length);
 	test.assertEqual(4, nestedEvents.length);
+});
+
+suite.runTest({ name: 'nested observable should handle errors', expectError: 'observer parameter MUST be a function' }, () => {
+	let oo = Observable.from(
+		{
+			user: {
+				address: {
+					street: 'street',
+					block: 'block',
+					city: 'city'
+				}
+			}
+		}),
+		oou = Observable.from(oo.user);
+
+	oou.observe('invalid observer');
+});
+
+suite.runTest({ name: 'nested observable should handle duplicate' }, test => {
+	let oo = Observable.from(
+		{
+			user: {
+				address: {
+					street: 'street',
+					block: 'block',
+					city: 'city'
+				}
+			}
+		}),
+		oou = Observable.from(oo.user),
+		events = [],
+		observer = changes => Array.prototype.push.apply(events, changes);
+
+	oou.observe(observer);
+	oou.observe(observer);
+	oou.address.street = 'streetA';
+	test.assertEqual(1, events.length);
 });

@@ -26,19 +26,16 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __2.6.0__
+  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
+  * updated performance numbers: slightly affected by the new functionality, Edge became obsolete while Chromium-Edge entered the picture, measured NodeJS
+
 * __2.5.2__
   * updated readme.md
   * added funding info
 
 * __2.5.0__
   * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
-
-* __2.4.2__
-  * minor improvenent in the CI part of the library due to newer/better version of the test runner
-
-* __2.4.1__
-  * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
-  * updated dependencies
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
