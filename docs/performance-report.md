@@ -189,7 +189,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
             one: 0.0084 ms<br>
             all: 841.73 ms
@@ -342,7 +342,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub></sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
             one: 0.0095 ms<br>
             all: 955.73 ms
