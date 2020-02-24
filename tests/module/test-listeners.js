@@ -13,7 +13,7 @@ suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
 	oo.some = 'else';
 	delete oo.some;
 
-	if (events.length !== 3) fail('expected to find 3 events');
+	if (events.length !== 3) throw new Error('expected to find 3 events');
 	if (events[0].type !== 'insert' ||
 		events[0].path[0] !== 'some' ||
 		typeof events[0].oldValue !== 'undefined' ||

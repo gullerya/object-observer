@@ -45,15 +45,15 @@ suite.runTest({ name: 'test unobserve - few observers - explicit unobserve' }, (
 	cntrB = 0;
 	oo.unobserve(observerA);
 	oo.some = 'true';
-	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB !== 1) throw new Error('unobserve failed, expected 1 callback for the left alone after unobserve, found ' + cntr);
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrA);
+	if (cntrB !== 1) throw new Error('unobserve failed, expected 1 callback for the left alone after unobserve, found ' + cntrB);
 
 	cntrA = 0;
 	cntrB = 0;
 	oo.unobserve(observerB);
 	oo.some = 'back';
-	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrA);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrB);
 });
 
 suite.runTest({ name: 'test unobserve - unobserve few' }, () => {
@@ -79,8 +79,8 @@ suite.runTest({ name: 'test unobserve - unobserve few' }, () => {
 	cntrB = 0;
 	oo.unobserve(observerA, observerB);
 	oo.some = 'true';
-	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrA);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrB);
 });
 
 suite.runTest({ name: 'test unobserve - unobserve all' }, () => {
@@ -106,8 +106,8 @@ suite.runTest({ name: 'test unobserve - unobserve all' }, () => {
 	cntrB = 0;
 	oo.unobserve();
 	oo.some = 'true';
-	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
-	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntr);
+	if (cntrA > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrA);
+	if (cntrB > 0) throw new Error('unobserve failed, expected 0 callbacks for unobserved, found ' + cntrB);
 });
 
 suite.runTest({ name: 'test unobserve - observe, unobserve and observe again' }, () => {

@@ -13,5 +13,5 @@ suite.runTest({ name: 'test DOMStringMap' }, test => {
 
 	oo.observe(observer);
 	oo.some = 'thing';
-	test.assertEqual(events.length, 1);
+	test.assertEqual(1, events.length);
 });
