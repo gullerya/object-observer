@@ -129,9 +129,7 @@ const
 	},
 	prepareArray = function (source, extDefs, observer) {
 		let l = source.length, item;
-		const target = new Array(l);
-		Object.defineProperties(target, extDefs);
-		// Object.assign(target, extDefs);
+		const target = Object.defineProperties(new Array(l), extDefs);
 		target[sysObsKey] = observer;
 		while (l--) {
 			item = source[l];
@@ -146,9 +144,7 @@ const
 	prepareObject = function (source, extDefs, observer) {
 		const
 			keys = Object.keys(source),
-			target = {};
-		Object.defineProperties(target, extDefs);
-		// Object.assign(target, extDefs);
+			target = Object.defineProperties({}, extDefs);
 		target[sysObsKey] = observer;
 		let l = keys.length, key, item;
 		while (l--) {
