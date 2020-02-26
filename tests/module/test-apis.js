@@ -87,15 +87,13 @@ suite.runTest({ name: 'test observable APIs presence on object/array' }, test =>
 
 	oo = Observable.from(o);
 
-	test.assertEqual(typeof oo.detach, 'function');
-	test.assertEqual(typeof oo.observe, 'function');
-	test.assertEqual(typeof oo.unobserve, 'function');
+	test.assertEqual('function', typeof oo.observe);
+	test.assertEqual('function', typeof oo.unobserve);
 
 	aa = Observable.from(a);
 
-	test.assertEqual(typeof aa.detach, 'function');
-	test.assertEqual(typeof aa.observe, 'function');
-	test.assertEqual(typeof aa.unobserve, 'function');
+	test.assertEqual('function', typeof aa.observe);
+	test.assertEqual('function', typeof aa.unobserve);
 });
 
 suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }, test => {
@@ -103,17 +101,13 @@ suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }
 
 	oo = Observable.from(o);
 
-	test.assertEqual(Object.keys(oo).length, 0);
+	test.assertEqual(0, Object.keys(oo).length);
 
 	aa = Observable.from(a);
 
-	test.assertEqual(Object.keys(aa).length, 0);
+	test.assertEqual(0, Object.keys(aa).length);
 });
 
-suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor' }, test => {
-	try {
-		let o = new Observable();
-		test.assertTrue(false);
-	} catch (e) {
-	}
+suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor', expectError: 'Observable MAY NOT be created via constructor' }, () => {
+	new Observable();
 });

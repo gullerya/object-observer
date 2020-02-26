@@ -21,9 +21,8 @@ suite.runTest({ name: 'inner object from observable should fire events as usual'
 	if (events[1].type !== 'insert' || events[1].path.join('.') !== 'inner.new' || typeof events[1].oldValue !== 'undefined' || events[1].value !== 'prop' || events[1].object !== iop) throw new Error('event 1 did not fire as expected');
 });
 
-suite.runTest({ name: 'removal (detaching) of inner object from observable should disable it\'s proxy/events generating' }, () => {
-	let o = { inner: { prop: 'more' } },
-		oo = Observable.from(o),
+suite.runTest({ name: 'removal (detaching) of inner object from observable should detach its events' }, test => {
+	let oo = Observable.from({ inner: { prop: 'more' } }),
 		iop = oo.inner,
 		cntr = 0,
 		observer = function () {
@@ -32,24 +31,19 @@ suite.runTest({ name: 'removal (detaching) of inner object from observable shoul
 
 	oo.observe(observer);
 	iop.prop = 'text';
-	if (cntr !== 1) throw new Error('preliminary check failed, observer expected to be called 1 time, called ' + cntr);
+	test.assertEqual(1, cntr);
 
 	oo.inner = null;
 	cntr = 0;
-	try {
-		iop.prop = 'again';
-		throw new Error('the flow should fail before this line on revoked proxy set');
-	} catch (e) {
-		if (!e || !(e instanceof TypeError)) throw new Error('expected to have TypeError while setting revoked proxy');
-	}
-	if (cntr > 0) throw new Error('observer expected NOT to be called when removed inner object changed, but called ' + cntr);
+	iop.prop = 'again';
+	test.assertEqual(0, cntr);
 });
 
 suite.runTest({ name: 'replacement of inner object from observable should return non-proxified original object' }, () => {
 	let o = { inner: { prop: 'more', nested: { text: 'text' } } },
 		oo = Observable.from(o),
 		events = [];
-	oo.observe(changes => events.push.apply(events, changes));
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
 
 	oo.inner.prop = 'some';
 	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 2 || events[0].object !== oo.inner) {

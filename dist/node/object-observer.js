@@ -57,11 +57,6 @@ const
 		[sysObsKey]: {
 			writable: true
 		},
-		detach: {
-			value: function () {
-				this[sysObsKey].detach();
-			}
-		},
 		observe: {
 			value: function (observer, options) {
 				if (typeof observer !== 'function') {
