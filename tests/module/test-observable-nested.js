@@ -151,7 +151,7 @@ suite.runTest({ name: 'nested observable should provide correct path (relative t
 	oou.observe(changes => Array.prototype.push.apply(eventsU, changes));
 	ooua.observe(changes => Array.prototype.push.apply(eventsUA, changes));
 
-	oou.address.street = 'streetA';
+	ooua.street = 'streetA';
 	test.assertEqual(1, events.length);
 	test.assertEqual('user.address.street', events[0].path.join('.'));
 	test.assertEqual(1, eventsU.length);
@@ -188,15 +188,19 @@ suite.runTest({ name: 'nested observable should continue to function when detach
 
 	//	dettaching user
 	oo.user = {};
-	ooua.street = 'streetA';
-	test.assertEqual(1, events.length);
+	test.assertEqual(2, events.length);
+	test.assertEqual(1, eventsU.length);
+	test.assertEqual(1, eventsUA.length);
+
+	ooua.street = 'streetB';
+	test.assertEqual(2, events.length);
 	test.assertEqual(2, eventsU.length);
 	test.assertEqual(2, eventsUA.length);
 
 	//	dettaching address
 	oou.address = {};
-	ooua.street = 'streetA';
-	test.assertEqual(1, events.length);
-	test.assertEqual(2, eventsU.length);
+	ooua.street = 'streetC';
+	test.assertEqual(2, events.length);
+	test.assertEqual(3, eventsU.length);
 	test.assertEqual(3, eventsUA.length);
 });

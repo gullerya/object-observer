@@ -99,6 +99,8 @@ suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
 
 	oo.inner = {};
 	oo.inner.observe(changes => Array.prototype.push.apply(eventsB, changes));
+	test.assertEqual(2, events.length);
+	test.assertEqual(1, eventsA.length);
 
 	inner.some = 'other text';
 	test.assertEqual(2, events.length);
@@ -106,7 +108,7 @@ suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
 	test.assertEqual(0, eventsB.length);
 
 	oo.inner.some = 'yet another';
-	test.assertEqual(2, events.length);
+	test.assertEqual(3, events.length);
 	test.assertEqual(2, eventsA.length);
 	test.assertEqual(1, eventsB.length);
 });
