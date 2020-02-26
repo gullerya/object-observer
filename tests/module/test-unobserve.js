@@ -145,7 +145,7 @@ suite.runTest({ name: 'test unobserve - revoke the observable (Object)' }, () =>
 	ooi.more = 'stuff';
 	if (cntr !== 2) throw new Error('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 2');
 
-	oo.revoke();
+	oo.detach();
 	try {
 		oo.some = 'true';
 		throw new Error(' execution should not get here');
@@ -178,7 +178,7 @@ suite.runTest({ name: 'test unobserve - revoke the observable (Array)' }, () => 
 	ooia.pop();
 	if (cntr !== 5) throw new Error('preliminary check failed - observer was invoked ' + cntr + ' times; expected - 5');
 
-	oo.revoke();
+	oo.detach();
 
 	try {
 		oo.pop();

@@ -108,15 +108,3 @@ suite.runTest({ name: 'test listeners invocation - listener is corrupted' }, () 
 	} catch (e) {
 	}
 });
-
-suite.runTest({ name: 'test listeners invocation - observing revoked Observable should throw' }, () => {
-	let o = {}, oo = Observable.from(o);
-
-	oo.revoke();
-	try {
-		oo.observe(() => {
-		});
-		throw new Error('the flow should fail due to listener being NULL');
-	} catch (e) {
-	}
-});

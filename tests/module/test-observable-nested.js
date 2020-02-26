@@ -129,3 +129,74 @@ suite.runTest({ name: 'nested observable should handle duplicate' }, test => {
 	oou.address.street = 'streetA';
 	test.assertEqual(1, events.length);
 });
+
+suite.runTest({ name: 'nested observable should provide correct path (relative to self)' }, test => {
+	let oo = Observable.from(
+		{
+			user: {
+				address: {
+					street: 'street',
+					block: 'block',
+					city: 'city'
+				}
+			}
+		}),
+		oou = Observable.from(oo.user),
+		ooua = Observable.from(oo.user.address),
+		events = [],
+		eventsU = [],
+		eventsUA = [];
+
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	oou.observe(changes => Array.prototype.push.apply(eventsU, changes));
+	ooua.observe(changes => Array.prototype.push.apply(eventsUA, changes));
+
+	oou.address.street = 'streetA';
+	test.assertEqual(1, events.length);
+	test.assertEqual('user.address.street', events[0].path.join('.'));
+	test.assertEqual(1, eventsU.length);
+	test.assertEqual('address.street', eventsU[0].path.join('.'));
+	test.assertEqual(1, eventsUA.length);
+	test.assertEqual('street', eventsUA[0].path.join('.'));
+});
+
+suite.runTest({ name: 'nested observable should continue to function when detached' }, test => {
+	let oo = Observable.from(
+		{
+			user: {
+				address: {
+					street: 'street',
+					block: 'block',
+					city: 'city'
+				}
+			}
+		}),
+		oou = Observable.from(oo.user),
+		ooua = Observable.from(oo.user.address),
+		events = [],
+		eventsU = [],
+		eventsUA = [];
+
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	oou.observe(changes => Array.prototype.push.apply(eventsU, changes));
+	ooua.observe(changes => Array.prototype.push.apply(eventsUA, changes));
+
+	ooua.street = 'streetA';
+	test.assertEqual(1, events.length);
+	test.assertEqual(1, eventsU.length);
+	test.assertEqual(1, eventsUA.length);
+
+	//	dettaching user
+	oo.user = {};
+	ooua.street = 'streetA';
+	test.assertEqual(1, events.length);
+	test.assertEqual(2, eventsU.length);
+	test.assertEqual(2, eventsUA.length);
+
+	//	dettaching address
+	oou.address = {};
+	ooua.street = 'streetA';
+	test.assertEqual(1, events.length);
+	test.assertEqual(2, eventsU.length);
+	test.assertEqual(3, eventsUA.length);
+});

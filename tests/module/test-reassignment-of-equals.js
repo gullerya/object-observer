@@ -3,49 +3,49 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing reassignment of equal values' });
 
-suite.runTest({ name: 'boolean' }, () => {
+suite.runTest({ name: 'boolean' }, test => {
 	let oo = Observable.from({ p: true }),
 		changes = null;
 	oo.observe(cs => changes = cs);
 
 	oo.p = true;
-	if (changes !== null) throw new Error('expected no events to be fired when strictly equal assigment performed');
+	test.assertEqual(null, changes);
 });
 
-suite.runTest({ name: 'number' }, () => {
+suite.runTest({ name: 'number' }, test => {
 	let oo = Observable.from({ p: 6 }),
 		changes = null;
 	oo.observe(cs => changes = cs);
 
 	oo.p = 6;
-	if (changes !== null) throw new Error('expected no events to be fired when strictly equal assigment performed');
+	test.assertEqual(null, changes);
 });
 
-suite.runTest({ name: 'string' }, () => {
+suite.runTest({ name: 'string' }, test => {
 	let oo = Observable.from({ p: 'text' }),
 		changes = null;
 	oo.observe(cs => changes = cs);
 
 	oo.p = 'text';
-	if (changes !== null) throw new Error('expected no events to be fired when strictly equal assigment performed');
+	test.assertEqual(null, changes);
 });
 
-suite.runTest({ name: 'function' }, () => {
+suite.runTest({ name: 'function' }, test => {
 	let f = function () { },
 		oo = Observable.from({ p: f }),
 		changes = null;
 	oo.observe(cs => changes = cs);
 
 	oo.p = f;
-	if (changes !== null) throw new Error('expected no events to be fired when strictly equal assigment performed');
+	test.assertEqual(null, changes);
 });
 
-suite.runTest({ name: 'Symbol' }, () => {
+suite.runTest({ name: 'Symbol' }, test => {
 	let s = Symbol('some'),
 		oo = Observable.from({ p: s }),
 		changes = null;
 	oo.observe(cs => changes = cs);
 
 	oo.p = s;
-	if (changes !== null) throw new Error('expected no events to be fired when strictly equal assigment performed');
+	test.assertEqual(null, changes);
 });

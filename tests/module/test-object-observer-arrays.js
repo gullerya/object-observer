@@ -87,34 +87,31 @@ suite.runTest({ name: 'array pop operation - primitives' }, () => {
 	if (popped !== 'some') throw new Error('pop base functionality broken');
 });
 
-suite.runTest({ name: 'array pop operation - objects' }, () => {
+suite.runTest({ name: 'array pop operation - objects' }, test => {
 	let a = [{ test: 'text' }],
 		pa,
 		pad,
 		popped,
-		events = [];
+		events = [],
+		eventsA = [];
 	pa = Observable.from(a);
 	pad = pa[0];
-	pa.observe(eventsList => {
-		[].push.apply(events, eventsList);
-	});
+	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].test = 'test';
 	pad.test = 'more';
-	if (events.length !== 2) throw new Error('expected to register 2 event on observable');
+	test.assertEqual(2, events.length);
 
 	popped = pa.pop();
-	if (popped.test !== 'more') throw new Error('expected to receive original object but with updated values');
-	if (events.length !== 3) throw new Error('expected to get Deleted event on pop operation');
+	test.assertEqual('more', popped.test);
+	test.assertEqual(3, events.length);
 
 	popped.new = 'value';
-	if (events.length !== 3) throw new Error('expected to not receive events on popped object');
-	try {
-		pad.test = 'change';
-		throw new Error('expected flow to not get to this point');
-	} catch (e) {
-		if (!(e instanceof TypeError)) throw new Error('expected to get TypeError of operation revoke proxy object (detached)');
-	}
+	test.assertEqual(3, events.length);
+
+	pad.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	pad.test = 'change';
+	test.assertEqual(1, eventsA.length);
 });
 
 suite.runTest({ name: 'array unshift operation - primitives' }, () => {
@@ -179,40 +176,37 @@ suite.runTest({ name: 'array unshift operation - arrays' }, () => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original' || events[1].object !== pa[1]) throw new Error('event 1 did not fire as expected');
 });
 
-suite.runTest({ name: 'array shift operation - primitives' }, () => {
+suite.runTest({ name: 'array shift operation - primitives' }, test => {
 	let a = ['some'],
 		pa,
 		shifted,
 		events = [];
 	pa = Observable.from(a);
-	pa.observe(eventsList => {
-		[].push.apply(events, eventsList);
-	});
+	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
 	shifted = pa.shift();
 
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
+	test.assertEqual(1, events.length);
 	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (shifted !== 'some') throw new Error('shift base functionality broken');
+	test.assertEqual('some', shifted);
 });
 
-suite.runTest({ name: 'array shift operation - objects' }, () => {
+suite.runTest({ name: 'array shift operation - objects' }, test => {
 	let a = [{ text: 'a', inner: { test: 'more' } }, { text: 'b' }],
 		pa,
 		pa0,
 		pa0i,
 		shifted,
-		events = [];
+		events = [],
+		eventsA = [];
 	pa = Observable.from(a);
 	pa0 = pa[0];
 	pa0i = pa0.inner;
-	pa.observe(eventsList => {
-		[].push.apply(events, eventsList);
-	});
+	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].text = 'b';
 	pa0i.test = 'test';
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
+	test.assertEqual(2, events.length);
 	events.splice(0);
 
 	shifted = pa.shift();
@@ -228,13 +222,11 @@ suite.runTest({ name: 'array shift operation - objects' }, () => {
 	events.splice(0);
 
 	shifted.text = 'd';
-	if (events.length) throw new Error('expected to not see events on revoked sub/graph');
-	try {
-		pa0i.test = 'dk';
-		throw new Error('expecte to not get to this point');
-	} catch (e) {
-		if (!(e instanceof TypeError)) throw new Error('expected to get TypeError on revoked proxy use');
-	}
+	test.assertEqual(0, events.length);
+
+	pa0i.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	pa0i.test = 'dk';
+	test.assertEqual(1, eventsA.length);
 });
 
 suite.runTest({ name: 'array reverse operation - primitives (flat array)' }, () => {

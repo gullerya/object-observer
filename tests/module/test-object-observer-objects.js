@@ -83,56 +83,52 @@ suite.runTest({ name: 'sub tree object operations' }, test => {
 	if (events[2].type !== 'update' || events[2].path.join('.') !== 'addressB.street.name' || events[2].oldValue !== 'street name' || events[2].value !== 'new street name' || events[2].object !== po.addressB.street) test.fail('event 2 did not fire as expected');
 });
 
-suite.runTest({ name: 'subgraph proxy correctly revoked when replaced' }, test => {
-	let o = {
-		inner: {}
-	}, oo = Observable.from(o),
+suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
+	let oo = Observable.from({ inner: {} }),
 		events = [],
-		tmp;
+		eventsA = [],
+		eventsB = [],
+		inner = oo.inner;
 
-	oo.observe(function (changes) {
-		[].push.apply(events, changes);
-	});
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	inner.observe(changes => Array.prototype.push.apply(eventsA, changes));
 
-	tmp = oo.inner;
-	tmp.some = 'text';
-	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
+	inner.some = 'text';
+	test.assertEqual(1, events.length);
+	test.assertEqual(1, eventsA.length);
 
-	oo.inner = null;
-	events = [];
-	try {
-		tmp.some = 'other text';
-		test.fail('flow is not supposed to get to this point');
-	} catch (e) {
-	}
+	oo.inner = {};
+	oo.inner.observe(changes => Array.prototype.push.apply(eventsB, changes));
 
-	if (events.length !== 0) test.fail('expected to not-observe any changes anymore');
+	inner.some = 'other text';
+	test.assertEqual(2, events.length);
+	test.assertEqual(2, eventsA.length);
+	test.assertEqual(0, eventsB.length);
+
+	oo.inner.some = 'yet another';
+	test.assertEqual(2, events.length);
+	test.assertEqual(2, eventsA.length);
+	test.assertEqual(1, eventsB.length);
 });
 
-suite.runTest({ name: 'subgraph proxy correctly revoked when deleted' }, test => {
-	let o = {
-		inner: {}
-	}, oo = Observable.from(o),
+suite.runTest({ name: 'subgraph correctly detached when deleted' }, test => {
+	let oo = Observable.from({ inner: {} }),
 		events = [],
-		tmp;
+		eventsA = [],
+		inner = oo.inner;
 
-	oo.observe(function (changes) {
-		[].push.apply(events, changes);
-	});
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	inner.observe(changes => Array.prototype.push.apply(eventsA, changes));
 
-	tmp = oo.inner;
-	tmp.some = 'text';
-	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
+	inner.some = 'text';
+	test.assertEqual(1, events.length);
+	test.assertEqual(1, eventsA.length);
 
 	delete oo.inner;
-	events = [];
-	try {
-		tmp.some = 'other text';
-		test.fail('flow is not supposed to get to this point');
-	} catch (e) {
-	}
 
-	if (events.length !== 0) test.fail('expected to not-observe any changes anymore');
+	inner.some = 'other text';
+	test.assertEqual(2, events.length);
+	test.assertEqual(2, eventsA.length);
 });
 
 suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet set' }, test => {

@@ -277,8 +277,8 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
             all: 943.97 ms
         </td>
         <td>
-            one: 0.0018 ms<br>
-            all: 185.20 ms
+            one: 0.0017 ms<br>
+            all: 176.09 ms
         </td>
     </tr>
     <tr style="font-family:monospace">

@@ -87,13 +87,13 @@ suite.runTest({ name: 'test observable APIs presence on object/array' }, test =>
 
 	oo = Observable.from(o);
 
-	test.assertEqual(typeof oo.revoke, 'function');
+	test.assertEqual(typeof oo.detach, 'function');
 	test.assertEqual(typeof oo.observe, 'function');
 	test.assertEqual(typeof oo.unobserve, 'function');
 
 	aa = Observable.from(a);
 
-	test.assertEqual(typeof aa.revoke, 'function');
+	test.assertEqual(typeof aa.detach, 'function');
 	test.assertEqual(typeof aa.observe, 'function');
 	test.assertEqual(typeof aa.unobserve, 'function');
 });
