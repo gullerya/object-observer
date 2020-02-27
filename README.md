@@ -18,13 +18,17 @@ Main aspects:
   * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-* following host objects (and their extensions) __are actively checked for to NOT be__ observed: `Date`, `Blob`, `Error`
+* following host objects (and their extensions) __are actively checked__ and are NOT observed: `Date`, `Blob`, `Error`
 
 #### Support matrix: ![CHROME](docs/browser_icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser_icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser_icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Performance report can be found [here](docs/performance-report.md)
 
 #### Last versions (full changelog is [here](docs/changelog.md))
+
+* __2.7.0__
+  * implemented [Issue no. 32](https://github.com/gullerya/object-observer/issues/32) - revokation part removed (underlying proxies are still revokable, for any possible future need)
+  * implemented [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself - it may be observed/unobserved, it provides relative paths when observed etc.
 
 * __2.6.0__
   * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
@@ -33,9 +37,6 @@ Main aspects:
 * __2.5.2__
   * updated readme.md
   * added funding info
-
-* __2.5.0__
-  * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 

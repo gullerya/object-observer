@@ -1,5 +1,9 @@
 # Changelog
 
+* __2.7.0__
+  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/32) - added experimental functionality of nested objects being observables on their own (not yet documented)
+  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/33) - added experimental functionality of nested objects being observables on their own (not yet documented)
+
 * __2.6.0__
   * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
   * updated performance numbers: slightly affected by the new functionality, Edge became obsolete while Chromium-Edge entered the picture, measured NodeJS
