@@ -96,39 +96,39 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.0079 ms<br>
-            all: 793.93 ms
+            one: 0.0069 ms<br>
+            all: 690.25 ms
         </td>
         <td>
-            one: 0.00034 ms<br>
-            all: 344.79 ms
+            one: 0.00044 ms<br>
+            all: 444.52 ms
         </td>
         <td>
-            one: 0.00069 ms<br>
-            all: 693.55 ms
+            one: 0.00086 ms<br>
+            all: 862.50 ms
         </td>
         <td>
-            one: 0.00058 ms<br>
-            all: 580.07 ms
+            one: 0.00068 ms<br>
+            all: 688.89 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
         <td>
-            one: 0.0076 ms<br>
-            all: 763.61 ms
+            one: 0.007 ms<br>
+            all: 702.87 ms
         </td>
         <td>
-            one: 0.00033 ms<br>
-            all: 333.86 ms
+            one: 0.00044 ms<br>
+            all: 446.24 ms
         </td>
         <td>
-            one: 0.00068 ms<br>
-            all: 680.43 ms
+            one: 0.00088 ms<br>
+            all: 883.37 ms
         </td>
         <td>
-            one: 0.00057 ms<br>
-            all: 577.86 ms
+            one: 0.00065 ms<br>
+            all: 654.25 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
@@ -269,31 +269,31 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
         <td>
-            one: 0.009 ms<br>
-            all: 902.10 ms
+            one: 0.0099 ms<br>
+            all: 996.94 ms
         </td>
         <td>
-            one: 0.0094 ms<br>
-            all: 943.97 ms
+            one: 0.0106 ms<br>
+            all: 1064.04 ms
         </td>
         <td>
-            one: 0.0017 ms<br>
-            all: 176.09 ms
+            one: 0.00048 ms<br>
+            all: 48.43 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
         <td>
-            one: 0.0086 ms<br>
-            all: 863.00 ms
+            one: 0.0099 ms<br>
+            all: 994.55 ms
         </td>
         <td>
-            one: 0.009 ms<br>
-            all: 906.12 ms
+            one: 0.0103 ms<br>
+            all: 1037.80 ms
         </td>
         <td>
-            one: 0.0018 ms<br>
-            all: 183.75 ms
+            one: 0.00046 ms<br>
+            all: 46.88 ms
         </td>
     </tr>
     <tr style="font-family:monospace">

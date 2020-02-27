@@ -204,3 +204,38 @@ suite.runTest({ name: 'nested observable should continue to function when detach
 	test.assertEqual(3, eventsU.length);
 	test.assertEqual(3, eventsUA.length);
 });
+
+suite.runTest({ name: 'nested observable is still cloned when moved' }, test => {
+	let u = { user: { address: { street: 'street', block: 'block', city: 'city' } } },
+		oo = Observable.from([u, u]),
+		oou = Observable.from(oo[0].user),
+		ooua = Observable.from(oo[0].user.address),
+		events = [],
+		eventsU = [],
+		eventsUA = [];
+
+	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	oou.observe(changes => Array.prototype.push.apply(eventsU, changes));
+	ooua.observe(changes => Array.prototype.push.apply(eventsUA, changes));
+
+	ooua.street = 'streetA';
+	test.assertEqual(1, events.length);
+	test.assertEqual('0.user.address.street', events[0].path.join('.'));
+	test.assertEqual(1, eventsU.length);
+	test.assertEqual('address.street', eventsU[0].path.join('.'));
+	test.assertEqual(1, eventsUA.length);
+	test.assertEqual('street', eventsUA[0].path.join('.'));
+
+	//	moving the subgraph
+	oo[1].user = oou;
+	ooua.street = 'streetB';
+	test.assertEqual(3, events.length);
+	test.assertEqual('0.user.address.street', events[2].path.join('.'));
+	test.assertEqual(2, eventsU.length);
+	test.assertEqual('address.street', eventsU[1].path.join('.'));
+	test.assertEqual(2, eventsUA.length);
+	test.assertEqual('street', eventsUA[1].path.join('.'));
+
+	test.assertFalse(oo[0].user === oo[1].user);
+	test.assertFalse(oo[0].user.address === oo[1].user.address);
+});

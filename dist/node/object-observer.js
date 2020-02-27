@@ -99,7 +99,8 @@ const
 		return target;
 	},
 	callObservers = function (observed, changes) {
-		let observers, pair, target, options, relevantChanges, oPath, oPaths, i, newPath;
+		let observers, pair, target, options, relevantChanges, oPath, oPaths, i, newPath, tmp;
+		const l = changes.length;
 		do {
 			observers = observed.observers;
 			i = observers.length;
@@ -125,18 +126,22 @@ const
 				}
 			}
 
+			let tmpa;
 			if (observed.parent) {
-				changes = changes.map(c => {
+				tmpa = new Array(l);
+				for (let i = 0; i < l; i++) {
+					tmp = changes[i];
 					newPath = [observed.ownKey];
-					Array.prototype.push.apply(newPath, c.path);
-					return {
-						type: c.type,
+					Array.prototype.push.apply(newPath, tmp.path);
+					tmpa[i] = {
+						type: tmp.type,
 						path: newPath,
-						value: c.value,
-						oldValue: c.oldValue,
-						object: c.object
+						value: tmp.value,
+						oldValue: tmp.oldValue,
+						object: tmp.object
 					};
-				});
+				}
+				changes = tmpa;
 				observed = observed.parent;
 			} else {
 				break;
