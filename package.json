@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
