@@ -80,6 +80,9 @@ If/When provided, `options` parameter MUST contain ONLY one/some of the properti
 > If the `path` equals `'firstName'` when observing `{ firstName: 'some', lastName: 'name' }`, ONLY and ONLY changes of the `firstName` will be observed.
 Samely, when the `path` equals `'address'` when observing `{ address: { city: 'city', street: 'street' } }`, ONLY and ONLY changes of `address` will be observed, BUT NOT, for instance, changes of `city` or `street`. 
 
+* __`pathsOf`__ - non-empty string, direct properties of which we want to observe
+> If the `path` equals `'address'` when observing an object from the examples above, ONLY and ONLY changes of the direct properties of `address` will be observed.
+
 * __`pathsFrom`__ - non-empty string, any changes from the specified path and deeper will be delivered to the observer; this option MAY NOT be used together with `path` option
 > If the `pathsFrom` equals `'address'` when observing `{ addressNew: {...}, addressOld: {...} }`, ALL of the changes to `addressNew` and `addressOld` and their nested properties of any level of depth will be observed.
 

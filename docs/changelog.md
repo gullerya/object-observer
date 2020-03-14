@@ -1,5 +1,8 @@
 # Changelog
 
+* __2.9.0__
+  * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
+
 * __2.8.0__
   * officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
 

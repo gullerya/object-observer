@@ -27,16 +27,15 @@ Main aspects:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __2.9.0__
+  * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
+
 * __2.8.0__
   * officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
 
 * __2.7.0__
   * implemented [Issue no. 32](https://github.com/gullerya/object-observer/issues/32) - revokation part removed (underlying proxies are still revokable, for any possible future need)
   * implemented [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself - it may be observed/unobserved, it provides relative paths when observed etc.
-
-* __2.6.0__
-  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
-  * updated performance numbers: slightly affected by the new functionality, Edge became obsolete while Chromium-Edge entered the picture, measured NodeJS
 
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
@@ -181,12 +180,24 @@ let user = {
     },
     oUser = Observable.from(user);
 
+//  path
+//
 //  going to observe ONLY the changes of 'firstName'
 oUser.observe(changes => {}, {path: 'firstName'});
 
 //  going to observe ONLY the changes of 'address.city'
 oUser.observe(changes => {}, {path: 'address.city'});
 
+//  pathsOf
+//
+//  going to observe the changes of 'address' own properties ('city', 'block') but not else
+oUser.observe(changes => {}, {pathsOf: 'address'});
+//  here we'll be notified on changes of
+//    address.city
+//    address.extra
+
+//  pathsFrom
+//
 //  going to observe the changes from 'address' and deeper
 oUser.observe(changes => {}, {pathsFrom: 'address'});
 //  here we'll be notified on changes of

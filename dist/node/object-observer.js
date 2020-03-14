@@ -5,24 +5,35 @@ const
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
 	sysObsKey = Symbol('system-observer-key'),
-	validOptionsKeys = ['path', 'pathsFrom'],
+	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function (options) {
 		const result = {};
-		if (options.path && typeof options.path !== 'string') {
-			console.error('"path" option, if/when provided, MUST be a non-empty string');
-		} else {
-			result.path = options.path;
+		if (typeof options.path !== 'undefined') {
+			if (typeof options.path !== 'string') {
+				console.error('"path" option, if/when provided, MUST be a non-empty string');
+			} else {
+				result.path = options.path;
+			}
 		}
-		if (options.pathsFrom) {
+		if (typeof options.pathsOf !== 'undefined') {
 			if (options.path) {
-				console.error('"pathsFrom" option MAY NOT be specified together with "path" option');
+				console.error('"pathsOf" option MAY NOT be specified together with "path" option');
+			} else if (typeof options.pathsOf !== 'string') {
+				console.error('"pathsOf" option, if/when provided, MUST be a non-empty string');
+			} else {
+				result.pathsOf = options.pathsOf.split('.').filter(n => n);
+			}
+		}
+		if (typeof options.pathsFrom !== 'undefined') {
+			if (options.path || options.pathsOf) {
+				console.error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
 			} else if (typeof options.pathsFrom !== 'string') {
 				console.error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
 			} else {
 				result.pathsFrom = options.pathsFrom;
 			}
 		}
-		const invalidOptions = Object.keys(options).filter(option => validOptionsKeys.indexOf(option) < 0);
+		const invalidOptions = Object.keys(options).filter(option => !validOptionsKeys.hasOwnProperty(option));
 		if (invalidOptions.length) {
 			console.error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
 		}
@@ -114,6 +125,8 @@ const
 					if (options.path) {
 						oPath = options.path;
 						relevantChanges = changes.filter(change => change.path.join('.') === oPath);
+					} else if (options.pathsOf) {
+						relevantChanges = changes.filter(change => change.path.length === options.pathsOf.length + 1);
 					} else if (options.pathsFrom) {
 						oPaths = options.pathsFrom;
 						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
