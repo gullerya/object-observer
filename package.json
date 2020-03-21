@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
@@ -26,7 +26,7 @@
   "files": [
     "dist"
   ],
-  "browser": "dist/node/object-observer.min.js",
+  "browser": "dist/object-observer.min.js",
   "type": "module",
   "author": {
     "name": "Guller Yuri",
@@ -44,12 +44,12 @@
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard": "^14.1.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^11.0.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "just-test": "^2.3.0",
     "uglify-es": "^3.3.9"
   }
