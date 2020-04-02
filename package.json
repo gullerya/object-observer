@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "2.9.1",
+  "version": "2.9.2",
   "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
@@ -47,10 +47,10 @@
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
     "fs-extra": "^9.0.0",
-    "just-test": "^2.3.0",
+    "just-test": "^2.3.1",
     "uglify-es": "^3.3.9"
   }
 }
