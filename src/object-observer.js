@@ -1,11 +1,12 @@
 const
+	ACCESS = 'access',
 	INSERT = 'insert',
 	UPDATE = 'update',
 	DELETE = 'delete',
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
 	sysObsKey = Symbol('system-observer-key'),
-	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
+	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1, enableGet: 1 },
 	processObserveOptions = function (options) {
 		const result = {};
 		if (typeof options.path !== 'undefined') {
@@ -31,6 +32,13 @@ const
 				console.error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
 			} else {
 				result.pathsFrom = options.pathsFrom;
+			}
+		}
+		if (typeof options.enableGet !== 'undefined') {
+			if (typeof options.enableGet !== 'boolean') {
+				console.error('"enableGet" option, if/when provided, MUST be a boolean');
+			} else {
+				result.enableGet = options.enableGet;
 			}
 		}
 		const invalidOptions = Object.keys(options).filter(option => !validOptionsKeys.hasOwnProperty(option));
@@ -130,6 +138,9 @@ const
 					} else if (options.pathsFrom) {
 						oPaths = options.pathsFrom;
 						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
+					}
+					if (!options.enableGet) {
+						relevantChanges = changes.filter(change => change.type !== ACCESS);
 					}
 					if (relevantChanges.length) {
 						target(relevantChanges);
@@ -417,6 +428,13 @@ class ObserverBase {
 		this.revokable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = targetClone;
+	}
+
+	get(target, key, receiver) {
+		const value = Reflect.get(target, key, receiver);
+		const changes = [{ type: ACCESS, path: [key], value, object: this.proxy }];
+		callObservers(this, changes);
+		return value;
 	}
 
 	set(target, key, value) {

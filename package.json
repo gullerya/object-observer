@@ -32,6 +32,9 @@
     "name": "Guller Yuri",
     "email": "gullerya@gmail.com"
   },
+  "contributors": [
+    "Ali Chamas <dragonworxau@yahoo.com.au> (https://github.com/dragonworx/)"
+  ],
   "funding": "https://paypal.me/gullerya?locale.x=en_US",
   "repository": {
     "type": "git",
