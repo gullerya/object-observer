@@ -1,6 +1,6 @@
 # Changelog
 
-* __2.9.3__
+* __2.9.4__
   * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
 
 * __2.8.0__
