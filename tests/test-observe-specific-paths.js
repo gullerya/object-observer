@@ -124,3 +124,27 @@ suite.runTest({ name: 'observe paths of - root case' }, test => {
 	oo.inner.newObj.test = 'non-relevant';
 	test.assertEqual(2, counter);
 });
+
+suite.runTest({ name: 'observe paths of - negative a' }, test => {
+	let oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } }),
+		counter = 0,
+		consoleErrors = [];
+	const origConsoleError = console.error;
+	console.error = e => consoleErrors.push(e);
+	oo.observe(changes => counter += changes.length, { pathsOf: 4 });
+	oo.inner.prop = 'else';
+	test.assertEqual(1, counter);
+	test.assertEqual('"pathsOf" option, if/when provided, MUST be a non-empty string', consoleErrors[0]);
+});
+
+suite.runTest({ name: 'observe paths of - negative b' }, test => {
+	let oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } }),
+		counter = 0,
+		consoleErrors = [];
+	const origConsoleError = console.error;
+	console.error = e => consoleErrors.push(e);
+	oo.observe(changes => counter += changes.length, { path: 'inner.prop', pathsOf: 'some.thing' });
+	oo.inner.prop = 'else';
+	test.assertEqual(1, counter);
+	test.assertEqual('"pathsOf" option MAY NOT be specified together with "path" option', consoleErrors[0]);
+});
