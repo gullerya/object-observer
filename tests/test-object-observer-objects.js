@@ -153,15 +153,3 @@ suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet
 	oo.inner.other = 'text';
 	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
 });
-
-suite.runTest({ name: 'subgraph objects pointing to the same object few times', skip: true }, test => {
-	let childObj = { prop: 'A' },
-		mainObj = { childA: childObj, childB: childObj };
-
-	let obsMainObj = Observable.from(mainObj);
-	obsMainObj.observe(changes => console.dir(changes));
-
-	obsMainObj.childA.prop = 'B';
-
-	if (obsMainObj.childA.prop !== obsMainObj.childB.prop) test.fail('expected shared object to be updated symmetrically, but found: ' + obsMainObj.childA.prop + ' - ' + obsMainObj.childB.prop);
-});
