@@ -1,8 +1,7 @@
-﻿const
-	os = require('os'),
-	fs = require('fs'),
-	fsExtra = require('fs-extra'),
-	uglifyES = require('uglify-es');
+﻿import os from 'os';
+import fs from 'fs';
+import fsExtra from 'fs-extra';
+import uglifyES from 'uglify-es';
 
 process.stdout.write('cleaning "dist"...');
 fsExtra.emptyDirSync('./dist');

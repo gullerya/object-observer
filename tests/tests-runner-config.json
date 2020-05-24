@@ -1,6 +1,6 @@
 {
 	"tests": {
-		"url": "/tests/module/test.html",
+		"url": "/tests/test.html",
 		"maxSkip": 1
 	},
 	"coverage": {

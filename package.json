@@ -38,19 +38,19 @@
     "url": "https://github.com/gullerya/object-observer"
   },
   "scripts": {
-    "eslint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
     "build": "node ./build/tools/build-dist.js",
+    "lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
     "test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "fs-extra": "^9.0.0",
-    "just-test": "^2.3.1",
+    "just-test": "^2.3.2",
     "uglify-es": "^3.3.9"
   }
 }
