@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable - objects with same reference' });
 
-suite.runTest({ name: 'subgraph objects pointing to the same object few times' }, test => {
+suite.runTest({ name: 'subgraph objects pointing to the same object few times', skip: true }, test => {
 	let childObj = { prop: 'A' },
 		mainObj = { childA: childObj, childB: childObj };
 
@@ -12,5 +12,5 @@ suite.runTest({ name: 'subgraph objects pointing to the same object few times' }
 
 	obsMainObj.childA.prop = 'B';
 
-	if (obsMainObj.childA.prop !== obsMainObj.childB.prop) test.fail('expected shared object to be updated symmetrically, but found: ' + obsMainObj.childA.prop + ' - ' + obsMainObj.childB.prop);
+	test.assertEqual(obsMainObj.childA.prop, obsMainObj.childB.prop);
 });
