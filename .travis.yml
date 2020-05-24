@@ -6,7 +6,7 @@ install:
 - npm install
 
 script:
-- npm run eslint
+- npm run lint
 - npm run test
 - bash <(curl -s https://codecov.io/bash)
 
