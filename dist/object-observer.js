@@ -4,7 +4,7 @@ const
 	DELETE = 'delete',
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
-	sysObsKey = Symbol('system-observer-key'),
+	oMetaKey = Symbol('observable-meta-key'),
 	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function (options) {
 		const result = {};
@@ -45,8 +45,8 @@ const
 		}
 
 		const
-			systemObserver = this[sysObsKey],
-			observers = systemObserver.observers;
+			oMeta = this[oMetaKey],
+			observers = oMeta.observers;
 		if (!observers.some(o => o[0] === observer)) {
 			let opts;
 			if (options) {
@@ -60,8 +60,8 @@ const
 		}
 	},
 	unobserve = function unobserve() {
-		const systemObserver = this[sysObsKey];
-		const observers = systemObserver.observers;
+		const oMeta = this[oMetaKey];
+		const observers = oMeta.observers;
 		let ol = observers.length;
 		if (ol) {
 			let al = arguments.length;
@@ -80,23 +80,23 @@ const
 			}
 		}
 	},
-	prepareArray = function (source, observer) {
+	prepareArray = function (source, oMeta) {
 		let l = source.length, item;
-		const target = Object.defineProperties(new Array(l), { [sysObsKey]: { value: observer }, observe: { value: observe }, unobserve: { value: unobserve } });
+		const target = Object.defineProperties(new Array(l), { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
 		while (l--) {
 			item = source[l];
 			if (!item || typeof item !== 'object') {
 				target[l] = item;
 			} else {
-				target[l] = getObservedOf(item, l, observer);
+				target[l] = getObservedOf(item, l, oMeta);
 			}
 		}
 		return target;
 	},
-	prepareObject = function (source, observer) {
+	prepareObject = function (source, oMeta) {
 		const
 			keys = Object.keys(source),
-			target = Object.defineProperties({}, { [sysObsKey]: { value: observer }, observe: { value: observe }, unobserve: { value: unobserve } });
+			target = Object.defineProperties({}, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
 		let l = keys.length, key, item;
 		while (l--) {
 			key = keys[l];
@@ -104,16 +104,16 @@ const
 			if (!item || typeof item !== 'object') {
 				target[key] = item;
 			} else {
-				target[key] = getObservedOf(item, key, observer);
+				target[key] = getObservedOf(item, key, oMeta);
 			}
 		}
 		return target;
 	},
-	callObservers = function (observed, changes) {
+	callObservers = function (oMeta, changes) {
 		let observers, pair, target, options, relevantChanges, oPath, oPaths, i, newPath, tmp;
 		const l = changes.length;
 		do {
-			observers = observed.observers;
+			observers = oMeta.observers;
 			i = observers.length;
 			while (i--) {
 				try {
@@ -140,11 +140,11 @@ const
 			}
 
 			let tmpa;
-			if (observed.parent) {
+			if (oMeta.parent) {
 				tmpa = new Array(l);
 				for (let i = 0; i < l; i++) {
 					tmp = changes[i];
-					newPath = [observed.ownKey];
+					newPath = [oMeta.ownKey];
 					Array.prototype.push.apply(newPath, tmp.path);
 					tmpa[i] = {
 						type: tmp.type,
@@ -155,7 +155,7 @@ const
 					};
 				}
 				changes = tmpa;
-				observed = observed.parent;
+				oMeta = oMeta.parent;
 			} else {
 				break;
 			}
@@ -165,30 +165,30 @@ const
 		if (!item || typeof item !== 'object') {
 			return item;
 		} else if (Array.isArray(item)) {
-			return new ArrayObserver({ target: item, ownKey: key, parent: parent }).proxy;
+			return new ArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
 		} else if (item instanceof Date || item instanceof Blob || item instanceof Error) {
 			return item;
 		} else {
-			return new ObjectObserver({ target: item, ownKey: key, parent: parent }).proxy;
+			return new ObjectOMeta({ target: item, ownKey: key, parent: parent }).proxy;
 		}
 	},
 	proxiedArrayMethods = {
-		pop: function proxiedPop(target, observed) {
+		pop: function proxiedPop(target, oMeta) {
 			const poppedIndex = target.length - 1;
 			let popResult = target.pop();
 			if (popResult && typeof popResult === 'object') {
-				const tmpObserved = popResult[sysObsKey];
+				const tmpObserved = popResult[oMetaKey];
 				if (tmpObserved) {
 					popResult = tmpObserved.detach();
 				}
 			}
 
-			const changes = [{ type: DELETE, path: [poppedIndex], oldValue: popResult, object: observed.proxy }];
-			callObservers(observed, changes);
+			const changes = [{ type: DELETE, path: [poppedIndex], oldValue: popResult, object: oMeta.proxy }];
+			callObservers(oMeta, changes);
 
 			return popResult;
 		},
-		push: function proxiedPush(target, observed) {
+		push: function proxiedPush(target, oMeta) {
 			const
 				l = arguments.length - 2,
 				pushContent = new Array(l),
@@ -197,24 +197,24 @@ const
 
 			for (let i = 0; i < l; i++) {
 				item = arguments[i + 2];
-				pushContent[i] = getObservedOf(item, initialLength + i, observed);
+				pushContent[i] = getObservedOf(item, initialLength + i, oMeta);
 			}
 			const pushResult = Reflect.apply(target.push, target, pushContent);
 
 			const changes = [];
 			for (let i = initialLength, l = target.length; i < l; i++) {
-				changes[i - initialLength] = { type: INSERT, path: [i], value: target[i], object: observed.proxy };
+				changes[i - initialLength] = { type: INSERT, path: [i], value: target[i], object: oMeta.proxy };
 			}
-			callObservers(observed, changes);
+			callObservers(oMeta, changes);
 
 			return pushResult;
 		},
-		shift: function proxiedShift(target, observed) {
+		shift: function proxiedShift(target, oMeta) {
 			let shiftResult, i, l, item, tmpObserved;
 
 			shiftResult = target.shift();
 			if (shiftResult && typeof shiftResult === 'object') {
-				tmpObserved = shiftResult[sysObsKey];
+				tmpObserved = shiftResult[oMetaKey];
 				if (tmpObserved) {
 					shiftResult = tmpObserved.detach();
 				}
@@ -224,29 +224,29 @@ const
 			for (i = 0, l = target.length; i < l; i++) {
 				item = target[i];
 				if (item && typeof item === 'object') {
-					tmpObserved = item[sysObsKey];
+					tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						tmpObserved.ownKey = i;
 					}
 				}
 			}
 
-			const changes = [{ type: DELETE, path: [0], oldValue: shiftResult, object: observed.proxy }];
-			callObservers(observed, changes);
+			const changes = [{ type: DELETE, path: [0], oldValue: shiftResult, object: oMeta.proxy }];
+			callObservers(oMeta, changes);
 
 			return shiftResult;
 		},
-		unshift: function proxiedUnshift(target, observed) {
+		unshift: function proxiedUnshift(target, oMeta) {
 			const unshiftContent = Array.from(arguments);
 			unshiftContent.splice(0, 2);
 			unshiftContent.forEach((item, index) => {
-				unshiftContent[index] = getObservedOf(item, index, observed);
+				unshiftContent[index] = getObservedOf(item, index, oMeta);
 			});
 			const unshiftResult = Reflect.apply(target.unshift, target, unshiftContent);
 			for (let i = 0, l = target.length, item; i < l; i++) {
 				item = target[i];
 				if (item && typeof item === 'object') {
-					const tmpObserved = item[sysObsKey];
+					const tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						tmpObserved.ownKey = i;
 					}
@@ -257,49 +257,49 @@ const
 			const l = unshiftContent.length;
 			const changes = new Array(l);
 			for (let i = 0; i < l; i++) {
-				changes[i] = { type: INSERT, path: [i], value: target[i], object: observed.proxy };
+				changes[i] = { type: INSERT, path: [i], value: target[i], object: oMeta.proxy };
 			}
-			callObservers(observed, changes);
+			callObservers(oMeta, changes);
 
 			return unshiftResult;
 		},
-		reverse: function proxiedReverse(target, observed) {
+		reverse: function proxiedReverse(target, oMeta) {
 			let i, l, item;
 			target.reverse();
 			for (i = 0, l = target.length; i < l; i++) {
 				item = target[i];
 				if (item && typeof item === 'object') {
-					const tmpObserved = item[sysObsKey];
+					const tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						tmpObserved.ownKey = i;
 					}
 				}
 			}
 
-			const changes = [{ type: REVERSE, path: [], object: observed.proxy }];
-			callObservers(observed, changes);
+			const changes = [{ type: REVERSE, path: [], object: oMeta.proxy }];
+			callObservers(oMeta, changes);
 
-			return observed.proxy;
+			return oMeta.proxy;
 		},
-		sort: function proxiedSort(target, observed, comparator) {
+		sort: function proxiedSort(target, oMeta, comparator) {
 			let i, l, item;
 			target.sort(comparator);
 			for (i = 0, l = target.length; i < l; i++) {
 				item = target[i];
 				if (item && typeof item === 'object') {
-					const tmpObserved = item[sysObsKey];
+					const tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						tmpObserved.ownKey = i;
 					}
 				}
 			}
 
-			const changes = [{ type: SHUFFLE, path: [], object: observed.proxy }];
-			callObservers(observed, changes);
+			const changes = [{ type: SHUFFLE, path: [], object: oMeta.proxy }];
+			callObservers(oMeta, changes);
 
-			return observed.proxy;
+			return oMeta.proxy;
 		},
-		fill: function proxiedFill(target, observed) {
+		fill: function proxiedFill(target, oMeta) {
 			const
 				changes = [],
 				tarLen = target.length,
@@ -315,27 +315,27 @@ const
 			let tmpObserved;
 			for (let i = start, item, tmpTarget; i < end; i++) {
 				item = target[i];
-				target[i] = getObservedOf(item, i, observed);
+				target[i] = getObservedOf(item, i, oMeta);
 				if (prev.hasOwnProperty(i)) {
 					tmpTarget = prev[i];
 					if (tmpTarget && typeof tmpTarget === 'object') {
-						tmpObserved = tmpTarget[sysObsKey];
+						tmpObserved = tmpTarget[oMetaKey];
 						if (tmpObserved) {
 							tmpTarget = tmpObserved.detach();
 						}
 					}
 
-					changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: observed.proxy });
+					changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: oMeta.proxy });
 				} else {
-					changes.push({ type: INSERT, path: [i], value: target[i], object: observed.proxy });
+					changes.push({ type: INSERT, path: [i], value: target[i], object: oMeta.proxy });
 				}
 			}
 
-			callObservers(observed, changes);
+			callObservers(oMeta, changes);
 
-			return observed.proxy;
+			return oMeta.proxy;
 		},
-		splice: function proxiedSplice(target, observed) {
+		splice: function proxiedSplice(target, oMeta) {
 			const
 				spliceContent = Array.from(arguments),
 				tarLen = target.length;
@@ -346,7 +346,7 @@ const
 			//	observify the newcomers
 			for (let i = 2, item; i < splLen; i++) {
 				item = spliceContent[i];
-				spliceContent[i] = getObservedOf(item, i, observed);
+				spliceContent[i] = getObservedOf(item, i, oMeta);
 			}
 
 			//	calculate pointers
@@ -362,7 +362,7 @@ const
 			for (let i = 0, item; i < newTarLen; i++) {
 				item = target[i];
 				if (item && typeof item === 'object') {
-					tmpObserved = item[sysObsKey];
+					tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						tmpObserved.ownKey = i;
 					}
@@ -374,7 +374,7 @@ const
 			for (i = 0, l = spliceResult.length; i < l; i++) {
 				item = spliceResult[i];
 				if (item && typeof item === 'object') {
-					tmpObserved = item[sysObsKey];
+					tmpObserved = item[oMetaKey];
 					if (tmpObserved) {
 						spliceResult[i] = tmpObserved.detach();
 					}
@@ -385,21 +385,21 @@ const
 			let index;
 			for (index = 0; index < removed; index++) {
 				if (index < inserted) {
-					changes.push({ type: UPDATE, path: [startIndex + index], value: target[startIndex + index], oldValue: spliceResult[index], object: observed.proxy });
+					changes.push({ type: UPDATE, path: [startIndex + index], value: target[startIndex + index], oldValue: spliceResult[index], object: oMeta.proxy });
 				} else {
-					changes.push({ type: DELETE, path: [startIndex + index], oldValue: spliceResult[index], object: observed.proxy });
+					changes.push({ type: DELETE, path: [startIndex + index], oldValue: spliceResult[index], object: oMeta.proxy });
 				}
 			}
 			for (; index < inserted; index++) {
-				changes.push({ type: INSERT, path: [startIndex + index], value: target[startIndex + index], object: observed.proxy });
+				changes.push({ type: INSERT, path: [startIndex + index], value: target[startIndex + index], object: oMeta.proxy });
 			}
-			callObservers(observed, changes);
+			callObservers(oMeta, changes);
 
 			return spliceResult;
 		}
 	};
 
-class ObserverBase {
+class OMetaBase {
 	constructor(properties, cloningFunction) {
 		const
 			source = properties.target,
@@ -430,7 +430,7 @@ class ObserverBase {
 		target[key] = newValue;
 
 		if (oldValue && typeof oldValue === 'object') {
-			const tmpObserved = oldValue[sysObsKey];
+			const tmpObserved = oldValue[oMetaKey];
 			if (tmpObserved) {
 				oldValue = tmpObserved.detach();
 			}
@@ -450,7 +450,7 @@ class ObserverBase {
 		delete target[key];
 
 		if (oldValue && typeof oldValue === 'object') {
-			const tmpObserved = oldValue[sysObsKey];
+			const tmpObserved = oldValue[oMetaKey];
 			if (tmpObserved) {
 				oldValue = tmpObserved.detach();
 			}
@@ -463,7 +463,7 @@ class ObserverBase {
 	}
 }
 
-class ArrayObserver extends ObserverBase {
+class ArrayOMeta extends OMetaBase {
 	constructor(properties) {
 		super(properties, prepareArray);
 	}
@@ -482,7 +482,7 @@ class ArrayObserver extends ObserverBase {
 	}
 }
 
-class ObjectObserver extends ObserverBase {
+class ObjectOMeta extends OMetaBase {
 	constructor(properties) {
 		super(properties, prepareObject);
 	}
@@ -501,19 +501,19 @@ class Observable {
 	static from(target) {
 		if (!target || typeof target !== 'object') {
 			throw new Error('observable MAY ONLY be created from a non-null object');
-		} else if (target[sysObsKey]) {
+		} else if (target[oMetaKey]) {
 			return target;
 		} else if (Array.isArray(target)) {
-			return new ArrayObserver({ target: target, ownKey: null, parent: null }).proxy;
+			return new ArrayOMeta({ target: target, ownKey: null, parent: null }).proxy;
 		} else if (target instanceof Date || target instanceof Blob || target instanceof Error) {
 			throw new Error(`${target} found to be one of non-observable types`);
 		} else {
-			return new ObjectObserver({ target: target, ownKey: null, parent: null }).proxy;
+			return new ObjectOMeta({ target: target, ownKey: null, parent: null }).proxy;
 		}
 	}
 
 	static isObservable(input) {
-		return !!(input && input[sysObsKey]);
+		return !!(input && input[oMetaKey]);
 	}
 }
 
