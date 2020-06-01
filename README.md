@@ -14,9 +14,13 @@ Main aspects:
 * nested objects of the observable graph are observables too
 * changes delivered in a __synchronous__ way
 * original objects are __cloned__ while turned into `Observable`s
-* arrays specifics:
+* __arrays__ specifics:
   * generic object-like mutations supported
   * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
+  * massive mutations delivered in a single callback, usually having an array of an atomic changes
+* __typed arrays__ specifics:
+  * generic object-like mutations supported
+  * intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 * following host objects (and their extensions) __are actively checked__ and NOT cloned / turned into observables: `Date`, `Blob`, `Error`
@@ -43,14 +47,14 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 
 `object-observer` provided as an __ES6 module__.
 In `NodeJS` environment, that is not yet fully supporting ES6 modules, use the dedicated distribution as in example below.
-> Once `NodeJS` (presumable 13.11.0 going to LTS) will add a full support for ES6 modules, this special distribution will be removed.
+> Once `NodeJS` (seemingly 14.x.x going to LTS) will add a full support for ES6 modules, this special distribution will be removed.
 
 ```javascript
 //  browser
 import { Observable } from 'dist/object-observer.min.js';
 
 //  NodeJS (when NodeJS will fully support ES6 modules syntax - this one will be removed)
-let Observable = require('./dist/node/object-observer').Observable;
+const Observable = require('./dist/node/object-observer').Observable;
 ```
 
 # API
