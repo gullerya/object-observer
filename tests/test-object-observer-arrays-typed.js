@@ -117,3 +117,17 @@ suite.runTest({ name: 'typed array set - Float32Array' }, () => {
 	if (events[2].type !== 'update' || events[2].path.join('.') !== '4' || events[2].value !== 7 || events[2].oldValue !== 2 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
 	events.splice(0);
 });
+
+suite.runTest({ name: 'typed array as nester - Uint8Array' }, () => {
+	let o = { a: new Uint8Array([1, 2, 3]) },
+		po,
+		events = [];
+	po = Observable.from(o);
+	po.observe(eventsList => {
+		[].push.apply(events, eventsList);
+	});
+
+	po.a[1] = 7;
+	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
+	if (events[0].type !== 'update' || events[0].path.join('.') !== 'a.1' || events[0].value !== 7 || events[0].oldValue !== 2 || events[0].object !== po.a) throw new Error('event 0 did not fire as expected');
+});
