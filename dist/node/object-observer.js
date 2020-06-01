@@ -313,17 +313,49 @@ const
 
 		return this;
 	},
-	proxiedFill = function proxiedFill() {
+	proxiedFill = function proxiedFill(filVal, start, end) {
 		const
 			oMeta = this[oMetaKey],
 			target = oMeta.target,
 			changes = [],
 			tarLen = target.length,
-			argLen = arguments.length,
-			start = argLen < 2 ? 0 : (arguments[1] < 0 ? tarLen + arguments[1] : arguments[1]),
-			end = argLen < 3 ? tarLen : (arguments[2] < 0 ? tarLen + arguments[2] : arguments[2]),
 			prev = target.slice(0);
-		Reflect.apply(target.fill, target, arguments);
+		start = typeof start === 'undefined' ? 0 : (start < 0 ? tarLen + start : start);
+		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
+		target.fill(filVal, start, end);
+
+		let tmpObserved;
+		for (let i = start, item, tmpTarget; i < end; i++) {
+			item = target[i];
+			target[i] = getObservedOf(item, i, oMeta);
+			if (prev.hasOwnProperty(i)) {
+				tmpTarget = prev[i];
+				if (tmpTarget && typeof tmpTarget === 'object') {
+					tmpObserved = tmpTarget[oMetaKey];
+					if (tmpObserved) {
+						tmpTarget = tmpObserved.detach();
+					}
+				}
+
+				changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
+			} else {
+				changes.push({ type: INSERT, path: [i], value: target[i], object: this });
+			}
+		}
+
+		callObservers(oMeta, changes);
+
+		return this;
+	},
+	proxiedCopyWithin = function proxiedCopyWithin(dest, start, end) {
+		const
+			oMeta = this[oMetaKey],
+			target = oMeta.target,
+			tarLen = target.length;
+		dest = dest < 0 ? tarLen + dest : dest;
+		start = typeof start === 'undefined' ? 0 : (start < 0 ? tarLen + start : start);
+		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
+		Reflect.apply(target.copyWithin, target, arguments);
 
 		let tmpObserved;
 		for (let i = start, item, tmpTarget; i < end; i++) {
@@ -433,12 +465,14 @@ const
 		reverse: proxiedReverse,
 		sort: proxiedSort,
 		fill: proxiedFill,
+		copyWithin: proxiedCopyWithin,
 		splice: proxiedSplice
 	},
 	proxiedTypedArrayMethods = {
 		reverse: proxiedReverse,
 		sort: proxiedSort,
 		fill: proxiedFill,
+		copyWithin: proxiedCopyWithin,
 		set: proxiedTypedArraySet
 	};
 
