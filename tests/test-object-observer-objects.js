@@ -37,17 +37,22 @@ suite.runTest({ name: 'plain object operations' }, test => {
 		[].push.apply(events, changes);
 	});
 
-	po.name = 'new name';           //  event 0
-	po.age = 9;                     //  event 1
-	po.address = tmpAddress;        //  event 2
+	const v1 = po.name = 'new name';           //  event 0
+	const v2 = po.age = 9;                     //  event 1
+	const v3 = po.address = tmpAddress;        //  event 2
+	test.assertEqual(v1, 'new name');
+	test.assertEqual(v2, 9);
+	test.assertEqual(v3, tmpAddress);
 	if (events.length !== 3) test.fail('expected to have 3 data change events but counted ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== 'name' || events[0].oldValue !== 'name' || events[0].value !== 'new name' || events[0].object !== po) test.fail('event 0 did not fire as expected');
 	if (events[1].type !== 'update' || events[1].path.join('.') !== 'age' || events[1].oldValue !== 7 || events[1].value !== 9 || events[1].object !== po) test.fail('event 1 did not fire as expected');
 	if (events[2].type !== 'update' || events[2].path.join('.') !== 'address' || events[2].oldValue !== null || events[2].value !== po.address || events[2].object !== po) test.fail('event 2 did not fire as expected');
 
-	po.address = null;              //  event 3
-	po.sex = 'male';                //  event 4
+	const v4 = po.address = null;              //  event 3
+	const v5 = po.sex = 'male';                //  event 4
 	delete po.sex;                  //  event 5
+	test.assertEqual(v4, null);
+	test.assertEqual(v5, 'male');
 	if (events.length !== 6) test.fail('expected to have 6 data change events but counted ' + events.length);
 	if (events[3].type !== 'update' || events[3].path.join('.') !== 'address' || events[3].value !== null || events[3].object !== po) test.fail('event 3 did not fire as expected');
 	if (events[4].type !== 'insert' || events[4].path.join('.') !== 'sex' || typeof events[4].oldValue !== 'undefined' || events[4].value !== 'male' || events[4].object !== po) test.fail('event 4 did not fire as expected');

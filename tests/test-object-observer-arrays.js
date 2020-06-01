@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing ObjectObserver - arrays' });
 
-suite.runTest({ name: 'array push operation - primitives' }, () => {
+suite.runTest({ name: 'array push - primitives' }, () => {
 	let a = [1, 2, 3, 4],
 		pa,
 		events = [],
@@ -24,7 +24,7 @@ suite.runTest({ name: 'array push operation - primitives' }, () => {
 	if (events[2].type !== 'insert' || events[2].path.join('.') !== '6' || events[2].value !== 7 || events[2].object !== pa) throw new Error('event 0 did not fire as expected');
 });
 
-suite.runTest({ name: 'array push operation - objects' }, () => {
+suite.runTest({ name: 'array push - objects' }, () => {
 	let a = [],
 		pa,
 		events = [];
@@ -47,7 +47,7 @@ suite.runTest({ name: 'array push operation - objects' }, () => {
 	if (events[3].type !== 'update' || events[3].path.join('.') !== '1.text' || events[3].value !== 'more' || events[3].oldValue !== 'secondary' || events[3].object !== pa[1]) throw new Error('event 3 did not fire as expected');
 });
 
-suite.runTest({ name: 'array push operation - arrays' }, () => {
+suite.runTest({ name: 'array push - arrays' }, () => {
 	let a = [],
 		pa,
 		events = [];
@@ -70,7 +70,7 @@ suite.runTest({ name: 'array push operation - arrays' }, () => {
 	if (events[3].type !== 'insert' || events[3].path.join('.') !== '1.0.prop' || events[3].value !== 'more' || events[3].object !== pa[1][0]) throw new Error('event 3 did not fire as expected');
 });
 
-suite.runTest({ name: 'array pop operation - primitives' }, () => {
+suite.runTest({ name: 'array pop - primitives' }, () => {
 	let a = ['some'],
 		pa,
 		popped,
@@ -87,7 +87,7 @@ suite.runTest({ name: 'array pop operation - primitives' }, () => {
 	if (popped !== 'some') throw new Error('pop base functionality broken');
 });
 
-suite.runTest({ name: 'array pop operation - objects' }, test => {
+suite.runTest({ name: 'array pop - objects' }, test => {
 	let a = [{ test: 'text' }],
 		pa,
 		pad,
@@ -114,7 +114,7 @@ suite.runTest({ name: 'array pop operation - objects' }, test => {
 	test.assertEqual(1, eventsA.length);
 });
 
-suite.runTest({ name: 'array unshift operation - primitives' }, () => {
+suite.runTest({ name: 'array unshift - primitives' }, () => {
 	let a = [],
 		pa,
 		events = [],
@@ -134,7 +134,7 @@ suite.runTest({ name: 'array unshift operation - primitives' }, () => {
 	if (events[2].type !== 'insert' || events[2].path.join('.') !== '1' || events[2].value !== 'c' || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
 });
 
-suite.runTest({ name: 'array unshift operation - objects' }, () => {
+suite.runTest({ name: 'array unshift - objects' }, () => {
 	let a = [{ text: 'original' }],
 		pa,
 		events = [];
@@ -155,7 +155,7 @@ suite.runTest({ name: 'array unshift operation - objects' }, () => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original' || events[1].object !== pa[1]) throw new Error('event 1 did not fire as expected');
 });
 
-suite.runTest({ name: 'array unshift operation - arrays' }, () => {
+suite.runTest({ name: 'array unshift - arrays' }, () => {
 	let a = [{ text: 'original' }],
 		pa,
 		events = [];
@@ -176,7 +176,7 @@ suite.runTest({ name: 'array unshift operation - arrays' }, () => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original' || events[1].object !== pa[1]) throw new Error('event 1 did not fire as expected');
 });
 
-suite.runTest({ name: 'array shift operation - primitives' }, test => {
+suite.runTest({ name: 'array shift - primitives' }, test => {
 	let a = ['some'],
 		pa,
 		shifted,
@@ -191,7 +191,7 @@ suite.runTest({ name: 'array shift operation - primitives' }, test => {
 	test.assertEqual('some', shifted);
 });
 
-suite.runTest({ name: 'array shift operation - objects' }, test => {
+suite.runTest({ name: 'array shift - objects' }, test => {
 	let a = [{ text: 'a', inner: { test: 'more' } }, { text: 'b' }],
 		pa,
 		pa0,
@@ -229,7 +229,7 @@ suite.runTest({ name: 'array shift operation - objects' }, test => {
 	test.assertEqual(1, eventsA.length);
 });
 
-suite.runTest({ name: 'array reverse operation - primitives (flat array)' }, () => {
+suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
 	let a = [1, 2, 3],
 		pa,
 		reversed,
@@ -247,7 +247,7 @@ suite.runTest({ name: 'array reverse operation - primitives (flat array)' }, () 
 	if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) throw new Error('reverse base functionality broken');
 });
 
-suite.runTest({ name: 'array reverse operation - primitives (nested array)' }, () => {
+suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
 	let a = { a1: { a2: [1, 2, 3] } },
 		pa,
 		reversed,
@@ -265,7 +265,7 @@ suite.runTest({ name: 'array reverse operation - primitives (nested array)' }, (
 	if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) throw new Error('reverse base functionality broken');
 });
 
-suite.runTest({ name: 'array reverse operation - objects' }, () => {
+suite.runTest({ name: 'array reverse - objects' }, () => {
 	let a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
 		pa,
 		reversed,
@@ -286,7 +286,7 @@ suite.runTest({ name: 'array reverse operation - objects' }, () => {
 	if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
 });
 
-suite.runTest({ name: 'array sort operation - primitives (flat array)' }, () => {
+suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
 	let a = [3, 2, 1],
 		pa,
 		sorted,
@@ -312,7 +312,7 @@ suite.runTest({ name: 'array sort operation - primitives (flat array)' }, () => 
 	if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) throw new Error('sort base functionality broken');
 });
 
-suite.runTest({ name: 'array sort operation - primitives (nested array)' }, () => {
+suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
 	let a = { a1: { a2: [3, 2, 1] } },
 		pa,
 		sorted,
@@ -338,7 +338,7 @@ suite.runTest({ name: 'array sort operation - primitives (nested array)' }, () =
 	if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) throw new Error('sort base functionality broken');
 });
 
-suite.runTest({ name: 'array sort operation - objects' }, () => {
+suite.runTest({ name: 'array sort - objects' }, () => {
 	let a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
 		pa,
 		sorted,
@@ -361,7 +361,7 @@ suite.runTest({ name: 'array sort operation - objects' }, () => {
 	if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
 });
 
-suite.runTest({ name: 'array fill operation - primitives' }, () => {
+suite.runTest({ name: 'array fill - primitives' }, () => {
 	let a = [1, 2, 3],
 		pa,
 		filled,
@@ -398,7 +398,7 @@ suite.runTest({ name: 'array fill operation - primitives' }, () => {
 	if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value !== 'd' || typeof events[1].oldValue !== 'undefined' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
 });
 
-suite.runTest({ name: 'array fill operation - objects' }, () => {
+suite.runTest({ name: 'array fill - objects' }, () => {
 	let a = [{ some: 'text' }, { some: 'else' }, { some: 'more' }],
 		pa,
 		filled,
@@ -421,7 +421,7 @@ suite.runTest({ name: 'array fill operation - objects' }, () => {
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv' || events[0].object !== pa[1]) throw new Error('event 0 did not fire as expected');
 });
 
-suite.runTest({ name: 'array fill operation - arrays' }, () => {
+suite.runTest({ name: 'array fill - arrays' }, () => {
 	let a = [{ some: 'text' }, { some: 'else' }, { some: 'more' }],
 		pa,
 		filled,
@@ -444,7 +444,7 @@ suite.runTest({ name: 'array fill operation - arrays' }, () => {
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.0.name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv' || events[0].object !== pa[1][0]) throw new Error('event 0 did not fire as expected');
 });
 
-suite.runTest({ name: 'array splice operation - primitives' }, () => {
+suite.runTest({ name: 'array splice - primitives' }, () => {
 	let a = [1, 2, 3, 4, 5, 6],
 		pa,
 		spliced,
@@ -485,7 +485,7 @@ suite.runTest({ name: 'array splice operation - primitives' }, () => {
 	callbacks = 0;
 });
 
-suite.runTest({ name: 'array splice operation - objects' }, () => {
+suite.runTest({ name: 'array splice - objects' }, () => {
 	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
 		pa,
 		spliced,
@@ -519,7 +519,7 @@ suite.runTest({ name: 'array splice operation - objects' }, () => {
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '3.text' || events[0].value !== 'C' || events[0].oldValue !== 'D' || events[0].object !== pa[3]) throw new Error('event 0 did not fire as expected');
 });
 
-suite.runTest({ name: 'array splice operation - arrays' }, () => {
+suite.runTest({ name: 'array splice - arrays' }, () => {
 	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
 		pa,
 		spliced,
