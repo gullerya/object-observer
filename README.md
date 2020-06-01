@@ -16,11 +16,11 @@ Main aspects:
 * original objects are __cloned__ while turned into `Observable`s
 * __arrays__ specifics:
   * generic object-like mutations supported
-  * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`
+  * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * __typed arrays__ specifics:
   * generic object-like mutations supported
-  * intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`
+  * intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
 * intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 * following host objects (and their extensions) __are actively checked__ and NOT cloned / turned into observables: `Date`, `Blob`, `Error`

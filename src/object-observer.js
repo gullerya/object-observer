@@ -358,19 +358,25 @@ const
 		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
 		target.copyWithin(dest, start, end);
 
-		let tmpObserved;
-		for (let i = dest, item, tmpTarget; i < end; i++) {
-			item = target[i];
-			target[i] = getObservedOf(item, i, oMeta);
-			tmpTarget = prev[i];
-			if (tmpTarget && typeof tmpTarget === 'object') {
-				tmpObserved = tmpTarget[oMetaKey];
+		for (let i = dest, nItem, oItem, tmpObserved; i < end; i++) {
+			//	update newly placed observable, if any
+			nItem = target[i];
+			if (nItem && typeof nItem === 'object') {
+				tmpObserved = nItem[oMetaKey];
 				if (tmpObserved) {
-					tmpTarget = tmpObserved.detach();
+					tmpObserved.ownKey = i;
+				}
+			}
+			//	detach previous observable, if any
+			oItem = prev[i];
+			if (oItem && typeof oItem === 'object') {
+				tmpObserved = oItem[oMetaKey];
+				if (tmpObserved) {
+					oItem = tmpObserved.detach();
 				}
 			}
 
-			changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
+			changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
 		}
 
 		callObservers(oMeta, changes);
