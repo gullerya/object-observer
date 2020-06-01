@@ -80,39 +80,28 @@ const
 			}
 		}
 	},
-	prepareArray = function prepareArray(source, oMeta) {
-		let l = source.length, item;
-		let target;
-		if (Array.isArray(source)) {
-			target = Object.defineProperties(new Array(l), { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
-		} else {
-			target = Object.defineProperties(source, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
-		}
-		while (l--) {
-			item = source[l];
-			if (!item || typeof item !== 'object') {
-				target[l] = item;
-			} else {
-				target[l] = getObservedOf(item, l, oMeta);
-			}
-		}
-		return target;
-	},
 	prepareObject = function prepareObject(source, oMeta) {
 		const
 			keys = Object.keys(source),
 			target = Object.defineProperties({}, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
-		let l = keys.length, key, item;
+		let l = keys.length, key;
 		while (l--) {
 			key = keys[l];
-			item = source[key];
-			if (!item || typeof item !== 'object') {
-				target[key] = item;
-			} else {
-				target[key] = getObservedOf(item, key, oMeta);
-			}
+			target[key] = getObservedOf(source[key], key, oMeta);
 		}
 		return target;
+	},
+	prepareArray = function prepareArray(source, oMeta) {
+		let l = source.length;
+		const target = Object.defineProperties(new Array(l), { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		while (l--) {
+			target[l] = getObservedOf(source[l], l, oMeta);
+		}
+		return target;
+	},
+	prepareTypedArray = function prepareTypedArray(source, oMeta) {
+		Object.defineProperties(source, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		return source;
 	},
 	callObservers = function callObservers(oMeta, changes) {
 		let observers, pair, target, options, relevantChanges, oPath, oPaths, i, newPath, tmp;
@@ -192,7 +181,7 @@ const
 			}
 		}
 
-		const changes = [{ type: DELETE, path: [poppedIndex], oldValue: popResult, object: oMeta.proxy }];
+		const changes = [{ type: DELETE, path: [poppedIndex], oldValue: popResult, object: this }];
 		callObservers(oMeta, changes);
 
 		return popResult;
@@ -212,7 +201,7 @@ const
 
 		const changes = [];
 		for (let i = initialLength, l = target.length; i < l; i++) {
-			changes[i - initialLength] = { type: INSERT, path: [i], value: target[i], object: oMeta.proxy };
+			changes[i - initialLength] = { type: INSERT, path: [i], value: target[i], object: this };
 		}
 		callObservers(oMeta, changes);
 
@@ -243,7 +232,7 @@ const
 			}
 		}
 
-		const changes = [{ type: DELETE, path: [0], oldValue: shiftResult, object: oMeta.proxy }];
+		const changes = [{ type: DELETE, path: [0], oldValue: shiftResult, object: this }];
 		callObservers(oMeta, changes);
 
 		return shiftResult;
@@ -274,7 +263,7 @@ const
 		const l = unshiftContent.length;
 		const changes = new Array(l);
 		for (let i = 0; i < l; i++) {
-			changes[i] = { type: INSERT, path: [i], value: target[i], object: oMeta.proxy };
+			changes[i] = { type: INSERT, path: [i], value: target[i], object: this };
 		}
 		callObservers(oMeta, changes);
 
@@ -297,10 +286,10 @@ const
 			}
 		}
 
-		const changes = [{ type: REVERSE, path: [], object: oMeta.proxy }];
+		const changes = [{ type: REVERSE, path: [], object: this }];
 		callObservers(oMeta, changes);
 
-		return oMeta.proxy;
+		return this;
 	},
 	proxiedSort = function proxiedSort(comparator) {
 		const
@@ -319,10 +308,10 @@ const
 			}
 		}
 
-		const changes = [{ type: SHUFFLE, path: [], object: oMeta.proxy }];
+		const changes = [{ type: SHUFFLE, path: [], object: this }];
 		callObservers(oMeta, changes);
 
-		return oMeta.proxy;
+		return this;
 	},
 	proxiedFill = function proxiedFill() {
 		const
@@ -349,15 +338,15 @@ const
 					}
 				}
 
-				changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: oMeta.proxy });
+				changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
 			} else {
-				changes.push({ type: INSERT, path: [i], value: target[i], object: oMeta.proxy });
+				changes.push({ type: INSERT, path: [i], value: target[i], object: this });
 			}
 		}
 
 		callObservers(oMeta, changes);
 
-		return oMeta.proxy;
+		return this;
 	},
 	proxiedSplice = function proxiedSplice() {
 		const
@@ -408,20 +397,33 @@ const
 		let index;
 		for (index = 0; index < removed; index++) {
 			if (index < inserted) {
-				changes.push({ type: UPDATE, path: [startIndex + index], value: target[startIndex + index], oldValue: spliceResult[index], object: oMeta.proxy });
+				changes.push({ type: UPDATE, path: [startIndex + index], value: target[startIndex + index], oldValue: spliceResult[index], object: this });
 			} else {
-				changes.push({ type: DELETE, path: [startIndex + index], oldValue: spliceResult[index], object: oMeta.proxy });
+				changes.push({ type: DELETE, path: [startIndex + index], oldValue: spliceResult[index], object: this });
 			}
 		}
 		for (; index < inserted; index++) {
-			changes.push({ type: INSERT, path: [startIndex + index], value: target[startIndex + index], object: oMeta.proxy });
+			changes.push({ type: INSERT, path: [startIndex + index], value: target[startIndex + index], object: this });
 		}
 		callObservers(oMeta, changes);
 
 		return spliceResult;
 	},
-	proxiedTypedArraySet = function proxiedTypedArraySet() {
-		//	TODO
+	proxiedTypedArraySet = function proxiedTypedArraySet(source, offset) {
+		const
+			oMeta = this[oMetaKey],
+			target = oMeta.target,
+			souLen = source.length,
+			prev = target.slice(0);
+		offset = offset || 0;
+
+		target.set(source, offset);
+		const changes = new Array(souLen);
+		for (let i = offset; i < (souLen + offset); i++) {
+			changes[i - offset] = { type: UPDATE, path: [i], value: target[i], oldValue: prev[i], object: this };
+		}
+
+		callObservers(oMeta, changes);
 	},
 	proxiedArrayMethods = {
 		pop: proxiedPop,
@@ -529,7 +531,7 @@ class ArrayOMeta extends OMetaBase {
 
 class TypedArrayOMeta extends OMetaBase {
 	constructor(properties) {
-		super(properties, prepareArray);
+		super(properties, prepareTypedArray);
 	}
 
 	get(target, key) {

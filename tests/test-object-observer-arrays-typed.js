@@ -83,3 +83,37 @@ suite.runTest({ name: 'typed array fill - Int32Array' }, () => {
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value !== 0 || events[0].oldValue !== 1024 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value !== 12056 || events[1].oldValue !== 0 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
 });
+
+suite.runTest({ name: 'typed array set - Float32Array' }, () => {
+	let a = new Float32Array(8),
+		pa,
+		events = [];
+	pa = Observable.from(a);
+	pa.observe(eventsList => {
+		[].push.apply(events, eventsList);
+	});
+
+	//	basic set
+	pa.set([1, 2, 3], 3);
+	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
+	if (events[0].type !== 'update' || events[0].path.join('.') !== '3' || events[0].value !== 1 || events[0].oldValue !== 0 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	if (events[1].type !== 'update' || events[1].path.join('.') !== '4' || events[1].value !== 2 || events[1].oldValue !== 0 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	if (events[2].type !== 'update' || events[2].path.join('.') !== '5' || events[2].value !== 3 || events[2].oldValue !== 0 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	events.splice(0);
+
+	//	set no offset - effectively 0
+	pa.set([1, 1, 1]);
+	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
+	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value !== 1 || events[0].oldValue !== 0 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value !== 1 || events[1].oldValue !== 0 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value !== 1 || events[2].oldValue !== 0 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	events.splice(0);
+
+	//	set from TypedArray
+	pa.set(new Int8Array([5, 6, 7]), 2);
+	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
+	if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 5 || events[0].oldValue !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	if (events[1].type !== 'update' || events[1].path.join('.') !== '3' || events[1].value !== 6 || events[1].oldValue !== 1 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	if (events[2].type !== 'update' || events[2].path.join('.') !== '4' || events[2].value !== 7 || events[2].oldValue !== 2 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	events.splice(0);
+});
