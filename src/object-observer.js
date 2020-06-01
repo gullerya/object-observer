@@ -358,6 +358,7 @@ const
 		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
 		target.copyWithin(dest, start, end);
 
+		const changes = [];
 		for (let i = dest, nItem, oItem, tmpObserved; i < end; i++) {
 			//	update newly placed observable, if any
 			nItem = target[i];
