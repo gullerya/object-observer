@@ -118,7 +118,7 @@ suite.runTest({ name: 'typed array set - Float32Array' }, () => {
 	events.splice(0);
 });
 
-suite.runTest({ name: 'typed array as nester - Uint8Array' }, () => {
+suite.runTest({ name: 'typed array as nested - Uint8Array' }, () => {
 	let o = { a: new Uint8Array([1, 2, 3]) },
 		po,
 		events = [];
@@ -130,4 +130,28 @@ suite.runTest({ name: 'typed array as nester - Uint8Array' }, () => {
 	po.a[1] = 7;
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== 'a.1' || events[0].value !== 7 || events[0].oldValue !== 2 || events[0].object !== po.a) throw new Error('event 0 did not fire as expected');
+});
+
+suite.runTest({ name: 'typed array copyWithin - Float64Array' }, () => {
+	let a = new Float64Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+		pa,
+		events = [];
+	pa = Observable.from(a);
+	pa.observe(eventsList => {
+		[].push.apply(events, eventsList);
+	});
+
+	//	basic case
+	pa.copyWithin(5, 7, 9);
+	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
+	if (events[0].type !== 'update' || events[0].path.join('.') !== '5' || events[0].value !== 7 || events[0].oldValue !== 5 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	if (events[1].type !== 'update' || events[1].path.join('.') !== '6' || events[1].value !== 8 || events[1].oldValue !== 6 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	events.splice(0);
+
+	//	basic case
+	pa.copyWithin(-2, 6);
+	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
+	//	we do not expect of 8, since 8 replaced with 8
+	if (events[0].type !== 'update' || events[0].path.join('.') !== '9' || events[0].value !== 7 || events[0].oldValue !== 9 || events[0].object !== pa) throw new Error('event 1 did not fire as expected');
+	events.splice(0);
 });

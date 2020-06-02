@@ -8,14 +8,14 @@ const
 	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function processObserveOptions(options) {
 		const result = {};
-		if (typeof options.path !== 'undefined') {
+		if (options.path !== undefined) {
 			if (typeof options.path !== 'string') {
 				console.error('"path" option, if/when provided, MUST be a non-empty string');
 			} else {
 				result.path = options.path;
 			}
 		}
-		if (typeof options.pathsOf !== 'undefined') {
+		if (options.pathsOf !== undefined) {
 			if (options.path) {
 				console.error('"pathsOf" option MAY NOT be specified together with "path" option');
 			} else if (typeof options.pathsOf !== 'string') {
@@ -24,7 +24,7 @@ const
 				result.pathsOf = options.pathsOf.split('.').filter(n => n);
 			}
 		}
-		if (typeof options.pathsFrom !== 'undefined') {
+		if (options.pathsFrom !== undefined) {
 			if (options.path || options.pathsOf) {
 				console.error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
 			} else if (typeof options.pathsFrom !== 'string') {
@@ -320,30 +320,33 @@ const
 			changes = [],
 			tarLen = target.length,
 			prev = target.slice(0);
-		start = typeof start === 'undefined' ? 0 : (start < 0 ? tarLen + start : start);
-		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
-		target.fill(filVal, start, end);
+		start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+		end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
 
-		let tmpObserved;
-		for (let i = start, item, tmpTarget; i < end; i++) {
-			item = target[i];
-			target[i] = getObservedOf(item, i, oMeta);
-			if (prev.hasOwnProperty(i)) {
-				tmpTarget = prev[i];
-				if (tmpTarget && typeof tmpTarget === 'object') {
-					tmpObserved = tmpTarget[oMetaKey];
-					if (tmpObserved) {
-						tmpTarget = tmpObserved.detach();
+		if (start < tarLen && end > start) {
+			target.fill(filVal, start, end);
+
+			let tmpObserved;
+			for (let i = start, item, tmpTarget; i < end; i++) {
+				item = target[i];
+				target[i] = getObservedOf(item, i, oMeta);
+				if (prev.hasOwnProperty(i)) {
+					tmpTarget = prev[i];
+					if (tmpTarget && typeof tmpTarget === 'object') {
+						tmpObserved = tmpTarget[oMetaKey];
+						if (tmpObserved) {
+							tmpTarget = tmpObserved.detach();
+						}
 					}
+
+					changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
+				} else {
+					changes.push({ type: INSERT, path: [i], value: target[i], object: this });
 				}
-
-				changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
-			} else {
-				changes.push({ type: INSERT, path: [i], value: target[i], object: this });
 			}
-		}
 
-		callObservers(oMeta, changes);
+			callObservers(oMeta, changes);
+		}
 
 		return this;
 	},
@@ -351,36 +354,45 @@ const
 		const
 			oMeta = this[oMetaKey],
 			target = oMeta.target,
-			tarLen = target.length,
-			prev = target.slice(0);
-		dest = dest < 0 ? tarLen + dest : dest;
-		start = typeof start === 'undefined' ? 0 : (start < 0 ? tarLen + start : start);
-		end = typeof end === 'undefined' ? tarLen : (end < 0 ? tarLen + end : end);
-		target.copyWithin(dest, start, end);
+			tarLen = target.length;
+		dest = dest < 0 ? Math.max(tarLen + dest, 0) : dest;
+		start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+		end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
+		const len = Math.min(end - start, tarLen - dest);
 
-		const changes = [];
-		for (let i = dest, nItem, oItem, tmpObserved; i < end; i++) {
-			//	update newly placed observable, if any
-			nItem = target[i];
-			if (nItem && typeof nItem === 'object') {
-				tmpObserved = nItem[oMetaKey];
-				if (tmpObserved) {
-					tmpObserved.ownKey = i;
+		if (dest < tarLen && dest !== start && len > 0) {
+			const
+				prev = target.slice(0),
+				changes = [];
+
+			target.copyWithin(dest, start, end);
+
+			for (let i = dest, nItem, oItem, tmpObserved; i < dest + len; i++) {
+				nItem = target[i];
+				oItem = prev[i];
+
+				if (nItem !== oItem) {
+					//	update newly placed observables, if any
+					if (nItem && typeof nItem === 'object') {
+						tmpObserved = nItem[oMetaKey];
+						if (tmpObserved) {
+							tmpObserved.ownKey = i;
+						}
+					}
+					//	detach overridden observables, if any
+					if (oItem && typeof oItem === 'object') {
+						tmpObserved = oItem[oMetaKey];
+						if (tmpObserved) {
+							oItem = tmpObserved.detach();
+						}
+					}
+
+					changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
 				}
 			}
-			//	detach previous observable, if any
-			oItem = prev[i];
-			if (oItem && typeof oItem === 'object') {
-				tmpObserved = oItem[oMetaKey];
-				if (tmpObserved) {
-					oItem = tmpObserved.detach();
-				}
-			}
 
-			changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
+			callObservers(oMeta, changes);
 		}
-
-		callObservers(oMeta, changes);
 
 		return this;
 	},
@@ -519,7 +531,7 @@ class OMetaBase {
 				}
 			}
 
-			const changes = typeof oldValue === 'undefined'
+			const changes = oldValue === undefined
 				? [{ type: INSERT, path: [key], value: newValue, object: this.proxy }]
 				: [{ type: UPDATE, path: [key], value: newValue, oldValue: oldValue, object: this.proxy }];
 			callObservers(this, changes);

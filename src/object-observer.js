@@ -358,34 +358,37 @@ const
 		dest = dest < 0 ? Math.max(tarLen + dest, 0) : dest;
 		start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
 		end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
-		len = Math.min(end - start, tarLen - dest);
+		const len = Math.min(end - start, tarLen - dest);
 
 		if (dest < tarLen && dest !== start && len > 0) {
 			const
 				prev = target.slice(0),
-				changes = new Array(len);
+				changes = [];
 
 			target.copyWithin(dest, start, end);
 
 			for (let i = dest, nItem, oItem, tmpObserved; i < dest + len; i++) {
-				//	update newly placed observables, if any
-				nItem = target[dest];
-				if (nItem && typeof nItem === 'object') {
-					tmpObserved = nItem[oMetaKey];
-					if (tmpObserved) {
-						tmpObserved.ownKey = dest;
-					}
-				}
-				//	detach overridden observables, if any
-				oItem = prev[dest];
-				if (oItem && typeof oItem === 'object') {
-					tmpObserved = oItem[oMetaKey];
-					if (tmpObserved) {
-						oItem = tmpObserved.detach();
-					}
-				}
+				nItem = target[i];
+				oItem = prev[i];
 
-				changes[i - dest] = { type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this };
+				if (nItem !== oItem) {
+					//	update newly placed observables, if any
+					if (nItem && typeof nItem === 'object') {
+						tmpObserved = nItem[oMetaKey];
+						if (tmpObserved) {
+							tmpObserved.ownKey = i;
+						}
+					}
+					//	detach overridden observables, if any
+					if (oItem && typeof oItem === 'object') {
+						tmpObserved = oItem[oMetaKey];
+						if (tmpObserved) {
+							oItem = tmpObserved.detach();
+						}
+					}
+
+					changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
+				}
 			}
 
 			callObservers(oMeta, changes);
