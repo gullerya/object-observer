@@ -368,27 +368,26 @@ const
 			target.copyWithin(dest, start, end);
 
 			for (let i = dest, nItem, oItem, tmpObserved; i < dest + len; i++) {
+				//	update newly placed observables, if any
 				nItem = target[i];
-				oItem = prev[i];
-
-				if (nItem !== oItem) {
-					//	update newly placed observables, if any
-					if (nItem && typeof nItem === 'object') {
-						tmpObserved = nItem[oMetaKey];
-						if (tmpObserved) {
-							tmpObserved.ownKey = i;
-						}
-					}
-					//	detach overridden observables, if any
-					if (oItem && typeof oItem === 'object') {
-						tmpObserved = oItem[oMetaKey];
-						if (tmpObserved) {
-							oItem = tmpObserved.detach();
-						}
-					}
-
-					changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
+				if (nItem && typeof nItem === 'object') {
+					nItem = getObservedOf(nItem, i, oMeta);
+					target[i] = nItem;
 				}
+
+				//	detach overridden observables, if any
+				oItem = prev[i];
+				if (oItem && typeof oItem === 'object') {
+					tmpObserved = oItem[oMetaKey];
+					if (tmpObserved) {
+						oItem = tmpObserved.detach();
+					}
+				}
+
+				if (typeof nItem !== 'object' && nItem === oItem) {
+					continue;
+				}
+				changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
 			}
 
 			callObservers(oMeta, changes);
