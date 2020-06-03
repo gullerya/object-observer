@@ -80,10 +80,12 @@ const
 			}
 		}
 	},
+	propertiesBluePrint = { [oMetaKey]: { value: null }, observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = function prepareObject(source, oMeta) {
+		propertiesBluePrint[oMetaKey].value = oMeta;
 		const
 			keys = Object.keys(source),
-			target = Object.defineProperties({}, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+			target = Object.defineProperties({}, propertiesBluePrint);
 		let l = keys.length, key;
 		while (l--) {
 			key = keys[l];
@@ -93,14 +95,16 @@ const
 	},
 	prepareArray = function prepareArray(source, oMeta) {
 		let l = source.length;
-		const target = Object.defineProperties(new Array(l), { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		propertiesBluePrint[oMetaKey].value = oMeta;
+		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
 		while (l--) {
 			target[l] = getObservedOf(source[l], l, oMeta);
 		}
 		return target;
 	},
 	prepareTypedArray = function prepareTypedArray(source, oMeta) {
-		Object.defineProperties(source, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		propertiesBluePrint[oMetaKey].value = oMeta;
+		Object.defineProperties(source, propertiesBluePrint);
 		return source;
 	},
 	callObservers = function callObservers(oMeta, changes) {
@@ -138,8 +142,7 @@ const
 				tmpa = new Array(l);
 				for (let i = 0; i < l; i++) {
 					tmp = changes[i];
-					newPath = [oMeta.ownKey];
-					Array.prototype.push.apply(newPath, tmp.path);
+					newPath = [oMeta.ownKey, ...tmp.path];
 					tmpa[i] = {
 						type: tmp.type,
 						path: newPath,
