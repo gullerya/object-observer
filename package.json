@@ -1,6 +1,6 @@
 {
   "name": "object-observer",
-  "version": "2.9.4",
+  "version": "3.0.0",
   "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
   "keywords": [
     "object",
@@ -39,7 +39,7 @@
   },
   "scripts": {
     "build": "node ./build/tools/build-dist.js",
-    "lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js",
+    "lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js ./build/**/*.js",
     "test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
   },
   "devDependencies": {
@@ -49,7 +49,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.0.1",
     "just-test": "^2.3.2",
     "uglify-es": "^3.3.9"
   }

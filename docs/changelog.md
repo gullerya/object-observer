@@ -1,5 +1,10 @@
 # Changelog
 
+* __3.0.0__
+  * implemented [Issue no. 46](https://github.com/gullerya/object-observer/issues/46) - added support to the `TypedArray` objects
+  * implemented [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
+  * slight performance improvements
+
 * __2.9.4__
   * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
 
