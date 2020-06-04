@@ -8,14 +8,14 @@ const
 	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function processObserveOptions(options) {
 		const result = {};
-		if (typeof options.path !== 'undefined') {
+		if (options.path !== undefined) {
 			if (typeof options.path !== 'string') {
 				console.error('"path" option, if/when provided, MUST be a non-empty string');
 			} else {
 				result.path = options.path;
 			}
 		}
-		if (typeof options.pathsOf !== 'undefined') {
+		if (options.pathsOf !== undefined) {
 			if (options.path) {
 				console.error('"pathsOf" option MAY NOT be specified together with "path" option');
 			} else if (typeof options.pathsOf !== 'string') {
@@ -24,7 +24,7 @@ const
 				result.pathsOf = options.pathsOf.split('.').filter(n => n);
 			}
 		}
-		if (typeof options.pathsFrom !== 'undefined') {
+		if (options.pathsFrom !== undefined) {
 			if (options.path || options.pathsOf) {
 				console.error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
 			} else if (typeof options.pathsFrom !== 'string') {
@@ -80,10 +80,12 @@ const
 			}
 		}
 	},
+	propertiesBluePrint = { [oMetaKey]: { value: null }, observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = function prepareObject(source, oMeta) {
+		propertiesBluePrint[oMetaKey].value = oMeta;
 		const
 			keys = Object.keys(source),
-			target = Object.defineProperties({}, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+			target = Object.defineProperties({}, propertiesBluePrint);
 		let l = keys.length, key;
 		while (l--) {
 			key = keys[l];
@@ -93,14 +95,16 @@ const
 	},
 	prepareArray = function prepareArray(source, oMeta) {
 		let l = source.length;
-		const target = Object.defineProperties(new Array(l), { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		propertiesBluePrint[oMetaKey].value = oMeta;
+		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
 		while (l--) {
 			target[l] = getObservedOf(source[l], l, oMeta);
 		}
 		return target;
 	},
 	prepareTypedArray = function prepareTypedArray(source, oMeta) {
-		Object.defineProperties(source, { [oMetaKey]: { value: oMeta }, observe: { value: observe }, unobserve: { value: unobserve } });
+		propertiesBluePrint[oMetaKey].value = oMeta;
+		Object.defineProperties(source, propertiesBluePrint);
 		return source;
 	},
 	callObservers = function callObservers(oMeta, changes) {
@@ -138,8 +142,7 @@ const
 				tmpa = new Array(l);
 				for (let i = 0; i < l; i++) {
 					tmp = changes[i];
-					newPath = [oMeta.ownKey];
-					Array.prototype.push.apply(newPath, tmp.path);
+					newPath = [oMeta.ownKey, ...tmp.path];
 					tmpa[i] = {
 						type: tmp.type,
 						path: newPath,
@@ -313,38 +316,85 @@ const
 
 		return this;
 	},
-	proxiedFill = function proxiedFill() {
+	proxiedFill = function proxiedFill(filVal, start, end) {
 		const
 			oMeta = this[oMetaKey],
 			target = oMeta.target,
 			changes = [],
 			tarLen = target.length,
-			argLen = arguments.length,
-			start = argLen < 2 ? 0 : (arguments[1] < 0 ? tarLen + arguments[1] : arguments[1]),
-			end = argLen < 3 ? tarLen : (arguments[2] < 0 ? tarLen + arguments[2] : arguments[2]),
 			prev = target.slice(0);
-		Reflect.apply(target.fill, target, arguments);
+		start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+		end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
 
-		let tmpObserved;
-		for (let i = start, item, tmpTarget; i < end; i++) {
-			item = target[i];
-			target[i] = getObservedOf(item, i, oMeta);
-			if (prev.hasOwnProperty(i)) {
-				tmpTarget = prev[i];
-				if (tmpTarget && typeof tmpTarget === 'object') {
-					tmpObserved = tmpTarget[oMetaKey];
+		if (start < tarLen && end > start) {
+			target.fill(filVal, start, end);
+
+			let tmpObserved;
+			for (let i = start, item, tmpTarget; i < end; i++) {
+				item = target[i];
+				target[i] = getObservedOf(item, i, oMeta);
+				if (prev.hasOwnProperty(i)) {
+					tmpTarget = prev[i];
+					if (tmpTarget && typeof tmpTarget === 'object') {
+						tmpObserved = tmpTarget[oMetaKey];
+						if (tmpObserved) {
+							tmpTarget = tmpObserved.detach();
+						}
+					}
+
+					changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
+				} else {
+					changes.push({ type: INSERT, path: [i], value: target[i], object: this });
+				}
+			}
+
+			callObservers(oMeta, changes);
+		}
+
+		return this;
+	},
+	proxiedCopyWithin = function proxiedCopyWithin(dest, start, end) {
+		const
+			oMeta = this[oMetaKey],
+			target = oMeta.target,
+			tarLen = target.length;
+		dest = dest < 0 ? Math.max(tarLen + dest, 0) : dest;
+		start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+		end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
+		const len = Math.min(end - start, tarLen - dest);
+
+		if (dest < tarLen && dest !== start && len > 0) {
+			const
+				prev = target.slice(0),
+				changes = [];
+
+			target.copyWithin(dest, start, end);
+
+			for (let i = dest, nItem, oItem, tmpObserved; i < dest + len; i++) {
+				//	update newly placed observables, if any
+				nItem = target[i];
+				if (nItem && typeof nItem === 'object') {
+					nItem = getObservedOf(nItem, i, oMeta);
+					target[i] = nItem;
+				}
+
+				//	detach overridden observables, if any
+				oItem = prev[i];
+				if (oItem && typeof oItem === 'object') {
+					tmpObserved = oItem[oMetaKey];
 					if (tmpObserved) {
-						tmpTarget = tmpObserved.detach();
+						oItem = tmpObserved.detach();
 					}
 				}
 
-				changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
-			} else {
-				changes.push({ type: INSERT, path: [i], value: target[i], object: this });
+				if (typeof nItem !== 'object' && nItem === oItem) {
+					continue;
+				}
+				changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
 			}
-		}
 
-		callObservers(oMeta, changes);
+			callObservers(oMeta, changes);
+		}
 
 		return this;
 	},
@@ -433,12 +483,14 @@ const
 		reverse: proxiedReverse,
 		sort: proxiedSort,
 		fill: proxiedFill,
+		copyWithin: proxiedCopyWithin,
 		splice: proxiedSplice
 	},
 	proxiedTypedArrayMethods = {
 		reverse: proxiedReverse,
 		sort: proxiedSort,
 		fill: proxiedFill,
+		copyWithin: proxiedCopyWithin,
 		set: proxiedTypedArraySet
 	};
 
@@ -481,7 +533,7 @@ class OMetaBase {
 				}
 			}
 
-			const changes = typeof oldValue === 'undefined'
+			const changes = oldValue === undefined
 				? [{ type: INSERT, path: [key], value: newValue, object: this.proxy }]
 				: [{ type: UPDATE, path: [key], value: newValue, oldValue: oldValue, object: this.proxy }];
 			callObservers(this, changes);
