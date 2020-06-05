@@ -47,8 +47,8 @@ For a short preview you may want to play with this [JSFiddle](https://jsfiddle.n
 # Loading the Library
 
 `object-observer` provided as an __ES6 module__.
-In `NodeJS` environment, that is not yet fully supporting ES6 modules, use the dedicated distribution as in example below.
-> Once `NodeJS` (seemingly 14.x.x going to LTS) will add a full support for ES6 modules, this special distribution will be removed.
+
+> In `NodeJS` environment, that is not yet fully supports ES6 modules, use the dedicated distribution as in example below. Once `NodeJS` (seemingly 14.x.x going to LTS) will add a full support for ES6 modules, this special distribution will be removed.
 
 ```javascript
 //  browser
