@@ -42,10 +42,6 @@ Main aspects:
 * __2.8.0__
   * officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
 
-* __2.7.0__
-  * implemented [Issue no. 32](https://github.com/gullerya/object-observer/issues/32) - revokation part removed (underlying proxies are still revokable, for any possible future need)
-  * implemented [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself - it may be observed/unobserved, it provides relative paths when observed etc.
-
 For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
 
 # Loading the Library
@@ -69,6 +65,7 @@ Library implements `Observable` API as it is defined [here](docs/observable.md).
 # Examples
 
 ##### Objects
+
 ```javascript
 let order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
     observableOrder = Observable.from(order);
@@ -110,6 +107,7 @@ observableA.observe(changes => {
         console.log(change);
     });
 });
+
 
 //  observableA = [ 1, 2, 3, 4, 5 ]
 observableA.pop();
@@ -174,33 +172,37 @@ In cases of massive changes touching presumably the whole array I took a pessimi
 
 ##### Observation options
 
+`object-observer` allows to filter the events delivered to each callback/listener by an optional configuration object passed to the `observe` API.
+
+> In the examples below assume that `callback = changes => {...}`.
+
 ```javascript
 let user = {
-	    firstName: 'Aya',
-	    lastName: 'Guller',
-	    address: {
-	    	city: 'of mountaineers',
-	    	street: 'of the top ridges',
-        block: 123,
-        extra: {
-          data: {}
+        firstName: 'Aya',
+        lastName: 'Guller',
+        address: {
+            city: 'of mountaineers',
+            street: 'of the top ridges',
+            block: 123,
+            extra: {
+                data: {}
+            }
         }
-	    }
     },
     oUser = Observable.from(user);
 
 //  path
 //
 //  going to observe ONLY the changes of 'firstName'
-oUser.observe(changes => {}, {path: 'firstName'});
+oUser.observe(callback, {path: 'firstName'});
 
 //  going to observe ONLY the changes of 'address.city'
-oUser.observe(changes => {}, {path: 'address.city'});
+oUser.observe(callback, {path: 'address.city'});
 
 //  pathsOf
 //
 //  going to observe the changes of 'address' own properties ('city', 'block') but not else
-oUser.observe(changes => {}, {pathsOf: 'address'});
+oUser.observe(callback, {pathsOf: 'address'});
 //  here we'll be notified on changes of
 //    address.city
 //    address.extra
@@ -208,7 +210,7 @@ oUser.observe(changes => {}, {pathsOf: 'address'});
 //  pathsFrom
 //
 //  going to observe the changes from 'address' and deeper
-oUser.observe(changes => {}, {pathsFrom: 'address'});
+oUser.observe(callback, {pathsFrom: 'address'});
 //  here we'll be notified on changes of
 //    address
 //    address.city
