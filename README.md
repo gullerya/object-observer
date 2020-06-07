@@ -42,7 +42,9 @@ Main aspects:
 * __2.8.0__
   * officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
 
-For a short preview you may want to play with this [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/).
+For a preview/playground you are welcome to:
+- [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/)
+- [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
 
 # Loading the Library
 
