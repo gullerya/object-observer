@@ -1,56 +1,56 @@
 {
-  "name": "object-observer",
-  "version": "3.0.0",
-  "description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
-  "keywords": [
-    "object",
-    "array",
-    "observe",
-    "observer",
-    "object observe",
-    "object.observe",
-    "observable",
-    "changes",
-    "deep",
-    "tree",
-    "graph",
-    "javascript",
-    "proxy"
-  ],
-  "homepage": "https://github.com/gullerya/object-observer",
-  "bugs": {
-    "url": "https://github.com/gullerya/object-observer/issues",
-    "email": "gullerya@gmail.com"
-  },
-  "license": "MIT",
-  "files": [
-    "dist"
-  ],
-  "browser": "dist/object-observer.min.js",
-  "type": "module",
-  "author": {
-    "name": "Guller Yuri",
-    "email": "gullerya@gmail.com"
-  },
-  "funding": "https://paypal.me/gullerya?locale.x=en_US",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gullerya/object-observer"
-  },
-  "scripts": {
-    "build": "node ./build/tools/build-dist.js",
-    "lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js ./build/**/*.js",
-    "test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
-  },
-  "devDependencies": {
-    "eslint": "^7.1.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "fs-extra": "^9.0.1",
-    "just-test": "^2.3.2",
-    "uglify-es": "^3.3.9"
-  }
+	"name": "object-observer",
+	"version": "3.0.0",
+	"description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
+	"keywords": [
+		"object",
+		"array",
+		"observe",
+		"observer",
+		"object observe",
+		"object.observe",
+		"observable",
+		"changes",
+		"deep",
+		"tree",
+		"graph",
+		"javascript",
+		"proxy"
+	],
+	"homepage": "https://github.com/gullerya/object-observer",
+	"bugs": {
+		"url": "https://github.com/gullerya/object-observer/issues",
+		"email": "gullerya@gmail.com"
+	},
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"browser": "dist/object-observer.min.js",
+	"type": "module",
+	"author": {
+		"name": "Guller Yuri",
+		"email": "gullerya@gmail.com"
+	},
+	"funding": "https://paypal.me/gullerya?locale.x=en_US",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/gullerya/object-observer"
+	},
+	"scripts": {
+		"build": "node ./build/tools/build-dist.js",
+		"lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js ./build/**/*.js",
+		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
+	},
+	"devDependencies": {
+		"eslint": "^7.3.0",
+		"eslint-config-standard": "^14.1.1",
+		"eslint-plugin-standard": "^4.0.1",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-import": "^2.21.2",
+		"eslint-plugin-node": "^11.1.0",
+		"fs-extra": "^9.0.1",
+		"just-test": "^2.3.2",
+		"uglify-es": "^3.3.9"
+	}
 }
