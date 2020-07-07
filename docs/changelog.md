@@ -1,6 +1,6 @@
 # Changelog
 
-* __3.0.1__
+* __3.0.3__
   * implemented [Issue no. 46](https://github.com/gullerya/object-observer/issues/46) - added support to the `TypedArray` objects
   * implemented [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
   * slight performance improvements
