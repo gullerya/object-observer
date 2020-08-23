@@ -129,6 +129,24 @@ suite.runTest({ name: 'observe paths of - root case' }, test => {
 	test.assertEqual(2, counter);
 });
 
+suite.runTest({ name: 'observe paths of - root case - array sort' }, test => {
+	const oo = Observable.from([1, 3, 2, 4, 9]);
+	let counter = 0;
+	oo.observe(changes => { counter += changes.length; }, { pathsOf: '' });
+	oo.sort();
+	test.assertTrue(oo[0] === 1 && oo[1] === 2 && oo[2] === 3 && oo[3] === 4 && oo[4] === 9);
+	test.assertEqual(1, counter);
+});
+
+suite.runTest({ name: 'observe paths of - root case - array reverse' }, test => {
+	const oo = Observable.from([1, 2, 3, 4, 9]);
+	let counter = 0;
+	oo.observe(changes => { counter += changes.length; }, { pathsOf: '' });
+	oo.reverse();
+	test.assertTrue(oo[0] === 9 && oo[1] === 4 && oo[2] === 3 && oo[3] === 2 && oo[4] === 1);
+	test.assertEqual(1, counter);
+});
+
 suite.runTest({
 	name: 'observe paths of - negative a',
 	expectError: '"pathsOf" option, if/when provided, MUST be a string (MAY be empty)'

@@ -123,7 +123,7 @@ const
 						oPath = options.path;
 						relevantChanges = changes.filter(change => change.path.join('.') === oPath);
 					} else if (options.pathsOf) {
-						relevantChanges = changes.filter(change => change.path.length === options.pathsOf.length + 1);
+						relevantChanges = changes.filter(change => change.path.length === options.pathsOf.length + 1 || change.type === REVERSE || change.type === SHUFFLE);
 					} else if (options.pathsFrom) {
 						oPaths = options.pathsFrom;
 						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
