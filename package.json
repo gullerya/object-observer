@@ -30,7 +30,7 @@
 	"browser": "dist/object-observer.min.js",
 	"type": "module",
 	"author": {
-		"name": "Guller Yuri",
+		"name": "Yuri Guller",
 		"email": "gullerya@gmail.com"
 	},
 	"funding": "https://paypal.me/gullerya?locale.x=en_US",
@@ -39,19 +39,19 @@
 		"url": "https://github.com/gullerya/object-observer"
 	},
 	"scripts": {
-		"build": "node ./build/tools/build-dist.js",
-		"lint": "eslint -c ./build/.eslintrc.json ./src/**/*.js ./build/**/*.js",
+		"build": "node ./ci/tools/build-dist.js",
+		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./ci/**/*.js",
 		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
 	},
 	"devDependencies": {
-		"eslint": "^7.4.0",
+		"eslint": "^7.7.0",
 		"eslint-config-standard": "^14.1.1",
 		"eslint-plugin-standard": "^4.0.1",
 		"eslint-plugin-promise": "^4.2.1",
 		"eslint-plugin-import": "^2.22.0",
 		"eslint-plugin-node": "^11.1.0",
 		"fs-extra": "^9.0.1",
-		"just-test": "^2.3.2",
+		"just-test": "^2.3.9",
 		"uglify-es": "^3.3.9"
 	}
 }
