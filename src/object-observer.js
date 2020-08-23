@@ -9,7 +9,7 @@ const
 	processObserveOptions = function processObserveOptions(options) {
 		const result = {};
 		if (options.path !== undefined) {
-			if (typeof options.path !== 'string') {
+			if (typeof options.path !== 'string' || options.path === '') {
 				throw new Error('"path" option, if/when provided, MUST be a non-empty string');
 			}
 			result.path = options.path;
@@ -19,7 +19,7 @@ const
 				throw new Error('"pathsOf" option MAY NOT be specified together with "path" option');
 			}
 			if (typeof options.pathsOf !== 'string') {
-				throw new Error('"pathsOf" option, if/when provided, MUST be a non-empty string');
+				throw new Error('"pathsOf" option, if/when provided, MUST be a string (MAY be empty)');
 			}
 			result.pathsOf = options.pathsOf.split('.').filter(n => n);
 		}
@@ -27,7 +27,7 @@ const
 			if (options.path || options.pathsOf) {
 				throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
 			}
-			if (typeof options.pathsFrom !== 'string') {
+			if (typeof options.pathsFrom !== 'string' || options.pathsFrom === '') {
 				throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
 			}
 			result.pathsFrom = options.pathsFrom;
