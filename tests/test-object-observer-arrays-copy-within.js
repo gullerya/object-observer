@@ -1,21 +1,20 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing ObjectObserver - arrays' });
 
 suite.runTest({ name: 'array copyWithin - primitives' }, test => {
-	let a = [1, 2, 3, 4, 5, 6],
-		pa,
-		copied,
-		events = [],
-		callbacks = 0;
-	pa = Observable.from(a);
+	const
+		pa = Observable.from([1, 2, 3, 4, 5, 6]),
+		events = [];
+	let callbacks = 0;
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 		callbacks++;
 	});
 
-	copied = pa.copyWithin(2, 0, 3);
+	let copied = pa.copyWithin(2, 0, 3);
 	test.assertEqual(pa, copied);
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
 	if (callbacks !== 1) throw new Error('expected to have 1 callback, found ' + callbacks);
@@ -49,18 +48,16 @@ suite.runTest({ name: 'array copyWithin - primitives' }, test => {
 });
 
 suite.runTest({ name: 'array copyWithin - objects' }, test => {
-	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
-		pa,
-		copied,
-		detached,
+	const
+		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	detached = pa[1];
-	copied = pa.copyWithin(1, 2, 3);
+	const detached = pa[1];
+	const copied = pa.copyWithin(1, 2, 3);
 	test.assertEqual(pa, copied);
 	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== 'c' || events[0].oldValue.text !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -82,16 +79,15 @@ suite.runTest({ name: 'array copyWithin - objects' }, test => {
 });
 
 suite.runTest({ name: 'array copyWithin - arrays' }, test => {
-	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, [{ text: 'd' }]],
-		pa,
-		copied,
+	const
+		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, [{ text: 'd' }]]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	copied = pa.copyWithin(1, 3, 4);
+	const copied = pa.copyWithin(1, 3, 4);
 	test.assertEqual(pa, copied);
 	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value[0].text !== 'd' || events[0].oldValue.text !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');

@@ -1,19 +1,19 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing revokation of removed/replaced objects' });
 
 suite.runTest({ name: 'test revokation of replaced objects - simple set' }, () => {
-	let g = {
+	const og = Observable.from({
 		a: {
 			b: {
 				prop: 'text'
 			},
 			prop: 'text'
 		}
-	};
+	});
 	let eventsCollector = [];
-	let og = Observable.from(g);
+
 	og.observe(changes => {
 		eventsCollector = eventsCollector.concat(changes);
 		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');
@@ -26,16 +26,16 @@ suite.runTest({ name: 'test revokation of replaced objects - simple set' }, () =
 });
 
 suite.runTest({ name: 'test revokation of replaced objects - splice in array' }, () => {
-	let g = [
+	const og = Observable.from([
 		{
 			child: {
 				prop: 'text'
 			},
 			prop: 'text'
 		}
-	];
+	]);
 	let eventsCollector = [];
-	let og = Observable.from(g);
+
 	og.observe(changes => {
 		eventsCollector = eventsCollector.concat(changes);
 		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');

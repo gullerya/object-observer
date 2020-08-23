@@ -1,21 +1,21 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable - objects' });
 
 suite.runTest({ name: 'creating observable leaves original object as is' }, test => {
-	let person = {
+	const person = {
 		name: 'name',
 		age: 7
-	},
+	};
+	const
 		address = { city: 'city' },
-		street = { name: 'street', apt: 234 },
-		po;
+		street = { name: 'street', apt: 234 };
 
 	address.street = street;
 	person.address = address;
 
-	po = Observable.from(person);
+	Observable.from(person);
 
 	if (person.address !== address) {
 		test.fail('internal address object should remain the same');
@@ -26,20 +26,23 @@ suite.runTest({ name: 'creating observable leaves original object as is' }, test
 });
 
 suite.runTest({ name: 'plain object operations' }, test => {
-	let o = {
+	const o = {
 		name: 'name',
 		age: 7,
 		address: null
-	}, po, events = [], tmpAddress = { street: 'some' };
+	}
+	const
+		events = [],
+		tmpAddress = { street: 'some' };
 
-	po = Observable.from(o);
+	const po = Observable.from(o);
 	po.observe(changes => {
 		[].push.apply(events, changes);
 	});
 
-	const v1 = po.name = 'new name';           //  event 0
-	const v2 = po.age = 9;                     //  event 1
-	const v3 = po.address = tmpAddress;        //  event 2
+	const v1 = po.name = 'new name';
+	const v2 = po.age = 9;
+	const v3 = po.address = tmpAddress;
 	test.assertEqual(v1, 'new name');
 	test.assertEqual(v2, 9);
 	test.assertEqual(v3, tmpAddress);
@@ -48,9 +51,9 @@ suite.runTest({ name: 'plain object operations' }, test => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== 'age' || events[1].oldValue !== 7 || events[1].value !== 9 || events[1].object !== po) test.fail('event 1 did not fire as expected');
 	if (events[2].type !== 'update' || events[2].path.join('.') !== 'address' || events[2].oldValue !== null || events[2].value !== po.address || events[2].object !== po) test.fail('event 2 did not fire as expected');
 
-	const v4 = po.address = null;              //  event 3
-	const v5 = po.sex = 'male';                //  event 4
-	delete po.sex;                  //  event 5
+	const v4 = po.address = null;
+	const v5 = po.sex = 'male';
+	delete po.sex;
 	test.assertEqual(v4, null);
 	test.assertEqual(v5, 'male');
 	if (events.length !== 6) test.fail('expected to have 6 data change events but counted ' + events.length);
@@ -60,7 +63,7 @@ suite.runTest({ name: 'plain object operations' }, test => {
 });
 
 suite.runTest({ name: 'sub tree object operations' }, test => {
-	let person = {
+	const person = {
 		name: 'name',
 		age: 7,
 		address: null,
@@ -70,9 +73,12 @@ suite.runTest({ name: 'sub tree object operations' }, test => {
 				apt: 123
 			}
 		}
-	}, po, events = [], newAddress = {};
+	};
+	const
+		events = [],
+		newAddress = {};
 
-	po = Observable.from(person);
+	const po = Observable.from(person);
 	po.observe(changes => {
 		[].push.apply(events, changes);
 	});
@@ -89,7 +95,8 @@ suite.runTest({ name: 'sub tree object operations' }, test => {
 });
 
 suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
-	let oo = Observable.from({ inner: {} }),
+	const
+		oo = Observable.from({ inner: {} }),
 		events = [],
 		eventsA = [],
 		eventsB = [],
@@ -119,7 +126,8 @@ suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
 });
 
 suite.runTest({ name: 'subgraph correctly detached when deleted' }, test => {
-	let oo = Observable.from({ inner: {} }),
+	const
+		oo = Observable.from({ inner: {} }),
 		events = [],
 		eventsA = [],
 		inner = oo.inner;
@@ -139,13 +147,15 @@ suite.runTest({ name: 'subgraph correctly detached when deleted' }, test => {
 });
 
 suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet set' }, test => {
-	let o = {
-		inner: {}
-	}, oo = Observable.from(o),
-		events = [],
+	const
+		oo = Observable.from({
+			inner: {}
+		});
+	const
 		callback = function (changes) {
 			[].push.apply(events, changes);
 		};
+	let events = [];
 
 	oo.observe(callback);
 	oo.inner.some = 'text';

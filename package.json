@@ -40,7 +40,7 @@
 	},
 	"scripts": {
 		"build": "node ./ci/tools/build-dist.js",
-		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./ci/**/*.js",
+		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
 		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
 	},
 	"devDependencies": {
@@ -51,7 +51,7 @@
 		"eslint-plugin-import": "^2.22.0",
 		"eslint-plugin-node": "^11.1.0",
 		"fs-extra": "^9.0.1",
-		"just-test": "^2.3.9",
+		"just-test": "^2.3.13",
 		"uglify-es": "^3.3.9"
 	}
 }

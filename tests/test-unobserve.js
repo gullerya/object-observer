@@ -1,15 +1,15 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing unobserving/removal of observed object' });
 
 suite.runTest({ name: 'test unobserve - single observer - explicit unobserve' }, () => {
-	let o = { some: 'text' },
-		oo = Observable.from(o),
-		cntr = 0,
+	const
+		oo = Observable.from({ some: 'text' }),
 		observer = function () {
 			cntr++;
 		};
+	let cntr = 0;
 
 	oo.observe(observer);
 
@@ -23,16 +23,16 @@ suite.runTest({ name: 'test unobserve - single observer - explicit unobserve' },
 });
 
 suite.runTest({ name: 'test unobserve - few observers - explicit unobserve' }, () => {
-	let o = { some: 'text' },
-		oo = Observable.from(o),
-		cntrA = 0,
-		cntrB = 0,
+	const
+		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
 			cntrA++;
 		},
 		observerB = function () {
 			cntrB++;
 		};
+	let cntrA = 0,
+		cntrB = 0;
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -57,16 +57,16 @@ suite.runTest({ name: 'test unobserve - few observers - explicit unobserve' }, (
 });
 
 suite.runTest({ name: 'test unobserve - unobserve few' }, () => {
-	let o = { some: 'text' },
-		oo = Observable.from(o),
-		cntrA = 0,
-		cntrB = 0,
+	const
+		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
 			cntrA++;
 		},
 		observerB = function () {
 			cntrB++;
 		};
+	let cntrA = 0,
+		cntrB = 0;
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -84,16 +84,16 @@ suite.runTest({ name: 'test unobserve - unobserve few' }, () => {
 });
 
 suite.runTest({ name: 'test unobserve - unobserve all' }, () => {
-	let o = { some: 'text' },
-		oo = Observable.from(o),
-		cntrA = 0,
-		cntrB = 0,
+	const
+		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
 			cntrA++;
 		},
 		observerB = function () {
 			cntrB++;
 		};
+	let cntrA = 0,
+		cntrB = 0;
 
 	oo.observe(observerA);
 	oo.observe(observerB);
@@ -111,12 +111,12 @@ suite.runTest({ name: 'test unobserve - unobserve all' }, () => {
 });
 
 suite.runTest({ name: 'test unobserve - observe, unobserve and observe again' }, () => {
-	let o = { some: 'text' },
-		oo = Observable.from(o),
-		cntr = 0,
+	const
+		oo = Observable.from({ some: 'text' }),
 		observer = function () {
 			cntr++;
 		};
+	let cntr = 0;
 
 	oo.observe(observer);
 	oo.some = 'thing';

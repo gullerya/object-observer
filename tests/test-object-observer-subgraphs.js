@@ -1,11 +1,11 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable - subgraphs' });
 
 suite.runTest({ name: 'inner object from observable should fire events as usual' }, () => {
-	let o = { inner: { prop: 'more' } },
-		oo = Observable.from(o),
+	const
+		oo = Observable.from({ inner: { prop: 'more' } }),
 		iop = oo.inner,
 		events = [],
 		observer = function (changes) {
@@ -22,12 +22,13 @@ suite.runTest({ name: 'inner object from observable should fire events as usual'
 });
 
 suite.runTest({ name: 'removal (detaching) of inner object from observable should detach its events' }, test => {
-	let oo = Observable.from({ inner: { prop: 'more' } }),
+	const
+		oo = Observable.from({ inner: { prop: 'more' } }),
 		iop = oo.inner,
-		cntr = 0,
 		observer = function () {
 			cntr++;
 		};
+	let cntr = 0;
 
 	oo.observe(observer);
 	iop.prop = 'text';
@@ -40,9 +41,8 @@ suite.runTest({ name: 'removal (detaching) of inner object from observable shoul
 });
 
 suite.runTest({ name: 'replacement of inner object from observable should return non-proxified original object' }, () => {
-	let o = { inner: { prop: 'more', nested: { text: 'text' } } },
-		oo = Observable.from(o),
-		events = [];
+	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
+	let events = [];
 	oo.observe(changes => Array.prototype.push.apply(events, changes));
 
 	oo.inner.prop = 'some';
@@ -65,9 +65,9 @@ suite.runTest({ name: 'replacement of inner object from observable should return
 });
 
 suite.runTest({ name: 'Object.assign on observable should raise an event/s of update with non-proxified original object' }, () => {
-	let oldData = { b: { b1: "x", b2: "y" } },
-		newData = { b: { b1: "z" } },
-		observable = Observable.from(oldData),
+	const
+		observable = Observable.from({ b: { b1: 'x', b2: 'y' } }),
+		newData = { b: { b1: 'z' } },
 		events = [];
 	observable.observe(changes => events.push.apply(events, changes));
 

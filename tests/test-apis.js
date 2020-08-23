@@ -1,4 +1,4 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable APIs' });
@@ -78,36 +78,34 @@ suite.runTest({ name: 'isObservable tests' }, test => {
 	test.assertFalse(Observable.isObservable({}));
 	test.assertTrue(Observable.isObservable(Observable.from({})));
 
-	let oo = Observable.from({ nested: {} });
+	const oo = Observable.from({ nested: {} });
 	test.assertTrue(Observable.isObservable(oo));
 });
 
 suite.runTest({ name: 'test observable APIs presence on object/array' }, test => {
-	let o = {}, a = [], oo, aa;
-
-	oo = Observable.from(o);
+	const oo = Observable.from({});
 
 	test.assertEqual('function', typeof oo.observe);
 	test.assertEqual('function', typeof oo.unobserve);
 
-	aa = Observable.from(a);
+	const aa = Observable.from([]);
 
 	test.assertEqual('function', typeof aa.observe);
 	test.assertEqual('function', typeof aa.unobserve);
 });
 
 suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }, test => {
-	let o = {}, a = [], oo, aa;
-
-	oo = Observable.from(o);
+	const oo = Observable.from({});
 
 	test.assertEqual(0, Object.keys(oo).length);
 
-	aa = Observable.from(a);
+	const aa = Observable.from([]);
 
 	test.assertEqual(0, Object.keys(aa).length);
 });
 
 suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor', expectError: 'Observable MAY NOT be created via constructor' }, () => {
-	new Observable();
+	if (new Observable()) {
+		throw new Error('wrong path');
+	}
 });

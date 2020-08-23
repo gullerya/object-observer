@@ -76,6 +76,8 @@ observableAddress.unobserve();
 ## Observation options
 If/When provided, `options` parameter MUST contain ONLY one/some of the properties below, no 'unknown' properties allowed.
 
+In order to fail-fast and prevent unexpected mess down the hill, incorrect observation options will throw.
+
 * __`path`__ - non-empty string, specific path to observe; only a changes to this path will be delivered to the observer
 > If the `path` equals `'firstName'` when observing `{ firstName: 'some', lastName: 'name' }`, ONLY and ONLY changes of the `firstName` will be observed.
 Samely, when the `path` equals `'address'` when observing `{ address: { city: 'city', street: 'street' } }`, ONLY and ONLY changes of `address` will be observed, BUT NOT, for instance, changes of `city` or `street`. 

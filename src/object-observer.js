@@ -10,38 +10,37 @@ const
 		const result = {};
 		if (options.path !== undefined) {
 			if (typeof options.path !== 'string') {
-				console.error('"path" option, if/when provided, MUST be a non-empty string');
-			} else {
-				result.path = options.path;
+				throw new Error('"path" option, if/when provided, MUST be a non-empty string');
 			}
+			result.path = options.path;
 		}
 		if (options.pathsOf !== undefined) {
 			if (options.path) {
-				console.error('"pathsOf" option MAY NOT be specified together with "path" option');
-			} else if (typeof options.pathsOf !== 'string') {
-				console.error('"pathsOf" option, if/when provided, MUST be a non-empty string');
-			} else {
-				result.pathsOf = options.pathsOf.split('.').filter(n => n);
+				throw new Error('"pathsOf" option MAY NOT be specified together with "path" option');
 			}
+			if (typeof options.pathsOf !== 'string') {
+				throw new Error('"pathsOf" option, if/when provided, MUST be a non-empty string');
+			}
+			result.pathsOf = options.pathsOf.split('.').filter(n => n);
 		}
 		if (options.pathsFrom !== undefined) {
 			if (options.path || options.pathsOf) {
-				console.error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
-			} else if (typeof options.pathsFrom !== 'string') {
-				console.error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
-			} else {
-				result.pathsFrom = options.pathsFrom;
+				throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
 			}
+			if (typeof options.pathsFrom !== 'string') {
+				throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
+			}
+			result.pathsFrom = options.pathsFrom;
 		}
 		const invalidOptions = Object.keys(options).filter(option => !validOptionsKeys.hasOwnProperty(option));
 		if (invalidOptions.length) {
-			console.error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
+			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
 		}
 		return result;
 	},
 	observe = function observe(observer, options) {
 		if (typeof observer !== 'function') {
-			throw new Error('observer parameter MUST be a function');
+			throw new Error(`observer MUST be a function, got '${observer}'`);
 		}
 
 		const
@@ -56,7 +55,7 @@ const
 			}
 			observers.push([observer, opts]);
 		} else {
-			console.info('observer may be bound to an observable only once');
+			console.warn('observer may be bound to an observable only once; will NOT rebind');
 		}
 	},
 	unobserve = function unobserve() {
@@ -610,7 +609,7 @@ class Observable {
 		} else if (ArrayBuffer.isView(target)) {
 			return new TypedArrayOMeta({ target: target, ownKey: null, parent: null }).proxy;
 		} else if (target instanceof Date || target instanceof Blob || target instanceof Error) {
-			throw new Error(`${target} found to be one of non-observable types`);
+			throw new Error(`${target} found to be one of a on-observable types`);
 		} else {
 			return new ObjectOMeta({ target: target, ownKey: null, parent: null }).proxy;
 		}

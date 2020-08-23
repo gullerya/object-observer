@@ -1,10 +1,10 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing nested observable' });
 
 suite.runTest({ name: 'nested of observable should be observable too' }, test => {
-	let oo = Observable.from({
+	const oo = Observable.from({
 		user: {
 			address: {
 				street: 'street',
@@ -21,17 +21,16 @@ suite.runTest({ name: 'nested of observable should be observable too' }, test =>
 });
 
 suite.runTest({ name: 'observable from nested stays the same object reference' }, test => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
-		oou = Observable.from(oo.user),
+		}
+	});
+	const oou = Observable.from(oo.user),
 		ooua = Observable.from(oo.user.address);
 
 	test.assertEqual(oo.user, oou);
@@ -41,17 +40,16 @@ suite.runTest({ name: 'observable from nested stays the same object reference' }
 });
 
 suite.runTest({ name: 'observable from nested can be observed' }, test => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
-		oou = Observable.from(oo.user),
+		}
+	});
+	const oou = Observable.from(oo.user),
 		ooua = Observable.from(oo.user.address);
 
 	test.assertTrue('observe' in oou);
@@ -93,33 +91,32 @@ suite.runTest({ name: 'observable from nested can be observed' }, test => {
 	test.assertEqual(4, nestedEvents.length);
 });
 
-suite.runTest({ name: 'nested observable should handle errors', expectError: 'observer parameter MUST be a function' }, () => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+suite.runTest({ name: 'nested observable should handle errors', expectError: 'observer MUST be a function' }, () => {
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
-		oou = Observable.from(oo.user);
+		}
+	})
+	const oou = Observable.from(oo.user);
 
 	oou.observe('invalid observer');
 });
 
 suite.runTest({ name: 'nested observable should handle duplicate' }, test => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
+		}
+	});
+	const
 		oou = Observable.from(oo.user),
 		events = [],
 		observer = changes => Array.prototype.push.apply(events, changes);
@@ -131,16 +128,16 @@ suite.runTest({ name: 'nested observable should handle duplicate' }, test => {
 });
 
 suite.runTest({ name: 'nested observable should provide correct path (relative to self)' }, test => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
+		}
+	})
+	const
 		oou = Observable.from(oo.user),
 		ooua = Observable.from(oo.user.address),
 		events = [],
@@ -161,16 +158,16 @@ suite.runTest({ name: 'nested observable should provide correct path (relative t
 });
 
 suite.runTest({ name: 'nested observable should continue to function when detached' }, test => {
-	let oo = Observable.from(
-		{
-			user: {
-				address: {
-					street: 'street',
-					block: 'block',
-					city: 'city'
-				}
+	const oo = Observable.from({
+		user: {
+			address: {
+				street: 'street',
+				block: 'block',
+				city: 'city'
 			}
-		}),
+		}
+	});
+	const
 		oou = Observable.from(oo.user),
 		ooua = Observable.from(oo.user.address),
 		events = [],
@@ -206,7 +203,8 @@ suite.runTest({ name: 'nested observable should continue to function when detach
 });
 
 suite.runTest({ name: 'nested observable is still cloned when moved' }, test => {
-	let u = { user: { address: { street: 'street', block: 'block', city: 'city' } } },
+	const
+		u = { user: { address: { street: 'street', block: 'block', city: 'city' } } },
 		oo = Observable.from([u, u]),
 		oou = Observable.from(oo[0].user),
 		ooua = Observable.from(oo[0].user.address),

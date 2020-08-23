@@ -1,10 +1,11 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable Load' });
 
 suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations' }, () => {
-	let creationIterations = 100000,
+	const
+		creationIterations = 100000,
 		mutationIterations = 1000000,
 		o = {
 			name: 'Anna Guller',
@@ -18,8 +19,8 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 				}
 			},
 			orders: []
-		},
-		po,
+		};
+	let po,
 		changesCountA,
 		changesCountB,
 		started,
@@ -85,7 +86,8 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 });
 
 suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back' }, () => {
-	let mutationIterations = 100000,
+	const
+		mutationIterations = 100000,
 		o = {
 			name: 'Anna Guller',
 			accountCreated: new Date(),
@@ -103,15 +105,14 @@ suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop
 			{ id: 1, description: 'some description', sum: 1234, date: new Date() },
 			{ id: 2, description: 'some description', sum: 1234, date: new Date() },
 			{ id: 3, description: 'some description', sum: 1234, date: new Date() }
-		],
-		po,
-		changesCountA,
+		];
+	let changesCountA,
 		changesCountB,
 		started,
 		ended;
 
 	//	creation of Observable
-	po = Observable.from({ users: [] });
+	const po = Observable.from({ users: [] });
 
 	//	add listeners/callbacks
 	po.observe(changes => {

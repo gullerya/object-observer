@@ -1,13 +1,13 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing listeners APIs' });
 
 suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
-	let o = {}, oo = Observable.from(o);
+	const oo = Observable.from({});
 	let events = [];
 
-	oo.observe(changes => events = events.concat(changes));
+	oo.observe(changes => { events = events.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -41,12 +41,12 @@ suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
 });
 
 suite.runTest({ name: 'test listeners invocation - multiple listeners' }, () => {
-	let o = {}, oo = Observable.from(o);
+	const oo = Observable.from({});
 	let eventsA = [], eventsB = [], eventsC = [];
 
-	oo.observe(changes => eventsA = eventsA.concat(changes));
-	oo.observe(changes => eventsB = eventsB.concat(changes));
-	oo.observe(changes => eventsC = eventsC.concat(changes));
+	oo.observe(changes => { eventsA = eventsA.concat(changes); });
+	oo.observe(changes => { eventsB = eventsB.concat(changes); });
+	oo.observe(changes => { eventsC = eventsC.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -58,14 +58,14 @@ suite.runTest({ name: 'test listeners invocation - multiple listeners' }, () => 
 });
 
 suite.runTest({ name: 'test listeners invocation - multiple listeners and one is throwing' }, () => {
-	let o = {}, oo = Observable.from(o);
+	const oo = Observable.from({});
 	let eventsA = [], eventsB = [];
 
 	oo.observe(changes => {
 		throw new Error('intentional disrupt');
 	});
-	oo.observe(changes => eventsA = eventsA.concat(changes));
-	oo.observe(changes => eventsB = eventsB.concat(changes));
+	oo.observe(changes => { eventsA = eventsA.concat(changes); });
+	oo.observe(changes => { eventsB = eventsB.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -77,9 +77,10 @@ suite.runTest({ name: 'test listeners invocation - multiple listeners and one is
 });
 
 suite.runTest({ name: 'test listeners invocation - multiple times same listener' }, () => {
-	let o = {}, oo = Observable.from(o);
+	const
+		oo = Observable.from({}),
+		listener = changes => { eventsA = eventsA.concat(changes); };
 	let eventsA = [];
-	let listener = changes => eventsA = eventsA.concat(changes);
 
 	oo.observe(listener);
 	oo.observe(listener);
@@ -94,7 +95,7 @@ suite.runTest({ name: 'test listeners invocation - multiple times same listener'
 });
 
 suite.runTest({ name: 'test listeners invocation - listener is corrupted' }, () => {
-	let o = {}, oo = Observable.from(o);
+	const oo = Observable.from({});
 
 	try {
 		oo.observe(null);

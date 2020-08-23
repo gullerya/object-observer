@@ -1,14 +1,14 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing ObjectObserver - arrays' });
 
 suite.runTest({ name: 'array push - primitives' }, () => {
-	let a = [1, 2, 3, 4],
-		pa,
-		events = [],
-		callBacks = 0;
-	pa = Observable.from(a);
+	const
+		pa = Observable.from([1, 2, 3, 4]),
+		events = [];
+	let callBacks = 0;
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 		callBacks++;
@@ -25,10 +25,10 @@ suite.runTest({ name: 'array push - primitives' }, () => {
 });
 
 suite.runTest({ name: 'array push - objects' }, () => {
-	let a = [],
-		pa,
+	const
+		pa = Observable.from([]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -48,10 +48,10 @@ suite.runTest({ name: 'array push - objects' }, () => {
 });
 
 suite.runTest({ name: 'array push - arrays' }, () => {
-	let a = [],
-		pa,
+	const
+		pa = Observable.from([]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -71,16 +71,15 @@ suite.runTest({ name: 'array push - arrays' }, () => {
 });
 
 suite.runTest({ name: 'array pop - primitives' }, () => {
-	let a = ['some'],
-		pa,
-		popped,
+	const
+		pa = Observable.from(['some']),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(function (eventsList) {
 		[].push.apply(events, eventsList);
 	});
 
-	popped = pa.pop();
+	const popped = pa.pop();
 
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
 	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -88,21 +87,19 @@ suite.runTest({ name: 'array pop - primitives' }, () => {
 });
 
 suite.runTest({ name: 'array pop - objects' }, test => {
-	let a = [{ test: 'text' }],
-		pa,
-		pad,
-		popped,
+	const
+		pa = Observable.from([{ test: 'text' }]),
+		pad = pa[0],
 		events = [],
 		eventsA = [];
-	pa = Observable.from(a);
-	pad = pa[0];
+
 	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].test = 'test';
 	pad.test = 'more';
 	test.assertEqual(2, events.length);
 
-	popped = pa.pop();
+	const popped = pa.pop();
 	test.assertEqual('more', popped.test);
 	test.assertEqual(3, events.length);
 
@@ -115,30 +112,30 @@ suite.runTest({ name: 'array pop - objects' }, test => {
 });
 
 suite.runTest({ name: 'array unshift - primitives' }, () => {
-	let a = [],
-		pa,
-		events = [],
-		callBacks = 0;
-	pa = Observable.from(a);
+	const
+		pa = Observable.from([]),
+		events = [];
+	let callbacks = 0;
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
-		callBacks++;
+		callbacks++;
 	});
 
 	pa.unshift('a');
 	pa.unshift('b', 'c');
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (callBacks !== 2) throw new Error('expected to have 2 callbacks, found ' + callBacks);
+	if (callbacks !== 2) throw new Error('expected to have 2 callbacks, found ' + callbacks);
 	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value !== 'a' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
 	if (events[1].type !== 'insert' || events[1].path.join('.') !== '0' || events[1].value !== 'b' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
 	if (events[2].type !== 'insert' || events[2].path.join('.') !== '1' || events[2].value !== 'c' || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
 });
 
 suite.runTest({ name: 'array unshift - objects' }, () => {
-	let a = [{ text: 'original' }],
-		pa,
+	const
+		pa = Observable.from([{ text: 'original' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -156,10 +153,10 @@ suite.runTest({ name: 'array unshift - objects' }, () => {
 });
 
 suite.runTest({ name: 'array unshift - arrays' }, () => {
-	let a = [{ text: 'original' }],
-		pa,
+	const
+		pa = Observable.from([{ text: 'original' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -177,14 +174,13 @@ suite.runTest({ name: 'array unshift - arrays' }, () => {
 });
 
 suite.runTest({ name: 'array shift - primitives' }, test => {
-	let a = ['some'],
-		pa,
-		shifted,
+	const
+		pa = Observable.from(['some']),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
-	shifted = pa.shift();
+	const shifted = pa.shift();
 
 	test.assertEqual(1, events.length);
 	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -192,16 +188,13 @@ suite.runTest({ name: 'array shift - primitives' }, test => {
 });
 
 suite.runTest({ name: 'array shift - objects' }, test => {
-	let a = [{ text: 'a', inner: { test: 'more' } }, { text: 'b' }],
-		pa,
-		pa0,
-		pa0i,
-		shifted,
+	const
+		pa = Observable.from([{ text: 'a', inner: { test: 'more' } }, { text: 'b' }]),
+		pa0 = pa[0],
+		pa0i = pa0.inner,
 		events = [],
 		eventsA = [];
-	pa = Observable.from(a);
-	pa0 = pa[0];
-	pa0i = pa0.inner;
+
 	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].text = 'b';
@@ -209,7 +202,7 @@ suite.runTest({ name: 'array shift - objects' }, test => {
 	test.assertEqual(2, events.length);
 	events.splice(0);
 
-	shifted = pa.shift();
+	const shifted = pa.shift();
 	if (shifted.text !== 'b' || shifted.inner.test !== 'test') throw new Error('expected to receive updated original object');
 
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -230,16 +223,15 @@ suite.runTest({ name: 'array shift - objects' }, test => {
 });
 
 suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
-	let a = [1, 2, 3],
-		pa,
-		reversed,
+	const
+		pa = Observable.from([1, 2, 3]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	reversed = pa.reverse();
+	const reversed = pa.reverse();
 
 	if (reversed !== pa) throw new Error('reverse base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -248,16 +240,15 @@ suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
 });
 
 suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
-	let a = { a1: { a2: [1, 2, 3] } },
-		pa,
-		reversed,
+	const
+		pa = Observable.from({ a1: { a2: [1, 2, 3] } }),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	reversed = pa.a1.a2.reverse();
+	const reversed = pa.a1.a2.reverse();
 
 	if (reversed !== pa.a1.a2) throw new Error('reverse base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -266,17 +257,16 @@ suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
 });
 
 suite.runTest({ name: 'array reverse - objects' }, () => {
-	let a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
-		pa,
-		reversed,
+	const
+		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
 	pa[0].name = 'A';
-	reversed = pa.reverse();
+	const reversed = pa.reverse();
 	pa[0].name = 'C';
 
 	if (reversed !== pa) throw new Error('reverse base functionality broken');
@@ -287,16 +277,15 @@ suite.runTest({ name: 'array reverse - objects' }, () => {
 });
 
 suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
-	let a = [3, 2, 1],
-		pa,
-		sorted,
+	const
+		pa = Observable.from([3, 2, 1]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	sorted = pa.sort();
+	let sorted = pa.sort();
 
 	if (sorted !== pa) throw new Error('sort base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -313,16 +302,15 @@ suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
 });
 
 suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
-	let a = { a1: { a2: [3, 2, 1] } },
-		pa,
-		sorted,
+	const
+		pa = Observable.from({ a1: { a2: [3, 2, 1] } }),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	sorted = pa.a1.a2.sort();
+	let sorted = pa.a1.a2.sort();
 
 	if (sorted !== pa.a1.a2) throw new Error('sort base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -339,17 +327,16 @@ suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
 });
 
 suite.runTest({ name: 'array sort - objects' }, () => {
-	let a = [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
-		pa,
-		sorted,
+	const
+		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
 	pa[0].name = 'A';
-	sorted = pa.sort((a, b) => {
+	const sorted = pa.sort((a, b) => {
 		return a.name < b.name ? 1 : -1;
 	});
 	pa[0].name = 'C';
@@ -362,16 +349,15 @@ suite.runTest({ name: 'array sort - objects' }, () => {
 });
 
 suite.runTest({ name: 'array fill - primitives' }, () => {
-	let a = [1, 2, 3],
-		pa,
-		filled,
+	const
+		pa = Observable.from([1, 2, 3]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	filled = pa.fill('a');
+	const filled = pa.fill('a');
 	if (filled !== pa) throw new Error('fill base functionality broken');
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value !== 'a' || events[0].oldValue !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -399,16 +385,15 @@ suite.runTest({ name: 'array fill - primitives' }, () => {
 });
 
 suite.runTest({ name: 'array fill - objects' }, () => {
-	let a = [{ some: 'text' }, { some: 'else' }, { some: 'more' }],
-		pa,
-		filled,
+	const
+		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	filled = pa.fill({ name: 'Niv' });
+	const filled = pa.fill({ name: 'Niv' });
 	if (filled !== pa) throw new Error('fill base functionality broken');
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value.name !== 'Niv' || events[0].oldValue.some !== 'text' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -422,16 +407,15 @@ suite.runTest({ name: 'array fill - objects' }, () => {
 });
 
 suite.runTest({ name: 'array fill - arrays' }, () => {
-	let a = [{ some: 'text' }, { some: 'else' }, { some: 'more' }],
-		pa,
-		filled,
+	const
+		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	filled = pa.fill([{ name: 'Niv' }]);
+	const filled = pa.fill([{ name: 'Niv' }]);
 	if (filled !== pa) throw new Error('fill base functionality broken');
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value[0].name !== 'Niv' || events[0].oldValue.some !== 'text' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -445,18 +429,17 @@ suite.runTest({ name: 'array fill - arrays' }, () => {
 });
 
 suite.runTest({ name: 'array splice - primitives' }, () => {
-	let a = [1, 2, 3, 4, 5, 6],
-		pa,
-		spliced,
-		events = [],
-		callbacks = 0;
-	pa = Observable.from(a);
+	const
+		pa = Observable.from([1, 2, 3, 4, 5, 6]),
+		events = [];
+	let callbacks = 0;
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 		callbacks++;
 	});
 
-	spliced = pa.splice(2, 2, 'a');
+	const spliced = pa.splice(2, 2, 'a');
 	if (!Array.isArray(spliced) || spliced.length !== 2 || spliced[0] !== 3 || spliced[1] !== 4) throw new Error('splice base functionality broken');
 	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
 	if (callbacks !== 1) throw new Error('expected to have 1 callback, found ' + callbacks);
@@ -486,11 +469,10 @@ suite.runTest({ name: 'array splice - primitives' }, () => {
 });
 
 suite.runTest({ name: 'array splice - objects' }, () => {
-	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
-		pa,
-		spliced,
+	const
+		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -508,7 +490,7 @@ suite.runTest({ name: 'array splice - objects' }, () => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd' || events[1].object !== pa[2]) throw new Error('event 1 did not fire as expected');
 	events.splice(0);
 
-	spliced = pa.splice(1, 1, { text: 'A' }, { text: 'B' });
+	pa.splice(1, 1, { text: 'A' }, { text: 'B' });
 	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== 'A' || events[0].oldValue.text !== 'B' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
 	if (events[1].type !== 'insert' || events[1].path.join('.') !== '2' || events[1].value.text !== 'B' || typeof events[1].oldValue !== 'undefined' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
@@ -520,11 +502,10 @@ suite.runTest({ name: 'array splice - objects' }, () => {
 });
 
 suite.runTest({ name: 'array splice - arrays' }, () => {
-	let a = [{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }],
-		pa,
-		spliced,
+	const
+		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -542,7 +523,7 @@ suite.runTest({ name: 'array splice - arrays' }, () => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd' || events[1].object !== pa[2]) throw new Error('event 1 did not fire as expected');
 	events.splice(0);
 
-	spliced = pa.splice(1, 1, { text: 'A' }, [{ text: 'B' }]);
+	const spliced = pa.splice(1, 1, { text: 'A' }, [{ text: 'B' }]);
 	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
 	if (spliced.length !== 1) throw new Error('expected to have 1 spliced object');
 	if (spliced[0].length !== 1 || spliced[0][0].text !== 'B') throw new Error('spliced object is not as expected');

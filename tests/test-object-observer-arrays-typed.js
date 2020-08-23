@@ -1,19 +1,18 @@
-﻿import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
+import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing ObjectObserver - typed arrays' });
 
 suite.runTest({ name: 'typed array reverse - Int8Array' }, () => {
-	let a = new Int8Array([1, 2, 3]),
-		pa,
-		reversed,
+	const
+		pa = Observable.from(new Int8Array([1, 2, 3])),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	reversed = pa.reverse();
+	const reversed = pa.reverse();
 
 	if (reversed !== pa) throw new Error('reverse base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -22,16 +21,15 @@ suite.runTest({ name: 'typed array reverse - Int8Array' }, () => {
 });
 
 suite.runTest({ name: 'typed array sort - Int16Array' }, () => {
-	let a = new Int16Array([3, 2, 1]),
-		pa,
-		sorted,
+	const
+		pa = Observable.from(new Int16Array([3, 2, 1])),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	sorted = pa.sort();
+	let sorted = pa.sort();
 
 	if (sorted !== pa) throw new Error('sort base functionality broken');
 	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
@@ -48,16 +46,15 @@ suite.runTest({ name: 'typed array sort - Int16Array' }, () => {
 });
 
 suite.runTest({ name: 'typed array fill - Int32Array' }, () => {
-	let a = new Int32Array([1, 2, 3]),
-		pa,
-		filled,
+	const
+		pa = Observable.from(new Int32Array([1, 2, 3])),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
-	filled = pa.fill(256);
+	const filled = pa.fill(256);
 	if (filled !== pa) throw new Error('fill base functionality broken');
 	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value !== 256 || events[0].oldValue !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -85,10 +82,10 @@ suite.runTest({ name: 'typed array fill - Int32Array' }, () => {
 });
 
 suite.runTest({ name: 'typed array set - Float32Array' }, () => {
-	let a = new Float32Array(8),
-		pa,
+	const
+		pa = Observable.from(new Float32Array(8)),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
@@ -119,17 +116,16 @@ suite.runTest({ name: 'typed array set - Float32Array' }, () => {
 });
 
 suite.runTest({ name: 'typed array copyWithin - Float64Array' }, test => {
-	let a = new Float64Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-		pa,
-		copied,
+	const
+		pa = Observable.from(new Float64Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])),
 		events = [];
-	pa = Observable.from(a);
+
 	pa.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
 	//	basic case
-	copied = pa.copyWithin(5, 7, 9);
+	let copied = pa.copyWithin(5, 7, 9);
 	test.assertEqual(pa, copied);
 	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
 	if (events[0].type !== 'update' || events[0].path.join('.') !== '5' || events[0].value !== 7 || events[0].oldValue !== 5 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
@@ -155,10 +151,10 @@ suite.runTest({ name: 'typed array copyWithin - Float64Array' }, test => {
 });
 
 suite.runTest({ name: 'typed array as nested - Uint8Array' }, () => {
-	let o = { a: new Uint8Array([1, 2, 3]) },
-		po,
+	const
+		po = Observable.from({ a: new Uint8Array([1, 2, 3]) }),
 		events = [];
-	po = Observable.from(o);
+
 	po.observe(eventsList => {
 		[].push.apply(events, eventsList);
 	});
