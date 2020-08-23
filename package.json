@@ -51,7 +51,7 @@
 		"eslint-plugin-import": "^2.22.0",
 		"eslint-plugin-node": "^11.1.0",
 		"fs-extra": "^9.0.1",
-		"just-test": "^2.3.13",
+		"just-test": "2.3.2",
 		"uglify-es": "^3.3.9"
 	}
 }
