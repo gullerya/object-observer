@@ -168,3 +168,21 @@ suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet
 	oo.inner.other = 'text';
 	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
 });
+
+suite.runTest({ name: 'Object.assign with multiple properties' }, test => {
+	const
+		observable = Observable.from({}),
+		newData = { a: 1, b: 2, c: 3 },
+		events = [];
+	let callbacks = 0;
+	observable.observe(changes => {
+		callbacks++;
+		events.push.apply(events, changes);
+	});
+
+	Object.assign(observable, newData);
+
+	test.assertEqual(1, callbacks);
+	test.assertEqual(3, events.length);
+	//	TODO: add more assertions
+});
