@@ -129,7 +129,27 @@ const
 						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
 					}
 					if (relevantChanges.length) {
-						target(relevantChanges);
+						if (oMeta.options && oMeta.options.async) {
+							//	this the async handling which
+							if (!oMeta.options.batches) {
+								queueMicrotask(() => {
+									oMeta.options.batches.forEach(b => {
+										b[0](b[1]);
+									});
+									// oMeta.options.batches = null;
+								});
+								oMeta.options.batches = [];
+							}
+							let rb = oMeta.options.batches.find(b => b[0] === target);
+							if (!rb) {
+								rb = [target, []];
+								oMeta.options.batches.push(rb);
+							}
+							rb[1].push.apply(rb[1], relevantChanges);
+						} else {
+							//	this is the naive straight forward synchronous dispatch
+							target(relevantChanges);
+						}
 					}
 				} catch (e) {
 					console.error(`failed to deliver changes to listener ${target}`, e);
@@ -511,6 +531,7 @@ class OMetaBase {
 		this.revokable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = targetClone;
+		this.options = properties.options;
 	}
 
 	detach() {
@@ -599,19 +620,19 @@ class Observable {
 		throw new Error('Observable MAY NOT be created via constructor, see "Observable.from" API');
 	}
 
-	static from(target) {
+	static from(target, options) {
 		if (!target || typeof target !== 'object') {
 			throw new Error('observable MAY ONLY be created from a non-null object');
 		} else if (target[oMetaKey]) {
 			return target;
 		} else if (Array.isArray(target)) {
-			return new ArrayOMeta({ target: target, ownKey: null, parent: null }).proxy;
+			return new ArrayOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		} else if (ArrayBuffer.isView(target)) {
-			return new TypedArrayOMeta({ target: target, ownKey: null, parent: null }).proxy;
+			return new TypedArrayOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		} else if (target instanceof Date || target instanceof Blob || target instanceof Error) {
 			throw new Error(`${target} found to be one of a on-observable types`);
 		} else {
-			return new ObjectOMeta({ target: target, ownKey: null, parent: null }).proxy;
+			return new ObjectOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		}
 	}
 

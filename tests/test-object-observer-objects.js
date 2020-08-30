@@ -169,7 +169,7 @@ suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet
 	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
 });
 
-suite.runTest({ name: 'Object.assign with multiple properties' }, test => {
+suite.runTest({ name: 'Object.assign with multiple properties - sync yields many callbacks' }, async test => {
 	const
 		observable = Observable.from({}),
 		newData = { a: 1, b: 2, c: 3 },
@@ -181,8 +181,9 @@ suite.runTest({ name: 'Object.assign with multiple properties' }, test => {
 	});
 
 	Object.assign(observable, newData);
+	observable.a = 4;
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(3, events.length);
+	test.assertEqual(4, callbacks);
+	test.assertEqual(4, events.length);
 	//	TODO: add more assertions
 });
