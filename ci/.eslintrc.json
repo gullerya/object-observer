@@ -1,23 +1,21 @@
 {
-  "extends": "standard",
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "module"
-  },
-  "rules": {
-    "indent": [
-      2,
-      "tab"
-    ],
-    "no-tabs": 0,
-    "semi": "off",
-    "space-before-function-paren": "off",
-    "eol-last": "off",
-    "one-var": "off",
-    "no-prototype-builtins": "off"
-  }
+	"env": {
+		"browser": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"sourceType": "module"
+	},
+	"rules": {
+		"indent": [
+			2,
+			"tab"
+		],
+		"no-tabs": 0,
+		"semi": "off",
+		"space-before-function-paren": "off",
+		"eol-last": "off",
+		"one-var": "off",
+		"no-prototype-builtins": "off"
+	}
 }
