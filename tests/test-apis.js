@@ -3,16 +3,14 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable APIs' });
 
-suite.runTest({ name: 'ensure Observable object is frozen with only defined API' }, test => {
+suite.runTest({ name: 'ensure Observable object has defined APIs' }, test => {
 	test.assertEqual(typeof Observable, 'function');
 	test.assertEqual(typeof Observable.from, 'function');
 	test.assertEqual(typeof Observable.isObservable, 'function');
+});
 
-	try {
-		Observable.some = 'prop';
-		test.assertFalse(Observable.some);
-	} catch (e) {
-	}
+suite.runTest({ name: 'ensure Observable object is frozen', expectError: 'not extensible' }, () => {
+	Observable.some = 'prop';
 });
 
 suite.runTest({ name: 'negative tests - invalid parameters' }, test => {

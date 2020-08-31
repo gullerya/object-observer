@@ -61,7 +61,7 @@ suite.runTest({ name: 'test listeners invocation - multiple listeners and one is
 	const oo = Observable.from({});
 	let eventsA = [], eventsB = [];
 
-	oo.observe(changes => {
+	oo.observe(() => {
 		throw new Error('intentional disrupt');
 	});
 	oo.observe(changes => { eventsA = eventsA.concat(changes); });
@@ -94,18 +94,16 @@ suite.runTest({ name: 'test listeners invocation - multiple times same listener'
 	}
 });
 
-suite.runTest({ name: 'test listeners invocation - listener is corrupted' }, () => {
-	const oo = Observable.from({});
+suite.runTest({
+	name: 'test listeners invocation - listener is corrupted - null',
+	expectError: 'observer MUST be a function'
+}, () => {
+	Observable.from({}).observe(null);
+});
 
-	try {
-		oo.observe(null);
-		throw new Error('the flow should fail due to listener being NULL');
-	} catch (e) {
-	}
-
-	try {
-		oo.observe('some non function');
-		throw new Error('the flow should fail due to listener being STRING');
-	} catch (e) {
-	}
+suite.runTest({
+	name: 'test listeners invocation - listener is corrupted - NaF',
+	expectError: 'observer MUST be a function'
+}, () => {
+	Observable.from({}).observe('some non function');
 });
