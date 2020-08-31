@@ -5,7 +5,7 @@ const
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
 	oMetaKey = Symbol('observable-meta-key'),
-	validOptionsKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
+	validObserverOptionKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function processObserveOptions(options) {
 		const result = {};
 		if (options.path !== undefined) {
@@ -32,7 +32,7 @@ const
 			}
 			result.pathsFrom = options.pathsFrom;
 		}
-		const invalidOptions = Object.keys(options).filter(option => !validOptionsKeys.hasOwnProperty(option));
+		const invalidOptions = Object.keys(options).filter(option => !validObserverOptionKeys.hasOwnProperty(option));
 		if (invalidOptions.length) {
 			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
 		}
@@ -106,44 +106,51 @@ const
 		Object.defineProperties(source, propertiesBluePrint);
 		return source;
 	},
+	filterChanges = function filterChanges(options, changes) {
+		let result = changes;
+		if (options.path) {
+			const oPath = options.path;
+			result = changes.filter(change => change.path.join('.') === oPath);
+		} else if (options.pathsOf) {
+			const oPathsOf = options.pathsOf;
+			result = changes.filter(change => change.path.length === oPathsOf.length + 1 || change.type === REVERSE || change.type === SHUFFLE);
+		} else if (options.pathsFrom) {
+			const oPathsFrom = options.pathsFrom;
+			result = changes.filter(change => change.path.join('.').startsWith(oPathsFrom));
+		}
+		return result;
+	},
+	callObserversFromMT = function callObserversFromMT() {
+		const l = this.length;
+		for (let i = 0; i < l; i++) {
+			this[i][0](this[i][1]);
+		}
+	},
 	callObservers = function callObservers(oMeta, changes) {
-		let observers, pair, target, options, relevantChanges, oPath, oPaths, i, newPath, tmp;
+		let currentObservable = oMeta;
+		let observers, pair, target, options, relevantChanges, i, newPath, tmp;
 		const l = changes.length;
 		do {
-			observers = oMeta.observers;
+			observers = currentObservable.observers;
 			i = observers.length;
 			while (i--) {
 				try {
 					pair = observers[i];
 					target = pair[0];
 					options = pair[1];
-					relevantChanges = changes;
+					relevantChanges = filterChanges(options, changes);
 
-					if (options.path) {
-						oPath = options.path;
-						relevantChanges = changes.filter(change => change.path.join('.') === oPath);
-					} else if (options.pathsOf) {
-						relevantChanges = changes.filter(change => change.path.length === options.pathsOf.length + 1 || change.type === REVERSE || change.type === SHUFFLE);
-					} else if (options.pathsFrom) {
-						oPaths = options.pathsFrom;
-						relevantChanges = changes.filter(change => change.path.join('.').startsWith(oPaths));
-					}
 					if (relevantChanges.length) {
-						if (oMeta.options && oMeta.options.async) {
+						if (currentObservable.options.async) {
 							//	this the async handling which
-							if (!oMeta.options.batches) {
-								queueMicrotask(() => {
-									oMeta.options.batches.forEach(b => {
-										b[0](b[1]);
-									});
-									// oMeta.options.batches = null;
-								});
-								oMeta.options.batches = [];
+							if (!currentObservable.options.batches) {
+								currentObservable.options.batches = [];
+								queueMicrotask(callObserversFromMT.bind(currentObservable.options.batches));
 							}
-							let rb = oMeta.options.batches.find(b => b[0] === target);
+							let rb = currentObservable.options.batches.find(b => b[0] === target);
 							if (!rb) {
 								rb = [target, []];
-								oMeta.options.batches.push(rb);
+								currentObservable.options.batches.push(rb);
 							}
 							rb[1].push.apply(rb[1], relevantChanges);
 						} else {
@@ -157,11 +164,11 @@ const
 			}
 
 			let tmpa;
-			if (oMeta.parent) {
+			if (currentObservable.parent) {
 				tmpa = new Array(l);
 				for (let i = 0; i < l; i++) {
 					tmp = changes[i];
-					newPath = [oMeta.ownKey, ...tmp.path];
+					newPath = [currentObservable.ownKey, ...tmp.path];
 					tmpa[i] = {
 						type: tmp.type,
 						path: newPath,
@@ -171,11 +178,11 @@ const
 					};
 				}
 				changes = tmpa;
-				oMeta = oMeta.parent;
+				currentObservable = currentObservable.parent;
 			} else {
-				break;
+				currentObservable = null;
 			}
-		} while (true);
+		} while (currentObservable);
 	},
 	getObservedOf = function getObservedOf(item, key, parent) {
 		if (!item || typeof item !== 'object') {
@@ -531,7 +538,7 @@ class OMetaBase {
 		this.revokable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = targetClone;
-		this.options = properties.options;
+		this.options = properties.options || {};
 	}
 
 	detach() {

@@ -1,6 +1,7 @@
 ﻿/* eslint-disable unicode-bom */
 import os from 'os';
 import fs from 'fs';
+import process from 'process';
 import fsExtra from 'fs-extra';
 import uglifyES from 'uglify-es';
 
@@ -12,7 +13,7 @@ process.stdout.write('copying "src" to "dist"...');
 fsExtra.copySync('./src', './dist');
 process.stdout.write(`\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
 
-process.stdout.write(`postprocessing "dist"...${os.EOL}`);
+process.stdout.write(`${os.EOL}`);
 
 //	TODO: to be removed when NodeJS start LTS of ES modules
 process.stdout.write('rewriting export definition for NodeJS distribution (temporary, until ES6 modules become fully supported)');

@@ -33,7 +33,7 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 		po = Observable.from(o);
 	}
 	ended = performance.now();
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / creationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 
 	//	add listeners/callbacks
 	po.observe(changes => {
@@ -56,7 +56,7 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 	ended = performance.now();
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 
 	//	adding new property
 	changesCountA = 0;
@@ -69,7 +69,7 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 	ended = performance.now();
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 
 	//	removing new property
 	changesCountA = 0;
@@ -82,7 +82,7 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 	ended = performance.now();
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 });
 
 suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back' }, () => {
@@ -136,7 +136,7 @@ suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop
 	if (po.users.length !== mutationIterations) throw new Error('expected to have total of ' + mutationIterations + ' elements in pushed array, but got ' + po.length);
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 
 	//	add orders array to each one of them
 	changesCountA = 0;
@@ -149,7 +149,7 @@ suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop
 	ended = performance.now();
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 
 	//	pop objects
 	changesCountA = 0;
@@ -163,5 +163,5 @@ suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop
 	if (po.users.length !== 0) throw new Error('expected to have total of 0 elements in pushed array, but got ' + po.length);
 	if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
 	if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + ((ended - started) / mutationIterations) + 'ms');
+	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 });
