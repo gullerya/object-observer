@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable Load - async' });
 
-suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations', timeout: 15000 }, async test => {
+suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations', timeout: 20000 }, async test => {
 	const
 		creationIterations = 100000,
 		mutationIterations = 1000000,
@@ -91,7 +91,7 @@ suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutatio
 	console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
 });
 
-suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back', timeout: 15000 }, async test => {
+suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back', timeout: 20000 }, async test => {
 	const
 		mutationIterations = 100000,
 		o = {
