@@ -3,7 +3,7 @@ import { Observable } from '../../dist/object-observer.js';
 
 const suite = getSuite({ name: 'Testing Observable - async dispatch' });
 
-suite.runTest({ name: 'multiple continuous mutations' }, async test => {
+suite.runTest({ name: 'multiple continuous mutations', timeout: 15000 }, async test => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -24,7 +24,7 @@ suite.runTest({ name: 'multiple continuous mutations' }, async test => {
 	test.assertEqual(4, events.length);
 });
 
-suite.runTest({ name: 'multiple continuous mutations is split bursts' }, async test => {
+suite.runTest({ name: 'multiple continuous mutations is split bursts', timeout: 15000 }, async test => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -54,7 +54,7 @@ suite.runTest({ name: 'multiple continuous mutations is split bursts' }, async t
 	test.assertEqual(2, events.length);
 });
 
-suite.runTest({ name: 'Object.assign with multiple properties' }, async test => {
+suite.runTest({ name: 'Object.assign with multiple properties', timeout: 15000 }, async test => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },
@@ -73,7 +73,7 @@ suite.runTest({ name: 'Object.assign with multiple properties' }, async test => 
 	test.assertEqual(3, events.length);
 });
 
-suite.runTest({ name: 'Object.assign with multiple properties + more changes' }, async test => {
+suite.runTest({ name: 'Object.assign with multiple properties + more changes', timeout: 15000 }, async test => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },
