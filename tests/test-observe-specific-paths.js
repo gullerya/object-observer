@@ -45,7 +45,7 @@ suite.runTest({
 
 suite.runTest({
 	name: 'baseline - negative - no foreign options (pathFrom)',
-	expectError: 'is/are not a valid option/s'
+	expectError: 'is/are not a valid observer option/s'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
 	oo.observe(() => { }, { pathFrom: 'something' });

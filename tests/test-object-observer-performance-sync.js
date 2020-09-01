@@ -1,7 +1,7 @@
 import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 import { Observable } from '../../dist/object-observer.js';
 
-const suite = getSuite({ name: 'Testing Observable Load' });
+const suite = getSuite({ name: 'Testing Observable Load - sync' });
 
 suite.runTest({ name: 'creating 100,000 observables, 1,000,000 deep (x3) mutations' }, () => {
 	const

@@ -5,6 +5,7 @@ const
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
 	oMetaKey = Symbol('observable-meta-key'),
+	validObservableOptionKeys = { async: 1 },
 	validObserverOptionKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
 	processObserveOptions = function processObserveOptions(options) {
 		const result = {};
@@ -34,7 +35,7 @@ const
 		}
 		const invalidOptions = Object.keys(options).filter(option => !validObserverOptionKeys.hasOwnProperty(option));
 		if (invalidOptions.length) {
-			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid option/s`);
+			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid observer option/s`);
 		}
 		return result;
 	},
@@ -121,9 +122,10 @@ const
 		return result;
 	},
 	callObserversFromMT = function callObserversFromMT() {
-		const l = this.length;
-		for (let i = 0; i < l; i++) {
-			this[i][0](this[i][1]);
+		const batches = this.batches;
+		this.batches = null;
+		for (const b of batches) {
+			b[0](b[1]);
 		}
 	},
 	callObservers = function callObservers(oMeta, changes) {
@@ -143,16 +145,16 @@ const
 					if (relevantChanges.length) {
 						if (currentObservable.options.async) {
 							//	this the async handling which
-							if (!currentObservable.options.batches) {
-								currentObservable.options.batches = [];
-								queueMicrotask(callObserversFromMT.bind(currentObservable.options.batches));
+							if (!currentObservable.batches) {
+								currentObservable.batches = [];
+								queueMicrotask(callObserversFromMT.bind(currentObservable));
 							}
-							let rb = currentObservable.options.batches.find(b => b[0] === target);
+							let rb = currentObservable.batches.find(b => b[0] === target);
 							if (!rb) {
 								rb = [target, []];
-								currentObservable.options.batches.push(rb);
+								currentObservable.batches.push(rb);
 							}
-							rb[1].push.apply(rb[1], relevantChanges);
+							Array.prototype.push.apply(rb[1], relevantChanges);
 						} else {
 							//	this is the naive straight forward synchronous dispatch
 							target(relevantChanges);
@@ -538,7 +540,22 @@ class OMetaBase {
 		this.revokable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revokable.proxy;
 		this.target = targetClone;
-		this.options = properties.options || {};
+		this.processOptions(properties.options);
+	}
+
+	processOptions(options) {
+		if (options) {
+			if (typeof options !== 'object') {
+				throw new Error(`Observable options if/when provided, MAY only be a non-null object, got '${options}'`);
+			}
+			const invalidOptions = Object.keys(options).filter(option => !validObservableOptionKeys.hasOwnProperty(option));
+			if (invalidOptions.length) {
+				throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid Observable option/s`);
+			}
+			this.options = Object.assign({}, options);
+		} else {
+			this.options = {};
+		}
 	}
 
 	detach() {
