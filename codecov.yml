@@ -1,2 +1,2 @@
 fixes:
-	- "/dist/*::/src/"
+	- "/dist/object-observer.js::/src/object-observer.js"
