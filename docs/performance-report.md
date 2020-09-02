@@ -94,7 +94,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         <th>delete primitive<br>deep L3; 1M times</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>80</sub></td>
         <td>
             one: 0.0069 ms<br>
             all: 690.25 ms
@@ -113,7 +113,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge-chromium.png"><sub>80</sub></td>
         <td>
             one: 0.007 ms<br>
             all: 702.87 ms
@@ -132,7 +132,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/firefox.png"><sub>74</sub></td>
         <td>
             one: 0.018 ms<br>
             all: 1888 ms
@@ -151,7 +151,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.025 ms<br>
             all: 2530 ms
@@ -170,7 +170,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>17</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>17</sub></td>
         <td>
             one: 0.014 ms<br>
             all: 1433.1 ms
@@ -189,7 +189,7 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub>12.15.0</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
             one: 0.0084 ms<br>
             all: 841.73 ms
@@ -267,7 +267,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         <th>pop 100,000 objects</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/chrome.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>80</sub></td>
         <td>
             one: 0.0099 ms<br>
             all: 996.94 ms
@@ -282,7 +282,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge-chromium.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge-chromium.png"><sub>80</sub></td>
         <td>
             one: 0.0099 ms<br>
             all: 994.55 ms
@@ -297,7 +297,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/firefox.png"><sub>74</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/firefox.png"><sub>74</sub></td>
         <td>
             one: 0.021 ms<br>
             all: 2119 ms
@@ -312,7 +312,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>13</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>13</sub></td>
         <td>
             one: 0.034 ms<br>
             all: 3425 ms
@@ -327,7 +327,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/edge.png"><sub>17</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>17</sub></td>
         <td>
             one: 0.017 ms<br>
             all: 1683.7 ms
@@ -342,7 +342,7 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser_icons/nodejs.png"><sub>12.15.0</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
             one: 0.0095 ms<br>
             all: 955.73 ms

@@ -8,24 +8,35 @@
 
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
-Main aspects:
+Main aspects and features:
+
 * implemented via native __Proxy__ (revokable)
+
 * observation is 'deep', yielding changes from a __sub-graphs__ too
+
 * nested objects of the observable graph are observables too
-* changes delivered in a __synchronous__ way
+
+* changes delivered in a __synchronous__ way by default, __asynchronous__ delivery (experimental) is optionally available as per `Observable` configuration
+
+* observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
+
 * original objects are __cloned__ while turned into `Observable`s
-* __arrays__ specifics:
+
+* __array__ specifics:
   * generic object-like mutations supported
   * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
-* __typed arrays__ specifics:
+
+* __typed array__ specifics:
   * generic object-like mutations supported
   * intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
   * massive mutations delivered in a single callback, usually having an array of an atomic changes
-* intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-* following host objects (and their extensions) __are actively checked__ and NOT cloned / turned into observables: `Date`, `Blob`, `Error`
 
-#### Support matrix: ![CHROME](docs/browser_icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser_icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser_icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser_icons/nodejs.png) <sub>8.10.0+</sub>
+* intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
+
+* following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`, `Blob`, `Error`
+
+#### Support matrix: ![CHROME](docs/browser-icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser-icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser-icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser-icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Performance report can be found [here](docs/performance-report.md)
 
@@ -71,7 +82,8 @@ Library implements `Observable` API as it is defined [here](docs/observable.md).
 ##### Objects
 
 ```javascript
-let order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+const
+	order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
     observableOrder = Observable.from(order);
 
 observableOrder.observe(changes => {
@@ -98,6 +110,12 @@ observableOrder.address.apt = 30;
 
 delete observableOrder.remark;
 //  { type: "delete", path: ['remark'], oldValue: 'remove me', object: observableOrder }
+
+Object.assign(observableOrder, { amount: 1, remark: 'less is more' }, { async: true });
+//	- by default the changes below would be delivered in a separate callback
+//	- due to async use, they are delivered as a batch in a single callback
+//  { type: 'update', path: ['ammount'], value: 1, oldValue: 7, object: observableOrder }
+//  { type: 'insert', path: ['remark'], value: 'less is more', object: observableOrder }
 ```
 
 ##### Arrays

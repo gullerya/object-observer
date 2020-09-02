@@ -11,7 +11,7 @@ Additionally, this API defines the `Change` object, list of which being a parame
 
 ## Static methods
 
-* __`from(input)`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance
+* __`from(input[, options])`__ - receives a _non-null object_ and returns its __clone__, decorated with an __`Observable`__ interface, effectively returning `Observable` instance
     * clone is deep
     * nested objects are turned into `Observable` instances too
     * cloning performed only on __own enumerable__ properties, leaving a possibility to 'hide' some data from observation
@@ -78,17 +78,11 @@ If/When provided, `options` parameter MUST contain ONLY one/some of the properti
 
 In order to fail-fast and prevent unexpected mess down the hill, incorrect observation options will throw.
 
-* __`path`__ - non-empty string; specific path to observe, only a changes of this exact path will be notified
-> If the `path` is `firstName` when observing `{ firstName: 'some', lastName: 'name' }`, ONLY and ONLY changes of the `firstName` will be notified.
-When the `path` equals `address` when observing `{ address: { city: 'city', street: 'street' } }`, ONLY and ONLY changes of `address` will be observed, BUT NOT, for instance, changes of `city` or `street`. 
+* __`path`__ - non-empty string; specific path to observe, only a changes of this exact path will be notified; [details here](filter-paths.md)
 
-* __`pathsOf`__ - string, MAY be empty; direct properties of the specified path will be notified
-> If the `path` equals `address` when observing an object from the examples above, ONLY and ONLY changes of the direct properties of `address` will be notified.
->
-> The `path` MAY be empty string, in this case a top level changed will be notified.
+* __`pathsOf`__ - string, MAY be empty; direct properties of the specified path will be notified; [details here](filter-paths.md)
 
-* __`pathsFrom`__ - non-empty string, any changes from the specified path and deeper will be delivered to the observer; this option MAY NOT be used together with `path` option
-> If the `pathsFrom` equals `'address'` when observing `{ addressNew: {...}, addressOld: {...} }`, ALL of the changes to `addressNew` and `addressOld` and their nested properties of any level of depth will be notified.
+* __`pathsFrom`__ - non-empty string, any changes from the specified path and deeper will be delivered to the observer; this option MAY NOT be used together with  `path` option; [details here](filter-paths.md)
 
 ## `Change` instance properties
 
