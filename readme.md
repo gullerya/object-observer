@@ -42,6 +42,10 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __3.2.0__
+  * implemented [Issue no. 45](https://github.com/gullerya/object-observer/issues/45) - implemented async flavor of changes delivery on per Observable configuration basis; default behavior remained the same - synchronous
+  * implemented [Issue no. 51](https://github.com/gullerya/object-observer/issues/51) - batch delivery of `Object.assign` changes is enabled via the async opt-in, see issue #45 above
+
 * __3.1.1__
   * fixed [Issue no. 58](https://github.com/gullerya/object-observer/issues/58) - JSFiddle links to point to the latest
 
@@ -49,11 +53,6 @@ Main aspects and features:
   * implemented [Issue no. 55](https://github.com/gullerya/object-observer/issues/55) - enhanced documentation of observation options
   * implemented [Issue no. 56](https://github.com/gullerya/object-observer/issues/56) - fixed handling of `pathsOf` option in case of `Array` massive mutations (`reverse`, `shuffle` events)
   * enhanced tests and fixed mis-implemented negative ones
-
-* __3.0.3__
-  * implemented [Issue no. 46](https://github.com/gullerya/object-observer/issues/46) - added support to the `TypedArray` objects
-  * implemented [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
-  * slight performance improvements
 
 For a preview/playground you are welcome to:
 * [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
