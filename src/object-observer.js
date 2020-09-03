@@ -111,13 +111,20 @@ const
 		let result = changes;
 		if (options.path) {
 			const oPath = options.path;
-			result = changes.filter(change => change.path.join('.') === oPath);
+			result = changes.filter(change =>
+				change.path.join('.') === oPath
+			);
 		} else if (options.pathsOf) {
 			const oPathsOf = options.pathsOf;
-			result = changes.filter(change => change.path.length === oPathsOf.length + 1 || change.type === REVERSE || change.type === SHUFFLE);
+			result = changes.filter(change =>
+				change.path.length === oPathsOf.length + 1 ||
+				(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))
+			);
 		} else if (options.pathsFrom) {
 			const oPathsFrom = options.pathsFrom;
-			result = changes.filter(change => change.path.join('.').startsWith(oPathsFrom));
+			result = changes.filter(change =>
+				change.path.join('.').startsWith(oPathsFrom)
+			);
 		}
 		return result;
 	},
