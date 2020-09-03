@@ -42,6 +42,9 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __3.1.1__
+  * fixed [Issue no. 58](https://github.com/gullerya/object-observer/issues/58) - JSFiddle lint to point to the latest
+
 * __3.1.0__
   * implemented [Issue no. 55](https://github.com/gullerya/object-observer/issues/55) - enhanced documentation of observation options
   * implemented [Issue no. 56](https://github.com/gullerya/object-observer/issues/56) - fixed handling of `pathsOf` option in case of `Array` massive mutations (`reverse`, `shuffle` events)
@@ -52,11 +55,8 @@ Main aspects and features:
   * implemented [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
   * slight performance improvements
 
-* __2.9.4__
-  * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
-
 For a preview/playground you are welcome to:
-* [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/)
+* [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
 * [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
 
 # Loading the Library
