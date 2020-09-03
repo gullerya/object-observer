@@ -16,7 +16,7 @@ Main aspects and features:
 
 * nested objects of the observable graph are observables too
 
-* changes delivered in a __synchronous__ way by default, __asynchronous__ delivery (experimental) is optionally available as per `Observable` configuration
+* changes delivered in a __synchronous__ way by default, __asynchronous__ delivery (experimental) is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
 
 * observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
 
