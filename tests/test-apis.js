@@ -102,8 +102,23 @@ suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }
 	test.assertEqual(0, Object.keys(aa).length);
 });
 
-suite.runTest({ name: 'test observable APIs - Observable can not be used via constructor', expectError: 'Observable MAY NOT be created via constructor' }, () => {
-	if (new Observable()) {
-		throw new Error('wrong path');
-	}
+suite.runTest({
+	name: 'test observable APIs - Observable can not be used via constructor',
+	expectError: 'Observable MAY NOT be created via constructor'
+}, () => {
+	new Observable();
+});
+
+suite.runTest({
+	name: 'negative - invalid options - not an object',
+	expectError: 'Observable options if/when provided, MAY only be an object'
+}, () => {
+	Observable.from({}, 4);
+});
+
+suite.runTest({
+	name: 'negative - invalid options - wrong param',
+	expectError: 'is/are not a valid Observable option/s'
+}, () => {
+	Observable.from({}, { invalid: 'key' });
 });

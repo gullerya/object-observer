@@ -553,7 +553,7 @@ class OMetaBase {
 	processOptions(options) {
 		if (options) {
 			if (typeof options !== 'object') {
-				throw new Error(`Observable options if/when provided, MAY only be a non-null object, got '${options}'`);
+				throw new Error(`Observable options if/when provided, MAY only be an object, got '${options}'`);
 			}
 			const invalidOptions = Object.keys(options).filter(option => !validObservableOptionKeys.hasOwnProperty(option));
 			if (invalidOptions.length) {
