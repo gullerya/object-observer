@@ -9,24 +9,24 @@ Some of the options are filtering ones, allowing to specify the changes of inter
 Value expected to be a non-empty string representing a path, any changes of which and deeper will be delivered to the observer.
 > This option MAY NOT be used together with `path` option.
 
-![paths from](./filter-graphs/filter-paths-from.svg)
-
-Given, that the graph above is our `Observable o` and we have subscribed for the changes via:
-```
-o.observe(callback, { pathsFrom: 'address' });
-```
-
-Following mutations __will__ be delivered to the `callback`:
-```
-o.address.street.apt = 5;
+<table>
+	<tr>
+		<td width="50%">
+			<img src="./filter-graphs/filter-paths-from.svg"/>
+		</td>
+		<td>
+			Given, that the graph above is our <code>Observable o</code> and we have subscribed for the changes via:
+<pre><code>o.observe(callback, { pathsFrom: 'address' });</code></pre>
+			Following mutations <b>will</b> be delivered to the <code>callback</code>:
+<pre><code>o.address.street.apt = 5;
 o.address.city = 'DreamCity';
-o.address = {};
-```
+o.address = {};</code></pre>
+			Following mutations <b>will not</b> be delivered to the <code>callback</code>:
+<pre><code>o.lastName = 'Joker';</code></pre>
+		</td>
+	</tr>
+</table>
 
-Following mutations __will not__ be delivered to the `callback`:
-```
-o.lastName = 'Joker';
-```
 
 ## __`pathsOf`__
 
