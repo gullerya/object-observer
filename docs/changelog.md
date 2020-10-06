@@ -1,21 +1,32 @@
 # Changelog
 
-* __3.2.0__
-  * implemented [Issue no. 45](https://github.com/gullerya/object-observer/issues/45) - implemented async flavor of changes delivery on per Observable configuration basis; default behavior remained the same - synchronous
-  * implemented [Issue no. 51](https://github.com/gullerya/object-observer/issues/51) - batch delivery of `Object.assign` changes is enabled via the async opt-in, see issue #45 above
+Change log of the `object-observer` by versions.
 
-* __3.1.1__
-  * fixed [Issue no. 58](https://github.com/gullerya/object-observer/issues/58) - JSFiddle link to point to the latest
+## [Unreleased]
 
-* __3.1.0__
-  * implemented [Issue no. 55](https://github.com/gullerya/object-observer/issues/55) - enhanced documentation of observation options
-  * implemented [Issue no. 56](https://github.com/gullerya/object-observer/issues/56) - fixed handling of `pathsOf` option in case of `Array` massive mutations (`reverse`, `shuffle` events)
-  * enhanced tests and fixed mis-implemented negative ones
+## [3.2.0] - 2020-09-03
+### Added
+- [Issue no. 45](https://github.com/gullerya/object-observer/issues/45) - implemented async flavor of changes delivery on per Observable configuration basis; default behavior remained the same - synchronous
+- [Issue no. 51](https://github.com/gullerya/object-observer/issues/51) - batch delivery of `Object.assign` changes is enabled via the async opt-in, see issue #45 above
 
-* __3.0.3__
-  * implemented [Issue no. 46](https://github.com/gullerya/object-observer/issues/46) - added support to the `TypedArray` objects
-  * implemented [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
-  * slight performance improvements
+## [3.1.1] - 2020-09-03
+### Fixed
+- [Issue no. 58](https://github.com/gullerya/object-observer/issues/58) - JSFiddle link to point to the latest
+
+## [3.1.0] - 2020-08-23
+### Changed
+- [Issue no. 55](https://github.com/gullerya/object-observer/issues/55) - enhanced documentation of observation options
+### Fixed
+- [Issue no. 56](https://github.com/gullerya/object-observer/issues/56) - fixed handling of `pathsOf` option in case of `Array` massive mutations (`reverse`, `shuffle` events)
+### Added
+- enhanced tests and fixed mis-implemented negative ones
+
+## [3.0.3] - 2020-06-04
+### Added
+- [Issue no. 46](https://github.com/gullerya/object-observer/issues/46) - added support to the `TypedArray` objects
+- [Issue no. 44](https://github.com/gullerya/object-observer/issues/44) - added support to the `copyWithin` method (`Array`, `TypedArray`)
+### Fixed
+- slight performance improvements
 
 * __2.9.4__
   * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
