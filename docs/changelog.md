@@ -3,6 +3,8 @@
 Change log of the `object-observer` by versions.
 
 ## [Unreleased]
+### Added
+- security process to be used - [TideLift](https://tidelift.com/security)
 
 ## [3.2.0] - 2020-09-03
 ### Added
