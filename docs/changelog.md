@@ -28,25 +28,36 @@ Change log of the `object-observer` by versions.
 ### Fixed
 - slight performance improvements
 
-* __2.9.4__
-  * implemented [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
+## [2.9.4] - 2020-03-14
+### Added
+- [Issue no. 31](https://github.com/gullerya/object-observer/issues/31) - added option to observe `pathsOf`, direct properties of a specific path only
 
-* __2.8.0__
-  * officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
+## [2.8.0] - 2020-03-13
+### Added
+- officially publishing and documenting [Issue no. 33](https://github.com/gullerya/object-observer/issues/33) - any nested object of an `Observable` graph is observable in itself
 
-* __2.7.0__
-  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/32) - added experimental functionality of nested objects being observables on their own (not yet documented)
-  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/33) - added experimental functionality of nested objects being observables on their own (not yet documented)
+## [2.7.0] - 2020-02-27
+### Added
+- [Issue no. 29](https://github.com/gullerya/object-observer/issues/32) - added experimental functionality of nested objects being observables on their own (not yet documented)
+- [Issue no. 29](https://github.com/gullerya/object-observer/issues/33) - added experimental functionality of nested objects being observables on their own (not yet documented)
 
-* __2.6.0__
-  * implemented [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
-  * updated performance numbers: slightly affected by the new functionality, Edge became obsolete while Chromium-Edge entered the picture, measured NodeJS
+## [2.6.0] - 2020-02-24
+### Added
+- [Issue no. 29](https://github.com/gullerya/object-observer/issues/29) - added experimental functionality of nested objects being observables on their own (not yet documented)
+### Changed
+- updated performance numbers: slightly affected by the new functionality, Edge became obsolete while Chromium-Edge entered the picture, measured NodeJS
 
-* __2.5.0__
-  * fixed [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
+## [2.5.0] - 2019-11-07
+### Fixed
+- [Issue no. 28](https://github.com/gullerya/object-observer/issues/28) - fixing non-observable objects detection
 
-* __2.4.2__
-  * minor improvenent in the CI part of the library due to newer/better version of the test runner
+## [2.4.2] - 2019-10-10
+### Fixed
+- minor improvenent in the CI part of the library due to newer/better version of the test runner
+
+
+---
+# Historical releases
 
 * __2.4.1__
   * fixed [Issue no. 27](https://github.com/gullerya/object-observer/issues/27) - broken `NodeJS` dedicated distro
