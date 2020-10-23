@@ -22,7 +22,7 @@ jobs:
 
       - name: Install NPM
           run: npm install
-  
+
       # Bump
       - name: Extract release version
         id: extractVersion
