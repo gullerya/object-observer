@@ -57,4 +57,4 @@ jobs:
       - name: Tag release
         run: |
           git tag -a v${{ steps.extractVersion.outputs.version }} -m "tag release v${{ steps.extractVersion.outputs.version }}"
-          git push --follow-tags
+          git push origin HEAD:master v${{ steps.extractVersion.outputs.version }}
