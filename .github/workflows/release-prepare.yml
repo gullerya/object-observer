@@ -21,7 +21,7 @@ jobs:
           node-version: 14
 
       - name: Install NPM
-         run: npm install
+          run: npm install
   
       # Bump
       - name: Extract release version
