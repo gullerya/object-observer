@@ -1,6 +1,6 @@
 {
 	"name": "object-observer",
-	"version": "4.0.0",
+	"version": "4.0.1",
 	"description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
 	"keywords": [
 		"object",
@@ -40,7 +40,6 @@
 		{
 			"url": "https://tidelift.com/funding/github/npm/object-observer"
 		}
-		
 	],
 	"repository": {
 		"type": "git",
