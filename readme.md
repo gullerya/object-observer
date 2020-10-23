@@ -42,7 +42,7 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-* __4.0.0__
+* __4.0.1__
   * implemented [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CJS fashioned NodeJS flavor distribution
 
 * __3.2.0__

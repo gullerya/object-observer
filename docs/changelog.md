@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## [4.0.0] - 2020-10-23
+## [4.0.1] - 2020-10-23
 ### Added
 - security process to be used - [TideLift](https://tidelift.com/security)
+- added automated release CI flow
 ### Removed
 - [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CommonJS-fashioned NodeJS distribution
 
