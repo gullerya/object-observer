@@ -52,7 +52,7 @@ jobs:
           git config user.name "object-observer CI"
           git add --all
           git commit -m "update version to ${{ steps.extractVersion.outputs.version }}"
-          git push
+          git push origin HEAD:master
 
       - name: Tag release
         run: |
