@@ -1,38 +1,38 @@
 ﻿/* eslint-disable unicode-bom */
 import os from 'os';
 import fs from 'fs';
+import path from 'path';
 import process from 'process';
-import fsExtra from 'fs-extra';
 import uglifyES from 'uglify-es';
 
-process.stdout.write('cleaning "dist"...');
-fsExtra.emptyDirSync('./dist');
-process.stdout.write(`\t\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
+const
+	filesToCopy = ['object-observer.js'],
+	filesToMinify = ['object-observer.js'];
 
-process.stdout.write('copying "src" to "dist"...');
-fsExtra.copySync('./src', './dist');
+process.stdout.write(`\x1B[32mStarting the build...\x1B[0m${os.EOL}${os.EOL}`);
+
+process.stdout.write('\tcleaning "dist"...');
+fs.rmdirSync('./dist', { recursive: true });
+fs.mkdirSync('./dist');
 process.stdout.write(`\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
 
-process.stdout.write(`${os.EOL}`);
-
-//	TODO: to be removed when NodeJS start LTS of ES modules
-process.stdout.write('rewriting export definition for NodeJS distribution (temporary, until ES6 modules become fully supported)');
-const baseCode = fs.readFileSync('./dist/object-observer.js', { encoding: 'utf8' });
-fsExtra.outputFileSync('./dist/node/object-observer.js', baseCode.replace('export { Observable };', 'exports.Observable = Observable;'));
+process.stdout.write('\tcopying "src" to "dist"...');
+for (const fileToCopy of filesToCopy) {
+	fs.copyFileSync(path.join('./src', fileToCopy), path.join('./dist', fileToCopy));
+}
 process.stdout.write(`\t\x1B[32mOK\x1B[0m${os.EOL}`);
 
-process.stdout.write('minifying...');
+process.stdout.write('\tminifying...');
 const options = {
 	toplevel: true
 };
-fs.writeFileSync(
-	'./dist/object-observer.min.js',
-	uglifyES.minify(fs.readFileSync('./dist/object-observer.js', { encoding: 'utf8' }), options).code
-);
+for (const fileToMinify of filesToMinify) {
+	const fp = path.join('./dist', fileToMinify);
+	const mfp = path.join('./dist', fileToMinify.replace(/\.js$/, '.min.js'));
+	const fc = fs.readFileSync(fp, { encoding: 'utf8' });
+	const mfc = uglifyES.minify(fc, options).code;
+	fs.writeFileSync(mfp, mfc);
+}
+process.stdout.write(`\t\t\t\x1B[32mOK\x1B[0m${os.EOL}${os.EOL}`);
 
-//	TODO: to be removed when NodeJS start LTS of ES modules
-fs.writeFileSync(
-	'./dist/node/object-observer.min.js',
-	uglifyES.minify(fs.readFileSync('./dist/node/object-observer.js', { encoding: 'utf8' }), options).code
-);
-process.stdout.write(`\t\t\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
+process.stdout.write(`\x1B[32mDONE\x1B[0m${os.EOL}`);

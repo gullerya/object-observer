@@ -2,9 +2,17 @@
 
 Change log of the `object-observer` by versions.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
+
+
+## [4.0.0] - 2020-10-23
 ### Added
 - security process to be used - [TideLift](https://tidelift.com/security)
+### Removed
+- [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CommonJS-fashioned NodeJS distribution
 
 ## [3.2.0] - 2020-09-03
 ### Added

@@ -42,6 +42,9 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __4.0.0__
+  * implemented [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CJS fashioned NodeJS flavor distribution
+
 * __3.2.0__
   * implemented [Issue no. 45](https://github.com/gullerya/object-observer/issues/45) - implemented async flavor of changes delivery on per Observable configuration basis; default behavior remained the same - synchronous
   * implemented [Issue no. 51](https://github.com/gullerya/object-observer/issues/51) - batch delivery of `Object.assign` changes is enabled via the async opt-in, see issue #45 above
@@ -49,27 +52,16 @@ Main aspects and features:
 * __3.1.1__
   * fixed [Issue no. 58](https://github.com/gullerya/object-observer/issues/58) - JSFiddle links to point to the latest
 
-* __3.1.0__
-  * implemented [Issue no. 55](https://github.com/gullerya/object-observer/issues/55) - enhanced documentation of observation options
-  * implemented [Issue no. 56](https://github.com/gullerya/object-observer/issues/56) - fixed handling of `pathsOf` option in case of `Array` massive mutations (`reverse`, `shuffle` events)
-  * enhanced tests and fixed mis-implemented negative ones
-
 For a preview/playground you are welcome to:
 * [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
 * [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
 
-# Loading the Library
+# Loading
 
 `object-observer` provided as an __ES6 module__.
 
-> In `NodeJS` environment, that is not yet fully supports ES6 modules, use the dedicated distribution as in example below. Once `NodeJS` (seemingly 14.x.x going to LTS) will add a full support for ES6 modules, this special distribution will be removed.
-
 ```javascript
-//  browser
 import { Observable } from 'dist/object-observer.min.js';
-
-//  NodeJS (when NodeJS will fully support ES6 modules syntax - this one will be removed)
-const Observable = require('./dist/node/object-observer').Observable;
 ```
 
 # API
