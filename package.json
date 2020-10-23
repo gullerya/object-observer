@@ -1,6 +1,6 @@
 {
 	"name": "object-observer",
-	"version": "4.0.1",
+	"version": "4.0.0",
 	"description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
 	"keywords": [
 		"object",
@@ -33,7 +33,15 @@
 		"name": "Yuri Guller",
 		"email": "gullerya@gmail.com"
 	},
-	"funding": "https://paypal.me/gullerya?locale.x=en_US",
+	"funding": [
+		{
+			"url": "https://paypal.me/gullerya?locale.x=en_US"
+		},
+		{
+			"url": "https://tidelift.com/funding/github/npm/object-observer"
+		}
+		
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/gullerya/object-observer"
