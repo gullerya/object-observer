@@ -25,6 +25,24 @@ suite.runTest({ name: 'creating observable leaves original object as is' }, test
 	}
 });
 
+suite.runTest({ name: 'creating observable preserves original object keys order' }, test => {
+	const person = {
+		name: 'name',
+		age: 7,
+		street: 'street',
+		block: 9,
+		apt: 1
+	};
+	const oPerson = Observable.from(person);
+	const sKeys = Object.keys(person);
+	const oKeys = Object.keys(oPerson);
+
+	test.assertEqual(sKeys.length, oKeys.length);
+	for (const [i, key] of Object.entries(sKeys)) {
+		test.assertEqual(key, oKeys[i]);
+	}
+});
+
 suite.runTest({ name: 'plain object operations' }, test => {
 	const o = {
 		name: 'name',

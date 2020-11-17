@@ -83,22 +83,18 @@ const
 	propertiesBluePrint = { [oMetaKey]: { value: null }, observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = function prepareObject(source, oMeta) {
 		propertiesBluePrint[oMetaKey].value = oMeta;
-		const
-			keys = Object.keys(source),
-			target = Object.defineProperties({}, propertiesBluePrint);
-		let l = keys.length, key;
-		while (l--) {
-			key = keys[l];
+		const target = Object.defineProperties({}, propertiesBluePrint);
+		for (const key of Object.keys(source)) {
 			target[key] = getObservedOf(source[key], key, oMeta);
 		}
 		return target;
 	},
 	prepareArray = function prepareArray(source, oMeta) {
-		let l = source.length;
+		let i = 0, l = source.length;
 		propertiesBluePrint[oMetaKey].value = oMeta;
 		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
-		while (l--) {
-			target[l] = getObservedOf(source[l], l, oMeta);
+		for (; i < l; i++) {
+			target[i] = getObservedOf(source[i], i, oMeta);
 		}
 		return target;
 	},

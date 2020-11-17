@@ -51,7 +51,7 @@
 		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
 	},
 	"devDependencies": {
-		"eslint": "^7.12.0",
+		"eslint": "^7.13.0",
 		"fs-extra": "^9.0.1",
 		"just-test": "2.3.2",
 		"uglify-es": "^3.3.9"
