@@ -6,10 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [4.0.3] - 2020-11-17
+### Fixed
+- [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
 ### Changed
 - dependencies updated
 
-## [4.0.1] - 2020-10-23
+## [4.0.2] - 2020-10-23
 ### Added
 - security process to be used - [TideLift](https://tidelift.com/security)
 - added automated release CI flow
