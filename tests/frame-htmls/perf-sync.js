@@ -3,10 +3,10 @@ import { Observable } from '../../src/object-observer.js';
 const
 	CREATE_ITERATIONS = 100000,
 	MUTATE_ITERATIONS = 1000000,
-	OBJECT_CREATION_TRSHLD = 0.05,
+	OBJECT_CREATION_TRSHLD = 0.03,
 	PRIMITIVE_DEEP_MUTATION_TRSHLD = 0.001,
 	PRIMITIVE_DEEP_ADDITION_TRSHLD = 0.001,
-	PRIMITIVE_DEEP_DELETION_TRSHLD = 0.001;
+	PRIMITIVE_DEEP_DELETION_TRSHLD = 0.003;
 
 window.runTests = suite => {
 	suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, sync: true }, test => {
