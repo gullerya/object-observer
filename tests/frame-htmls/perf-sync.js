@@ -1,6 +1,6 @@
 import { Observable } from '../../src/object-observer.js';
 
-const TOLERANCE_MULTIPLIER = 3;
+const TOLERANCE_MULTIPLIER = 3.5;
 
 window.runTests = suite => {
 	const
