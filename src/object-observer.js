@@ -124,47 +124,48 @@ const
 		}
 		return result;
 	},
+	callObserverSafe = function callObserverSafe(listener, changes) {
+		try {
+			listener(changes);
+		} catch (e) {
+			console.error(`failed to notify listener ${listener} with ${changes}`, e);
+		}
+	},
 	callObserversFromMT = function callObserversFromMT() {
 		const batches = this.batches;
 		this.batches = null;
-		for (const b of batches) {
-			b[0](b[1]);
+		for (const [listener, options] of batches) {
+			callObserverSafe(listener, options);
 		}
 	},
 	callObservers = function callObservers(oMeta, changes) {
 		let currentObservable = oMeta;
-		let observers, pair, target, options, relevantChanges, i, newPath, tmp;
+		let observers, target, options, relevantChanges, i, newPath, tmp;
 		const l = changes.length;
 		do {
 			observers = currentObservable.observers;
 			i = observers.length;
 			while (i--) {
-				try {
-					pair = observers[i];
-					target = pair[0];
-					options = pair[1];
-					relevantChanges = filterChanges(options, changes);
+				[target, options] = observers[i];
+				relevantChanges = filterChanges(options, changes);
 
-					if (relevantChanges.length) {
-						if (currentObservable.options.async) {
-							//	this the async handling which
-							if (!currentObservable.batches) {
-								currentObservable.batches = [];
-								queueMicrotask(callObserversFromMT.bind(currentObservable));
-							}
-							let rb = currentObservable.batches.find(b => b[0] === target);
-							if (!rb) {
-								rb = [target, []];
-								currentObservable.batches.push(rb);
-							}
-							Array.prototype.push.apply(rb[1], relevantChanges);
-						} else {
-							//	this is the naive straight forward synchronous dispatch
-							target(relevantChanges);
+				if (relevantChanges.length) {
+					if (currentObservable.options.async) {
+						//	this is the async dispatch handling
+						if (!currentObservable.batches) {
+							currentObservable.batches = [];
+							queueMicrotask(callObserversFromMT.bind(currentObservable));
 						}
+						let rb = currentObservable.batches.find(b => b[0] === target);
+						if (!rb) {
+							rb = [target, []];
+							currentObservable.batches.push(rb);
+						}
+						Array.prototype.push.apply(rb[1], relevantChanges);
+					} else {
+						//	this is the naive straight forward synchronous dispatch
+						callObserverSafe(target, relevantChanges);
 					}
-				} catch (e) {
-					console.error(`failed to deliver changes to listener ${target}`, e);
 				}
 			}
 
@@ -527,10 +528,7 @@ const
 
 class OMetaBase {
 	constructor(properties, cloningFunction) {
-		const
-			source = properties.target,
-			parent = properties.parent,
-			ownKey = properties.ownKey;
+		const { target, parent, ownKey } = properties;
 		if (parent && ownKey !== undefined) {
 			this.parent = parent;
 			this.ownKey = ownKey;
@@ -538,12 +536,12 @@ class OMetaBase {
 			this.parent = null;
 			this.ownKey = null;
 		}
-		const targetClone = cloningFunction(source, this);
+		const targetClone = cloningFunction(target, this);
 		this.observers = [];
 		this.revocable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revocable.proxy;
 		this.target = targetClone;
-		this.processOptions(properties.options);
+		this.options = this.processOptions(properties.options);
 	}
 
 	processOptions(options) {
@@ -555,9 +553,9 @@ class OMetaBase {
 			if (invalidOptions.length) {
 				throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid Observable option/s`);
 			}
-			this.options = Object.assign({}, options);
+			return Object.assign({}, options);
 		} else {
-			this.options = {};
+			return {};
 		}
 	}
 
