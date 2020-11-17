@@ -7,7 +7,7 @@ window.runTests = suite => {
 
 	suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, sync: true }, async test => {
 		const
-			OBJECT_CREATION_TRSHLD = 0.02,
+			OBJECT_CREATION_TRSHLD = 0.01,
 			PRIMITIVE_DEEP_MUTATION_TRSHLD = 0.008,
 			PRIMITIVE_DEEP_ADDITION_TRSHLD = 0.0016,
 			PRIMITIVE_DEEP_DELETION_TRSHLD = 0.0016;
