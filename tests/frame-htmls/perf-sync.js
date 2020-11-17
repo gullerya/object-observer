@@ -8,10 +8,15 @@ const
 	PRIMITIVE_DEEP_ADDITION_TRSHLD = 0.001,
 	PRIMITIVE_DEEP_DELETION_TRSHLD = 0.003;
 
+const
+	ARRAY_ITERATIONS = 100000,
+	ARRAY_PUSH_TRSHLD = 0.05,
+	ARRAY_MUTATION_TRSHLD = 0.05,
+	ARRAY_POP_TRSHLD = 0.003;
+
 window.runTests = suite => {
 	suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, sync: true }, test => {
-		let ttl;
-		let avg;
+		let ttl, avg;
 		const
 			o = {
 				name: 'Anna Guller',
@@ -97,9 +102,9 @@ window.runTests = suite => {
 		test.assertTrue(avg < PRIMITIVE_DEEP_DELETION_TRSHLD, `expected ${PRIMITIVE_DEEP_DELETION_TRSHLD}, found ${avg}`);
 	});
 
-	suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back', sync: true }, () => {
+	suite.runTest({ name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`, sync: true }, test => {
+		let ttl, avg;
 		const
-			mutationIterations = 100000,
 			o = {
 				name: 'Anna Guller',
 				accountCreated: new Date(),
@@ -139,42 +144,51 @@ window.runTests = suite => {
 		//	push objects
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' objects pushes...');
+		console.info(`performing ${ARRAY_ITERATIONS} objects pushes...`);
 		started = performance.now();
-		for (let i = 0; i < mutationIterations; i++) {
+		for (let i = 0; i < ARRAY_ITERATIONS; i++) {
 			po.users.push(o);
 		}
 		ended = performance.now();
-		if (po.users.length !== mutationIterations) throw new Error('expected to have total of ' + mutationIterations + ' elements in pushed array, but got ' + po.length);
-		if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
-		if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
+		ttl = ended - started;
+		avg = ttl / ARRAY_ITERATIONS;
+		test.assertEqual(ARRAY_ITERATIONS, po.users.length);
+		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
+		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
+		console.info(`... push of ${ARRAY_ITERATIONS} objects done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
+		test.assertTrue(avg < ARRAY_PUSH_TRSHLD, `expected ${ARRAY_PUSH_TRSHLD}, found ${avg}`);
 
 		//	add orders array to each one of them
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' additions of arrays onto the objects...');
+		console.info(`performing ${ARRAY_ITERATIONS} additions of arrays onto the objects...`);
 		started = performance.now();
-		for (let i = 0; i < mutationIterations; i++) {
+		for (let i = 0; i < ARRAY_ITERATIONS; i++) {
 			po.users[i].orders = orders;
 		}
 		ended = performance.now();
-		if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
-		if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
+		ttl = ended - started;
+		avg = ttl / ARRAY_ITERATIONS;
+		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
+		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
+		console.info(`... mutate of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
+		test.assertTrue(avg < ARRAY_MUTATION_TRSHLD, `expected ${ARRAY_MUTATION_TRSHLD}, found ${avg}`);
 
 		//	pop objects
 		changesCountA = 0;
 		changesCountB = 0;
-		console.info('performing ' + mutationIterations + ' object pops...');
+		console.info(`performing ${ARRAY_ITERATIONS} object pops...`);
 		started = performance.now();
-		for (let i = 0; i < mutationIterations; i++) {
+		for (let i = 0; i < ARRAY_ITERATIONS; i++) {
 			po.users.pop();
 		}
 		ended = performance.now();
-		if (po.users.length !== 0) throw new Error('expected to have total of 0 elements in pushed array, but got ' + po.length);
-		if (changesCountA !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted A, but got ' + changesCountA);
-		if (changesCountB !== mutationIterations) throw new Error('expected to have ' + mutationIterations + ' changes counted B, but got ' + changesCountB);
-		console.info('\tdone: total time - ' + (ended - started) + 'ms, average operation time: ' + Math.round((ended - started) / mutationIterations * 10000) / 10000 + 'ms');
+		ttl = ended - started;
+		avg = ttl / ARRAY_ITERATIONS;
+		test.assertEqual(0, po.users.length);
+		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
+		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
+		console.info(`... mutate of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
+		test.assertTrue(avg < ARRAY_POP_TRSHLD, `expected ${ARRAY_POP_TRSHLD}, found ${avg}`);
 	});
 };
