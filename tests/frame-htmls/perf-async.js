@@ -1,5 +1,7 @@
 import { Observable } from '../../src/object-observer.js';
 
+const TOLERANCE_MULTIPLIER = 3;
+
 window.runTests = suite => {
 	const
 		CREATE_ITERATIONS = 100000,
@@ -7,10 +9,10 @@ window.runTests = suite => {
 
 	suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, sync: true }, async test => {
 		const
-			OBJECT_CREATION_TRSHLD = 0.01,
-			PRIMITIVE_DEEP_MUTATION_TRSHLD = 0.008,
-			PRIMITIVE_DEEP_ADDITION_TRSHLD = 0.0016,
-			PRIMITIVE_DEEP_DELETION_TRSHLD = 0.0016;
+			OBJECT_CREATION_TRSHLD = 0.004,
+			PRIMITIVE_DEEP_MUTATION_TRSHLD = 0.004,
+			PRIMITIVE_DEEP_ADDITION_TRSHLD = 0.0009,
+			PRIMITIVE_DEEP_DELETION_TRSHLD = 0.0009;
 
 		let ttl, avg;
 		const
@@ -43,7 +45,7 @@ window.runTests = suite => {
 		ttl = ended - started;
 		avg = ttl / CREATE_ITERATIONS;
 		console.info(`... [async] create of ${CREATE_ITERATIONS} observables done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < OBJECT_CREATION_TRSHLD, `expected ${OBJECT_CREATION_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < OBJECT_CREATION_TRSHLD * TOLERANCE_MULTIPLIER);
 
 		//	add listeners/callbacks
 		po.observe(changes => changesCountA += changes.length);
@@ -64,7 +66,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... [async] mutate of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_MUTATION_TRSHLD, `expected ${PRIMITIVE_DEEP_MUTATION_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < PRIMITIVE_DEEP_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER);
 
 		//	adding new property
 		changesCountA = 0;
@@ -81,7 +83,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... [async] add of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_ADDITION_TRSHLD, `expected ${PRIMITIVE_DEEP_ADDITION_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < PRIMITIVE_DEEP_ADDITION_TRSHLD * TOLERANCE_MULTIPLIER);
 
 		//	removing new property
 		changesCountA = 0;
@@ -98,7 +100,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... [async] delete of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_DELETION_TRSHLD, `expected ${PRIMITIVE_DEEP_DELETION_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < PRIMITIVE_DEEP_DELETION_TRSHLD * TOLERANCE_MULTIPLIER);
 	});
 
 	const
@@ -107,9 +109,9 @@ window.runTests = suite => {
 	suite.runTest({ name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`, sync: true }, async test => {
 		const
 			ARRAY_ITERATIONS = 100000,
-			ARRAY_PUSH_TRSHLD = 0.015,
-			ARRAY_MUTATION_TRSHLD = 0.016,
-			ARRAY_POP_TRSHLD = 0.0018;
+			ARRAY_PUSH_TRSHLD = 0.006,
+			ARRAY_MUTATION_TRSHLD = 0.007,
+			ARRAY_POP_TRSHLD = 0.0005;
 
 		let ttl, avg;
 		const
@@ -159,7 +161,7 @@ window.runTests = suite => {
 		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
 		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
 		console.info(`... [async] push of ${ARRAY_ITERATIONS} objects done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < ARRAY_PUSH_TRSHLD, `expected ${ARRAY_PUSH_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < ARRAY_PUSH_TRSHLD * TOLERANCE_MULTIPLIER);
 
 		//	add orders array to each one of them
 		changesCountA = 0;
@@ -176,7 +178,7 @@ window.runTests = suite => {
 		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
 		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
 		console.info(`... [async] add of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < ARRAY_MUTATION_TRSHLD, `expected ${ARRAY_MUTATION_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < ARRAY_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER);
 
 		//	pop objects
 		changesCountA = 0;
@@ -194,6 +196,6 @@ window.runTests = suite => {
 		test.assertEqual(ARRAY_ITERATIONS, changesCountA);
 		test.assertEqual(ARRAY_ITERATIONS, changesCountB);
 		console.info(`... [async] pop of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < ARRAY_POP_TRSHLD, `expected ${ARRAY_POP_TRSHLD}, found ${avg}`);
+		test.assertTrue(avg < ARRAY_POP_TRSHLD * TOLERANCE_MULTIPLIER);
 	});
 };
