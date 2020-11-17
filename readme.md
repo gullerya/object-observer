@@ -43,8 +43,9 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-* __4.0.3__
+* __4.0.4__
   * [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
+  * added perf tests
 
 * __4.0.2__
   * implemented [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CJS fashioned NodeJS flavor distribution
