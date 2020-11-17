@@ -42,7 +42,7 @@ window.runTests = suite => {
 		ttl = ended - started;
 		avg = ttl / CREATE_ITERATIONS;
 		console.info(`... create of ${CREATE_ITERATIONS} observables done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < OBJECT_CREATION_TRSHLD);
+		test.assertTrue(avg < OBJECT_CREATION_TRSHLD, `expected ${OBJECT_CREATION_TRSHLD}, found ${avg}`);
 
 		//	add listeners/callbacks
 		po.observe(changes => changesCountA += changes.length);
@@ -62,7 +62,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... mutate of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_MUTATION_TRSHLD);
+		test.assertTrue(avg < PRIMITIVE_DEEP_MUTATION_TRSHLD, `expected ${PRIMITIVE_DEEP_MUTATION_TRSHLD}, found ${avg}`);
 
 		//	adding new property
 		changesCountA = 0;
@@ -78,7 +78,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... add of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_ADDITION_TRSHLD);
+		test.assertTrue(avg < PRIMITIVE_DEEP_ADDITION_TRSHLD, `expected ${PRIMITIVE_DEEP_ADDITION_TRSHLD}, found ${avg}`);
 
 		//	removing new property
 		changesCountA = 0;
@@ -94,7 +94,7 @@ window.runTests = suite => {
 		test.assertEqual(MUTATE_ITERATIONS, changesCountA);
 		test.assertEqual(MUTATE_ITERATIONS, changesCountB);
 		console.info(`... delete of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
-		test.assertTrue(avg < PRIMITIVE_DEEP_DELETION_TRSHLD);
+		test.assertTrue(avg < PRIMITIVE_DEEP_DELETION_TRSHLD, `expected ${PRIMITIVE_DEEP_DELETION_TRSHLD}, found ${avg}`);
 	});
 
 	suite.runTest({ name: 'push 100,000 observables to an array, mutate them and pop them back', sync: true }, () => {
