@@ -8,7 +8,10 @@ const
 	CREATE_ITERATIONS = 100000,
 	MUTATE_ITERATIONS = 1000000;
 
-suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations` }, async () => {
+suite.runTest({
+	name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`,
+	sync: true
+}, async () => {
 	await executeInWorker('/tests/workers/perf-sync-test-a.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		CREATE_ITERATIONS: CREATE_ITERATIONS,
@@ -22,7 +25,10 @@ suite.runTest({ name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERA
 
 const ARRAY_ITERATIONS = 100000;
 
-suite.runTest({ name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back` }, async () => {
+suite.runTest({
+	name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`,
+	sync: true
+}, async () => {
 	await executeInWorker('/tests/workers/perf-sync-test-b.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		ARRAY_ITERATIONS: ARRAY_ITERATIONS,
