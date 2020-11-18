@@ -2,7 +2,7 @@ import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 
 const suite = getSuite({ name: 'Testing Observable load - sync' });
 
-const TOLERANCE_MULTIPLIER = 2;
+const TOLERANCE_MULTIPLIER = 10;
 
 const
 	CREATE_ITERATIONS = 100000,
