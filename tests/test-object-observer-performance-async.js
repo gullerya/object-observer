@@ -1,16 +1,60 @@
 import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 
-getIFrame()
-	.then(frame => {
-		const suite = getSuite({ name: 'Testing Observable Load - async' });
-		frame.contentWindow.runTests(suite);
-	});
+const suite = getSuite({ name: 'Testing Observable load - async' });
 
-async function getIFrame() {
-	return new Promise(r => {
-		const f = document.createElement('iframe');
-		f.src = './frame-htmls/perf-async.html';
-		document.body.appendChild(f);
-		f.addEventListener('load', () => r(f));
+const TOLERANCE_MULTIPLIER = 5;
+
+const
+	CREATE_ITERATIONS = 100000,
+	MUTATE_ITERATIONS = 1000000;
+
+suite.runTest({
+	name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`,
+	sync: true,
+	timeout: 15000
+}, async () => {
+	await executeInWorker('./perf-async-test-a.js', {
+		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
+		CREATE_ITERATIONS: CREATE_ITERATIONS,
+		MUTATE_ITERATIONS: MUTATE_ITERATIONS,
+		OBJECT_CREATION_TRSHLD: 0.007,
+		PRIMITIVE_DEEP_MUTATION_TRSHLD: 0.0007,
+		PRIMITIVE_DEEP_ADDITION_TRSHLD: 0.0009,
+		PRIMITIVE_DEEP_DELETION_TRSHLD: 0.0009
+	});
+});
+
+const ARRAY_ITERATIONS = 100000;
+
+suite.runTest({
+	name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`,
+	sync: true,
+	timeout: 15000
+}, async () => {
+	await executeInWorker('./perf-async-test-b.js', {
+		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
+		ARRAY_ITERATIONS: ARRAY_ITERATIONS,
+		ARRAY_PUSH_TRSHLD: 0.009,
+		ARRAY_MUTATION_TRSHLD: 0.009,
+		ARRAY_POP_TRSHLD: 0.0009
+	});
+});
+
+async function executeInWorker(testUrl, testParams) {
+	return new Promise((resolve, reject) => {
+		const w = new Worker('./workers/perf-worker.js');
+		w.onmessage = message => {
+			w.terminate();
+			if (message.data && message.data.error) {
+				reject(message.data.error);
+			} else {
+				resolve();
+			}
+		};
+		w.onerror = error => {
+			w.terminate();
+			reject(error);
+		};
+		w.postMessage({ testUrl: testUrl, testParams: testParams });
 	});
 }
