@@ -2,7 +2,7 @@ import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
 
 const suite = getSuite({ name: 'Testing Observable load - sync' });
 
-const TOLERANCE_MULTIPLIER = 10;
+const TOLERANCE_MULTIPLIER = 5;
 
 const
 	CREATE_ITERATIONS = 100000,
@@ -10,7 +10,8 @@ const
 
 suite.runTest({
 	name: `creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`,
-	sync: true
+	sync: true,
+	timeout: 15000
 }, async () => {
 	await executeInWorker('/tests/workers/perf-sync-test-a.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
@@ -27,7 +28,8 @@ const ARRAY_ITERATIONS = 100000;
 
 suite.runTest({
 	name: `push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`,
-	sync: true
+	sync: true,
+	timeout: 15000
 }, async () => {
 	await executeInWorker('/tests/workers/perf-sync-test-b.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
