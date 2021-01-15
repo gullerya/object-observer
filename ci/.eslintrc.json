@@ -9,6 +9,6 @@
 		"sourceType": "module"
 	},
 	"rules": {
-		"no-prototype-builtins": 0
+		"no-shadow": 2
 	}
 }

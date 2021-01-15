@@ -4,13 +4,20 @@ import { Observable } from '../../src/object-observer.js';
 const suite = getSuite({ name: 'Testing Observable APIs' });
 
 suite.runTest({ name: 'ensure Observable object has defined APIs' }, test => {
-	test.assertEqual(typeof Observable, 'function');
+	test.assertEqual(typeof Observable, 'object');
 	test.assertEqual(typeof Observable.from, 'function');
 	test.assertEqual(typeof Observable.isObservable, 'function');
+	test.assertEqual(2, Object.keys(Observable).length);
 });
 
-suite.runTest({ name: 'ensure Observable object is frozen', expectError: 'not extensible' }, () => {
-	Observable.some = 'prop';
+suite.runTest({ name: 'ensure Observable object is frozen' }, test => {
+	const failErrorMessage = 'should not reach this point';
+	try {
+		Observable.some = 'prop';
+		throw new Error(failErrorMessage);
+	} catch (e) {
+		test.assertNotEqual(failErrorMessage, e.message);
+	}
 });
 
 suite.runTest({ name: 'negative tests - invalid parameters' }, test => {
@@ -100,13 +107,6 @@ suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }
 	const aa = Observable.from([]);
 
 	test.assertEqual(0, Object.keys(aa).length);
-});
-
-suite.runTest({
-	name: 'test observable APIs - Observable can not be used via constructor',
-	expectError: 'Observable MAY NOT be created via constructor'
-}, () => {
-	new Observable();
 });
 
 suite.runTest({

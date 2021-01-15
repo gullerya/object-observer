@@ -1,3 +1,5 @@
+export { Observable };
+
 const
 	INSERT = 'insert',
 	UPDATE = 'update',
@@ -6,34 +8,39 @@ const
 	SHUFFLE = 'shuffle',
 	oMetaKey = Symbol('observable-meta-key'),
 	validObservableOptionKeys = { async: 1 },
-	validObserverOptionKeys = { path: 1, pathsOf: 1, pathsFrom: 1 },
-	processObserveOptions = function processObserveOptions(options) {
+	processObserveOptions = options => {
+		if (!options || typeof options !== 'object') {
+			return null;
+		}
+
 		const result = {};
-		if (options.path !== undefined) {
-			if (typeof options.path !== 'string' || options.path === '') {
-				throw new Error('"path" option, if/when provided, MUST be a non-empty string');
+		const invalidOptions = [];
+		for (const [optName, optVal] of Object.entries(options)) {
+			if (optName === 'path') {
+				if (typeof optVal !== 'string' || optVal === '') {
+					throw new Error('"path" option, if/when provided, MUST be a non-empty string');
+				}
+				result[optName] = optVal;
+			} else if (optName === 'pathsOf') {
+				if (options.path) {
+					throw new Error('"pathsOf" option MAY NOT be specified together with "path" option');
+				}
+				if (typeof optVal !== 'string') {
+					throw new Error('"pathsOf" option, if/when provided, MUST be a string (MAY be empty)');
+				}
+				result[optName] = options.pathsOf.split('.').filter(Boolean);
+			} else if (optName === 'pathsFrom') {
+				if (options.path || options.pathsOf) {
+					throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
+				}
+				if (typeof optVal !== 'string' || optVal === '') {
+					throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
+				}
+				result[optName] = optVal;
+			} else {
+				invalidOptions.push(optName);
 			}
-			result.path = options.path;
 		}
-		if (options.pathsOf !== undefined) {
-			if (options.path) {
-				throw new Error('"pathsOf" option MAY NOT be specified together with "path" option');
-			}
-			if (typeof options.pathsOf !== 'string') {
-				throw new Error('"pathsOf" option, if/when provided, MUST be a string (MAY be empty)');
-			}
-			result.pathsOf = options.pathsOf.split('.').filter(n => n);
-		}
-		if (options.pathsFrom !== undefined) {
-			if (options.path || options.pathsOf) {
-				throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
-			}
-			if (typeof options.pathsFrom !== 'string' || options.pathsFrom === '') {
-				throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
-			}
-			result.pathsFrom = options.pathsFrom;
-		}
-		const invalidOptions = Object.keys(options).filter(option => !validObserverOptionKeys.hasOwnProperty(option));
 		if (invalidOptions.length) {
 			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid observer option/s`);
 		}
@@ -44,24 +51,15 @@ const
 			throw new Error(`observer MUST be a function, got '${observer}'`);
 		}
 
-		const
-			oMeta = this[oMetaKey],
-			observers = oMeta.observers;
+		const observers = this[oMetaKey].observers;
 		if (!observers.some(o => o[0] === observer)) {
-			let opts;
-			if (options) {
-				opts = processObserveOptions(options);
-			} else {
-				opts = {};
-			}
-			observers.push([observer, opts]);
+			observers.push([observer, processObserveOptions(options)]);
 		} else {
 			console.warn('observer may be bound to an observable only once; will NOT rebind');
 		}
 	},
 	unobserve = function unobserve() {
-		const oMeta = this[oMetaKey];
-		const observers = oMeta.observers;
+		const observers = this[oMetaKey].observers;
 		let ol = observers.length;
 		if (ol) {
 			let al = arguments.length;
@@ -81,7 +79,7 @@ const
 		}
 	},
 	propertiesBluePrint = { [oMetaKey]: { value: null }, observe: { value: observe }, unobserve: { value: unobserve } },
-	prepareObject = function prepareObject(source, oMeta) {
+	prepareObject = (source, oMeta) => {
 		propertiesBluePrint[oMetaKey].value = oMeta;
 		const target = Object.defineProperties({}, propertiesBluePrint);
 		for (const key of Object.keys(source)) {
@@ -89,7 +87,7 @@ const
 		}
 		return target;
 	},
-	prepareArray = function prepareArray(source, oMeta) {
+	prepareArray = (source, oMeta) => {
 		let i = 0, l = source.length;
 		propertiesBluePrint[oMetaKey].value = oMeta;
 		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
@@ -98,33 +96,35 @@ const
 		}
 		return target;
 	},
-	prepareTypedArray = function prepareTypedArray(source, oMeta) {
+	prepareTypedArray = (source, oMeta) => {
 		propertiesBluePrint[oMetaKey].value = oMeta;
 		Object.defineProperties(source, propertiesBluePrint);
 		return source;
 	},
-	filterChanges = function filterChanges(options, changes) {
+	filterChanges = (options, changes) => {
 		let result = changes;
-		if (options.path) {
-			const oPath = options.path;
-			result = changes.filter(change =>
-				change.path.join('.') === oPath
-			);
-		} else if (options.pathsOf) {
-			const oPathsOf = options.pathsOf;
-			result = changes.filter(change =>
-				change.path.length === oPathsOf.length + 1 ||
-				(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))
-			);
-		} else if (options.pathsFrom) {
-			const oPathsFrom = options.pathsFrom;
-			result = changes.filter(change =>
-				change.path.join('.').startsWith(oPathsFrom)
-			);
+		if (options) {
+			if (options.path) {
+				const oPath = options.path;
+				result = changes.filter(change =>
+					change.path.join('.') === oPath
+				);
+			} else if (options.pathsOf) {
+				const oPathsOf = options.pathsOf;
+				result = changes.filter(change =>
+					change.path.length === oPathsOf.length + 1 ||
+					(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))
+				);
+			} else if (options.pathsFrom) {
+				const oPathsFrom = options.pathsFrom;
+				result = changes.filter(change =>
+					change.path.join('.').startsWith(oPathsFrom)
+				);
+			}
 		}
 		return result;
 	},
-	callObserverSafe = function callObserverSafe(listener, changes) {
+	callObserverSafe = (listener, changes) => {
 		try {
 			listener(changes);
 		} catch (e) {
@@ -138,7 +138,7 @@ const
 			callObserverSafe(listener, options);
 		}
 	},
-	callObservers = function callObservers(oMeta, changes) {
+	callObservers = (oMeta, changes) => {
 		let currentObservable = oMeta;
 		let observers, target, options, relevantChanges, i, newPath, tmp;
 		const l = changes.length;
@@ -156,7 +156,13 @@ const
 							currentObservable.batches = [];
 							queueMicrotask(callObserversFromMT.bind(currentObservable));
 						}
-						let rb = currentObservable.batches.find(b => b[0] === target);
+						let rb;
+						for (const b of currentObservable.batches) {
+							if (b[0] === target) {
+								rb = b;
+								break;
+							}
+						}
 						if (!rb) {
 							rb = [target, []];
 							currentObservable.batches.push(rb);
@@ -172,10 +178,10 @@ const
 			let tmpa;
 			if (currentObservable.parent) {
 				tmpa = new Array(l);
-				for (let i = 0; i < l; i++) {
-					tmp = changes[i];
+				for (let j = 0; j < l; j++) {
+					tmp = changes[j];
 					newPath = [currentObservable.ownKey, ...tmp.path];
-					tmpa[i] = {
+					tmpa[j] = {
 						type: tmp.type,
 						path: newPath,
 						value: tmp.value,
@@ -190,7 +196,7 @@ const
 			}
 		} while (currentObservable);
 	},
-	getObservedOf = function getObservedOf(item, key, parent) {
+	getObservedOf = (item, key, parent) => {
 		if (!item || typeof item !== 'object') {
 			return item;
 		} else if (Array.isArray(item)) {
@@ -216,7 +222,7 @@ const
 			}
 		}
 
-		const changes = [{ type: DELETE, path: [poppedIndex], oldValue: popResult, object: this }];
+		const changes = [new Change(DELETE, [poppedIndex], undefined, popResult, this)];
 		callObservers(oMeta, changes);
 
 		return popResult;
@@ -235,8 +241,8 @@ const
 		const pushResult = Reflect.apply(target.push, target, pushContent);
 
 		const changes = [];
-		for (let i = initialLength, l = target.length; i < l; i++) {
-			changes[i - initialLength] = { type: INSERT, path: [i], value: target[i], object: this };
+		for (let i = initialLength, j = target.length; i < j; i++) {
+			changes[i - initialLength] = new Change(INSERT, [i], target[i], undefined, this);
 		}
 		callObservers(oMeta, changes);
 
@@ -267,7 +273,7 @@ const
 			}
 		}
 
-		const changes = [{ type: DELETE, path: [0], oldValue: shiftResult, object: this }];
+		const changes = [new Change(DELETE, [0], undefined, shiftResult, this)];
 		callObservers(oMeta, changes);
 
 		return shiftResult;
@@ -298,7 +304,7 @@ const
 		const l = unshiftContent.length;
 		const changes = new Array(l);
 		for (let i = 0; i < l; i++) {
-			changes[i] = { type: INSERT, path: [i], value: target[i], object: this };
+			changes[i] = new Change(INSERT, [i], target[i], undefined, this);
 		}
 		callObservers(oMeta, changes);
 
@@ -321,7 +327,7 @@ const
 			}
 		}
 
-		const changes = [{ type: REVERSE, path: [], object: this }];
+		const changes = [new Change(REVERSE, [], undefined, undefined, this)];
 		callObservers(oMeta, changes);
 
 		return this;
@@ -343,7 +349,7 @@ const
 			}
 		}
 
-		const changes = [{ type: SHUFFLE, path: [], object: this }];
+		const changes = [new Change(SHUFFLE, [], undefined, undefined, this)];
 		callObservers(oMeta, changes);
 
 		return this;
@@ -365,7 +371,7 @@ const
 			for (let i = start, item, tmpTarget; i < end; i++) {
 				item = target[i];
 				target[i] = getObservedOf(item, i, oMeta);
-				if (prev.hasOwnProperty(i)) {
+				if (i in prev) {
 					tmpTarget = prev[i];
 					if (tmpTarget && typeof tmpTarget === 'object') {
 						tmpObserved = tmpTarget[oMetaKey];
@@ -374,9 +380,9 @@ const
 						}
 					}
 
-					changes.push({ type: UPDATE, path: [i], value: target[i], oldValue: tmpTarget, object: this });
+					changes.push(new Change(UPDATE, [i], target[i], tmpTarget, this));
 				} else {
-					changes.push({ type: INSERT, path: [i], value: target[i], object: this });
+					changes.push(new Change(INSERT, [i], target[i], undefined, this));
 				}
 			}
 
@@ -422,7 +428,7 @@ const
 				if (typeof nItem !== 'object' && nItem === oItem) {
 					continue;
 				}
-				changes.push({ type: UPDATE, path: [i], value: nItem, oldValue: oItem, object: this });
+				changes.push(new Change(UPDATE, [i], nItem, oItem, this));
 			}
 
 			callObservers(oMeta, changes);
@@ -479,13 +485,13 @@ const
 		let index;
 		for (index = 0; index < removed; index++) {
 			if (index < inserted) {
-				changes.push({ type: UPDATE, path: [startIndex + index], value: target[startIndex + index], oldValue: spliceResult[index], object: this });
+				changes.push(new Change(UPDATE, [startIndex + index], target[startIndex + index], spliceResult[index], this));
 			} else {
-				changes.push({ type: DELETE, path: [startIndex + index], oldValue: spliceResult[index], object: this });
+				changes.push(new Change(DELETE, [startIndex + index], undefined, spliceResult[index], this));
 			}
 		}
 		for (; index < inserted; index++) {
-			changes.push({ type: INSERT, path: [startIndex + index], value: target[startIndex + index], object: this });
+			changes.push(new Change(INSERT, [startIndex + index], target[startIndex + index], undefined, this));
 		}
 		callObservers(oMeta, changes);
 
@@ -502,7 +508,7 @@ const
 		target.set(source, offset);
 		const changes = new Array(souLen);
 		for (let i = offset; i < (souLen + offset); i++) {
-			changes[i - offset] = { type: UPDATE, path: [i], value: target[i], oldValue: prev[i], object: this };
+			changes[i - offset] = new Change(UPDATE, [i], target[i], prev[i], this);
 		}
 
 		callObservers(oMeta, changes);
@@ -525,6 +531,16 @@ const
 		copyWithin: proxiedCopyWithin,
 		set: proxiedTypedArraySet
 	};
+
+class Change {
+	constructor(type, path, value, oldValue, object) {
+		this.type = type;
+		this.path = path;
+		this.value = value;
+		this.oldValue = oldValue;
+		this.object = object;
+	}
+}
 
 class OMetaBase {
 	constructor(properties, cloningFunction) {
@@ -549,7 +565,7 @@ class OMetaBase {
 			if (typeof options !== 'object') {
 				throw new Error(`Observable options if/when provided, MAY only be an object, got '${options}'`);
 			}
-			const invalidOptions = Object.keys(options).filter(option => !validObservableOptionKeys.hasOwnProperty(option));
+			const invalidOptions = Object.keys(options).filter(option => !(option in validObservableOptionKeys));
 			if (invalidOptions.length) {
 				throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid Observable option/s`);
 			}
@@ -579,8 +595,8 @@ class OMetaBase {
 			}
 
 			const changes = oldValue === undefined
-				? [{ type: INSERT, path: [key], value: newValue, object: this.proxy }]
-				: [{ type: UPDATE, path: [key], value: newValue, oldValue: oldValue, object: this.proxy }];
+				? [new Change(INSERT, [key], newValue, undefined, this.proxy)]
+				: [new Change(UPDATE, [key], newValue, oldValue, this.proxy)];
 			callObservers(this, changes);
 		}
 
@@ -599,7 +615,7 @@ class OMetaBase {
 			}
 		}
 
-		const changes = [{ type: DELETE, path: [key], oldValue: oldValue, object: this.proxy }];
+		const changes = [new Change(DELETE, [key], undefined, oldValue, this.proxy)];
 		callObservers(this, changes);
 
 		return true;
@@ -618,11 +634,7 @@ class ArrayOMeta extends OMetaBase {
 	}
 
 	get(target, key) {
-		if (proxiedArrayMethods.hasOwnProperty(key)) {
-			return proxiedArrayMethods[key];
-		} else {
-			return target[key];
-		}
+		return proxiedArrayMethods[key] || target[key];
 	}
 }
 
@@ -632,20 +644,12 @@ class TypedArrayOMeta extends OMetaBase {
 	}
 
 	get(target, key) {
-		if (proxiedTypedArrayMethods.hasOwnProperty(key)) {
-			return proxiedTypedArrayMethods[key];
-		} else {
-			return target[key];
-		}
+		return proxiedTypedArrayMethods[key] || target[key];
 	}
 }
 
-class Observable {
-	constructor() {
-		throw new Error('Observable MAY NOT be created via constructor, see "Observable.from" API');
-	}
-
-	static from(target, options) {
+const Observable = Object.freeze({
+	from: (target, options) => {
 		if (!target || typeof target !== 'object') {
 			throw new Error('observable MAY ONLY be created from a non-null object');
 		} else if (target[oMetaKey]) {
@@ -659,13 +663,8 @@ class Observable {
 		} else {
 			return new ObjectOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		}
-	}
-
-	static isObservable(input) {
+	},
+	isObservable: input => {
 		return !!(input && input[oMetaKey]);
 	}
-}
-
-Object.freeze(Observable);
-
-export { Observable };
+});

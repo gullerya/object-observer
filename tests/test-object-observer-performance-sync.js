@@ -31,7 +31,7 @@ suite.runTest({
 	sync: true,
 	timeout: 15000
 }, async () => {
-	await executeInWorker('/tests/workers/perf-sync-test-b.js', {
+	return executeInWorker('/tests/workers/perf-sync-test-b.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		ARRAY_ITERATIONS: ARRAY_ITERATIONS,
 		ARRAY_PUSH_TRSHLD: 0.008,
@@ -46,7 +46,8 @@ async function executeInWorker(testUrl, testParams) {
 		w.onmessage = message => {
 			w.terminate();
 			if (message.data && message.data.error) {
-				reject(message.data.error);
+				console.error(`failed in worker; name: '${message.data.error.name}', message: '${message.data.error.message}'`);
+				reject(new Error(message.data.error.message));
 			} else {
 				resolve();
 			}

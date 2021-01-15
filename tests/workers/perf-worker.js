@@ -6,6 +6,6 @@ globalThis.onmessage = async message => {
 		const result = await Promise.resolve(test(testParams));
 		globalThis.postMessage(result);
 	} catch (error) {
-		globalThis.postMessage({ error });
+		globalThis.postMessage({ error: { name: error.name, message: error.message, stack: error.stack } });
 	}
 };
