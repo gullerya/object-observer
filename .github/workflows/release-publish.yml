@@ -39,6 +39,7 @@ jobs:
       - name: Bump snapshot version
         run: |
           npm run bump -- --version=patch --snapshot
+          npm install
           echo "SNAPSHOT_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
       - name: Push changes
