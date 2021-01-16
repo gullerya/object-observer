@@ -27,9 +27,13 @@ jobs:
         run: npm run build
 
       - name: Publish
-        run: npm publish
+        run: |
+          echo registry=https://registry.npmjs.org/ > .npmrc
+          echo //registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN} >> .npmrc
+          npm publish
+          rm .npmrc
         env:
-          NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       # Bump version to next snapshot
       - name: Bump snapshot version
