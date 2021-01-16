@@ -59,6 +59,8 @@ export default async setup => {
 	console.info(`... [async] push of ${ARRAY_ITERATIONS} objects done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > ARRAY_PUSH_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`create perf assert failed, expected at most ${ARRAY_PUSH_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`PUSH [async]: expected - ${ARRAY_PUSH_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 
 	//	add orders array to each one of them
@@ -78,6 +80,8 @@ export default async setup => {
 	console.info(`... [async] add of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > ARRAY_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`create perf assert failed, expected at most ${ARRAY_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`ARRAY UPDATE [async]: expected - ${ARRAY_MUTATION_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 
 	//	pop objects
@@ -98,5 +102,7 @@ export default async setup => {
 	console.info(`... [async] pop of ${ARRAY_ITERATIONS} array items done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > ARRAY_POP_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`create perf assert failed, expected at most ${ARRAY_POP_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`POP [async]: expected - ${ARRAY_POP_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 };

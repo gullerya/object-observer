@@ -44,6 +44,8 @@ export default setup => {
 	console.info(`... create of ${CREATE_ITERATIONS} observables done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > OBJECT_CREATION_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`create perf assert failed, expected at most ${OBJECT_CREATION_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`CREATE: expected - ${OBJECT_CREATION_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 
 	//	add listeners/callbacks
@@ -66,6 +68,8 @@ export default setup => {
 	console.info(`... mutate of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > PRIMITIVE_DEEP_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`mutate perf assert failed, expected at most ${PRIMITIVE_DEEP_MUTATION_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`UPDATE: expected - ${PRIMITIVE_DEEP_MUTATION_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 
 	//	adding new property
@@ -84,6 +88,8 @@ export default setup => {
 	console.info(`... add of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > PRIMITIVE_DEEP_ADDITION_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`add perf assert failed, expected at most ${PRIMITIVE_DEEP_ADDITION_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`INSERT: expected - ${PRIMITIVE_DEEP_ADDITION_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 
 	//	removing new property
@@ -102,5 +108,7 @@ export default setup => {
 	console.info(`... delete of ${MUTATE_ITERATIONS} X3 deep done: total - ${ttl.toFixed(2)}ms, average - ${avg.toFixed(4)}ms`);
 	if (avg > PRIMITIVE_DEEP_DELETION_TRSHLD * TOLERANCE_MULTIPLIER) {
 		throw new Error(`delete perf assert failed, expected at most ${PRIMITIVE_DEEP_DELETION_TRSHLD * TOLERANCE_MULTIPLIER}, got ${avg}`);
+	} else {
+		console.info(`DELETE: expected - ${PRIMITIVE_DEEP_DELETION_TRSHLD}, measured - ${avg.toFixed(4)}: PASSED`);
 	}
 };
