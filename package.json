@@ -48,7 +48,8 @@
 	"scripts": {
 		"build": "node ./ci/tools/build-dist.js",
 		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
-		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
+		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json",
+		"bump": "node ./ci/tools/version-utils.js"
 	},
 	"devDependencies": {
 		"eslint": "^7.17.0",
