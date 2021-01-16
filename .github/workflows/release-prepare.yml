@@ -48,7 +48,7 @@ jobs:
           git config user.email "gullerya@gmail.com"
           git config user.name "object-observer CI"
           git add --all
-          git commit -m "set version to ${{ env.RELEASE_VERSION }}
+          git commit -m "set version to ${{ env.RELEASE_VERSION }}"
           git push origin HEAD:master
 
       - name: Tag release
