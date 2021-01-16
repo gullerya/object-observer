@@ -43,7 +43,7 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-* __4.1.0__
+* __4.1.1__
   * [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
   * unified `Change` object structure (so that it is always the same shape)
   * improved perf tests
