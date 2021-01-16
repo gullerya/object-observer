@@ -53,5 +53,5 @@ jobs:
 
       - name: Tag release
         run: |
-          git tag -a v${{ env.RELEASE_VERSION }} -m "tag release v${{ env.RELEASE_VERSION }}
+          git tag -a v${{ env.RELEASE_VERSION }} -m "tag release v${{ env.RELEASE_VERSION }}"
           git push origin HEAD:master v${{ env.RELEASE_VERSION }}

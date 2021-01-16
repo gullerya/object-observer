@@ -36,7 +36,9 @@ jobs:
 
       # Bump version to next snapshot
       - name: Bump snapshot version
-        run: npm run bump -- --version=patch --snapshot
+        run: |
+          npm run bump -- --version=patch --snapshot
+          echo "SNAPSHOT_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
 
       - name: Push changes
         run: |
@@ -44,5 +46,5 @@ jobs:
           git config user.email "gullerya@gmail.com"
           git config user.name "object-observer CI"
           git add --all
-          git commit -m "set version to ${{ env.RELEASE_VERSION }}
+          git commit -m "set version to ${{ env.SNAPSHOT_VERSION }}"
           git push origin HEAD:master
