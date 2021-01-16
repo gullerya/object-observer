@@ -3,7 +3,7 @@ name: Prepare 'object-observer' release
 on:
   push:
     tags:
-      - release
+      - release-*
 
 jobs:
   prepare-verify:
@@ -15,21 +15,24 @@ jobs:
         with:
           token: ${{ secrets.OO_CI_AT }}
 
-      - name: Delete temporary trigger tag
-        run: git push origin --delete release
-
       - name: Setup NodeJS 14
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v1
         with:
           node-version: 14
 
       - name: Install NPM
         run: npm install
 
-      - name: Bump release version
-        run: |
-          npm run bump -- --release
-          echo "RELEASE_VERSION=$(cat package.json | jq '.version')" >> $GITHUB_ENV
+      # Bump
+      - name: Extract release version
+        id: extractVersion
+        run: echo "::set-output name=version::$(echo ${GITHUB_REF##*/release-})"
+
+      - name: Delete temporary trigger tag
+        run: git push origin --delete release-${{ steps.extractVersion.outputs.version }}
+
+      - name: Bump version to ${{ steps.extractVersion.outputs.version }}
+        run: npm --no-git-tag-version version ${{ steps.extractVersion.outputs.version }}
 
       # Build & Verify new version
       - name: Build
@@ -48,10 +51,10 @@ jobs:
           git config user.email "gullerya@gmail.com"
           git config user.name "object-observer CI"
           git add --all
-          git commit -m "set version to ${{ env.RELEASE_VERSION }}
+          git commit -m "update version to ${{ steps.extractVersion.outputs.version }}"
           git push origin HEAD:master
 
       - name: Tag release
         run: |
-          git tag -a v${{ env.RELEASE_VERSION }} -m "tag release v${{ env.RELEASE_VERSION }}
-          git push origin HEAD:master v${{ env.RELEASE_VERSION }}
+          git tag -a v${{ steps.extractVersion.outputs.version }} -m "tag release v${{ steps.extractVersion.outputs.version }}"
+          git push origin HEAD:master v${{ steps.extractVersion.outputs.version }}

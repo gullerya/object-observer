@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [4.1.0] - 2021-01-16
+### Fixed
+- `change` structure unified for all types of events
+- slightly improved performance
+### Changed
+- [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - CI release automation flow improved
+- performance tests adjusted
+
 ## [4.0.4] - 2020-11-18
 ### Added
 - performance tests

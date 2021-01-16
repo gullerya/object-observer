@@ -16,7 +16,7 @@ jobs:
           token: ${{ secrets.OO_CI_AT }}
 
       - name: Setup NodeJS 14
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: 14
 
@@ -33,3 +33,16 @@ jobs:
           npm publish
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      # Bump version to next snapshot
+      - name: Bump snapshot version
+        run: npm run bump -- --version=patch --snapshot
+
+      - name: Push changes
+        run: |
+          git fetch
+          git config user.email "gullerya@gmail.com"
+          git config user.name "object-observer CI"
+          git add --all
+          git commit -m "set version to ${{ env.RELEASE_VERSION }}
+          git push origin HEAD:master
