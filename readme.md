@@ -43,16 +43,17 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+* __4.1.0__
+  * [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
+  * unified `Change` object structure (so that it is always the same shape)
+  * improved perf tests
+
 * __4.0.4__
   * [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
   * added perf tests
 
 * __4.0.2__
   * implemented [Issue no. 61](https://github.com/gullerya/object-observer/issues/61) - removed the CJS fashioned NodeJS flavor distribution
-
-* __3.2.0__
-  * implemented [Issue no. 45](https://github.com/gullerya/object-observer/issues/45) - implemented async flavor of changes delivery on per Observable configuration basis; default behavior remained the same - synchronous
-  * implemented [Issue no. 51](https://github.com/gullerya/object-observer/issues/51) - batch delivery of `Object.assign` changes is enabled via the async opt-in, see issue #45 above
 
 For a preview/playground you are welcome to:
 * [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
@@ -126,26 +127,26 @@ observableA.observe(changes => {
 
 //  observableA = [ 1, 2, 3, 4, 5 ]
 observableA.pop();
-//  { type: 'delete', path: [4], oldValue: 5, object: observableA }
+//  { type: 'delete', path: [4], value: undefined, oldValue: 5, object: observableA }
 
 
 //  now observableA = [ 1, 2, 3, 4 ]
 //  following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.push('a', 'b');
-//  { type: 'insert', path: [4], value: 'a', object: observableA }
-//  { type: 'insert', path: [5], value: 'b', object: observableA }
+//  { type: 'insert', path: [4], value: 'a', oldValue: undefined, object: observableA }
+//  { type: 'insert', path: [5], value: 'b', oldValue: undefined, object: observableA }
 
 
 //  now observableA = [1, 2, 3, 4, 'a', 'b']
 observableA.shift();
-//  { type: 'delete', path: [0], oldValue: 1, object: observableA }
+//  { type: 'delete', path: [0] value: undefined, oldValue: 1, object: observableA }
 
 
 //  now observableA = [ 2, 3, 4, 'a', 'b' ]
 //  following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.unshift('x', 'y');
-//  { type: 'insert', path: [0], value: 'x', object: observableA }
-//  { type: 'insert', path: [1], value: 'y', object: observableA }
+//  { type: 'insert', path: [0], value: 'x', oldValue: undefined, object: observableA }
+//  { type: 'insert', path: [1], value: 'y', oldValue: undefined, object: observableA }
 
 
 //  now observableA = [ 2, 3, 4, 'a', 'b' ]
@@ -167,7 +168,7 @@ observableA.fill(0, 0, 1);
 //  the following operation will cause a single callback to the observer with an array of 2 changes in it)
 observableA.splice(0, 1, 'x', 'y');
 //  { type: 'update', path: [0], value: 'x', oldValue: 0, object: observableA }
-//  { type: 'insert', path: [1], value: 'y', object: observableA }
+//  { type: 'insert', path: [1], value: 'y', oldValue: undefined, object: observableA }
 
 
 let customer = { orders: [ ... ] },
