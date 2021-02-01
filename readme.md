@@ -43,7 +43,7 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-* __4.1.2__
+* __4.1.3__
   * implemented [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
 
 * __4.1.1__
