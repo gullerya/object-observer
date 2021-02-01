@@ -19,21 +19,26 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
+          registry-url: 'https://registry.npmjs.org'
 
+      # Prepare
       - name: Install NPM
         run: npm install
 
       - name: Build
         run: npm run build
 
+      # Publish to NPM
       - name: Publish
-        run: |
-          echo registry=https://registry.npmjs.org/ > .npmrc
-          echo //registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN} >> .npmrc
-          npm publish
-          rm .npmrc
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: npm publish
+
+      # Deploy to CDN (trigger)
+      - name: Tirgger deploy to CDN
+        run: |
+          git tag deploy
+          git push origin HEAD:master deploy
 
       # Bump version to next snapshot
       - name: Bump snapshot version

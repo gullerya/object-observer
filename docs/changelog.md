@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.2] - 2021-02-01
+### Added
+- [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
 
 ## [4.1.1] - 2021-01-16
 ### Fixed
