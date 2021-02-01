@@ -39,4 +39,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET }}
-        run: aws s3 sync ./dist s3://${{ secrets.AWS_LIBS_OBJECT_OBSERVER_BUCKET }}/${{ env.RELEASE_VERSION }} --delete --cache-control public,max-age=172800,immutable
+        run: aws s3 sync ./dist s3://${{ secrets.AWS_LIBS_BUCKET }}/object-observer/${{ env.RELEASE_VERSION }} --delete --cache-control public,max-age=172800,immutable
