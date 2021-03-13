@@ -86,7 +86,7 @@ Library implements `Observable` API as it is defined [here](docs/observable.md).
 
 ## Security
 
-Security policy is described [here](docs/security.md). If/when any concern raised, please follow the process.
+Security policy is described [here](https://github.com/gullerya/object-observer/blob/main/docs/security.md). If/when any concern raised, please follow the process.
 
 ## Examples
 
