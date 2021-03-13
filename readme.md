@@ -61,9 +61,9 @@ For a preview/playground you are welcome to:
 
 ## Install
 
-Use regular `npm install object-observer --save-prod` to use the component from your local environment.
+Use regular `npm install object-observer --save-prod` to use the library from your local environment.
 
-Additionally, a __CDN__ deployment available (AWS driven), so one can import the component directly:
+Additionally, a __CDN__ deployment available (AWS driven), so one can import it directly:
 ```js
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```
