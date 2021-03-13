@@ -43,33 +43,50 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
-* __4.1.3__
-  * implemented [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
+- __4.1.3__
+  - implemented [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
 
-* __4.1.1__
-  * [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
-  * unified `Change` object structure (so that it is always the same shape)
-  * improved perf tests
+- __4.1.1__
+  - [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
+  - unified `Change` object structure (so that it is always the same shape)
+  - improved perf tests
 
-* __4.0.4__
-  * [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
-  * added perf tests
+- __4.0.4__
+  - [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
+  - added perf tests
 
 For a preview/playground you are welcome to:
-* [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
-* [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
+- [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
+- [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
 
-## Loading
+## Install
 
-`object-observer` provided as an __ES6 module__.
+Use regular `npm install object-observer --save-prod` to use the component from your local environment.
 
-```javascript
-import { Observable } from 'dist/object-observer.min.js';
+Additionally, a **CDN** deployment available (AWS driven), so one can import the component directly:
+```js
+import 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
+```
+
+> Note: replace the `x.y.z` by the desired version, one of the listed in the [changelog](docs/changelog.md).
+
+CDN features:
+- HTTPS only, no untrusted man-in-the-middle
+- highly available (with many geo spread edges)
+- agressive caching setup
+
+Import `object-observer` as __ES6 module__:
+```js
+import { Observable } from 'object-observer.min.js';
 ```
 
 ## API
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
+
+## Security
+
+Security policy is described [here](docs/security.md). If/when any concern raised, please follow the process.
 
 ## Examples
 
@@ -233,7 +250,3 @@ oUser.observe(callback, {pathsFrom: 'address'});
 //    address.extra
 //    address.extra.data
 ```
-
-## Security
-
-Security policy is describe [here](https://github.com/gullerya/object-observer/blob/main/security.md). If/when any concern raised, please follow the process.

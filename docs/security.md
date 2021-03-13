@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-**Latest 2 major** versions are supported and will have a security issues resolved as their minor fixes.
+**At least 2 latest major** versions will have a security patches provided.
 
 ## Reporting a Vulnerability
 
