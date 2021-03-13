@@ -1,4 +1,4 @@
-export { Observable };
+export { Observable, ObjectObserver };
 
 const
 	INSERT = 'insert',
@@ -668,3 +668,33 @@ const Observable = Object.freeze({
 		return !!(input && input[oMetaKey]);
 	}
 });
+
+const
+	callbackKey = Symbol('callback-key'),
+	targetsKey = Symbol('targets-key');
+class ObjectObserver {
+	constructor(callback) {
+		this[callbackKey] = callback;
+		this[targetsKey] = new Set();
+		Object.freeze(this);
+	}
+
+	observe(target, config) {
+		const r = Observable.from(target);
+		r.observe(this[callbackKey], config);
+		this[targetsKey].add(r);
+		return r;
+	}
+
+	unobserve(target) {
+		target.unobserve(this[callbackKey]);
+		this[targetsKey].delete(target);
+	}
+
+	disconnect() {
+		for (const t of this[targetsKey].values) {
+			t.unobserve(this[callbackKey]);
+		}
+		this[targetsKey].clear();
+	}
+}
