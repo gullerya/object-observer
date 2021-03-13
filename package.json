@@ -22,7 +22,7 @@
 		"url": "https://github.com/gullerya/object-observer/issues",
 		"email": "gullerya@gmail.com"
 	},
-	"license": "MIT",
+	"license": "ISC",
 	"files": [
 		"dist"
 	],
