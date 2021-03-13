@@ -59,7 +59,7 @@ For a preview/playground you are welcome to:
 * [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
 * [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
 
-# Loading
+## Loading
 
 `object-observer` provided as an __ES6 module__.
 
@@ -67,11 +67,11 @@ For a preview/playground you are welcome to:
 import { Observable } from 'dist/object-observer.min.js';
 ```
 
-# API
+## API
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
 
-# Examples
+## Examples
 
 ##### Objects
 
@@ -233,3 +233,7 @@ oUser.observe(callback, {pathsFrom: 'address'});
 //    address.extra
 //    address.extra.data
 ```
+
+## Security
+
+Security policy is describe [here](https://github.com/gullerya/object-observer/blob/main/security.md). If/when any concern raised, please follow the process.
