@@ -692,7 +692,7 @@ class ObjectObserver {
 	}
 
 	disconnect() {
-		for (const t of this[targetsKey].values) {
+		for (const t of this[targetsKey]) {
 			t.unobserve(this[callbackKey]);
 		}
 		this[targetsKey].clear();

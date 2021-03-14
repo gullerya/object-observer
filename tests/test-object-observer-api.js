@@ -8,7 +8,7 @@ suite.runTest({ name: 'ensure ObjectObserver constructable' }, test => {
 	test.assertTrue(String(ObjectObserver).includes('class'));
 });
 
-suite.runTest({ name: 'create ObjectObserver and observe 1 object' }, test => {
+suite.runTest({ name: 'observe 1 object' }, test => {
 	let calls = 0;
 	const oo = new ObjectObserver(changes => {
 		calls += changes.length;
@@ -17,4 +17,19 @@ suite.runTest({ name: 'create ObjectObserver and observe 1 object' }, test => {
 
 	o.a = 'b';
 	test.assertEqual(1, calls);
+});
+
+suite.runTest({ name: 'observe 3 objects' }, test => {
+});
+
+suite.runTest({ name: 'observe 3 objects then unobserve 1' }, test => {
+});
+
+suite.runTest({ name: 'observe 3 objects then disconnect' }, test => {
+});
+
+suite.runTest({ name: 'observe object that is already observable - should stay same' }, test => {
+});
+
+suite.runTest({ name: 'observe 3 objects then disconnect' }, test => {
 });
