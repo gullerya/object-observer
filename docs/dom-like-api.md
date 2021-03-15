@@ -1,4 +1,4 @@
-# 'DOM-like' API
+# 'DOM-like' API (Experimental)
 
 Starting from version 4.2.0 `object-observer` provides additional 'DOM-like' API flavor.
 To be sure, this is a thin layer over an exising `Observable` API, so do make sure to get accustomized with [this](observable.md).
