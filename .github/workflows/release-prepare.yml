@@ -49,9 +49,9 @@ jobs:
           git config user.name "object-observer CI"
           git add --all
           git commit -m "set version to ${{ env.RELEASE_VERSION }}"
-          git push origin HEAD:master
+          git push origin HEAD:main
 
       - name: Tag release
         run: |
           git tag -a v${{ env.RELEASE_VERSION }} -m "tag release v${{ env.RELEASE_VERSION }}"
-          git push origin HEAD:master v${{ env.RELEASE_VERSION }}
+          git push origin HEAD:main v${{ env.RELEASE_VERSION }}

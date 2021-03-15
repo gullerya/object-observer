@@ -38,7 +38,7 @@ jobs:
       - name: Tirgger deploy to CDN
         run: |
           git tag deploy
-          git push origin HEAD:master deploy
+          git push origin HEAD:main deploy
 
       # Bump version to next snapshot
       - name: Bump snapshot version
@@ -54,4 +54,4 @@ jobs:
           git config user.name "object-observer CI"
           git add --all
           git commit -m "set version to ${{ env.SNAPSHOT_VERSION }}"
-          git push origin HEAD:master
+          git push origin HEAD:main
