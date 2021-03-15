@@ -43,6 +43,11 @@ Main aspects and features:
 
 #### Last versions (full changelog is [here](docs/changelog.md))
 
+- __4.2.1__
+  - documentation improved and updated
+  - dependencies updated
+  - [Issue no. 73](https://github.com/gullerya/object-observer/issues/73) - added DOM-like API of `ObjectObserver`
+
 - __4.1.3__
   - implemented [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
 
@@ -50,10 +55,6 @@ Main aspects and features:
   - [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
   - unified `Change` object structure (so that it is always the same shape)
   - improved perf tests
-
-- __4.0.4__
-  - [Issue no. 65](https://github.com/gullerya/object-observer/issues/65) - fixed a broken keys order of the cloned observable
-  - added perf tests
 
 For a preview/playground you are welcome to:
 - [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
