@@ -88,7 +88,7 @@ Additionally, from version 4.2.0 there is also 'DOM-like' API flavor, a one that
 Under the hood it uses the same `Observable` mechanics.
 Read docs about this API flavor [here](docs/dom-like-api.md).
 
-> This is **experimental** API until specified here otherwise.
+> This is __experimental__ API until specified here otherwise.
 
 ## Security
 

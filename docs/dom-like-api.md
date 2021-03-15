@@ -3,7 +3,7 @@
 Starting from version 4.2.0 `object-observer` provides additional 'DOM-like' API flavor.
 To be sure, this is a thin layer over an exising `Observable` API, so do make sure to get accustomized with [this](observable.md).
 
-While `Observable` API is more **data** centric, the present API can be seen as more **logic** centric one.
+While `Observable` API is more __data__ centric, the present API can be seen as more __logic__ centric one.
 
 ## Use cases and basic example
 
@@ -46,4 +46,4 @@ The `callback` is a function with the following signature:
 |--------------|-------------------------|--------------|------------|
 | `observe`    | `(subject: object)`     | `Observable` | create new `Observable` from the given subject (unless it is already `Observable`) and start observing it |
 | `unobserve`  | `(subject: Observable)` |              | stop observing the specified `Observable` subject |
-| `disconnect` | `()`                    |              | stop observing **all** observed subjects |
+| `disconnect` | `()`                    |              | stop observing __all__ observed subjects |

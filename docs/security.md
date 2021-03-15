@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-**At least 2 latest major** versions will have a security patches provided.
+__At least 2 latest major__ versions will have a security patches provided.
 
 ## Reporting a Vulnerability
 
