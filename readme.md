@@ -84,6 +84,12 @@ import { Observable } from 'object-observer.min.js';
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
 
+Additionally, from version 4.2.0 there is also 'DOM-like' API flavor, a one that resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
+Under the hood it uses the same `Observable` mechanics.
+Read docs about this API flavor [here](docs/dom-like-api.md).
+
+> This is __experimental__ API until specified here otherwise.
+
 ## Security
 
 Security policy is described [here](https://github.com/gullerya/object-observer/blob/main/docs/security.md). If/when any concern raised, please follow the process.
