@@ -1,12 +1,14 @@
-name: Prepare 'object-observer' release
+name: Trigger 'object-observer' release
 
 on:
-  push:
-    tags:
-      - release
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to bump to'
+        required: false
 
 jobs:
-  prepare-verify:
+  prepare-verify-trigger:
     runs-on: ubuntu-18.04
 
     steps:
@@ -14,9 +16,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.OO_CI_AT }}
-
-      - name: Delete temporary trigger tag
-        run: git push origin --delete release
 
       - name: Setup NodeJS 14
         uses: actions/setup-node@v2
@@ -26,6 +25,10 @@ jobs:
       - name: Install NPM
         run: npm install
 
+      # Bump version
+      - name: Bump to target version, if any
+        if: ${{ github.event.inputs.version }}
+        run: npm run bump -- --version=${{ github.event.inputs.version }}
       - name: Bump release version
         run: |
           npm run bump -- --release

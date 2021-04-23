@@ -79,7 +79,7 @@ Security policy is described [here](https://github.com/gullerya/object-observer/
 
 ```javascript
 const
-	order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+    order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
     observableOrder = Observable.from(order);
 
 observableOrder.observe(changes => {
@@ -108,8 +108,8 @@ delete observableOrder.remark;
 //  { type: "delete", path: ['remark'], oldValue: 'remove me', object: observableOrder }
 
 Object.assign(observableOrder, { amount: 1, remark: 'less is more' }, { async: true });
-//	- by default the changes below would be delivered in a separate callback
-//	- due to async use, they are delivered as a batch in a single callback
+//  - by default the changes below would be delivered in a separate callback
+//  - due to async use, they are delivered as a batch in a single callback
 //  { type: 'update', path: ['ammount'], value: 1, oldValue: 7, object: observableOrder }
 //  { type: 'insert', path: ['remark'], value: 'less is more', object: observableOrder }
 ```
