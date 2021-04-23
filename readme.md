@@ -37,8 +37,8 @@ Main aspects and features:
 ## Preview
 
 For a preview/playground you are welcome to:
-- [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
-- [JSFiddle](https://jsfiddle.net/gullerya/5a4tyoqs/latest)
+- [CodePen](https://codepen.io/gullerya/pen/zYrGMNB) - `Observable.from()` flavor
+- [CodePen](https://codepen.io/gullerya/pen/WNRLJWY) - `new ObjectObserver()` flavor
 
 ## Install
 
