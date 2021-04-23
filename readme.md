@@ -5,56 +5,36 @@
 [![Codecov](https://img.shields.io/codecov/c/github/gullerya/object-observer/main.svg)](https://codecov.io/gh/gullerya/object-observer/branch/main)
 [![Codacy](https://img.shields.io/codacy/grade/a3879d7077eb4eef83a591733ad7c579.svg?logo=codacy)](https://www.codacy.com/app/gullerya/object-observer)
 
-# Summary
+# `object-observer`
 
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
 Main aspects and features:
 
-* implemented via native __Proxy__ (revokable)
-
-* observation is 'deep', yielding changes from a __sub-graphs__ too
-
-* nested objects of the observable graph are observables too
-
-* changes delivered in a __synchronous__ way by default, __asynchronous__ delivery (experimental) is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
-
-* observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
-
-* original objects are __cloned__ while turned into `Observable`s
-
-* __array__ specifics:
-  * generic object-like mutations supported
-  * intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
-  * massive mutations delivered in a single callback, usually having an array of an atomic changes
-
-* __typed array__ specifics:
-  * generic object-like mutations supported
-  * intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
-  * massive mutations delivered in a single callback, usually having an array of an atomic changes
-
-* intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-
-* following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`, `Blob`, `Error`
+- implemented via native __Proxy__ (revokable)
+- observation is 'deep', yielding changes from a __sub-graphs__ too
+- nested objects of the observable graph are observables too
+- changes delivered in a __synchronous__ way by default, __asynchronous__ delivery is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
+- observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
+- original objects are __cloned__ while turned into `Observable`s
+- __array__ specifics:
+  - generic object-like mutations supported
+  - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
+  - massive mutations delivered in a single callback, usually having an array of an atomic changes
+- __typed array__ specifics:
+  - generic object-like mutations supported
+  - intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
+  - massive mutations delivered in a single callback, usually having an array of an atomic changes
+- intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
+- following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`, `Blob`, `Error`
 
 #### Support matrix: ![CHROME](docs/browser-icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser-icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser-icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser-icons/nodejs.png) <sub>8.10.0+</sub>
 
 #### Performance report can be found [here](docs/performance-report.md)
 
-#### Last versions (full changelog is [here](docs/changelog.md))
+#### Changelog is [here](docs/changelog.md)
 
-- __4.2.1__
-  - documentation improved and updated
-  - dependencies updated
-  - [Issue no. 73](https://github.com/gullerya/object-observer/issues/73) - added DOM-like API of `ObjectObserver`
-
-- __4.1.3__
-  - implemented [Issue no. 71](https://github.com/gullerya/object-observer/issues/71) - added CDN deployment
-
-- __4.1.1__
-  - [Issue no. 70](https://github.com/gullerya/object-observer/issues/70) - automated version bump
-  - unified `Change` object structure (so that it is always the same shape)
-  - improved perf tests
+## Preview
 
 For a preview/playground you are welcome to:
 - [CodePen](https://codepen.io/gullerya/pen/zYrGMNB)
@@ -62,9 +42,12 @@ For a preview/playground you are welcome to:
 
 ## Install
 
-Use regular `npm install object-observer --save-prod` to use the library from your local environment.
+Use regular `npm install object-observer --save-prod` to use the library from your local environment:
+```js
+import { Observable } from 'node_modules/object-observer/dist/object-observer.min.js';
+```
 
-Additionally, a __CDN__ deployment available (AWS driven), so one can import it directly:
+Alternatively, a __CDN__ deployment available (AWS driven), so one can import it directly:
 ```js
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```
@@ -76,20 +59,15 @@ CDN features:
 - highly available (with many geo spread edges)
 - agressive caching setup
 
-Import `object-observer` as __ES6 module__:
-```js
-import { Observable } from 'object-observer.min.js';
-```
-
 ## API
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
 
-Additionally, from version 4.2.0 there is also 'DOM-like' API flavor, a one that resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
+Additionally, from version 4.2.0 there is also 'DOM-like' API flavor, a one that is resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
 Under the hood it uses the same `Observable` mechanics.
 Read docs about this API flavor [here](docs/dom-like-api.md).
 
-> This is __experimental__ API until specified here otherwise.
+> This is __experimental__ API until specified otherwise.
 
 ## Security
 
@@ -101,7 +79,7 @@ Security policy is described [here](https://github.com/gullerya/object-observer/
 
 ```javascript
 const
-	order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
+    order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
     observableOrder = Observable.from(order);
 
 observableOrder.observe(changes => {
@@ -130,8 +108,8 @@ delete observableOrder.remark;
 //  { type: "delete", path: ['remark'], oldValue: 'remove me', object: observableOrder }
 
 Object.assign(observableOrder, { amount: 1, remark: 'less is more' }, { async: true });
-//	- by default the changes below would be delivered in a separate callback
-//	- due to async use, they are delivered as a batch in a single callback
+//  - by default the changes below would be delivered in a separate callback
+//  - due to async use, they are delivered as a batch in a single callback
 //  { type: 'update', path: ['ammount'], value: 1, oldValue: 7, object: observableOrder }
 //  { type: 'insert', path: ['remark'], value: 'less is more', object: observableOrder }
 ```

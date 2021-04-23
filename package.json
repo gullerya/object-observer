@@ -52,10 +52,10 @@
 		"bump": "node ./ci/tools/version-utils.js"
 	},
 	"devDependencies": {
-		"eslint": "^7.22.0",
+		"eslint": "^7.24.0",
 		"fs-extra": "^9.1.0",
 		"just-test": "2.3.2",
-		"puppeteer": "^8.0.0",
+		"puppeteer": "^9.0.0",
 		"uglify-es": "^3.3.9"
 	}
 }

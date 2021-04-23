@@ -7,10 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.2.1] - 2021-03-15
+## [4.2.2] - 2021-04-23
+### Added
+- [Issue no. 77](https://github.com/gullerya/object-observer/issues/77) - manual CI trigger for release
+### Changed
 - documentation improved and updated
 - dependencies updated
+
+## [4.2.1] - 2021-03-15
+### Added
 - [Issue no. 73](https://github.com/gullerya/object-observer/issues/73) - added DOM-like API of `ObjectObserver`
+### Changed
+- documentation improved and updated
+- dependencies updated
 
 ## [4.1.3] - 2021-02-01
 ### Added
