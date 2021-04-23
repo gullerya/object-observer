@@ -32,7 +32,7 @@ Main aspects and features:
 
 #### Performance report can be found [here](docs/performance-report.md)
 
-#### Changelog is [here](docs/changelog.md))
+#### Changelog is [here](docs/changelog.md)
 
 ## Preview
 
