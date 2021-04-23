@@ -44,7 +44,7 @@ For a preview/playground you are welcome to:
 
 Use regular `npm install object-observer --save-prod` to use the library from your local environment:
 ```js
-import { Observable } from 'node_modules/object-observer/object-observer.min.js';
+import { Observable } from 'node_modules/object-observer/dist/object-observer.min.js';
 ```
 
 Alternatively, a __CDN__ deployment available (AWS driven), so one can import it directly:
@@ -57,7 +57,6 @@ import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/obje
 CDN features:
 - HTTPS only, no untrusted man-in-the-middle
 - highly available (with many geo spread edges)
-- version contents are __immutable__
 - agressive caching setup
 
 ## API
