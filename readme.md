@@ -14,7 +14,7 @@ Main aspects and features:
 - implemented via native __Proxy__ (revokable)
 - observation is 'deep', yielding changes from a __sub-graphs__ too
 - nested objects of the observable graph are observables too
-- changes delivered in a __synchronous__ way by default, __asynchronous__ delivery (experimental) is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
+- changes delivered in a __synchronous__ way by default, __asynchronous__ delivery is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
 - observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
 - original objects are __cloned__ while turned into `Observable`s
 - __array__ specifics:
