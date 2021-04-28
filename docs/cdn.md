@@ -33,16 +33,18 @@ Checksums provided per version for both, regular and minified resources:
 
 To begin with, detailed descripton on SRI (Subresource Integrity) [found here](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity).
 
-Particularly, in order to make browser ensuring the integrity of `object-observer`, use the following syntax:
+Since `object-observer` provides ES6 module syntax, the approach described in the documentation above and elsewhere is not applicable.
+In this case, and until better way available (like [this proposal](https://github.com/tc39/proposal-import-assertions/issues/113) of myself), one is required to use `<link rel="modulepreload">` in __addition__ to the regular `import` in order to enforce integrity validation.
 
+Thus, please add the below HTML piece in your HTML, when willing to use enforce the module's integrity:
 ```html
-<script
-  type="module"
-  intergrity="hash"
-  crossorigin="anonymous"
-  scr="https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js"></script>
+<link rel="modulepreload" 
+  href="https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js"
+  integrity="sha512-hash">
 ```
 
 > Note: replace the `hash` with the relevant value as per version and regular/minified resource from the table above.
 
 > Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](changelog.md).
+
+> Note: `modulepreload` in general and `integrity` attribute with it in particular are still having a limited support.
