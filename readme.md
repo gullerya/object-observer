@@ -30,9 +30,9 @@ Main aspects and features:
 
 #### Support matrix: ![CHROME](docs/browser-icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser-icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser-icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser-icons/nodejs.png) <sub>8.10.0+</sub>
 
-#### Performance report can be found [here](docs/performance-report.md)
+#### Performance report can be found [here](docs/performance-report.md).
 
-#### Changelog is [here](docs/changelog.md)
+#### Changelog is [here](docs/changelog.md).
 
 ## Preview
 
@@ -52,12 +52,17 @@ Alternatively, a __CDN__ deployment available (AWS driven), so one can import it
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```
 
-> Note: replace the `x.y.z` by the desired version, one of the listed in the [changelog](docs/changelog.md).
+> Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](docs/changelog.md).
 
 CDN features:
-- HTTPS only, no untrusted man-in-the-middle
-- highly available (with many geo spread edges)
-- agressive caching setup
+- security:
+  - __HTTPS__ only, no untrusted man-in-the-middle
+  - __intergrity__ checksums for SRI
+- performance
+  - highly __available__ (with many geo spread edges)
+  - agressive __caching__ setup
+
+Full details about CDN usage and example are [found here](docs/cdn.md).
 
 ## API
 
