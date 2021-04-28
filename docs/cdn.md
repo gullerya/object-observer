@@ -2,7 +2,7 @@
 
 CDN provisioning is a general convenience feature, which also provides:
 - security:
-  - __HTTPS__ only, no untrusted man-in-the-middle
+  - __HTTPS__ only
   - __intergrity__ checksum provided, see below
 - performance
   - highly __available__ (with many geo spread edges)

@@ -56,7 +56,7 @@ import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/obje
 
 CDN features:
 - security:
-  - __HTTPS__ only, no untrusted man-in-the-middle
+  - __HTTPS__ only
   - __intergrity__ checksums for SRI
 - performance
   - highly __available__ (with many geo spread edges)
