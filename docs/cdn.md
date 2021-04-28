@@ -15,21 +15,21 @@ Import `object-observer` directly from CDN:
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```
 
-> Note: minified and non-minified resouces are available.
+> Note: regular and minified resouces are available.
 
 > Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](changelog.md).
 
 ## Integrity (SRI)
 
-Security feature `integrity` was defined specifically to fortify a consumption of CDN delivered modules.
+Security feature `integrity` was defined specifically to fortify a consumption of a CDN delivered modules.
 `object-observer` adheres to this effort and provides integrity checksums per release (starting from v4.3.0).
 
-Checksums provided per version for both, regular and minified resources, see the table below.
+Checksums provided per version for both, regular and minified resources:
 
 | Version | Resource | Integrity checksum |
 |---------|----------|--------------------|
 
-### How to use `integrity`
+### Use with `integrity`
 
 To begin with, detailed descripton on SRI (Subresource Integrity) [found here](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity).
 
@@ -39,10 +39,10 @@ Particularly, in order to make browser ensuring the integrity of `object-observe
 <script
   type="module"
   intergrity="hash"
-  corssorigin="anonymous"
+  crossorigin="anonymous"
   scr="https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js"></script>
 ```
 
-> Note: replace the `hash` with the relevant value as per version and min/non-min resource from the table above.
+> Note: replace the `hash` with the relevant value as per version and regular/minified resource from the table above.
 
 > Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](changelog.md).
