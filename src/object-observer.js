@@ -82,8 +82,8 @@ const
 	prepareObject = (source, oMeta) => {
 		propertiesBluePrint[oMetaKey].value = oMeta;
 		const target = Object.defineProperties({}, propertiesBluePrint);
-		for (const key of Object.keys(source)) {
-			target[key] = getObservedOf(source[key], key, oMeta);
+		for (const [key, value] of Object.entries(source)) {
+			target[key] = getObservedOf(value, key, oMeta);
 		}
 		return target;
 	},
