@@ -28,7 +28,7 @@ Checksums provided per version for both, regular and minified resources:
 
 | Version | Resource | Integrity checksum |
 |---------|----------|--------------------|
-<!--INSERT-MARKER-->
+|<!--INSERT-MARKER-->
 
 ### Use with `integrity`
 

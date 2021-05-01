@@ -36,9 +36,12 @@ jobs:
 
       # Deploy to CDN (trigger)
       - name: Tirgger deploy to CDN
-        run: |
-          git tag deploy
-          git push origin HEAD:main deploy
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.OO_CI_AT }}
+          repository: gullerya/object-observer
+          event-type: deploy
+          client-payload: '{ "version": "$(cat package.json | jq -r '.version')" }'
 
       # Bump version to next snapshot
       - name: Bump snapshot version
