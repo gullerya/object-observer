@@ -35,13 +35,15 @@ jobs:
         run: npm publish
 
       # Deploy to CDN (trigger)
+      - name: Obtain release version
+        run: echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
       - name: Tirgger deploy to CDN
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.OO_CI_AT }}
           repository: gullerya/object-observer
           event-type: deploy
-          client-payload: '{ "version": "$(cat package.json | jq -r '.version')" }'
+          client-payload: '{ "version": "${{ env.RELEASE_VERSION }}" }'
 
       # Bump version to next snapshot
       - name: Bump snapshot version
