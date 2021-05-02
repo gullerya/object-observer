@@ -6,6 +6,7 @@ import uglifyES from 'uglify-es';
 import { updateIntegrity } from './integrity-utils.js';
 
 const
+	isCDN = process.argv.some(a => a === '--cdn'),
 	SRC = 'src',
 	DIST = 'dist',
 	CDN = 'cdn',
@@ -36,9 +37,10 @@ for (const fileToMinify of filesToMinify) {
 }
 process.stdout.write(`\t\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
 
-buildCDNDistro(DIST, CDN);
-
-updateIntegrity(path.join(DIST, CDN));
+if (isCDN) {
+	buildCDNDistro(DIST, CDN);
+	updateIntegrity(path.join(DIST, CDN));
+}
 
 process.stdout.write(os.EOL);
 process.stdout.write(`\x1B[32mDONE\x1B[0m${os.EOL}`);
