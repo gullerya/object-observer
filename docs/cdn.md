@@ -21,7 +21,7 @@ import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/obje
 
 ## Integrity (SRI)
 
-Security feature `integrity` was defined specifically to fortify a consumption of a CDN delivered modules.
+Security feature `integrity` was introduced specifically to fortify a consumption of a CDN delivered modules.
 `object-observer` adheres to this effort and provides integrity checksums per release (starting from v4.3.0).
 
 Checksums provided per version for both, regular and minified resources:
@@ -35,7 +35,7 @@ Checksums provided per version for both, regular and minified resources:
 To begin with, detailed descripton on SRI (Subresource Integrity) [found here](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity).
 
 Since `object-observer` provides ES6 module syntax, the approach described in the documentation above and elsewhere is not applicable.
-In this case, and until better way available (like [this proposal](https://github.com/tc39/proposal-import-assertions/issues/113) of myself), one is required to use `<link rel="modulepreload">` in __addition__ to the regular `import` in order to enforce integrity validation.
+In this case, and a until better way available (like [this proposal](https://github.com/tc39/proposal-import-assertions/issues/113) of myself), one is required to use `<link rel="modulepreload">` in __addition__ to the regular `import` in order to enforce integrity validation.
 
 Thus, please add the below HTML piece in your HTML, when willing to use enforce the module's integrity:
 ```html
