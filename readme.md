@@ -28,11 +28,11 @@ Main aspects and features:
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 - following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`, `Blob`, `Error`
 
-#### Support matrix: ![CHROME](docs/browser-icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser-icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser-icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser-icons/nodejs.png) <sub>8.10.0+</sub>
+Supported: ![CHROME](docs/browser-icons/chrome.png)<sub>61+</sub> | ![FIREFOX](docs/browser-icons/firefox.png)<sub>60+</sub> | ![EDGE](docs/browser-icons/edge.png)<sub>16+</sub> | ![NODE JS](docs/browser-icons/nodejs.png) <sub>8.10.0+</sub>
 
-#### Performance report can be found [here](docs/performance-report.md).
+Performance report can be found [here](docs/performance-report.md).
 
-#### Changelog is [here](docs/changelog.md).
+Changelog is [here](docs/changelog.md).
 
 ## Preview
 
