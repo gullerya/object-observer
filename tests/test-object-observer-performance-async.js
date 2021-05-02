@@ -13,7 +13,7 @@ suite.runTest({
 	sync: true,
 	timeout: 15000
 }, async () => {
-	await executeInWorker('./perf-async-test-a.js', {
+	await executeInWorker('/tests/workers/perf-async-test-a.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		CREATE_ITERATIONS: CREATE_ITERATIONS,
 		MUTATE_ITERATIONS: MUTATE_ITERATIONS,
@@ -31,7 +31,7 @@ suite.runTest({
 	sync: true,
 	timeout: 15000
 }, async () => {
-	return executeInWorker('./perf-async-test-b.js', {
+	return executeInWorker('/tests/workers/perf-async-test-b.js', {
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		ARRAY_ITERATIONS: ARRAY_ITERATIONS,
 		ARRAY_PUSH_TRSHLD: 0.009,
@@ -41,6 +41,7 @@ suite.runTest({
 });
 
 async function executeInWorker(testUrl, testParams) {
+	// return (await import(testUrl)).default(testParams);
 	return new Promise((resolve, reject) => {
 		const w = new Worker('./workers/perf-worker.js');
 		w.onmessage = message => {
