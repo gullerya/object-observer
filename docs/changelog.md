@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [4.3.0] - 2021-05-03
 ### Changed
 - [Issue no. 82](https://github.com/gullerya/object-observer/issues/82) - `object-observer` made cross-instance operable
 
 ## [4.2.4] - 2021-05-02
-
 ### Added
 - [Issue no. 79](https://github.com/gullerya/object-observer/issues/79) - added CodePen example for ObjectObserver API flavor
 - [Issue no. 81](https://github.com/gullerya/object-observer/issues/81) - added integrity checksums to the CDN flow and documentation
