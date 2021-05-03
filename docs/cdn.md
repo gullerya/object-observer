@@ -35,12 +35,10 @@ Thus, please add the below HTML piece in your HTML, when willing to enforce the 
 ```html
 <link rel="modulepreload" 
   href="https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js"
-  integrity="sha512-hash">
+  integrity="hash">
 ```
 
-> Note: replace the `hash` with the relevant value as per version and regular/minified resource from the table below.
-
-> Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](changelog.md).
+> Note: version (to be put instead of `x.y.z`) and resource kind (regular/minified) should be the as you use in the application. Accordingly, replace the `hash` with the relevant value as per version and resource kind from the table below.
 
 > Note: `modulepreload` in general and `integrity` attribute with it in particular are still having a limited support.
 
@@ -48,8 +46,8 @@ Thus, please add the below HTML piece in your HTML, when willing to enforce the 
 
 Checksums provided per version for both, regular and minified resources:
 
-| Version | Resource | Integrity checksum |
-|---------|----------|--------------------|
+| Version | Resource | Integrity checksum (hash) |
+|---------|----------|---------------------------|
 |<!--INSERT-MARKER-->
 | 4.3.0 | `object-observer.js` | `sha512-KIVmA1D/MQMPfJ2DunNeugVrTsOjt/q9BU2+C2E4PEMT+Om5kRE8nl/at+zBKbO7yUih/T9VmiQw50mROPfI/A==` |
 | 4.3.0 | `object-observer.min.js` | `sha512-lpc5mmJKkVVMt5Cus2qHKN+9WppzIEqyBuT1ROmI2w+dC+RRwi0jB9p0El55Yoh2m5cmDOcXbv3YMyWQd22oZA==` |
