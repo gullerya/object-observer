@@ -38,7 +38,7 @@ Thus, please add the below HTML piece in your HTML, when willing to enforce the 
   integrity="hash">
 ```
 
-> Note: version (to be put instead of `x.y.z`) and resource kind (regular/minified) should be the as you use in the application. Accordingly, replace the `hash` with the relevant value as per version and resource kind from the table below.
+> Note: version (to be put instead of `x.y.z`) and resource kind (regular/minified) should be the same as you use in the application. Accordingly, replace the `hash` with the relevant value as per version and resource kind from the table below.
 
 > Note: `modulepreload` in general and `integrity` attribute with it in particular are still having a limited support.
 
