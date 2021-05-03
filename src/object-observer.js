@@ -6,7 +6,7 @@ const
 	DELETE = 'delete',
 	REVERSE = 'reverse',
 	SHUFFLE = 'shuffle',
-	oMetaKey = Symbol('observable-meta-key'),
+	oMetaKey = Symbol.for('object-observer-meta-key-0'),
 	validObservableOptionKeys = { async: 1 },
 	processObserveOptions = options => {
 		if (!options || typeof options !== 'object') {

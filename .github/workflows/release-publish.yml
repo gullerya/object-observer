@@ -38,12 +38,11 @@ jobs:
       - name: Obtain release version
         run: echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
       - name: Tirgger deploy to CDN
-        uses: peter-evans/repository-dispatch@v1
+        uses: benc-uk/workflow-dispatch@v1
         with:
+          workflow: Deploy 'object-observer' to CDN
           token: ${{ secrets.OO_CI_AT }}
-          repository: gullerya/object-observer
-          event-type: deploy
-          client-payload: '{ "version": "${{ env.RELEASE_VERSION }}" }'
+          inputs: '{ "version": "${{ env.RELEASE_VERSION }}" }'
 
       # Bump version to next snapshot
       - name: Bump snapshot version

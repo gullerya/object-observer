@@ -1,8 +1,11 @@
 name: Deploy 'object-observer' to CDN
 
 on:
-  repository_dispatch:
-    types: [deploy]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy'
+        required: true
 
 jobs:
   release-deploy:
