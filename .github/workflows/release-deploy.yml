@@ -1,4 +1,4 @@
-name: Deploy 'object-observer' to CDN
+name: Deploy to CDN
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Release 'object-observer'
+name: Release
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
       - name: Tirgger deploy to CDN
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: Deploy 'object-observer' to CDN
+          workflow: Deploy to CDN
           token: ${{ secrets.OO_CI_AT }}
           inputs: '{ "version": "${{ env.RELEASE_VERSION }}" }'
 
@@ -55,7 +55,7 @@ jobs:
         run: |
           git fetch
           git config user.email "gullerya@gmail.com"
-          git config user.name "object-observer CI"
+          git config user.name "CI automation"
           git add --all
           git commit -m "set version to ${{ env.SNAPSHOT_VERSION }}"
           git push origin HEAD:main

@@ -1,4 +1,4 @@
-name: Trigger 'object-observer' release
+name: Trigger release
 
 on:
   workflow_dispatch:
@@ -49,7 +49,7 @@ jobs:
         run: |
           git fetch
           git config user.email "gullerya@gmail.com"
-          git config user.name "object-observer CI"
+          git config user.name "CI automation"
           git add --all
           git commit -m "set version to ${{ env.RELEASE_VERSION }}"
           git push origin HEAD:main
