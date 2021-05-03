@@ -10,7 +10,6 @@
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
 Main aspects and features:
-
 - implemented via native __Proxy__ (revokable)
 - observation is 'deep', yielding changes from a __sub-graphs__ too
 - nested objects of the observable graph are observables too
@@ -68,11 +67,15 @@ Full details about CDN usage and example are [found here](docs/cdn.md).
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
 
-Additionally, from version 4.2.0 there is also 'DOM-like' API flavor, a one that is resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
+Additionally, from version 4.2.0 there is also 'DOM-like' API flavor - constructable `ObjectObserver`.
+This API is resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
 Under the hood it uses the same `Observable` mechanics.
 Read docs about this API flavor [here](docs/dom-like-api.md).
 
 > This is __experimental__ API until specified otherwise.
+
+Starting from 4.3.x `object-observer` is cross-instance operable.
+Observables created by different instances of the library will still be detected correctly as such and handled correctly by any of the instances.
 
 ## Security
 
