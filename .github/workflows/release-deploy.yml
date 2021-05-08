@@ -19,7 +19,7 @@ jobs:
 
       # Get release version
       - name: Get release version
-        run: echo "RELEASE_VERSION=${{ github.event.client_payload.version }}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
 
       - name: Install
         run: npm install -E object-observer@${{ env.RELEASE_VERSION }}
