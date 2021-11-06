@@ -41,7 +41,7 @@ suite.runTest({
 });
 
 async function executeInWorker(testUrl, testParams) {
-	return (await import(testUrl)).default(testParams);
+	// return (await import(testUrl)).default(testParams);
 	return new Promise((resolve, reject) => {
 		const w = new Worker('./workers/perf-worker.js');
 		w.onmessage = message => {
