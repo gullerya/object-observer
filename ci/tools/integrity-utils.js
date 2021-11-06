@@ -8,7 +8,7 @@ export {
 	updateIntegrity
 };
 
-function updateIntegrity(dir) {
+async function updateIntegrity(dir) {
 	const version = getVersion();
 	const hashesMap = getHashesMap(dir);
 
@@ -29,6 +29,8 @@ function updateIntegrity(dir) {
 		}
 		outputFS.write(output + os.EOL);
 	});
+
+	await new Promise(r => setTimeout(r, 500));
 
 	fs.rmSync('docs/cdn.md');
 	fs.renameSync('docs/tmp.md', 'docs/cdn.md');
