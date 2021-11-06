@@ -47,7 +47,7 @@ process.stdout.write(`\x1B[32mDONE\x1B[0m${os.EOL}`);
 
 function ensureCleanDir(dir) {
 	process.stdout.write(`\tcleaning "${dir}"...`);
-	fs.rmSync(dir, { recursive: true });
+	fs.rmSync(dir, { recursive: true, force: true });
 	fs.mkdirSync(dir);
 	process.stdout.write(`\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
 }
