@@ -111,11 +111,11 @@ const
 				);
 			} else if (options.pathsOf) {
 				const oPathsOf = options.pathsOf;
-				const oPathsOfStr = oPathsOf.join(".");
+				const oPathsOfStr = oPathsOf.join('.');
 				result = changes.filter(change =>
 					(change.path.length === oPathsOf.length + 1 ||
-					(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
-					change.path.join(".").startsWith(oPathsOfStr)
+						(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
+					change.path.join('.').startsWith(oPathsOfStr)
 				);
 			} else if (options.pathsFrom) {
 				const oPathsFrom = options.pathsFrom;

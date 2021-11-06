@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import uglifyES from 'uglify-es';
+import uglify from 'uglify-js';
 import { updateIntegrity } from './integrity-utils.js';
 
 const
@@ -32,7 +32,7 @@ for (const fileToMinify of filesToMinify) {
 	const fp = path.join(DIST, fileToMinify);
 	const mfp = path.join(DIST, fileToMinify.replace(/\.js$/, '.min.js'));
 	const fc = fs.readFileSync(fp, { encoding: 'utf8' });
-	const mfc = uglifyES.minify(fc, options).code;
+	const mfc = uglify.minify(fc, options).code;
 	fs.writeFileSync(mfp, mfc);
 }
 process.stdout.write(`\t\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
@@ -47,7 +47,7 @@ process.stdout.write(`\x1B[32mDONE\x1B[0m${os.EOL}`);
 
 function ensureCleanDir(dir) {
 	process.stdout.write(`\tcleaning "${dir}"...`);
-	fs.rmdirSync(dir, { recursive: true });
+	fs.rmSync(dir, { recursive: true, force: true });
 	fs.mkdirSync(dir);
 	process.stdout.write(`\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
 }

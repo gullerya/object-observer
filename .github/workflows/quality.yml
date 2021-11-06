@@ -2,7 +2,11 @@ name: Quality pipeline
 
 on:
   push:
-    branches: ["*"]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   schedule:
     - cron: "0 */6 * * *"
 
