@@ -31,7 +31,7 @@ const
 				result[optName] = options.pathsOf.split('.').filter(Boolean);
 			} else if (optName === 'pathsFrom') {
 				if (options.path || options.pathsOf) {
-					throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf"  option/s');
+					throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf" option/s');
 				}
 				if (typeof optVal !== 'string' || optVal === '') {
 					throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
@@ -78,51 +78,53 @@ const
 			}
 		}
 	},
-	propertiesBluePrint = { [oMetaKey]: { value: null }, observe: { value: observe }, unobserve: { value: unobserve } },
+	propertiesBluePrint = { observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = (source, oMeta) => {
-		propertiesBluePrint[oMetaKey].value = oMeta;
 		const target = Object.defineProperties({}, propertiesBluePrint);
-		for (const [key, value] of Object.entries(source)) {
-			target[key] = getObservedOf(value, key, oMeta);
+		target[oMetaKey] = oMeta;
+		for (const key in source) {
+			target[key] = getObservedOf(source[key], key, oMeta);
 		}
 		return target;
 	},
 	prepareArray = (source, oMeta) => {
-		let i = 0, l = source.length;
-		propertiesBluePrint[oMetaKey].value = oMeta;
+		let l = source.length;
 		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
-		for (; i < l; i++) {
+		target[oMetaKey] = oMeta;
+		for (let i = 0; i < l; i++) {
 			target[i] = getObservedOf(source[i], i, oMeta);
 		}
 		return target;
 	},
 	prepareTypedArray = (source, oMeta) => {
-		propertiesBluePrint[oMetaKey].value = oMeta;
 		Object.defineProperties(source, propertiesBluePrint);
+		source[oMetaKey] = oMeta;
 		return source;
 	},
 	filterChanges = (options, changes) => {
+		if (!options) {
+			return changes;
+		}
+
 		let result = changes;
-		if (options) {
-			if (options.path) {
-				const oPath = options.path;
-				result = changes.filter(change =>
-					change.path.join('.') === oPath
-				);
-			} else if (options.pathsOf) {
-				const oPathsOf = options.pathsOf;
-				const oPathsOfStr = oPathsOf.join('.');
-				result = changes.filter(change =>
-					(change.path.length === oPathsOf.length + 1 ||
-						(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
-					change.path.join('.').startsWith(oPathsOfStr)
-				);
-			} else if (options.pathsFrom) {
-				const oPathsFrom = options.pathsFrom;
-				result = changes.filter(change =>
-					change.path.join('.').startsWith(oPathsFrom)
-				);
-			}
+		if (options.path) {
+			const oPath = options.path;
+			result = changes.filter(change =>
+				change.path.join('.') === oPath
+			);
+		} else if (options.pathsOf) {
+			const oPathsOf = options.pathsOf;
+			const oPathsOfStr = oPathsOf.join('.');
+			result = changes.filter(change =>
+				(change.path.length === oPathsOf.length + 1 ||
+					(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
+				change.path.join('.').startsWith(oPathsOfStr)
+			);
+		} else if (options.pathsFrom) {
+			const oPathsFrom = options.pathsFrom;
+			result = changes.filter(change =>
+				change.path.join('.').startsWith(oPathsFrom)
+			);
 		}
 		return result;
 	},
@@ -136,13 +138,13 @@ const
 	callObserversFromMT = function callObserversFromMT() {
 		const batches = this.batches;
 		this.batches = null;
-		for (const [listener, options] of batches) {
-			callObserverSafe(listener, options);
+		for (const [listener, changes] of batches) {
+			callObserverSafe(listener, changes);
 		}
 	},
 	callObservers = (oMeta, changes) => {
 		let currentObservable = oMeta;
-		let observers, target, options, relevantChanges, i, newPath, tmp;
+		let observers, target, options, relevantChanges, i;
 		const l = changes.length;
 		do {
 			observers = currentObservable.observers;
@@ -177,21 +179,14 @@ const
 				}
 			}
 
-			let tmpa;
+			//	cloning all the changes and notifying in context of parent
 			if (currentObservable.parent) {
-				tmpa = new Array(l);
+				const clonedChanges = new Array(l);
 				for (let j = 0; j < l; j++) {
-					tmp = changes[j];
-					newPath = [currentObservable.ownKey, ...tmp.path];
-					tmpa[j] = {
-						type: tmp.type,
-						path: newPath,
-						value: tmp.value,
-						oldValue: tmp.oldValue,
-						object: tmp.object
-					};
+					clonedChanges[j] = { ...changes[j] };
+					clonedChanges[j].path = [currentObservable.ownKey, ...clonedChanges[j].path];
 				}
-				changes = tmpa;
+				changes = clonedChanges;
 				currentObservable = currentObservable.parent;
 			} else {
 				currentObservable = null;

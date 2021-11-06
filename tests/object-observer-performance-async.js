@@ -17,7 +17,7 @@ suite.runTest({
 		TOLERANCE_MULTIPLIER: TOLERANCE_MULTIPLIER,
 		CREATE_ITERATIONS: CREATE_ITERATIONS,
 		MUTATE_ITERATIONS: MUTATE_ITERATIONS,
-		OBJECT_CREATION_TRSHLD: 0.01,
+		OBJECT_CREATION_TRSHLD: 0.005,
 		PRIMITIVE_DEEP_MUTATION_TRSHLD: 0.001,
 		PRIMITIVE_DEEP_ADDITION_TRSHLD: 0.001,
 		PRIMITIVE_DEEP_DELETION_TRSHLD: 0.001
@@ -41,7 +41,7 @@ suite.runTest({
 });
 
 async function executeInWorker(testUrl, testParams) {
-	// return (await import(testUrl)).default(testParams);
+	return (await import(testUrl)).default(testParams);
 	return new Promise((resolve, reject) => {
 		const w = new Worker('./workers/perf-worker.js');
 		w.onmessage = message => {
