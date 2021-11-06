@@ -118,6 +118,19 @@ suite.runTest({ name: 'observe paths of - inner case' }, test => {
 	test.assertEqual(2, counter);
 });
 
+suite.runTest({ name: 'observe paths of - array - property of same depth updated' }, test => {
+	const oo = Observable.from({ array: [1, 2, 3], prop: { inner: 'value' } });
+	let counter = 0;
+	oo.observe(changes => { counter += changes.length; }, { pathsOf: 'array' });
+	oo.nonRelevant = 'non-relevant';
+	oo.prop.inner = 'non-relevant';
+	oo.prop = { newObj: { test: 'non-relevant' } };
+	oo.array.pop();
+	oo.array.push({newObj: { test: 'relevant' }});
+	oo.array[2].newObj.test = 'non-relevant';
+	test.assertEqual(2, counter);
+});
+
 suite.runTest({ name: 'observe paths of - root case' }, test => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
