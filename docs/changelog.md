@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- dependencies updated
 - [Issue no. 93](https://github.com/gullerya/object-observer/issues/93) - `pathsOf` misbehave fixed
+- dependencies updated
+- performance tuned up
 
 ## [4.3.2] - 2021-07-19
 ### Fixed
