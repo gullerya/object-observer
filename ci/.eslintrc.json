@@ -3,10 +3,9 @@
 	"env": {
 		"browser": true,
 		"node": true,
-		"es2017": true
+		"es2020": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 9,
 		"sourceType": "module"
 	},
 	"rules": {
