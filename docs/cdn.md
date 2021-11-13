@@ -49,6 +49,8 @@ Checksums provided per version for both, regular and minified resources:
 | Version | Resource | Integrity checksum (hash) |
 |---------|----------|---------------------------|
 |<!--INSERT-MARKER-->
+| 4.5.0 | `object-observer.js` | `sha512-PRxMMuoda0rmLHMFCguy2CSySHoWyCZtFIy+N7gzBHAOB9QYs0VGx8PbaHUhpyo0VwHDY/2L02bDZzmfAq3aIQ==` |
+| 4.5.0 | `object-observer.min.js` | `sha512-Xn4niKWPRT5W502IEgfafP4W+agpLcE6Y/arwL2/kP5FQq1rFP5B6WRZiLPlT++qxGXHkKejduWo6L7SAVh0Sg==` |
 | 4.4.0 | `object-observer.js` | `sha512-4l0Q/VlM/3dyYEiH6zp4qQ7oFoe6lcyKFDTU+wJ04LwK9o9hzvBYfmHzFlt4kicfGe4U8u+D+AD3onTQuQBoaw==` |
 | 4.4.0 | `object-observer.min.js` | `sha512-zlqhnAOtENZ58r5GzmpbvYQMr9JrII7YrxJ9SEWQXNIZUhL/rZDTm3g0uH1895kbPKv/zIK59XcfrmAWtR/QDA==` |
 | 4.3.2 | `object-observer.js` | `sha512-KIVmA1D/MQMPfJ2DunNeugVrTsOjt/q9BU2+C2E4PEMT+Om5kRE8nl/at+zBKbO7yUih/T9VmiQw50mROPfI/A==` |
