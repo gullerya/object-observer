@@ -25,7 +25,7 @@ Main aspects and features:
   - intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
   - massive mutations delivered in a single callback, usually having an array of an atomic changes
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
-- following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`, `Blob`, `Error`
+- following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`
 
 Supported:
 ![CHROME](docs/browser-icons/chrome.png)<sub>71+</sub> |

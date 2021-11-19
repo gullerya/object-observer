@@ -200,7 +200,7 @@ const
 			return new ArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
 		} else if (ArrayBuffer.isView(item)) {
 			return new TypedArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
-		} else if (item instanceof Date || item instanceof Error || (globalThis.Blob && item instanceof Blob)) {
+		} else if (item instanceof Date) {
 			return item;
 		} else {
 			return new ObjectOMeta({ target: item, ownKey: key, parent: parent }).proxy;
@@ -655,8 +655,8 @@ const Observable = Object.freeze({
 			return new ArrayOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		} else if (ArrayBuffer.isView(target)) {
 			return new TypedArrayOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
-		} else if (target instanceof Date || target instanceof Error || (globalThis.Blob && target instanceof Blob)) {
-			throw new Error(`${target} found to be one of a on-observable types`);
+		} else if (target instanceof Date) {
+			throw new Error(`${target} found to be one of a non-observable types`);
 		} else {
 			return new ObjectOMeta({ target: target, ownKey: null, parent: null, options: options }).proxy;
 		}
