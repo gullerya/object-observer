@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.6.0] - 2021-11-19
+- [Issue no. 97](https://github.com/gullerya/object-observer/issues/97) - removing the care for native objects, any but `Date`, due to seemingly non-relevancy (until proven otherwise); this effectively un-does issue #2
+
 ## [4.5.0] - 2021-11-13
 - [Issue no. 53](https://github.com/gullerya/object-observer/issues/53) - fixing failures on NodeJS due to `Blob` unavailability on global scope
 

@@ -5,9 +5,7 @@ const suite = getSuite({ name: 'Testing Observable - non-observables' });
 
 suite.runTest({ name: 'creating observable from non-observable should throw an error' }, test => {
 	const objectsToTest = [
-		new Date(),
-		new Blob(),
-		new Error()
+		new Date()
 	];
 
 	for (const one of objectsToTest) {
@@ -15,7 +13,7 @@ suite.runTest({ name: 'creating observable from non-observable should throw an e
 			Observable.from(one);
 			throw new Error('should not get to this point');
 		} catch (e) {
-			test.assertTrue(e.message.includes('found to be one of a on-observable types'));
+			test.assertTrue(e.message.includes('found to be one of a non-observable types'));
 		}
 	}
 
@@ -26,8 +24,6 @@ suite.runTest({ name: 'creating observable from non-observable should throw an e
 suite.runTest({ name: 'non-observable in an object subgraph should stay unchanged' }, () => {
 	const o = {
 		data: new Date(),
-		blob: new Blob(),
-		error: new Error(),
 		object: {}
 	};
 	const po = Observable.from(o);
@@ -44,9 +40,7 @@ suite.runTest({ name: 'non-observable in an object subgraph should stay unchange
 suite.runTest({ name: 'non-observable in an array subgraph should stay unchanged' }, () => {
 	const a = [
 		{},
-		new Date(),
-		new Blob(),
-		new Error()
+		new Date()
 	];
 	const o = Observable.from(a);
 
@@ -70,37 +64,28 @@ suite.runTest({ name: 'non-observable should be handled correctly when nullified
 
 suite.runTest({ name: 'non-observable should be handled correctly when replaced' }, test => {
 	const oo = Observable.from({
-		error: new Error('error message')
+		date: new Date()
 	});
 
-	test.assertTrue(oo.error instanceof Error);
-	test.assertTrue('name' in oo.error);
-	test.assertTrue('message' in oo.error);
-	test.assertTrue('stack' in oo.error);
+	test.assertTrue(oo.date instanceof Date);
 
-	oo.error = new Error('new error message');
+	oo.date = new Date(2020, 10, 5);
 
-	test.assertTrue(oo.error instanceof Error);
-	test.assertTrue('name' in oo.error);
-	test.assertTrue('message' in oo.error);
-	test.assertTrue('stack' in oo.error);
+	test.assertTrue(oo.date instanceof Date);
 });
 
 suite.runTest({ name: 'non-observable deviation should be handled correctly when replaced' }, test => {
 	const
 		o = {
-			error: new SyntaxError('syntax error message')
+			date: new Date()
 		},
 		oo = Observable.from(o);
 
-	test.assertEqual(oo.error, o.error);
+	test.assertEqual(oo.date, o.date);
 
-	oo.error = new TypeError('type error message');
+	oo.date = new Date();
 
-	test.assertTrue(oo.error instanceof TypeError);
-	test.assertTrue('name' in oo.error);
-	test.assertEqual(oo.error.message, 'type error message');
-	test.assertTrue('stack' in oo.error);
+	test.assertTrue(oo.date instanceof Date);
 });
 
 suite.runTest({ name: 'non-observable should be handled correctly when deleted' }, () => {
