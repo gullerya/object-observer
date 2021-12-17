@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to bump to'
-        required: false
+        description: "Version bump kind"
+        required: true
+        type: choice
+        options: ["patch", "minor", "major"]
 
 jobs:
   prepare-verify-trigger:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout
@@ -22,39 +24,6 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install NPM
-        run: npm install
-
-      # Bump version
+      # Bump / tag version
       - name: Bump to target version, if any
-        if: ${{ github.event.inputs.version }}
-        run: npm run bump -- --version=${{ github.event.inputs.version }}
-      - name: Bump release version
-        run: |
-          npm run bump -- --release
-          echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
-
-      # Build & Verify new version
-      - name: Build
-        run: npm run build
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Test
-        run: npm run test
-
-      # Push updated content to remote and Tag version
-      - name: Push changes
-        run: |
-          git fetch
-          git config user.email "gullerya@gmail.com"
-          git config user.name "CI automation"
-          git add --all
-          git commit -m "set version to ${{ env.RELEASE_VERSION }}"
-          git push origin HEAD:main
-
-      - name: Tag release
-        run: |
-          git tag -a v${{ env.RELEASE_VERSION }} -m "tag release v${{ env.RELEASE_VERSION }}"
-          git push origin HEAD:main v${{ env.RELEASE_VERSION }}
+        run: npm run ${{ github.event.inputs.version }}

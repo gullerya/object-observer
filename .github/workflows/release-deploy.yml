@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to deploy'
+        description: "Version to deploy"
         required: true
 
 jobs:
   release-deploy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Setup NodeJS 14
@@ -21,6 +21,7 @@ jobs:
       - name: Get release version
         run: echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
 
+      # Pull the object-observer version to be deployed
       - name: Install
         run: npm install -E object-observer@${{ env.RELEASE_VERSION }}
 
