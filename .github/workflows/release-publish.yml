@@ -34,7 +34,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: npm publish
 
-      # Deploy to CDN (trigger)
+      # Trigger deploy to CDN
       - name: Obtain release version
         run: echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
       - name: Tirgger deploy to CDN
