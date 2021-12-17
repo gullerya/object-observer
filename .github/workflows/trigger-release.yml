@@ -26,4 +26,6 @@ jobs:
 
       # Bump / tag version
       - name: Bump to target version, if any
-        run: npm version ${{ github.event.inputs.version }}
+        run: |
+          git config user.name "automation"
+          npm version ${{ github.event.inputs.version }}
