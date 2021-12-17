@@ -25,11 +25,13 @@ jobs:
       - name: Install NPM
         run: npm install
 
-      - name: Build
+      - name: Build & Push
         run: |
           npm run build -- --cdn
           git config user.name "automation"
-          git push
+          git fetch
+          git add --all
+          git push origin HEAD:main
 
       # Publish to NPM
       - name: Publish
