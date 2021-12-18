@@ -10,7 +10,7 @@ const
 	SRC = 'src',
 	DIST = 'dist',
 	CDN = 'cdn',
-	filesToCopy = ['object-observer.js'],
+	filesToCopy = ['object-observer.js', 'object-observer.d.ts'],
 	filesToMinify = ['object-observer.js'];
 
 process.stdout.write(`\x1B[32mStarting the build...\x1B[0m${os.EOL}`);

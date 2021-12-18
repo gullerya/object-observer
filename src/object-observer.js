@@ -667,30 +667,30 @@ const Observable = Object.freeze({
 });
 
 const
-	callbackKey = Symbol('callback-key'),
+	observerKey = Symbol('observer-key'),
 	targetsKey = Symbol('targets-key');
 class ObjectObserver {
-	constructor(callback) {
-		this[callbackKey] = callback;
+	constructor(observer) {
+		this[observerKey] = observer;
 		this[targetsKey] = new Set();
 		Object.freeze(this);
 	}
 
-	observe(target, config) {
+	observe(target, options) {
 		const r = Observable.from(target);
-		r.observe(this[callbackKey], config);
+		r.observe(this[observerKey], options);
 		this[targetsKey].add(r);
 		return r;
 	}
 
 	unobserve(target) {
-		target.unobserve(this[callbackKey]);
+		target.unobserve(this[observerKey]);
 		this[targetsKey].delete(target);
 	}
 
 	disconnect() {
 		for (const t of this[targetsKey]) {
-			t.unobserve(this[callbackKey]);
+			t.unobserve(this[observerKey]);
 		}
 		this[targetsKey].clear();
 	}
