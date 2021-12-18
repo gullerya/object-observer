@@ -22,7 +22,7 @@ import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/obje
 ## Integrity (SRI)
 
 Security feature `integrity` was introduced specifically to fortify a consumption of a CDN delivered modules.
-`object-observer` adheres to this effort and provides integrity checksums per release (starting from v4.2.4).
+`object-observer` adheres to this effort and provides integrity checksums per release (starting from version `4.2.4`).
 
 ### Usage example
 
@@ -38,13 +38,19 @@ Thus, please add the below HTML piece in your HTML, when willing to enforce the 
   integrity="hash">
 ```
 
-> Note: version (to be put instead of `x.y.z`) and resource kind (regular/minified) should be the same as you use in the application. Accordingly, replace the `hash` with the relevant value as per version and resource kind from the table below.
+> Note: version (to be put instead of `x.y.z`) and resource kind (regular/minified) should be the same as you use in the application. Accordingly, replace the `hash` with the relevant value as per version and resource, see below.
 
 > Note: `modulepreload` in general and `integrity` attribute with it in particular are still having a limited support.
 
-### Integrity checksums list
+### Integrity checksums
 
-Checksums provided per version for both, regular and minified resources:
+Checksums provided per version for both, regular and minified resources.
+
+Starting from version `4.6.6` SRI hashes provided via Git and NPM package, via `sri.json` file:
+- GitHub: visit the file in repo at the desired version tag, eg [this link](https://github.com/gullerya/object-observer/blob/v4.6.6/sri.json)
+- NPM: do install `object-observer` via `npm install...`, then find `sri.json` file your `node_modules/object-observer` folder
+
+Below are SRI hashes of the pre-`4.6.6` version:
 
 | Version | Resource | Integrity checksum (hash) |
 |---------|----------|---------------------------|
