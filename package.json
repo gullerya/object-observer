@@ -25,7 +25,7 @@
 	"license": "ISC",
 	"files": [
 		"dist",
-		"sri"
+		"sri.json"
 	],
 	"main": "dist/object-observer.min.js",
 	"browser": "dist/object-observer.min.js",
