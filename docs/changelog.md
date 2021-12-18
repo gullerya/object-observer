@@ -7,10 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.0] - 2021-12-18
+### Added
+- [Issue no. 102](https://github.com/gullerya/object-observer/issues/102) - Added TS definitions for convenience
+
+## [4.6.6] - 2021-12-18
+### Changed
+- [Issue no. 99](https://github.com/gullerya/object-observer/issues/99) - simplified CD flow
+
 ## [4.6.0] - 2021-11-19
+### Changed
 - [Issue no. 97](https://github.com/gullerya/object-observer/issues/97) - removing the care for native objects, any but `Date`, due to seemingly non-relevancy (until proven otherwise); this effectively un-does issue #2
 
 ## [4.5.0] - 2021-11-13
+### Fixed
 - [Issue no. 53](https://github.com/gullerya/object-observer/issues/53) - fixing failures on NodeJS due to `Blob` unavailability on global scope
 
 ## [4.4.0] - 2021-11-07

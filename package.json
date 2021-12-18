@@ -27,8 +27,9 @@
 		"dist",
 		"sri.json"
 	],
-	"main": "dist/object-observer.min.js",
-	"browser": "dist/object-observer.min.js",
+	"main": "./dist/object-observer.min.js",
+	"browser": "./dist/object-observer.min.js",
+	"types": "./dist/object-observer.d.ts",
 	"type": "module",
 	"author": {
 		"name": "Yuri Guller",
