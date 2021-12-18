@@ -15,10 +15,10 @@ jobs:
         with:
           token: ${{ secrets.OO_CI_AT }}
 
-      - name: Setup NodeJS 14
+      - name: Setup NodeJS 16
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
           registry-url: "https://registry.npmjs.org"
 
       # Prepare
