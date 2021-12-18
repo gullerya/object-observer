@@ -1,4 +1,4 @@
-name: Release
+name: Publish
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - v*
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-20.04
 
     steps:
@@ -20,18 +20,6 @@ jobs:
         with:
           node-version: 16
           registry-url: "https://registry.npmjs.org"
-
-      # Prepare
-      - name: Install NPM
-        run: npm install
-
-      - name: Build & Push
-        run: |
-          npm run build -- --cdn
-          git config user.name "automation"
-          git fetch
-          git add --all
-          git push origin HEAD:main
 
       # Publish to NPM
       - name: Publish
