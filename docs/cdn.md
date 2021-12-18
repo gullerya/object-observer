@@ -46,7 +46,7 @@ Thus, please add the below HTML piece in your HTML, when willing to enforce the 
 
 Checksums provided per version for both, regular and minified resources.
 
-Starting from version `4.6.6` SRI hashes provided via Git and NPM package, via `sri.json` file:
+Starting from version `4.6.6` SRI hashes provided via Git and NPM, via `sri.json` file:
 - GitHub: visit the file in repo at the desired version tag, eg [this link](https://github.com/gullerya/object-observer/blob/v4.6.6/sri.json) (pay attention to the version tag in the URL)
 - NPM: do install `object-observer` via `npm install...`, then find `sri.json` file your `node_modules/object-observer` folder
 
