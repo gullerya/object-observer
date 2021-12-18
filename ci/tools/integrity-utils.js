@@ -1,56 +1,31 @@
-import os from 'os';
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import readline from 'readline';
 
 export {
-	updateIntegrity
+	calcIntegrity
 };
 
-async function updateIntegrity(dir) {
-	const version = getVersion();
-	const hashesMap = getHashesMap(dir);
+const HASHING_ALGO = 'sha512';
 
-	const inputFS = fs.createReadStream('docs/cdn.md', { encoding: 'utf-8' });
-	const outputFS = fs.createWriteStream('docs/tmp.md', { encoding: 'utf-8' });
-
-	const rl = readline.createInterface(inputFS);
-
-	rl.on('line', line => {
-		let output;
-		if (line === '|<!--INSERT-MARKER-->') {
-			output = Object.entries(hashesMap)
-				.map(([fileName, hash]) => `| ${version} | \`${fileName}\` | \`${hash}\` |`)
-				.join(os.EOL);
-			output = '|<!--INSERT-MARKER-->' + os.EOL + output;
-		} else {
-			output = line;
-		}
-		outputFS.write(output + os.EOL);
-	});
-
-	await new Promise(r => setTimeout(r, 500));
-
-	fs.rmSync('docs/cdn.md');
-	fs.renameSync('docs/tmp.md', 'docs/cdn.md');
-}
-
-function getVersion() {
-	const text = fs.readFileSync('package.json', { encoding: 'utf-8' });
-	const json = JSON.parse(text);
-	return json.version;
-}
-
-function getHashesMap(dir) {
+async function calcIntegrity(dir) {
 	const result = {};
-	const files = fs.readdirSync(dir);
-	const hashingAlgoritm = 'sha512';
+	const files = await getFlatFilesList(dir);
 	for (const file of files) {
-		const text = fs.readFileSync(path.join(dir, file), { encoding: 'utf-8' });
-		const algo = crypto.createHash(hashingAlgoritm);
+		const text = await fs.readFile(path.join(file), { encoding: 'utf-8' });
+		const algo = crypto.createHash(HASHING_ALGO);
 		const hash = algo.update(text, 'utf-8').digest().toString('base64');
-		result[file] = `${hashingAlgoritm}-${hash}`;
+		result[file] = `${HASHING_ALGO}-${hash}`;
 	}
-	return result;
+	return Object.freeze(result);
+}
+
+async function getFlatFilesList(rootDir) {
+	const result = [];
+	const entries = await fs.readdir(rootDir, { withFileTypes: true });
+	for (const e of entries) {
+		const ePath = path.join(rootDir, e.name);
+		result.push(e.isDirectory() ? getFlatFilesList(ePath) : ePath);
+	}
+	return result.flat(Number.MAX_VALUE);
 }

@@ -3,10 +3,11 @@
 	"env": {
 		"browser": true,
 		"node": true,
-		"es2020": true
+		"es2021": true
 	},
 	"parserOptions": {
-		"sourceType": "module"
+		"sourceType": "module",
+		"ecmaVersion": "latest"
 	},
 	"rules": {
 		"no-shadow": 2

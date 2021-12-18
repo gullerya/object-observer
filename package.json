@@ -24,7 +24,8 @@
 	},
 	"license": "ISC",
 	"files": [
-		"dist"
+		"dist",
+		"sri.json"
 	],
 	"main": "dist/object-observer.min.js",
 	"browser": "dist/object-observer.min.js",
@@ -48,7 +49,9 @@
 	"scripts": {
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
-		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json"
+		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json",
+		"version": "npm run build -- --cdn && git add --all",
+		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
 		"eslint": "^8.4.1",

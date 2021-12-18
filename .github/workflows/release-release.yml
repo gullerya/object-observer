@@ -1,4 +1,4 @@
-name: Trigger release
+name: Release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
         options: ["patch", "minor", "major"]
 
 jobs:
-  trigger:
+  release:
     runs-on: ubuntu-20.04
 
     steps:
@@ -19,14 +19,12 @@ jobs:
         with:
           token: ${{ secrets.OO_CI_AT }}
 
-      - name: Setup NodeJS 14
+      - name: Setup NodeJS 16
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Bump & Tag version
         run: |
           git config user.name "automation"
           npm version ${{ github.event.inputs.version }}
-          git push
-          git push --tags
