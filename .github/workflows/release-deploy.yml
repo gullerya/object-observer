@@ -1,4 +1,4 @@
-name: Deploy to CDN
+name: Deploy (CDN)
 
 on:
   workflow_dispatch:

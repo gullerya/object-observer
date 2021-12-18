@@ -1,4 +1,4 @@
-name: Publish
+name: Publish (NPM)
 
 on:
   push:
@@ -38,6 +38,6 @@ jobs:
       - name: Tirgger deploy to CDN
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: Deploy to CDN
+          workflow: "Deploy (CDN)"
           token: ${{ secrets.OO_CI_AT }}
           inputs: '{ "version": "${{ env.RELEASE_VERSION }}" }'
