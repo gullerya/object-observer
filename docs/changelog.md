@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.7.1] - 2021-12-22
+### Fixed
+- [Issue no. 104](https://github.com/gullerya/object-observer/issues/104) - Fixed TS definitions
+
 ## [4.7.0] - 2021-12-18
 ### Added
 - [Issue no. 102](https://github.com/gullerya/object-observer/issues/102) - Added TS definitions for convenience
