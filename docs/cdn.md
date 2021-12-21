@@ -29,7 +29,7 @@ Security feature `integrity` was introduced specifically to fortify a consumptio
 To begin with, detailed description on SRI (Subresource Integrity) [found here](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity).
 
 Since `object-observer` provides ES6 module syntax, the approach described in the documentation above and elsewhere is not applicable.
-In this case, and a until better way available (like [this proposal](https://github.com/tc39/proposal-import-assertions/issues/113) of myself), one is required to use `<link rel="modulepreload">` in __addition__ to the regular `import` in order to enforce integrity validation.
+In this case, and until a better way available (like [this proposal](https://github.com/tc39/proposal-import-assertions/issues/113) of myself), one is required to use `<link rel="modulepreload">` in __addition__ to the regular `import` in order to enforce integrity validation.
 
 Thus, please add the below HTML piece in your HTML, when willing to enforce the module's integrity:
 ```html
