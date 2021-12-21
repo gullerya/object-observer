@@ -55,7 +55,7 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"eslint": "^8.4.1",
+		"eslint": "^8.5.0",
 		"fs-extra": "^10.0.0",
 		"just-test": "2.3.2",
 		"puppeteer": "^13.0.0",

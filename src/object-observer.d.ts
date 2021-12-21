@@ -7,19 +7,23 @@ export enum ChangeType {
 }
 
 /**
- * `Observable` allows to observe any (deep) changes on it's underlying object graph
+ * `Observable` allows to observe any (deep) changes on its underlying object graph
  * - created by `from` static method, via cloning the target and enhancing it with own methods
- * - important: the type `T` is not preserved, beside the shape
+ * - important: the type `T` is not preserved, beside its shape
  */
 export abstract class Observable {
 
 	/**
 	 * create Observable from the target
 	 * - target is cloned, remaining unchanged in itself
-	 * - important: the type `T` is NOT preserved, beside it's shape
+	 * - important: the type `T` is NOT preserved, beside its shape
 	 */
 	static from<T>(target: T, options?: ObservableOptions): Observable & T;
 
+	/**
+	 * test an input for being `Observable`
+	 * @param input any object to be verified as `Observable`
+	 */
 	static isObservable(input: unknown): boolean;
 
 	abstract observe(observer: Observer, options?: ObserverOptions): void;
@@ -64,9 +68,9 @@ export class ObjectObserver {
 	constructor(observer: Observer, options?: ObservableOptions);
 
 	/**
-	 * created `Observable` from the target and starts observation
-	 * - important: the type `T` is NOT preserved, except the shape
-	 * @param target  target to be observed, turned into `Observable` via cloning during the process
+	 * create `Observable` from the target and starts observation
+	 * - important: the type `T` is NOT preserved, except its shape
+	 * @param target  target to be observed, turned into `Observable` via cloning
 	 * @param options `ObserverOptions` options
 	 */
 	observe<T>(target: T, options: ObserverOptions): Observable & T;
