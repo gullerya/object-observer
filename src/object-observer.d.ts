@@ -1,10 +1,4 @@
-export enum ChangeType {
-	INSERT = 'insert',
-	UPDATE = 'update',
-	DELETE = 'delete',
-	REVERSE = 'reverse',
-	SHUFFLE = 'shuffle'
-}
+export type ChangeType = 'insert' | 'update' | 'delete' | 'reverse' | 'shuffle';
 
 /**
  * `Observable` allows to observe any (deep) changes on its underlying object graph
