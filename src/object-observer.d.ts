@@ -63,7 +63,7 @@ export class ObjectObserver {
 
 	/**
 	 * create `Observable` from the target and starts observation
-	 * - important: the type `T` is NOT preserved, except its shape
+	 * - important: the type `T` is NOT preserved, beside its shape
 	 * @param target  target to be observed, turned into `Observable` via cloning
 	 * @param options `ObserverOptions` options
 	 */
