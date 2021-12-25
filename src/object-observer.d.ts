@@ -22,7 +22,7 @@ export abstract class Observable {
 
 	abstract observe(observer: Observer, options?: ObserverOptions): void;
 
-	abstract unobserve<T>(...observer: Observer[]): T;
+	abstract unobserve(...observer: Observer[]): void;
 }
 
 export interface ObservableOptions {
@@ -67,13 +67,13 @@ export class ObjectObserver {
 	 * @param target  target to be observed, turned into `Observable` via cloning
 	 * @param options `ObserverOptions` options
 	 */
-	observe<T>(target: T, options: ObserverOptions): Observable & T;
+	observe<T>(target: T, options?: ObserverOptions): Observable & T;
 
 	/**
-	 * un-observes the `Observable`, if any, returning the original undelying plain object
+	 * un-observes the `Observable`, returning the original undelying plain object
 	 * @param target target to be un-observed
 	 */
-	unobserve<T>(target: (Observable & T) | unknown): T;
+	unobserve(target: Observable): void;
 
 	disconnect(): void;
 }
