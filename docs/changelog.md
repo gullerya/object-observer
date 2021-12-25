@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - [Issue no. 106](https://github.com/gullerya/object-observer/issues/106) - Fixed TS definition of ChangeType (enum to type)
+- [Issue no. 107](https://github.com/gullerya/object-observer/issues/107) - Fixed TS definition of ObjectObserver.observe (options are optional)
 
 ## [4.7.1] - 2021-12-22
 ### Fixed
