@@ -124,3 +124,17 @@ suite.runTest({
 }, () => {
 	Observable.from({}, { invalid: 'key' });
 });
+
+suite.runTest({
+	name: 'negative observe - invalid observable',
+	expectError: 'invalid observable parameter'
+}, () => {
+	Observable.observe({});
+});
+
+suite.runTest({
+	name: 'negative unobserve - invalid observable',
+	expectError: 'invalid observable parameter'
+}, () => {
+	Observable.unobserve({});
+});
