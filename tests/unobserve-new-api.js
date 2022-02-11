@@ -130,3 +130,9 @@ suite.runTest({ name: 'test unobserve - observe, unobserve and observe again' },
 	oo.some = 'again';
 	if (cntr !== 2) throw new Error('preliminary check failed - observer was not invoked being added anew');
 });
+
+suite.runTest({ name: 'test unobserve - on observers set case' }, () => {
+	const oo = Observable.from({ some: 'text' });
+
+	Observable.unobserve(oo, () => { });
+});
