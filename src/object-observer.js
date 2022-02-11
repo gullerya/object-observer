@@ -70,8 +70,8 @@ const
 			return;
 		}
 
-		while (el--) {
-			let i = observers.indexOf(existingObs[el][0]);
+		while (el) {
+			let i = observers.indexOf(existingObs[--el][0]);
 			if (i >= 0) {
 				existingObs.splice(el, 1);
 			}
