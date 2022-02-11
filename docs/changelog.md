@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Issue no. 111](https://github.com/gullerya/object-observer/issues/111) - Added `observe` and `unobserve` methods as statics on the `Observable`. Those methods will be removed from the next major release (5) from the observable instance and only be available from `Observable` namespace.
 ### Fixed
 - upgraded dependencies
+
 
 ## [4.7.2] - 2021-12-25
 ### Fixed
