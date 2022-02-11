@@ -7,7 +7,9 @@ suite.runTest({ name: 'ensure Observable object has defined APIs' }, test => {
 	test.assertEqual(typeof Observable, 'object');
 	test.assertEqual(typeof Observable.from, 'function');
 	test.assertEqual(typeof Observable.isObservable, 'function');
-	test.assertEqual(2, Object.keys(Observable).length);
+	test.assertEqual(typeof Observable.observe, 'function');
+	test.assertEqual(typeof Observable.unobserve, 'function');
+	test.assertEqual(4, Object.keys(Observable).length);
 });
 
 suite.runTest({ name: 'ensure Observable object is frozen' }, test => {
