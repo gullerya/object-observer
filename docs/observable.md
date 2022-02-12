@@ -2,24 +2,14 @@
 
 `Observable` API provides the whole life cycle of object observation functionality.
 
-| static methods | instance methods |
-|----------------|------------------|
-| `from`         | `observe`        |
-| `isObservable` | `unobserve`      |
-| `observe`      |                  |
-| `unobserve`    |                  |
+Additionally, this API defines the `Change` object, list of which being a parameter of an observer callback function.
 
-Additionally, this API defines the `Change` object, list of which being a parameter of an observer/listener callback function.
+> `object-observer` provides `Observable` top level object as a named import:
+	```
+	import { Observable } from 'object-observer.js'
+	```
 
 ## Static methods
-
-Static methods are provided by `object-observer` via a plain (frozen) object exported as `Observable`.
-
-```javascript
-import { Observable } from 'object-observer.js';
-```
-
-This is the namespace to invoke the static methods described below:
 
 ### `Observable.`__`from(input[, options])`__
 

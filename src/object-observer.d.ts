@@ -2,7 +2,8 @@ export type ChangeType = 'insert' | 'update' | 'delete' | 'reverse' | 'shuffle';
 
 /**
  * `Observable` allows to observe any (deep) changes on its underlying object graph
- * - created by `from` static method, via cloning the target and enhancing it with own methods
+ * 
+ * - created by `from` static method, via cloning the target
  * - important: the type `T` is not preserved, beside its shape
  */
 export abstract class Observable {
@@ -20,12 +21,12 @@ export abstract class Observable {
 	/**
 	 * check input for being `Observable`
 	 * 
-	 * @param input any object to be verified as `Observable`
+	 * @param input any object to be checked as `Observable`
 	 */
 	static isObservable(input: unknown): boolean;
 
 	/**
-	 * add observer to process observable's changes
+	 * add observer to handle the observable's changes
 	 * 
 	 * @param observable observable to set observer on
 	 * @param observer observer function / logic
@@ -44,6 +45,7 @@ export abstract class Observable {
 	/**
 	 * deprecated, use static `Observable.observe` instead
 	 * 
+	 * @deprecated
 	 * @param observer 
 	 * @param options 
 	 */
@@ -52,6 +54,7 @@ export abstract class Observable {
 	/**
 	 * deprecated, use static `Observable`unobserve` instead
 	 * 
+	 * @deprecated
 	 * @param observers observers to remove; if none supplied - will remove all observers
 	 */
 	abstract unobserve(...observers: Observer[]): void;
