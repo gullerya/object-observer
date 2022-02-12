@@ -2,7 +2,8 @@ export type ChangeType = 'insert' | 'update' | 'delete' | 'reverse' | 'shuffle';
 
 /**
  * `Observable` allows to observe any (deep) changes on its underlying object graph
- * - created by `from` static method, via cloning the target and enhancing it with own methods
+ * 
+ * - created by `from` static method, via cloning the target
  * - important: the type `T` is not preserved, beside its shape
  */
 export abstract class Observable {
@@ -11,18 +12,52 @@ export abstract class Observable {
 	 * create Observable from the target
 	 * - target is cloned, remaining unchanged in itself
 	 * - important: the type `T` is NOT preserved, beside its shape
+	 *
+	 * @param target source, to create `Observable` from
+	 * @param options observable options
 	 */
 	static from<T>(target: T, options?: ObservableOptions): Observable & T;
 
 	/**
-	 * test an input for being `Observable`
-	 * @param input any object to be verified as `Observable`
+	 * check input for being `Observable`
+	 * 
+	 * @param input any object to be checked as `Observable`
 	 */
 	static isObservable(input: unknown): boolean;
 
+	/**
+	 * add observer to handle the observable's changes
+	 * 
+	 * @param observable observable to set observer on
+	 * @param observer observer function / logic
+	 * @param options observation options
+	 */
+	static observe(observable: Observable, observer: Observer, options?: ObserverOptions): void;
+
+	/**
+	 * remove observer/s from observable
+	 * 
+	 * @param observable observable to remove observer/s from
+	 * @param observers 0 to many observers to remove; if none supplied, ALL observers will be removed
+	 */
+	static unobserve(observable: Observable, ...observers: Observer[]): void;
+
+	/**
+	 * deprecated, use static `Observable.observe` instead
+	 * 
+	 * @deprecated
+	 * @param observer 
+	 * @param options 
+	 */
 	abstract observe(observer: Observer, options?: ObserverOptions): void;
 
-	abstract unobserve(...observer: Observer[]): void;
+	/**
+	 * deprecated, use static `Observable`unobserve` instead
+	 * 
+	 * @deprecated
+	 * @param observers observers to remove; if none supplied - will remove all observers
+	 */
+	abstract unobserve(...observers: Observer[]): void;
 }
 
 export interface ObservableOptions {

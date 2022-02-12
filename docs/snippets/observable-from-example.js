@@ -14,7 +14,7 @@ let user = {
 
 //	setup observation
 let observableUser = Observable.from(user);
-observableUser.observe(changes => console.log(changes));
+Observable.observe(observableUser, changes => console.log(changes));
 
 //	now lets play with some changes to see the results (see the console log in dev tools)
 observableUser.name = 'Nava Guller';

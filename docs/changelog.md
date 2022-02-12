@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.8.0] - 2022-02-12
+### Added
+- [Issue no. 111](https://github.com/gullerya/object-observer/issues/111) - Added `observe` and `unobserve` methods as statics on the `Observable`. Those methods will be removed from the next major release (5) from the observable instance and only be available from `Observable` namespace.
+### Fixed
+- upgraded dependencies
+
+
 ## [4.7.2] - 2021-12-25
 ### Fixed
 - [Issue no. 106](https://github.com/gullerya/object-observer/issues/106) - Fixed TS definition of ChangeType (enum to type)

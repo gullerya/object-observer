@@ -55,10 +55,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"eslint": "^8.5.0",
+		"eslint": "^8.8.0",
 		"fs-extra": "^10.0.0",
 		"just-test": "2.3.2",
-		"puppeteer": "^13.0.0",
-		"uglify-js": "^3.14.5"
+		"puppeteer": "^13.3.1",
+		"uglify-js": "^3.15.1"
 	}
 }

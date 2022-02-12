@@ -58,23 +58,22 @@ const
 			console.warn('observer may be bound to an observable only once; will NOT rebind');
 		}
 	},
-	unobserve = function unobserve() {
-		const observers = this[oMetaKey].observers;
-		let ol = observers.length;
-		if (ol) {
-			let al = arguments.length;
-			if (al) {
-				while (al--) {
-					let i = ol;
-					while (i--) {
-						if (observers[i][0] === arguments[al]) {
-							observers.splice(i, 1);
-							ol--;
-						}
-					}
-				}
-			} else {
-				observers.splice(0);
+	unobserve = function unobserve(...observers) {
+		const existingObs = this[oMetaKey].observers;
+		let el = existingObs.length;
+		if (!el) {
+			return;
+		}
+
+		if (!observers.length) {
+			existingObs.splice(0);
+			return;
+		}
+
+		while (el) {
+			let i = observers.indexOf(existingObs[--el][0]);
+			if (i >= 0) {
+				existingObs.splice(el, 1);
 			}
 		}
 	},
@@ -663,6 +662,20 @@ const Observable = Object.freeze({
 	},
 	isObservable: input => {
 		return !!(input && input[oMetaKey]);
+	},
+	observe: (observable, observer, options) => {
+		if (!Observable.isObservable(observable)) {
+			throw new Error(`invalid observable parameter`);
+		}
+
+		observe.call(observable, observer, options);
+	},
+	unobserve: (observable, ...observers) => {
+		if (!Observable.isObservable(observable)) {
+			throw new Error(`invalid observable parameter`);
+		}
+
+		unobserve.call(observable, ...observers);
 	}
 });
 

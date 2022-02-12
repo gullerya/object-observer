@@ -77,8 +77,6 @@ This API is resonating with DOM's `MutationObserver`, `ResizeObserver` etc from 
 Under the hood it uses the same `Observable` mechanics.
 Read docs about this API flavor [here](docs/dom-like-api.md).
 
-> This is __experimental__ API until specified otherwise.
-
 Starting from 4.3.x `object-observer` is cross-instance operable.
 Observables created by different instances of the library will still be detected correctly as such and handled correctly by any of the instances.
 
@@ -95,7 +93,7 @@ const
     order = { type: 'book', pid: 102, ammount: 5, remark: 'remove me' },
     observableOrder = Observable.from(order);
 
-observableOrder.observe(changes => {
+Observable.observe(observableOrder, changes => {
     changes.forEach(change => {
         console.log(change);
     });
@@ -133,7 +131,7 @@ Object.assign(observableOrder, { amount: 1, remark: 'less is more' }, { async: t
 let a = [ 1, 2, 3, 4, 5 ],
     observableA = Observable.from(a);
 
-observableA.observe(changes => {
+Observable.observe(observableA, changes => {
     changes.forEach(change => {
         console.log(change);
     });
@@ -225,15 +223,15 @@ let user = {
 //  path
 //
 //  going to observe ONLY the changes of 'firstName'
-oUser.observe(callback, {path: 'firstName'});
+Observable.observe(oUser, callback, {path: 'firstName'});
 
 //  going to observe ONLY the changes of 'address.city'
-oUser.observe(callback, {path: 'address.city'});
+Observable.observe(oUser, callback, {path: 'address.city'});
 
 //  pathsOf
 //
 //  going to observe the changes of 'address' own properties ('city', 'block') but not else
-oUser.observe(callback, {pathsOf: 'address'});
+Observable.observe(oUser, callback, {pathsOf: 'address'});
 //  here we'll be notified on changes of
 //    address.city
 //    address.extra
@@ -241,7 +239,7 @@ oUser.observe(callback, {pathsOf: 'address'});
 //  pathsFrom
 //
 //  going to observe the changes from 'address' and deeper
-oUser.observe(callback, {pathsFrom: 'address'});
+Observable.observe(oUser, callback, {pathsFrom: 'address'});
 //  here we'll be notified on changes of
 //    address
 //    address.city
