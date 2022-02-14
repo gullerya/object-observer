@@ -9,7 +9,7 @@ suite.runTest({ name: 'array copyWithin - primitives' }, test => {
 		events = [];
 	let callbacks = 0;
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 		callbacks++;
 	});
@@ -52,7 +52,7 @@ suite.runTest({ name: 'array copyWithin - objects' }, test => {
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -70,7 +70,7 @@ suite.runTest({ name: 'array copyWithin - objects' }, test => {
 	if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'c' || events[1].object !== pa[2]) throw new Error('event 1 did not fire as expected');
 	events.splice(0);
 
-	detached.observe(eventsList => {
+	Observable.observe(detached, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 	detached.text = '1';
@@ -83,7 +83,7 @@ suite.runTest({ name: 'array copyWithin - arrays' }, test => {
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, [{ text: 'd' }]]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 

@@ -19,7 +19,7 @@ suite.runTest({ name: 'Object.seal - modifications allowed' }, test => {
 	const oo = Observable.from({ propA: 'a', propB: 'b' });
 	let events = 0;
 	Object.seal(oo);
-	oo.observe(changes => { events += changes.length; });
+	Observable.observe(oo, changes => { events += changes.length; });
 	oo.propA = 'A';
 	test.assertEqual(1, events);
 });
@@ -40,7 +40,7 @@ suite.runTest({ name: 'Object.seal - nested - modifications allowed' }, test => 
 	const oo = Observable.from({ nested: { propA: 'a', propB: 'b' } });
 	let events = 0;
 	Object.seal(oo.nested);
-	oo.observe(changes => { events += changes.length; });
+	Observable.observe(oo, changes => { events += changes.length; });
 	oo.nested.propA = 'A';
 	test.assertEqual(1, events);
 });

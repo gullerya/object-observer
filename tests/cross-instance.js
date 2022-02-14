@@ -30,8 +30,8 @@ suite.runTest({ name: 'callbacks are interoperable' }, test => {
 	test.assertEqual(obsbl1, obsbl2);
 
 	let count = 0;
-	obsbl1.observe(es => count += es.length);
-	obsbl2.observe(es => count += es.length);
+	O1.observe(obsbl1, es => count += es.length);
+	O2.observe(obsbl2, es => count += es.length);
 
 	obsbl1.some = 'thing';
 	obsbl2.some = 'else';

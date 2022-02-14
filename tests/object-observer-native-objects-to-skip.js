@@ -58,7 +58,7 @@ suite.runTest({ name: 'non-observable should be handled correctly when nullified
 		date: new Date()
 	});
 
-	oo.observe(() => { });
+	Observable.observe(oo, () => { });
 	oo.date = null;
 });
 
@@ -93,6 +93,6 @@ suite.runTest({ name: 'non-observable should be handled correctly when deleted' 
 		date: new Date()
 	});
 
-	oo.observe(() => { });
+	Observable.observe(oo, () => { });
 	delete oo.date;
 });

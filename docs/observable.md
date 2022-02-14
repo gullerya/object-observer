@@ -62,12 +62,12 @@ function personUIObserver(changes) {
 }
 ...
 //  following the observablePerson example from above
-observablePerson.observe(personUIObserver, options);    //  options is optional
+Observable.observe(observablePerson, personUIObserver, options);    //  options is optional
 
 const observableAddress = observablePerson.address;
-observableAddress.observe(personUIObserver);            //  nested objects are observables too
+Observable.observe(observableAddress, personUIObserver);            //  nested objects are observables too
 
-observablePerson.address = {};                          //  see below
+observablePerson.address = {};                          			//  see below
 ```
 
 > Attention! Observation set on the nested objects, like `address` in the example above, 'sticks' to that object. So if one replaces the nested object of the observable graph (see the last line of code above), observer callbacks __are NOT__ moved to the new object, they stick to the old one and continue to live there - think of detaching/replacing a sub-graph from the parent.
@@ -77,57 +77,12 @@ observablePerson.address = {};                          //  see below
 - receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed.
 
 ```javascript
-observablePerson.unobserve(personUIObserver);
+Observable.unobserve(observablePerson, personUIObserver);
 //  or
-observablePerson.unobserve();
+Observable.unobserve(observablePerson);
 
 //  same applies to the nested
-observableAddress.unobserve();
-```
-
-## Instance methods
-
-`<observable>` instance is the __clone__ of the object given to the `from` method above, __decorated__ with `Observable` instance APIs.
-
-### `<observable>.`__`observe(callback[, options])`__
-- callback is a _function_, which will be added to the list of observers subscribed for a changes of this observable; changes delivered always as a never-null-nor-empty array of [__`Change`__](#change-instance-properties) objects; each change is a defined, non-null object, see `Change` definition below
-- options is an _object_, optional
-
-> this API is deprecated and will be removed in v5; use static `Observable.observe` instead
-
-```javascript
-function personUIObserver(changes) {
-    changes.forEach(change => {
-        console.log(change.type);
-        console.log(change.path);
-        console.log(change.value);
-        console.log(change.oldValue);
-    });
-}
-...
-//  following the observablePerson example from above
-observablePerson.observe(personUIObserver, options);    //  options is optional
-
-const observableAddress = observablePerson.address;
-observableAddress.observe(personUIObserver);            //  nested objects are observables too
-
-observablePerson.address = {};                          //  see below
-```
-
-> Attention! Observation set on the nested objects, like `address` in the example above, 'sticks' to that object. So if one replaces the nested object of the observable graph (see the last line of code above), observer callbacks __are NOT__ moved to the new object, they stick to the old one and continue to live there - think of detaching/replacing a sub-graph from the parent.
-
-### `<observable>.`__`unobserve([callback[, callback]+])`__
-- receives a _function/s_ which previously was/were registered as an observer/s and removes it/them. If _no arguments_ passed, all observers will be removed.
-
-> this API is deprecated and will be removed in v5; use static `Observable.unobserve` instead
-
-```javascript
-observablePerson.unobserve(personUIObserver);
-//  or
-observablePerson.unobserve();
-
-//  same applies to the nested
-observableAddress.unobserve();
+Observable.unobserve(observableAddress);
 ```
 
 ## Observation options

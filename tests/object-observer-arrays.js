@@ -9,7 +9,7 @@ suite.runTest({ name: 'array push - primitives' }, () => {
 		events = [];
 	let callBacks = 0;
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 		callBacks++;
 	});
@@ -29,7 +29,7 @@ suite.runTest({ name: 'array push - objects' }, () => {
 		pa = Observable.from([]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -52,7 +52,7 @@ suite.runTest({ name: 'array push - arrays' }, () => {
 		pa = Observable.from([]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -75,7 +75,7 @@ suite.runTest({ name: 'array pop - primitives' }, () => {
 		pa = Observable.from(['some']),
 		events = [];
 
-	pa.observe(function (eventsList) {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -93,7 +93,7 @@ suite.runTest({ name: 'array pop - objects' }, test => {
 		events = [],
 		eventsA = [];
 
-	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
+	Observable.observe(pa, eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].test = 'test';
 	pad.test = 'more';
@@ -106,7 +106,7 @@ suite.runTest({ name: 'array pop - objects' }, test => {
 	popped.new = 'value';
 	test.assertEqual(3, events.length);
 
-	pad.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	Observable.observe(pad, changes => Array.prototype.push.apply(eventsA, changes));
 	pad.test = 'change';
 	test.assertEqual(1, eventsA.length);
 });
@@ -117,7 +117,7 @@ suite.runTest({ name: 'array unshift - primitives' }, () => {
 		events = [];
 	let callbacks = 0;
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 		callbacks++;
 	});
@@ -136,7 +136,7 @@ suite.runTest({ name: 'array unshift - objects' }, () => {
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -157,7 +157,7 @@ suite.runTest({ name: 'array unshift - arrays' }, () => {
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -178,7 +178,7 @@ suite.runTest({ name: 'array shift - primitives' }, test => {
 		pa = Observable.from(['some']),
 		events = [];
 
-	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
+	Observable.observe(pa, eventsList => Array.prototype.push.apply(events, eventsList));
 
 	const shifted = pa.shift();
 
@@ -195,7 +195,7 @@ suite.runTest({ name: 'array shift - objects' }, test => {
 		events = [],
 		eventsA = [];
 
-	pa.observe(eventsList => Array.prototype.push.apply(events, eventsList));
+	Observable.observe(pa, eventsList => Array.prototype.push.apply(events, eventsList));
 
 	pa[0].text = 'b';
 	pa0i.test = 'test';
@@ -217,7 +217,7 @@ suite.runTest({ name: 'array shift - objects' }, test => {
 	shifted.text = 'd';
 	test.assertEqual(0, events.length);
 
-	pa0i.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	Observable.observe(pa0i, changes => Array.prototype.push.apply(eventsA, changes));
 	pa0i.test = 'dk';
 	test.assertEqual(1, eventsA.length);
 });
@@ -227,7 +227,7 @@ suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
 		pa = Observable.from([1, 2, 3]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -244,7 +244,7 @@ suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
 		pa = Observable.from({ a1: { a2: [1, 2, 3] } }),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -261,7 +261,7 @@ suite.runTest({ name: 'array reverse - objects' }, () => {
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -281,7 +281,7 @@ suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
 		pa = Observable.from([3, 2, 1]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -306,7 +306,7 @@ suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
 		pa = Observable.from({ a1: { a2: [3, 2, 1] } }),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -331,7 +331,7 @@ suite.runTest({ name: 'array sort - objects' }, () => {
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -353,7 +353,7 @@ suite.runTest({ name: 'array fill - primitives' }, () => {
 		pa = Observable.from([1, 2, 3]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -389,7 +389,7 @@ suite.runTest({ name: 'array fill - objects' }, () => {
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -411,7 +411,7 @@ suite.runTest({ name: 'array fill - arrays' }, () => {
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -434,7 +434,7 @@ suite.runTest({ name: 'array splice - primitives' }, () => {
 		events = [];
 	let callbacks = 0;
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 		callbacks++;
 	});
@@ -473,7 +473,7 @@ suite.runTest({ name: 'array splice - objects' }, () => {
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -506,7 +506,7 @@ suite.runTest({ name: 'array splice - arrays' }, () => {
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 

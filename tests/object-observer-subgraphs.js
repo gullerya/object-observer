@@ -12,7 +12,7 @@ suite.runTest({ name: 'inner object from observable should fire events as usual'
 			events.push.apply(events, changes);
 		};
 
-	oo.observe(observer);
+	Observable.observe(oo, observer);
 	iop.prop = 'else';
 	iop.new = 'prop';
 
@@ -30,7 +30,7 @@ suite.runTest({ name: 'removal (detaching) of inner object from observable shoul
 		};
 	let cntr = 0;
 
-	oo.observe(observer);
+	Observable.observe(oo, observer);
 	iop.prop = 'text';
 	test.assertEqual(1, cntr);
 
@@ -43,7 +43,7 @@ suite.runTest({ name: 'removal (detaching) of inner object from observable shoul
 suite.runTest({ name: 'replacement of inner object from observable should return non-proxified original object' }, () => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let events = [];
-	oo.observe(changes => Array.prototype.push.apply(events, changes));
+	Observable.observe(oo, changes => Array.prototype.push.apply(events, changes));
 
 	oo.inner.prop = 'some';
 	if (events.length !== 1 || events[0].type !== 'update' || events[0].path.length !== 2 || events[0].object !== oo.inner) {
@@ -69,7 +69,7 @@ suite.runTest({ name: 'Object.assign on observable should raise an event/s of up
 		observable = Observable.from({ b: { b1: 'x', b2: 'y' } }),
 		newData = { b: { b1: 'z' } },
 		events = [];
-	observable.observe(changes => events.push.apply(events, changes));
+	Observable.observe(observable, changes => events.push.apply(events, changes));
 
 	Object.assign(observable, newData);
 

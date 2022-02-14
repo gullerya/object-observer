@@ -7,7 +7,7 @@ suite.runTest({ name: 'test listeners invocation - single listener' }, () => {
 	const oo = Observable.from({});
 	let events = [];
 
-	oo.observe(changes => { events = events.concat(changes); });
+	Observable.observe(oo, changes => { events = events.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -44,9 +44,9 @@ suite.runTest({ name: 'test listeners invocation - multiple listeners' }, () => 
 	const oo = Observable.from({});
 	let eventsA = [], eventsB = [], eventsC = [];
 
-	oo.observe(changes => { eventsA = eventsA.concat(changes); });
-	oo.observe(changes => { eventsB = eventsB.concat(changes); });
-	oo.observe(changes => { eventsC = eventsC.concat(changes); });
+	Observable.observe(oo, changes => { eventsA = eventsA.concat(changes); });
+	Observable.observe(oo, changes => { eventsB = eventsB.concat(changes); });
+	Observable.observe(oo, changes => { eventsC = eventsC.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -61,11 +61,11 @@ suite.runTest({ name: 'test listeners invocation - multiple listeners and one is
 	const oo = Observable.from({});
 	let eventsA = [], eventsB = [];
 
-	oo.observe(() => {
+	Observable.observe(oo, () => {
 		throw new Error('intentional disrupt');
 	});
-	oo.observe(changes => { eventsA = eventsA.concat(changes); });
-	oo.observe(changes => { eventsB = eventsB.concat(changes); });
+	Observable.observe(oo, changes => { eventsA = eventsA.concat(changes); });
+	Observable.observe(oo, changes => { eventsB = eventsB.concat(changes); });
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -82,8 +82,8 @@ suite.runTest({ name: 'test listeners invocation - multiple times same listener'
 		listener = changes => { eventsA = eventsA.concat(changes); };
 	let eventsA = [];
 
-	oo.observe(listener);
-	oo.observe(listener);
+	Observable.observe(oo, listener);
+	Observable.observe(oo, listener);
 
 	oo.some = 'test';
 	oo.some = 'else';
@@ -98,12 +98,12 @@ suite.runTest({
 	name: 'test listeners invocation - listener is corrupted - null',
 	expectError: 'observer MUST be a function'
 }, () => {
-	Observable.from({}).observe(null);
+	Observable.observe(Observable.from({}), null);
 });
 
 suite.runTest({
 	name: 'test listeners invocation - listener is corrupted - NaF',
 	expectError: 'observer MUST be a function'
 }, () => {
-	Observable.from({}).observe('some non function');
+	Observable.observe(Observable.from({}), 'some non function');
 });

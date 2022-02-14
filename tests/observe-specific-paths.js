@@ -8,7 +8,7 @@ suite.runTest({
 	expectError: '"path" option, if/when provided, MUST be a non-empty string'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { path: 4 });
+	Observable.observe(oo, () => { }, { path: 4 });
 });
 
 suite.runTest({
@@ -16,7 +16,7 @@ suite.runTest({
 	expectError: '"path" option, if/when provided, MUST be a non-empty string'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { path: '' });
+	Observable.observe(oo, () => { }, { path: '' });
 });
 
 suite.runTest({
@@ -24,7 +24,7 @@ suite.runTest({
 	expectError: '"pathsFrom" option, if/when provided, MUST be a non-empty string'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { pathsFrom: 4 });
+	Observable.observe(oo, () => { }, { pathsFrom: 4 });
 });
 
 suite.runTest({
@@ -32,7 +32,7 @@ suite.runTest({
 	expectError: '"pathsFrom" option, if/when provided, MUST be a non-empty string'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { pathsFrom: '' });
+	Observable.observe(oo, () => { }, { pathsFrom: '' });
 });
 
 suite.runTest({
@@ -40,7 +40,7 @@ suite.runTest({
 	expectError: '"pathsFrom" option MAY NOT be specified together with'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { path: 'some', pathsFrom: 'else' });
+	Observable.observe(oo, () => { }, { path: 'some', pathsFrom: 'else' });
 });
 
 suite.runTest({
@@ -48,7 +48,7 @@ suite.runTest({
 	expectError: 'is/are not a valid observer option/s'
 }, () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
-	oo.observe(() => { }, { pathFrom: 'something' });
+	Observable.observe(oo, () => { }, { pathFrom: 'something' });
 });
 
 suite.runTest({ name: 'baseline - no options / empty options' }, () => {
@@ -58,10 +58,10 @@ suite.runTest({ name: 'baseline - no options / empty options' }, () => {
 	let counter = 0;
 
 	//  null is valid
-	oo.observe(observer, null);
+	Observable.observe(oo, observer, null);
 	oo.inner.prop = 'else';
 	if (counter !== 1) throw new Error('expected 1 callback, found ' + counter);
-	oo.unobserve(observer);
+	Observable.unobserve(oo, observer);
 });
 
 suite.runTest({ name: 'baseline - empty options is valid' }, () => {
@@ -69,10 +69,10 @@ suite.runTest({ name: 'baseline - empty options is valid' }, () => {
 		oo = Observable.from({ inner: { prop: 'more' } }),
 		observer = changes => (counter += changes.length);
 	let counter = 0;
-	oo.observe(observer, {});
+	Observable.observe(oo, observer, {});
 	oo.inner.prop = 'even';
 	if (counter !== 1) throw new Error('expected 1 callback, found ' + counter);
-	oo.unobserve(observer);
+	Observable.unobserve(oo, observer);
 });
 
 suite.runTest({ name: 'observe specific path' }, () => {
@@ -80,7 +80,7 @@ suite.runTest({ name: 'observe specific path' }, () => {
 	let callbackCalls = 0,
 		changesCounter = 0;
 
-	oo.observe(changes => {
+	Observable.observe(oo, changes => {
 		callbackCalls++;
 		changesCounter += changes.length;
 	}, { path: 'inner' });
@@ -96,7 +96,7 @@ suite.runTest({ name: 'observe paths from .. and deeper' }, test => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
 
-	oo.observe(changes => { counter += changes.length; }, { pathsFrom: 'inner.prop' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsFrom: 'inner.prop' });
 	oo.nonRelevant = 'non-relevant';
 	oo.inner.also = 'non-relevant';
 	oo.inner.prop = 'relevant';
@@ -108,7 +108,7 @@ suite.runTest({ name: 'observe paths from .. and deeper' }, test => {
 suite.runTest({ name: 'observe paths of - inner case' }, test => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: 'inner.nested' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: 'inner.nested' });
 	oo.nonRelevant = 'non-relevant';
 	oo.inner.also = 'non-relevant';
 	oo.inner.nested.text = 'relevant';
@@ -121,12 +121,12 @@ suite.runTest({ name: 'observe paths of - inner case' }, test => {
 suite.runTest({ name: 'observe paths of - array - property of same depth updated' }, test => {
 	const oo = Observable.from({ array: [1, 2, 3], prop: { inner: 'value' } });
 	let counter = 0;
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: 'array' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: 'array' });
 	oo.nonRelevant = 'non-relevant';
 	oo.prop.inner = 'non-relevant';
 	oo.prop = { newObj: { test: 'non-relevant' } };
 	oo.array.pop();
-	oo.array.push({newObj: { test: 'relevant' }});
+	oo.array.push({ newObj: { test: 'relevant' } });
 	oo.array[2].newObj.test = 'non-relevant';
 	test.assertEqual(2, counter);
 });
@@ -134,7 +134,7 @@ suite.runTest({ name: 'observe paths of - array - property of same depth updated
 suite.runTest({ name: 'observe paths of - root case' }, test => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: '' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });
 	oo.relevant = 'relevant';
 	oo.inner.also = 'non-relevant';
 	oo.inner = { newObj: { test: 'relevant' } };
@@ -145,7 +145,7 @@ suite.runTest({ name: 'observe paths of - root case' }, test => {
 suite.runTest({ name: 'observe paths of - root case - array sort' }, test => {
 	const oo = Observable.from([1, 3, 2, 4, 9]);
 	let counter = 0;
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: '' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });
 	oo.sort();
 	test.assertTrue(oo[0] === 1 && oo[1] === 2 && oo[2] === 3 && oo[3] === 4 && oo[4] === 9);
 	test.assertEqual(1, counter);
@@ -154,7 +154,7 @@ suite.runTest({ name: 'observe paths of - root case - array sort' }, test => {
 suite.runTest({ name: 'observe paths of - root case - array reverse' }, test => {
 	const oo = Observable.from([1, 2, 3, 4, 9]);
 	let counter = 0;
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: '' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });
 	oo.reverse();
 	test.assertTrue(oo[0] === 9 && oo[1] === 4 && oo[2] === 3 && oo[3] === 2 && oo[4] === 1);
 	test.assertEqual(1, counter);
@@ -170,7 +170,7 @@ suite.runTest({
 	let counter = 0;
 	const origConsoleError = console.error;
 	console.error = e => consoleErrors.push(e);
-	oo.observe(changes => { counter += changes.length; }, { pathsOf: 4 });
+	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: 4 });
 	oo.inner.prop = 'else';
 	test.assertEqual(1, counter);
 	test.assertEqual('"pathsOf" option, if/when provided, MUST be a non-empty string', consoleErrors[0]);
@@ -186,7 +186,7 @@ suite.runTest({
 	let counter = 0;
 	const origConsoleError = console.error;
 	console.error = e => consoleErrors.push(e);
-	oo.observe(changes => { counter += changes.length; }, { path: 'inner.prop', pathsOf: 'some.thing' });
+	Observable.observe(oo, changes => { counter += changes.length; }, { path: 'inner.prop', pathsOf: 'some.thing' });
 	oo.inner.prop = 'else';
 	test.assertEqual(1, counter);
 	test.assertEqual('"pathsOf" option MAY NOT be specified together with "path" option', consoleErrors[0]);

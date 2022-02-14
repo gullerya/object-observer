@@ -46,9 +46,8 @@ const
 		}
 		return result;
 	},
-	propertiesBluePrint = { observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = (source, oMeta) => {
-		const target = Object.defineProperties({}, propertiesBluePrint);
+		const target = {};
 		target[oMetaKey] = oMeta;
 		for (const key in source) {
 			target[key] = getObservedOf(source[key], key, oMeta);
@@ -57,7 +56,7 @@ const
 	},
 	prepareArray = (source, oMeta) => {
 		let l = source.length;
-		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
+		const target = new Array(l);
 		target[oMetaKey] = oMeta;
 		for (let i = 0; i < l; i++) {
 			target[i] = getObservedOf(source[i], i, oMeta);
@@ -65,7 +64,6 @@ const
 		return target;
 	},
 	prepareTypedArray = (source, oMeta) => {
-		Object.defineProperties(source, propertiesBluePrint);
 		source[oMetaKey] = oMeta;
 		return source;
 	},

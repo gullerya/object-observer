@@ -6,7 +6,7 @@ const suite = getSuite({ name: 'Testing reassignment of equal values' });
 suite.runTest({ name: 'boolean' }, test => {
 	const oo = Observable.from({ p: true });
 	let changes = null;
-	oo.observe(cs => { changes = cs; });
+	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = true;
 	test.assertEqual(null, changes);
@@ -15,7 +15,7 @@ suite.runTest({ name: 'boolean' }, test => {
 suite.runTest({ name: 'number' }, test => {
 	const oo = Observable.from({ p: 6 });
 	let changes = null;
-	oo.observe(cs => { changes = cs; });
+	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = 6;
 	test.assertEqual(null, changes);
@@ -24,7 +24,7 @@ suite.runTest({ name: 'number' }, test => {
 suite.runTest({ name: 'string' }, test => {
 	const oo = Observable.from({ p: 'text' });
 	let changes = null;
-	oo.observe(cs => { changes = cs; });
+	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = 'text';
 	test.assertEqual(null, changes);
@@ -35,7 +35,7 @@ suite.runTest({ name: 'function' }, test => {
 		f = function () { },
 		oo = Observable.from({ p: f });
 	let changes = null;
-	oo.observe(cs => { changes = cs; });
+	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = f;
 	test.assertEqual(null, changes);
@@ -46,7 +46,7 @@ suite.runTest({ name: 'Symbol' }, test => {
 		s = Symbol('some'),
 		oo = Observable.from({ p: s });
 	let changes = null;
-	oo.observe(cs => { changes = cs; });
+	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = s;
 	test.assertEqual(null, changes);

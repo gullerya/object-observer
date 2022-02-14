@@ -14,7 +14,7 @@ suite.runTest({ name: 'test revokation of replaced objects - simple set' }, () =
 	});
 	let eventsCollector = [];
 
-	og.observe(changes => {
+	Observable.observe(og, changes => {
 		eventsCollector = eventsCollector.concat(changes);
 		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');
 		if (changes[0].oldValue.prop !== 'text') throw new Error('expected the old value to still be readable');
@@ -36,7 +36,7 @@ suite.runTest({ name: 'test revokation of replaced objects - splice in array' },
 	]);
 	let eventsCollector = [];
 
-	og.observe(changes => {
+	Observable.observe(og, changes => {
 		eventsCollector = eventsCollector.concat(changes);
 		if (changes.length !== 1 || changes[0].type !== 'update') throw new Error('expected to track one update change');
 		if (changes[0].oldValue.prop !== 'text') throw new Error('expected the old value to still be readable');

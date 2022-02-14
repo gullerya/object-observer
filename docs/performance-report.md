@@ -51,11 +51,11 @@ for (let i = 0; i < creationIterations; i++) {
 2. Last observable created in previous step is used to __mutate__ nested primitive property, while 2 observers added to watch for the changes, as following:
 ```javascript
 //	add listeners/callbacks
-observable.observe(changes => {
+Observable.observe(observable, changes => {
     if (!changes.length) throw new Error('expected to have at least one change in the list');
     else changesCountA += changes.length;
 });
-observable.observe(changes => {
+Observable.observe(observable, changes => {
     if (!changes) throw new Error('expected changes list to be defined');
     else changesCountB += changes.length;
 });
