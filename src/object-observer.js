@@ -68,7 +68,7 @@ const
 		return source;
 	},
 	filterChanges = (options, changes) => {
-		if (!options) {
+		if (options === null) {
 			return changes;
 		}
 
@@ -103,16 +103,17 @@ const
 	},
 	callObserversFromMT = function callObserversFromMT() {
 		const batches = this.batches;
-		this.batches = null;
+		this.batches = [];
 		for (const [listener, changes] of batches) {
 			callObserverSafe(listener, changes);
 		}
 	},
 	callObservers = (oMeta, changes) => {
 		let currentObservable = oMeta;
-		let observers, target, options, relevantChanges, i;
+		let isAsync, observers, target, options, relevantChanges, i;
 		const l = changes.length;
 		do {
+			isAsync = currentObservable.options.async;
 			observers = currentObservable.observers;
 			i = observers.length;
 			while (i--) {
@@ -120,10 +121,9 @@ const
 				relevantChanges = filterChanges(options, changes);
 
 				if (relevantChanges.length) {
-					if (currentObservable.options.async) {
+					if (isAsync) {
 						//	this is the async dispatch handling
-						if (!currentObservable.batches) {
-							currentObservable.batches = [];
+						if (currentObservable.batches.length === 0) {
 							queueMicrotask(callObserversFromMT.bind(currentObservable));
 						}
 						let rb;
@@ -146,21 +146,26 @@ const
 			}
 
 			//	cloning all the changes and notifying in context of parent
-			if (currentObservable.parent) {
-				const clonedChanges = new Array(l);
+			const parent = currentObservable.parent;
+			if (parent) {
 				for (let j = 0; j < l; j++) {
-					clonedChanges[j] = { ...changes[j] };
-					clonedChanges[j].path = [currentObservable.ownKey, ...clonedChanges[j].path];
+					const change = changes[j];
+					changes[j] = new Change(
+						change.type,
+						[currentObservable.ownKey, ...change.path],
+						change.value,
+						change.oldValue,
+						change.object
+					);
 				}
-				changes = clonedChanges;
-				currentObservable = currentObservable.parent;
+				currentObservable = parent;
 			} else {
 				currentObservable = null;
 			}
 		} while (currentObservable);
 	},
 	getObservedOf = (item, key, parent) => {
-		if (!item || typeof item !== 'object') {
+		if (typeof item !== 'object' || item === null) {
 			return item;
 		} else if (Array.isArray(item)) {
 			return new ArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
@@ -521,6 +526,9 @@ class OMetaBase {
 		this.proxy = this.revocable.proxy;
 		this.target = targetClone;
 		this.options = this.processOptions(properties.options);
+		if (this.options.async) {
+			this.batches = [];
+		}
 	}
 
 	processOptions(options) {
