@@ -41,23 +41,6 @@ export abstract class Observable {
 	 * @param observers 0 to many observers to remove; if none supplied, ALL observers will be removed
 	 */
 	static unobserve(observable: Observable, ...observers: Observer[]): void;
-
-	/**
-	 * deprecated, use static `Observable.observe` instead
-	 * 
-	 * @deprecated
-	 * @param observer 
-	 * @param options 
-	 */
-	abstract observe(observer: Observer, options?: ObserverOptions): void;
-
-	/**
-	 * deprecated, use static `Observable`unobserve` instead
-	 * 
-	 * @deprecated
-	 * @param observers observers to remove; if none supplied - will remove all observers
-	 */
-	abstract unobserve(...observers: Observer[]): void;
 }
 
 export interface ObservableOptions {

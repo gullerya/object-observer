@@ -8,7 +8,7 @@ suite.runTest({ name: 'typed array reverse - Int8Array' }, () => {
 		pa = Observable.from(new Int8Array([1, 2, 3])),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -25,7 +25,7 @@ suite.runTest({ name: 'typed array sort - Int16Array' }, () => {
 		pa = Observable.from(new Int16Array([3, 2, 1])),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -50,7 +50,7 @@ suite.runTest({ name: 'typed array fill - Int32Array' }, () => {
 		pa = Observable.from(new Int32Array([1, 2, 3])),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -86,7 +86,7 @@ suite.runTest({ name: 'typed array set - Float32Array' }, () => {
 		pa = Observable.from(new Float32Array(8)),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -120,7 +120,7 @@ suite.runTest({ name: 'typed array copyWithin - Float64Array' }, test => {
 		pa = Observable.from(new Float64Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])),
 		events = [];
 
-	pa.observe(eventsList => {
+	Observable.observe(pa, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 
@@ -155,7 +155,7 @@ suite.runTest({ name: 'typed array as nested - Uint8Array' }, () => {
 		po = Observable.from({ a: new Uint8Array([1, 2, 3]) }),
 		events = [];
 
-	po.observe(eventsList => {
+	Observable.observe(po, eventsList => {
 		[].push.apply(events, eventsList);
 	});
 

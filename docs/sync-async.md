@@ -15,7 +15,7 @@ Which one to use? I suggest to go first with a default __sync__ flavor and switc
 Default behaviour is to deliver changes __synchronously__:
 ```
 const o = Observable.from({});
-o.observe(changes =>
+Observable.observe(o, changes =>
 	changes.forEach(change => console.log(change.value))
 );
 
@@ -34,7 +34,7 @@ Here is the place to mention somewhat unexpected outcome of this flavor in case 
 ```
 const o = Observable.from({});
 let callbacksCount = 0;
-o.observe(() => callbacksCount++);
+Observable.observe(o, () => callbacksCount++);
 
 Object.assign(o, { a: 1, b: 2, c: 3 });
 console.log(callbacksCount);
@@ -50,7 +50,7 @@ While one would expect to have a single callback with 3 changes, in fact we've g
 One may opt-in an __asynchronous__ changes delivery:
 ```
 const o = Observable.from({}, { async: true });
-o.observe(changes =>
+Observable.observe(o, changes =>
 	changes.forEach(change => console.log(change.value))
 );
 
@@ -71,7 +71,7 @@ In this case `Object.assign` will behave correctly:
 ```
 const o = Observable.from({});
 let callbacksCount = 0;
-o.observe(() => callbacksCount++);
+Observable.observe(o, () => callbacksCount++);
 
 Object.assign(o, { a: 1, b: 2, c: 3 });
 

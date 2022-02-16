@@ -1,6 +1,6 @@
 # Filter paths options
 
-`<observable instance>.observe(...)` allows `options` parameter, second one, optional.
+`Observable.observe(...)` allows `options` parameter, third one, optional.
 
 Some of the options are filtering ones, allowing to specify the changes of interest from within the observable graph. Here is a detailed description of those options.
 
@@ -16,7 +16,7 @@ Value expected to be a non-empty string representing a path, any changes of whic
 		</td>
 		<td>
 			Given, that we have subscribed for the changes via:
-<pre><code>o.observe(callback, { pathsFrom: 'address' });</code></pre>
+<pre><code>Observable.observe(o, callback, { pathsFrom: 'address' });</code></pre>
 			Following mutations <b>will</b> be delivered to the <code>callback</code>:
 <pre><code>o.address.street.apt = 5;
 o.address.city = 'DreamCity';
@@ -38,7 +38,7 @@ Value expected to be a string, which MAY be empty, representing a path. Changes 
 		</td>
 		<td>
 			Given, that we have subscribed for the changes via:
-<pre><code>o.observe(callback, { pathsOf: 'address' });</code></pre>
+<pre><code>Observable.observe(o, callback, { pathsOf: 'address' });</code></pre>
 			Following mutations <b>will</b> be delivered to the <code>callback</code>:
 <pre><code>o.address.street = {};
 o.address.city = 'DreamCity';</code></pre>
@@ -61,7 +61,7 @@ Value expected to be a non-empty string, representing a specific path to observe
 		</td>
 		<td>
 			Given, that we have subscribed for the changes via:
-<pre><code>o.observe(callback, { path: 'address.street' });</code></pre>
+<pre><code>Observable.observe(o, callback, { path: 'address.street' });</code></pre>
 			Following mutations <b>will</b> be delivered to the <code>callback</code>:
 <pre><code>o.address.street = {};</code></pre>
 			Following mutations <b>will not</b> be delivered to the <code>callback</code>:

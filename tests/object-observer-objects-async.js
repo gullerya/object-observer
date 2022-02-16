@@ -8,7 +8,7 @@ suite.runTest({ name: 'multiple continuous mutations', timeout: 15000 }, async t
 		observable = Observable.from({}, { async: true }),
 		events = [];
 	let callbacks = 0;
-	observable.observe(changes => {
+	Observable.observe(observable, changes => {
 		callbacks++;
 		events.push.apply(events, changes);
 	});
@@ -29,7 +29,7 @@ suite.runTest({ name: 'multiple continuous mutations is split bursts', timeout: 
 		observable = Observable.from({}, { async: true }),
 		events = [];
 	let callbacks = 0;
-	observable.observe(changes => {
+	Observable.observe(observable, changes => {
 		callbacks++;
 		events.push.apply(events, changes);
 	});
@@ -60,7 +60,7 @@ suite.runTest({ name: 'Object.assign with multiple properties', timeout: 15000 }
 		newData = { a: 1, b: 2, c: 3 },
 		events = [];
 	let callbacks = 0;
-	observable.observe(changes => {
+	Observable.observe(observable, changes => {
 		callbacks++;
 		events.push.apply(events, changes);
 	});
@@ -79,7 +79,7 @@ suite.runTest({ name: 'Object.assign with multiple properties + more changes', t
 		newData = { a: 1, b: 2, c: 3 },
 		events = [];
 	let callbacks = 0;
-	observable.observe(changes => {
+	Observable.observe(observable, changes => {
 		callbacks++;
 		events.push.apply(events, changes);
 	});

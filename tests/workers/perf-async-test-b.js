@@ -38,8 +38,8 @@ export default async setup => {
 	const po = Observable.from({ users: [] }, { async: true });
 
 	//	add listeners/callbacks
-	po.observe(changes => changesCountA += changes.length);
-	po.observe(changes => changesCountB += changes.length);
+	Observable.observe(po, changes => changesCountA += changes.length);
+	Observable.observe(po, changes => changesCountB += changes.length);
 
 	//	push objects
 	changesCountA = 0;

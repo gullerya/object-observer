@@ -12,7 +12,7 @@ suite.runTest({ name: 'test DOMStringMap' }, test => {
 			events.push.apply(events, changes);
 		};
 
-	oo.observe(observer);
+	Observable.observe(oo, observer);
 	oo.some = 'thing';
 	test.assertEqual(1, events.length);
 });

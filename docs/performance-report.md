@@ -14,13 +14,13 @@ Pay attention: __each and every__ object / array (including all the nested ones)
 
 Tests described below are covering most of those flows.
 
-<span style="color:green">__In overall it looks to me, that `object-observer`'s impact on the application is negligible from both, CPU and memory aspects.__
+<span style="color:green">__Overall, `object-observer`'s impact on the application is negligible from both, CPU and memory aspects.__
 </span>
 
 ### Hardware
-All of the benchmarks below were performed on __Lenovo ThinkPad E590__ (model 2019), plugged in at the moment of tests:
-- CPU i7-8565U 1.80GHz, 4 Cores, 8 Logical processors
-- 32GB physical memory
+All of the benchmarks below were performed on __MacBook Pro__ (model 2019, Monterey 12.1), plugged in at the moment of tests:
+- CPU 2.6 GHz 6-Core Intel Core i7
+- 16 GB 2667 MHz DDR4
 
 ### Tests
 
@@ -51,11 +51,11 @@ for (let i = 0; i < creationIterations; i++) {
 2. Last observable created in previous step is used to __mutate__ nested primitive property, while 2 observers added to watch for the changes, as following:
 ```javascript
 //	add listeners/callbacks
-observable.observe(changes => {
+Observable.observe(observable, changes => {
     if (!changes.length) throw new Error('expected to have at least one change in the list');
     else changesCountA += changes.length;
 });
-observable.observe(changes => {
+Observable.observe(observable, changes => {
     if (!changes) throw new Error('expected changes list to be defined');
     else changesCountB += changes.length;
 });
@@ -82,129 +82,75 @@ for (let i = 0; i < mutationIterations; i++) {
 
 All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
-Below are results of those tests, where 'one' is the time of a single operation in average achieved with division of time for 'all' on the number of iterations.
-All times are given in 'ms', meaning that cost of a single operation on Chrome and Chromium-Edge is usually half to few nanoseconds. Firefox values are slightly higher (worse). Old Edge results are brough for historical reasons only.
+Below are results of those tests, where the time shown is of a single operation in average.
+All times are given in 'ms', meaning that cost of a single operation on Chrome and Chromium-Edge is usually half to few nanoseconds. Firefox values are slightly higher (worse).
 
 <table>
     <tr>
         <th style="width:75px;white-space:nowrap"></th>
         <th>create observable<br>100,000 times</th>
-        <th>mutate primitive<br>deep L3; 1M times</th>
-        <th>add primitive<br>deep L3; 1M times</th>
-        <th>delete primitive<br>deep L3; 1M times</th>
+        <th>mutate primitive<br>depth L3; 1M times</th>
+        <th>add primitive<br>depth L3; 1M times</th>
+        <th>delete primitive<br>depth L3; 1M times</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>98</sub></td>
         <td>
-            one: 0.0069 ms<br>
-            all: 690.25 ms
+            0.001 ms
         </td>
         <td>
-            one: 0.00044 ms<br>
-            all: 444.52 ms
+            0.0004 ms
         </td>
         <td>
-            one: 0.00086 ms<br>
-            all: 862.50 ms
+            0.0006 ms
         </td>
         <td>
-            one: 0.00068 ms<br>
-            all: 688.89 ms
+            0.0005 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge-chromium.png"><sub>80</sub></td>
         <td>
-            one: 0.007 ms<br>
-            all: 702.87 ms
+            0.001 ms
         </td>
         <td>
-            one: 0.00044 ms<br>
-            all: 446.24 ms
+            0.0004 ms
         </td>
         <td>
-            one: 0.00088 ms<br>
-            all: 883.37 ms
+            0.0006 ms
         </td>
         <td>
-            one: 0.00065 ms<br>
-            all: 654.25 ms
+            0.0005 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/firefox.png"><sub>74</sub></td>
         <td>
-            one: 0.018 ms<br>
-            all: 1888 ms
+            0.0047 ms
         </td>
         <td>
-            one: 0.0007 ms<br>
-            all: 705 ms
+            0.0007 ms
         </td>
         <td>
-            one: 0.00076 ms<br>
-            all: 762 ms
+            0.0007 ms
         </td>
         <td>
-            one: 0.0011 ms<br>
-            all: 1163 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>13</sub></td>
-        <td>
-            one: 0.025 ms<br>
-            all: 2530 ms
-        </td>
-        <td>
-            one: 0.01 ms<br>
-            all: 10249 ms
-        </td>
-        <td>
-            one: 0.011 ms<br>
-            all: 11048 ms
-        </td>
-        <td>
-            one: 0.01 ms<br>
-            all: 10876 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>17</sub></td>
-        <td>
-            one: 0.014 ms<br>
-            all: 1433.1 ms
-        </td>
-        <td>
-            one: 0.0013 ms<br>
-            all: 1286.3 ms
-        </td>
-        <td>
-            one: 0.00187 ms<br>
-            all: 1870.3 ms
-        </td>
-        <td>
-            one: 0.002 ms<br>
-            all: 1987.8 ms
+            0.0011 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
-            one: 0.0084 ms<br>
-            all: 841.73 ms
+            one: 0.0084 ms
         </td>
         <td>
-            one: 0.0005 ms<br>
-            all: 573.27 ms
+            one: 0.0005 ms
         </td>
         <td>
-            one: 0.0009 ms<br>
-            all: 926.32 ms
+            one: 0.0009 ms
         </td>
         <td>
-            one: 0.0008 ms<br>
-            all: 790.70 ms
+            one: 0.0008 ms
         </td>
     </tr>
 </table>
@@ -267,97 +213,51 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         <th>pop 100,000 objects</th>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/chrome.png"><sub>98</sub></td>
         <td>
-            one: 0.0099 ms<br>
-            all: 996.94 ms
+            0.002 ms
         </td>
         <td>
-            one: 0.0106 ms<br>
-            all: 1064.04 ms
+            0.003 ms
         </td>
         <td>
-            one: 0.00048 ms<br>
-            all: 48.43 ms
+            0.0008 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge-chromium.png"><sub>80</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge-chromium.png"><sub>98</sub></td>
         <td>
-            one: 0.0099 ms<br>
-            all: 994.55 ms
+            0.002 ms
         </td>
         <td>
-            one: 0.0103 ms<br>
-            all: 1037.80 ms
+            0.003 ms
         </td>
         <td>
-            one: 0.00046 ms<br>
-            all: 46.88 ms
+            0.0008 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/firefox.png"><sub>74</sub></td>
         <td>
-            one: 0.021 ms<br>
-            all: 2119 ms
+            0.0077 ms
         </td>
         <td>
-            one: 0.026 ms<br>
-            all: 2686 ms
+            0.0096 ms
         </td>
         <td>
-            one: 0.0085 ms<br>
-            all: 853 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>13</sub></td>
-        <td>
-            one: 0.034 ms<br>
-            all: 3425 ms
-        </td>
-        <td>
-            one: 0.038 ms<br>
-            all: 3802 ms
-        </td>
-        <td>
-            one: 0.032 ms<br>
-            all: 3246 ms
-        </td>
-    </tr>
-    <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/edge.png"><sub>17</sub></td>
-        <td>
-            one: 0.017 ms<br>
-            all: 1683.7 ms
-        </td>
-        <td>
-            one: 0.025 ms<br>
-            all: 2477.1 ms
-        </td>
-        <td>
-            one: 0.02 ms<br>
-            all: 2007.7 ms
+            0.0011 ms
         </td>
     </tr>
     <tr style="font-family:monospace">
         <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
         <td>
-            one: 0.0095 ms<br>
-            all: 955.73 ms
+            0.0095 ms
         </td>
         <td>
-            one: 0.0108 ms<br>
-            all: 1088.51 ms
+            0.0108 ms
         </td>
         <td>
-            one: 0.0024 ms<br>
-            all: 244.38 ms
+            0.0024 ms
         </td>
     </tr>
 </table>
-
-> Edge has shown huge improvement from v13 to v17.
-This happens to be mostly due to the ability to preserve the console log when DevTools are closed.
-Seems like opened DevTools of Edge have vast negative impact on the page/s performance up to and including v17.

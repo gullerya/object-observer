@@ -7,7 +7,7 @@ suite.runTest({ name: 'subgraph objects pointing to the same object few times', 
 	const childObj = { prop: 'A' };
 	const obsMainObj = Observable.from({ childA: childObj, childB: childObj });
 
-	obsMainObj.observe(changes => console.dir(changes));
+	Observable.observe(obsMainObj, changes => console.dir(changes));
 
 	obsMainObj.childA.prop = 'B';
 

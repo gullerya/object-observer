@@ -89,18 +89,6 @@ suite.runTest({ name: 'isObservable tests' }, test => {
 	test.assertTrue(Observable.isObservable(oo));
 });
 
-suite.runTest({ name: 'test observable APIs presence on object/array' }, test => {
-	const oo = Observable.from({});
-
-	test.assertEqual('function', typeof oo.observe);
-	test.assertEqual('function', typeof oo.unobserve);
-
-	const aa = Observable.from([]);
-
-	test.assertEqual('function', typeof aa.observe);
-	test.assertEqual('function', typeof aa.unobserve);
-});
-
 suite.runTest({ name: 'test observable APIs - ensure APIs are not enumerables' }, test => {
 	const oo = Observable.from({});
 

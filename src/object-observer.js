@@ -46,40 +46,8 @@ const
 		}
 		return result;
 	},
-	observe = function observe(observer, options) {
-		if (typeof observer !== 'function') {
-			throw new Error(`observer MUST be a function, got '${observer}'`);
-		}
-
-		const observers = this[oMetaKey].observers;
-		if (!observers.some(o => o[0] === observer)) {
-			observers.push([observer, processObserveOptions(options)]);
-		} else {
-			console.warn('observer may be bound to an observable only once; will NOT rebind');
-		}
-	},
-	unobserve = function unobserve(...observers) {
-		const existingObs = this[oMetaKey].observers;
-		let el = existingObs.length;
-		if (!el) {
-			return;
-		}
-
-		if (!observers.length) {
-			existingObs.splice(0);
-			return;
-		}
-
-		while (el) {
-			let i = observers.indexOf(existingObs[--el][0]);
-			if (i >= 0) {
-				existingObs.splice(el, 1);
-			}
-		}
-	},
-	propertiesBluePrint = { observe: { value: observe }, unobserve: { value: unobserve } },
 	prepareObject = (source, oMeta) => {
-		const target = Object.defineProperties({}, propertiesBluePrint);
+		const target = {};
 		target[oMetaKey] = oMeta;
 		for (const key in source) {
 			target[key] = getObservedOf(source[key], key, oMeta);
@@ -88,7 +56,7 @@ const
 	},
 	prepareArray = (source, oMeta) => {
 		let l = source.length;
-		const target = Object.defineProperties(new Array(l), propertiesBluePrint);
+		const target = new Array(l);
 		target[oMetaKey] = oMeta;
 		for (let i = 0; i < l; i++) {
 			target[i] = getObservedOf(source[i], i, oMeta);
@@ -96,12 +64,11 @@ const
 		return target;
 	},
 	prepareTypedArray = (source, oMeta) => {
-		Object.defineProperties(source, propertiesBluePrint);
 		source[oMetaKey] = oMeta;
 		return source;
 	},
 	filterChanges = (options, changes) => {
-		if (!options) {
+		if (options === null) {
 			return changes;
 		}
 
@@ -136,16 +103,17 @@ const
 	},
 	callObserversFromMT = function callObserversFromMT() {
 		const batches = this.batches;
-		this.batches = null;
+		this.batches = [];
 		for (const [listener, changes] of batches) {
 			callObserverSafe(listener, changes);
 		}
 	},
 	callObservers = (oMeta, changes) => {
 		let currentObservable = oMeta;
-		let observers, target, options, relevantChanges, i;
+		let isAsync, observers, target, options, relevantChanges, i;
 		const l = changes.length;
 		do {
+			isAsync = currentObservable.options.async;
 			observers = currentObservable.observers;
 			i = observers.length;
 			while (i--) {
@@ -153,10 +121,9 @@ const
 				relevantChanges = filterChanges(options, changes);
 
 				if (relevantChanges.length) {
-					if (currentObservable.options.async) {
+					if (isAsync) {
 						//	this is the async dispatch handling
-						if (!currentObservable.batches) {
-							currentObservable.batches = [];
+						if (currentObservable.batches.length === 0) {
 							queueMicrotask(callObserversFromMT.bind(currentObservable));
 						}
 						let rb;
@@ -179,21 +146,26 @@ const
 			}
 
 			//	cloning all the changes and notifying in context of parent
-			if (currentObservable.parent) {
-				const clonedChanges = new Array(l);
+			const parent = currentObservable.parent;
+			if (parent) {
 				for (let j = 0; j < l; j++) {
-					clonedChanges[j] = { ...changes[j] };
-					clonedChanges[j].path = [currentObservable.ownKey, ...clonedChanges[j].path];
+					const change = changes[j];
+					changes[j] = new Change(
+						change.type,
+						[currentObservable.ownKey, ...change.path],
+						change.value,
+						change.oldValue,
+						change.object
+					);
 				}
-				changes = clonedChanges;
-				currentObservable = currentObservable.parent;
+				currentObservable = parent;
 			} else {
 				currentObservable = null;
 			}
 		} while (currentObservable);
 	},
 	getObservedOf = (item, key, parent) => {
-		if (!item || typeof item !== 'object') {
+		if (typeof item !== 'object' || item === null) {
 			return item;
 		} else if (Array.isArray(item)) {
 			return new ArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
@@ -554,6 +526,9 @@ class OMetaBase {
 		this.proxy = this.revocable.proxy;
 		this.target = targetClone;
 		this.options = this.processOptions(properties.options);
+		if (this.options.async) {
+			this.batches = [];
+		}
 	}
 
 	processOptions(options) {
@@ -667,15 +642,39 @@ const Observable = Object.freeze({
 		if (!Observable.isObservable(observable)) {
 			throw new Error(`invalid observable parameter`);
 		}
+		if (typeof observer !== 'function') {
+			throw new Error(`observer MUST be a function, got '${observer}'`);
+		}
 
-		observe.call(observable, observer, options);
+		const observers = observable[oMetaKey].observers;
+		if (!observers.some(o => o[0] === observer)) {
+			observers.push([observer, processObserveOptions(options)]);
+		} else {
+			console.warn('observer may be bound to an observable only once; will NOT rebind');
+		}
 	},
 	unobserve: (observable, ...observers) => {
 		if (!Observable.isObservable(observable)) {
 			throw new Error(`invalid observable parameter`);
 		}
 
-		unobserve.call(observable, ...observers);
+		const existingObs = observable[oMetaKey].observers;
+		let el = existingObs.length;
+		if (!el) {
+			return;
+		}
+
+		if (!observers.length) {
+			existingObs.splice(0);
+			return;
+		}
+
+		while (el) {
+			let i = observers.indexOf(existingObs[--el][0]);
+			if (i >= 0) {
+				existingObs.splice(el, 1);
+			}
+		}
 	}
 });
 
@@ -691,19 +690,19 @@ class ObjectObserver {
 
 	observe(target, options) {
 		const r = Observable.from(target);
-		r.observe(this[observerKey], options);
+		Observable.observe(r, this[observerKey], options);
 		this[targetsKey].add(r);
 		return r;
 	}
 
 	unobserve(target) {
-		target.unobserve(this[observerKey]);
+		Observable.unobserve(target, this[observerKey]);
 		this[targetsKey].delete(target);
 	}
 
 	disconnect() {
 		for (const t of this[targetsKey]) {
-			t.unobserve(this[observerKey]);
+			Observable.unobserve(t, this[observerKey]);
 		}
 		this[targetsKey].clear();
 	}

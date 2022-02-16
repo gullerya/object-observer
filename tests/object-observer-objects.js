@@ -54,7 +54,7 @@ suite.runTest({ name: 'plain object operations' }, test => {
 		tmpAddress = { street: 'some' };
 
 	const po = Observable.from(o);
-	po.observe(changes => {
+	Observable.observe(po, changes => {
 		[].push.apply(events, changes);
 	});
 
@@ -97,7 +97,7 @@ suite.runTest({ name: 'sub tree object operations' }, test => {
 		newAddress = {};
 
 	const po = Observable.from(person);
-	po.observe(changes => {
+	Observable.observe(po, changes => {
 		[].push.apply(events, changes);
 	});
 
@@ -120,15 +120,15 @@ suite.runTest({ name: 'subgraph correctly detached when replaced' }, test => {
 		eventsB = [],
 		inner = oo.inner;
 
-	oo.observe(changes => Array.prototype.push.apply(events, changes));
-	inner.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	Observable.observe(oo, changes => Array.prototype.push.apply(events, changes));
+	Observable.observe(inner, changes => Array.prototype.push.apply(eventsA, changes));
 
 	inner.some = 'text';
 	test.assertEqual(1, events.length);
 	test.assertEqual(1, eventsA.length);
 
 	oo.inner = {};
-	oo.inner.observe(changes => Array.prototype.push.apply(eventsB, changes));
+	Observable.observe(oo.inner, changes => Array.prototype.push.apply(eventsB, changes));
 	test.assertEqual(2, events.length);
 	test.assertEqual(1, eventsA.length);
 
@@ -150,8 +150,8 @@ suite.runTest({ name: 'subgraph correctly detached when deleted' }, test => {
 		eventsA = [],
 		inner = oo.inner;
 
-	oo.observe(changes => Array.prototype.push.apply(events, changes));
-	inner.observe(changes => Array.prototype.push.apply(eventsA, changes));
+	Observable.observe(oo, changes => Array.prototype.push.apply(events, changes));
+	Observable.observe(inner, changes => Array.prototype.push.apply(eventsA, changes));
 
 	inner.some = 'text';
 	test.assertEqual(1, events.length);
@@ -175,14 +175,14 @@ suite.runTest({ name: 'subgraph proxy correctly processed when callbacks not yet
 		};
 	let events = [];
 
-	oo.observe(callback);
+	Observable.observe(oo, callback);
 	oo.inner.some = 'text';
 	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
-	oo.unobserve(callback);
+	Observable.unobserve(oo, callback);
 
 	oo.inner = {};
 	events = [];
-	oo.observe(callback);
+	Observable.observe(oo, callback);
 	oo.inner.other = 'text';
 	if (events.length !== 1) test.fail('preliminary check failed, expected to observe 1 change');
 });
@@ -193,7 +193,7 @@ suite.runTest({ name: 'Object.assign with multiple properties - sync yields many
 		newData = { a: 1, b: 2, c: 3 },
 		events = [];
 	let callbacks = 0;
-	observable.observe(changes => {
+	Observable.observe(observable, changes => {
 		callbacks++;
 		events.push.apply(events, changes);
 	});
