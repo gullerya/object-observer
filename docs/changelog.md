@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [5.0.0] - 2022-02-16
 ### Changed (breaking change)
 - [Issue no. 113](https://github.com/gullerya/object-observer/issues/113) - removed `observable`'s `observe` and `unobserve` in favor of the static counterparts from `Observable` namespace.
 
