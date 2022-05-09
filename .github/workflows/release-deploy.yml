@@ -22,7 +22,7 @@ jobs:
         run: echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
 
       # Pull the object-observer version to be deployed
-      - name: Install
+      - name: Install the package to deploy
         run: npm install -E object-observer@${{ env.RELEASE_VERSION }}
 
       # Deploy
