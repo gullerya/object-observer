@@ -15,7 +15,12 @@
 		"tree",
 		"graph",
 		"javascript",
-		"proxy"
+		"proxy",
+		"C",
+		"J",
+		"G",
+		"Y",
+		"gullerya"
 	],
 	"homepage": "https://github.com/gullerya/object-observer",
 	"bugs": {
@@ -55,10 +60,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"eslint": "^8.9.0",
-		"fs-extra": "^10.0.0",
+		"eslint": "^8.15.0",
+		"fs-extra": "^10.1.0",
 		"just-test": "2.3.2",
-		"puppeteer": "^13.3.2",
-		"uglify-js": "^3.15.1"
+		"puppeteer": "^13.7.0",
+		"uglify-js": "^3.15.4"
 	}
 }
