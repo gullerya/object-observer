@@ -15,7 +15,11 @@
 		"tree",
 		"graph",
 		"javascript",
-		"proxy"
+		"proxy",
+		"C",
+		"J",
+		"G",
+		"Y"
 	],
 	"homepage": "https://github.com/gullerya/object-observer",
 	"bugs": {
