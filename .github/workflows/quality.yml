@@ -21,7 +21,7 @@ jobs:
           node-version: 18
 
       - name: Install
-        run: npm ci
+        run: nvm use && npm ci
 
       - name: Build
         run: npm run build
