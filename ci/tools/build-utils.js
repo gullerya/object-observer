@@ -1,7 +1,7 @@
-﻿import os from 'os';
-import { promises as fs } from 'fs';
-import path from 'path';
-import process from 'process';
+﻿import os from 'node:os';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 import uglify from 'uglify-js';
 import { calcIntegrity } from './integrity-utils.js';
 

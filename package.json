@@ -50,15 +50,14 @@
 	"scripts": {
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
-		"test": "node ./node_modules/just-test/dist/tests-runner/run-tests.js --config=./tests/tests-runner-config.json",
+		"test": "node node_modules/just-test/bin/local-runner.js config_file=./tests/tests-config-ci-node.json",
 		"version": "npm run build -- --cdn && git add --all",
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"eslint": "^8.9.0",
-		"fs-extra": "^10.0.0",
-		"just-test": "2.3.2",
-		"puppeteer": "^13.3.2",
-		"uglify-js": "^3.15.1"
+		"eslint": "^8.18.0",
+		"just-test": "^3.0.3",
+		"chai": "^4.3.6",
+		"uglify-js": "^3.16.1"
 	}
 }
