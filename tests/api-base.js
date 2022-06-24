@@ -1,5 +1,5 @@
-import { getSuite } from 'just-test/suite';
 import { assert } from 'chai';
+import { getSuite } from 'just-test/suite';
 import { Observable } from '../src/object-observer.js';
 
 const suite = getSuite('Testing Observable APIs');
