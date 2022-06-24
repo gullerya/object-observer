@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.2] - 2022-05-09
+### Fixed
+- upgraded dependencies
+
 ## [5.0.0] - 2022-02-16
 ### Changed (breaking change)
 - [Issue no. 113](https://github.com/gullerya/object-observer/issues/113) - removed `observable`'s `observe` and `unobserve` in favor of the static counterparts from `Observable` namespace.
