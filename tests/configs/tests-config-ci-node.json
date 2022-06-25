@@ -7,8 +7,13 @@
 				"maxFail": 0,
 				"maxSkip": 1,
 				"include": [
-					"./tests/ap*.js",
-					"./tests/c*.js"
+					"./tests/a*.js",
+					"./tests/c*.js",
+					"./tests/l*.js",
+					"./tests/u*.js"
+				],
+				"exclude": [
+					"./tests/browser-host-objects.js"
 				]
 			},
 			"coverage": {

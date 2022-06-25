@@ -37,7 +37,7 @@ suite.test('callbacks are interoperable', () => {
 	obsbl1.some = 'thing';
 	obsbl2.some = 'else';
 
-	assert.equal(4, count);
+	assert.equal(count, 4);
 });
 
 suite.test('ObjectObserver interoperable', () => {
@@ -53,5 +53,5 @@ suite.test('ObjectObserver interoperable', () => {
 	o1.some = 'thing';
 	o2.some = 'else';
 
-	assert.equal(4, count);
+	assert.equal(count, 4);
 });

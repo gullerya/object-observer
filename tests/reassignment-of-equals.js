@@ -1,36 +1,37 @@
-import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
-import { Observable } from '../../src/object-observer.js';
+import { assert } from 'chai';
+import { getSuite } from 'just-test/suite';
+import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite({ name: 'Testing reassignment of equal values' });
+const suite = getSuite('Testing reassignment of equal values');
 
-suite.runTest({ name: 'boolean' }, test => {
+suite.test('boolean', () => {
 	const oo = Observable.from({ p: true });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = true;
-	test.assertEqual(null, changes);
+	assert.equal(changes, null);
 });
 
-suite.runTest({ name: 'number' }, test => {
+suite.test('number', () => {
 	const oo = Observable.from({ p: 6 });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = 6;
-	test.assertEqual(null, changes);
+	assert.equal(changes, null);
 });
 
-suite.runTest({ name: 'string' }, test => {
+suite.test('string', () => {
 	const oo = Observable.from({ p: 'text' });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = 'text';
-	test.assertEqual(null, changes);
+	assert.equal(changes, null);
 });
 
-suite.runTest({ name: 'function' }, test => {
+suite.test('function', () => {
 	const
 		f = function () { },
 		oo = Observable.from({ p: f });
@@ -38,10 +39,10 @@ suite.runTest({ name: 'function' }, test => {
 	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = f;
-	test.assertEqual(null, changes);
+	assert.equal(changes, null);
 });
 
-suite.runTest({ name: 'Symbol' }, test => {
+suite.test('Symbol', () => {
 	const
 		s = Symbol('some'),
 		oo = Observable.from({ p: s });
@@ -49,5 +50,5 @@ suite.runTest({ name: 'Symbol' }, test => {
 	Observable.observe(oo, cs => { changes = cs; });
 
 	oo.p = s;
-	test.assertEqual(null, changes);
+	assert.equal(changes, null);
 });

@@ -10,74 +10,25 @@ suite.test('ensure Observable object has defined APIs', () => {
 	assert.equal(typeof Observable.isObservable, 'function');
 	assert.equal(typeof Observable.observe, 'function');
 	assert.equal(typeof Observable.unobserve, 'function');
-	assert.equal(4, Object.keys(Observable).length);
+	assert.equal(Object.keys(Observable).length, 4);
 });
 
 suite.test('ensure Observable object is frozen', () => {
-	const failErrorMessage = 'should not reach this point';
-	try {
-		Observable.some = 'prop';
-		throw new Error(failErrorMessage);
-	} catch (e) {
-		assert.notEqual(failErrorMessage, e.message);
-	}
+	assert.throws(() => Observable.some = 'prop', 'Cannot add property some');
 });
 
 suite.test('negative tests - invalid parameters', () => {
-	let bo,
-		safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from(undefined), 'observable MAY ONLY be created from');
 
-	bo = null;
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from(null), 'observable MAY ONLY be created from');
 
-	bo = true;
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from(true), 'observable MAY ONLY be created from');
 
-	bo = 1;
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from(1), 'observable MAY ONLY be created from');
 
-	bo = 'string';
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from('string'), 'observable MAY ONLY be created from');
 
-	bo = function () {
-	};
-	safeToContinue = false;
-	try {
-		Observable.from(bo);
-	} catch (e) {
-		safeToContinue = true;
-	}
-	assert.isTrue(safeToContinue);
+	assert.throws(() => Observable.from(() => { }), 'observable MAY ONLY be created from');
 });
 
 suite.test('isObservable tests', () => {
@@ -93,11 +44,11 @@ suite.test('isObservable tests', () => {
 suite.test('test observable APIs - ensure APIs are not enumerables', () => {
 	const oo = Observable.from({});
 
-	assert.equal(0, Object.keys(oo).length);
+	assert.equal(Object.keys(oo).length, 0);
 
 	const aa = Observable.from([]);
 
-	assert.equal(0, Object.keys(aa).length);
+	assert.equal(Object.keys(aa).length, 0);
 });
 
 suite.test('negative - invalid options - not an object', () => {
