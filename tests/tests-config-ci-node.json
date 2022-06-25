@@ -7,7 +7,8 @@
 				"maxFail": 0,
 				"maxSkip": 1,
 				"include": [
-					"./tests/ap*.js"
+					"./tests/ap*.js",
+					"./tests/c*.js"
 				]
 			},
 			"coverage": {
