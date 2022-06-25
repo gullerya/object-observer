@@ -60,7 +60,7 @@
 	},
 	"devDependencies": {
 		"eslint": "^8.18.0",
-		"just-test": "^3.0.3",
+		"just-test": "^3.0.4",
 		"chai": "^4.3.6",
 		"uglify-js": "^3.16.1"
 	}
