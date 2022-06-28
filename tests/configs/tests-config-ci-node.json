@@ -10,6 +10,7 @@
 					"./tests/a*.js",
 					"./tests/c*.js",
 					"./tests/l*.js",
+					"./tests/obser*.js",
 					"./tests/u*.js"
 				],
 				"exclude": [
