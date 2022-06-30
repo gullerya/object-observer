@@ -13,6 +13,7 @@
 					"./tests/object-gene*.js",
 					"./tests/object-observer-a*.js",
 					"./tests/object-observer-n*.js",
+					"./tests/object-observer-s*.js",
 					"./tests/obser*.js",
 					"./tests/u*.js"
 				],
