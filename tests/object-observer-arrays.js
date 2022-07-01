@@ -1,9 +1,10 @@
-import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
-import { Observable } from '../../src/object-observer.js';
+import { assert } from 'chai';
+import { getSuite } from 'just-test/suite';
+import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite({ name: 'Testing ObjectObserver - arrays' });
+const suite = getSuite('Testing ObjectObserver - arrays');
 
-suite.runTest({ name: 'array push - primitives' }, () => {
+suite.test('array push - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3, 4]),
 		events = [];
@@ -17,14 +18,14 @@ suite.runTest({ name: 'array push - primitives' }, () => {
 	pa.push(5);
 	pa.push(6, 7);
 
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (callBacks !== 2) throw new Error('expected to have 2 callbacks, found ' + callBacks);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '4' || events[0].value !== 5 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '5' || events[1].value !== 6 || events[1].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[2].type !== 'insert' || events[2].path.join('.') !== '6' || events[2].value !== 7 || events[2].object !== pa) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 3);
+	assert.strictEqual(callBacks, 2);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [4], value: 5, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [5], value: 6, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'insert', path: [6], value: 7, oldValue: undefined, object: pa });
 });
 
-suite.runTest({ name: 'array push - objects' }, () => {
+suite.test('array push - objects', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -34,20 +35,20 @@ suite.runTest({ name: 'array push - objects' }, () => {
 	});
 
 	pa.push({ text: 'initial' }, { text: 'secondary' });
-	if (events.length !== 2) throw new Error('expected to have 2 event, found ' + events.length);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value.text !== 'secondary' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0], value: { text: 'initial' }, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [1], value: { text: 'secondary' }, oldValue: undefined, object: pa });
 
 	pa[0].text = 'name';
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '0.text' || events[2].value !== 'name' || events[2].oldValue !== 'initial' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[2], { type: 'update', path: [0, 'text'], value: 'name', oldValue: 'initial', object: pa[0] });
 
 	pa[1].text = 'more';
-	if (events.length !== 4) throw new Error('expected to have 4 events, found ' + events.length);
-	if (events[3].type !== 'update' || events[3].path.join('.') !== '1.text' || events[3].value !== 'more' || events[3].oldValue !== 'secondary' || events[3].object !== pa[1]) throw new Error('event 3 did not fire as expected');
+	assert.strictEqual(events.length, 4);
+	assert.deepStrictEqual(events[3], { type: 'update', path: [1, 'text'], value: 'more', oldValue: 'secondary', object: pa[1] });
 });
 
-suite.runTest({ name: 'array push - arrays' }, () => {
+suite.test('array push - arrays', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -57,20 +58,20 @@ suite.runTest({ name: 'array push - arrays' }, () => {
 	});
 
 	pa.push([], [{}]);
-	if (events.length !== 2) throw new Error('expected to have 2 event, found ' + events.length);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.length !== 0 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value.length !== 1 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0], value: [], oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [1], value: [{}], oldValue: undefined, object: pa });
 
 	pa[0].push('name');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[2].type !== 'insert' || events[2].path.join('.') !== '0.0' || events[2].value !== 'name' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[2], { type: 'insert', path: [0, 0], value: 'name', oldValue: undefined, object: pa[0] });
 
 	pa[1][0].prop = 'more';
-	if (events.length !== 4) throw new Error('expected to have 4 events, found ' + events.length);
-	if (events[3].type !== 'insert' || events[3].path.join('.') !== '1.0.prop' || events[3].value !== 'more' || events[3].object !== pa[1][0]) throw new Error('event 3 did not fire as expected');
+	assert.strictEqual(events.length, 4);
+	assert.deepStrictEqual(events[3], { type: 'insert', path: [1, 0, 'prop'], value: 'more', oldValue: undefined, object: pa[1][0] });
 });
 
-suite.runTest({ name: 'array pop - primitives' }, () => {
+suite.test('array pop - primitives', () => {
 	const
 		pa = Observable.from(['some']),
 		events = [];
@@ -81,12 +82,12 @@ suite.runTest({ name: 'array pop - primitives' }, () => {
 
 	const popped = pa.pop();
 
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (popped !== 'some') throw new Error('pop base functionality broken');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: [0], value: undefined, oldValue: 'some', object: pa });
+	assert.strictEqual(popped, 'some');
 });
 
-suite.runTest({ name: 'array pop - objects' }, test => {
+suite.test('array pop - objects', () => {
 	const
 		pa = Observable.from([{ test: 'text' }]),
 		pad = pa[0],
@@ -97,21 +98,21 @@ suite.runTest({ name: 'array pop - objects' }, test => {
 
 	pa[0].test = 'test';
 	pad.test = 'more';
-	test.assertEqual(2, events.length);
+	assert.strictEqual(events.length, 2);
 
 	const popped = pa.pop();
-	test.assertEqual('more', popped.test);
-	test.assertEqual(3, events.length);
+	assert.strictEqual(popped.test, 'more');
+	assert.strictEqual(events.length, 3);
 
 	popped.new = 'value';
-	test.assertEqual(3, events.length);
+	assert.strictEqual(events.length, 3);
 
 	Observable.observe(pad, changes => Array.prototype.push.apply(eventsA, changes));
 	pad.test = 'change';
-	test.assertEqual(1, eventsA.length);
+	assert.strictEqual(eventsA.length, 1);
 });
 
-suite.runTest({ name: 'array unshift - primitives' }, () => {
+suite.test('array unshift - primitives', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -124,14 +125,14 @@ suite.runTest({ name: 'array unshift - primitives' }, () => {
 
 	pa.unshift('a');
 	pa.unshift('b', 'c');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (callbacks !== 2) throw new Error('expected to have 2 callbacks, found ' + callbacks);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value !== 'a' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '0' || events[1].value !== 'b' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'insert' || events[2].path.join('.') !== '1' || events[2].value !== 'c' || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(events.length, 3);
+	assert.strictEqual(callbacks, 2);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0], value: 'a', oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [0], value: 'b', oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'insert', path: [1], value: 'c', oldValue: undefined, object: pa });
 });
 
-suite.runTest({ name: 'array unshift - objects' }, () => {
+suite.test('array unshift - objects', () => {
 	const
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
@@ -141,18 +142,18 @@ suite.runTest({ name: 'array unshift - objects' }, () => {
 	});
 
 	pa.unshift({ text: 'initial' });
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.text !== 'initial' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0], value: { text: 'initial' }, oldValue: undefined, object: pa });
 	events.splice(0);
 
 	pa[0].text = 'name';
 	pa[1].text = 'other';
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0.text' || events[0].value !== 'name' || events[0].oldValue !== 'initial' || events[0].object !== pa[0]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original' || events[1].object !== pa[1]) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0, 'text'], value: 'name', oldValue: 'initial', object: pa[0] });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [1, 'text'], value: 'other', oldValue: 'original', object: pa[1] });
 });
 
-suite.runTest({ name: 'array unshift - arrays' }, () => {
+suite.test('array unshift - arrays', () => {
 	const
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
@@ -162,18 +163,18 @@ suite.runTest({ name: 'array unshift - arrays' }, () => {
 	});
 
 	pa.unshift([{}]);
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0' || events[0].value.length !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0], value: [{}], oldValue: undefined, object: pa });
 	events.splice(0);
 
 	pa[0][0].text = 'name';
 	pa[1].text = 'other';
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'insert' || events[0].path.join('.') !== '0.0.text' || events[0].value !== 'name' || events[0].object !== pa[0][0]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '1.text' || events[1].value !== 'other' || events[1].oldValue !== 'original' || events[1].object !== pa[1]) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'insert', path: [0, 0, 'text'], value: 'name', oldValue: undefined, object: pa[0][0] });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [1, 'text'], value: 'other', oldValue: 'original', object: pa[1] });
 });
 
-suite.runTest({ name: 'array shift - primitives' }, test => {
+suite.test('array shift - primitives', () => {
 	const
 		pa = Observable.from(['some']),
 		events = [];
@@ -182,12 +183,12 @@ suite.runTest({ name: 'array shift - primitives' }, test => {
 
 	const shifted = pa.shift();
 
-	test.assertEqual(1, events.length);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 'some' || events[0].newValue || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	test.assertEqual('some', shifted);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: [0], value: undefined, oldValue: 'some', object: pa });
+	assert.strictEqual(shifted, 'some');
 });
 
-suite.runTest({ name: 'array shift - objects' }, test => {
+suite.test('array shift - objects', () => {
 	const
 		pa = Observable.from([{ text: 'a', inner: { test: 'more' } }, { text: 'b' }]),
 		pa0 = pa[0],
@@ -199,30 +200,30 @@ suite.runTest({ name: 'array shift - objects' }, test => {
 
 	pa[0].text = 'b';
 	pa0i.test = 'test';
-	test.assertEqual(2, events.length);
+	assert.strictEqual(events.length, 2);
 	events.splice(0);
 
 	const shifted = pa.shift();
-	if (shifted.text !== 'b' || shifted.inner.test !== 'test') throw new Error('expected to receive updated original object');
+	assert.deepStrictEqual(shifted, { text: 'b', inner: { test: 'test' } });
 
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue.text !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: [0], value: undefined, oldValue: { text: 'b', inner: { test: 'test' } }, object: pa });
 	events.splice(0);
 
 	pa[0].text = 'c';
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0.text' || events[0].oldValue !== 'b' || events[0].value !== 'c' || events[0].object !== pa[0]) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0, 'text'], value: 'c', oldValue: 'b', object: pa[0] });
 	events.splice(0);
 
 	shifted.text = 'd';
-	test.assertEqual(0, events.length);
+	assert.strictEqual(events.length, 0);
 
 	Observable.observe(pa0i, changes => Array.prototype.push.apply(eventsA, changes));
 	pa0i.test = 'dk';
-	test.assertEqual(1, eventsA.length);
+	assert.strictEqual(eventsA.length, 1);
 });
 
-suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
+suite.test('array reverse - primitives (flat array)', () => {
 	const
 		pa = Observable.from([1, 2, 3]),
 		events = [];
@@ -233,13 +234,13 @@ suite.runTest({ name: 'array reverse - primitives (flat array)' }, () => {
 
 	const reversed = pa.reverse();
 
-	if (reversed !== pa) throw new Error('reverse base functionality broken');
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'reverse' || events[0].path.length !== 0 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) throw new Error('reverse base functionality broken');
+	assert.strictEqual(reversed, pa);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'reverse', path: [], value: undefined, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(pa, [3, 2, 1]);
 });
 
-suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
+suite.test('array reverse - primitives (nested array)', () => {
 	const
 		pa = Observable.from({ a1: { a2: [1, 2, 3] } }),
 		events = [];
@@ -250,13 +251,13 @@ suite.runTest({ name: 'array reverse - primitives (nested array)' }, () => {
 
 	const reversed = pa.a1.a2.reverse();
 
-	if (reversed !== pa.a1.a2) throw new Error('reverse base functionality broken');
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'reverse' || events[0].path.length !== 2 || events[0].path.join('.') !== 'a1.a2' || events[0].object !== pa.a1.a2) throw new Error('event 0 did not fire as expected');
-	if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) throw new Error('reverse base functionality broken');
+	assert.strictEqual(reversed, pa.a1.a2);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'reverse', path: ['a1', 'a2'], value: undefined, oldValue: undefined, object: pa.a1.a2 });
+	assert.deepStrictEqual(pa.a1.a2, [3, 2, 1]);
 });
 
-suite.runTest({ name: 'array reverse - objects' }, () => {
+suite.test('array reverse - objects', () => {
 	const
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
@@ -269,14 +270,14 @@ suite.runTest({ name: 'array reverse - objects' }, () => {
 	const reversed = pa.reverse();
 	pa[0].name = 'C';
 
-	if (reversed !== pa) throw new Error('reverse base functionality broken');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0.name' || events[0].value !== 'A' || events[0].oldValue !== 'a' || events[0].object !== pa[2]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'reverse' || events[1].path.length !== 0 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(reversed, pa);
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0, 'name'], value: 'A', oldValue: 'a', object: pa[2] });
+	assert.deepStrictEqual(events[1], { type: 'reverse', path: [], value: undefined, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'update', path: [0, 'name'], value: 'C', oldValue: 'c', object: pa[0] });
 });
 
-suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
+suite.test('array sort - primitives (flat array)', () => {
 	const
 		pa = Observable.from([3, 2, 1]),
 		events = [];
@@ -287,21 +288,21 @@ suite.runTest({ name: 'array sort - primitives (flat array)' }, () => {
 
 	let sorted = pa.sort();
 
-	if (sorted !== pa) throw new Error('sort base functionality broken');
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'shuffle' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (pa[0] !== 1 || pa[1] !== 2 || pa[2] !== 3) throw new Error('sort base functionality broken');
+	assert.strictEqual(sorted, pa);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'shuffle', path: [], value: undefined, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(pa, [1, 2, 3]);
 
 	sorted = pa.sort((a, b) => {
 		return a < b ? 1 : -1;
 	});
-	if (sorted !== pa) throw new Error('sort base functionality broken');
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[1].type !== 'shuffle' || events[1].path.length !== 0 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (pa[0] !== 3 || pa[1] !== 2 || pa[2] !== 1) throw new Error('sort base functionality broken');
+	assert.strictEqual(sorted, pa);
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[1], { type: 'shuffle', path: [], value: undefined, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(pa, [3, 2, 1]);
 });
 
-suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
+suite.test('array sort - primitives (nested array)', () => {
 	const
 		pa = Observable.from({ a1: { a2: [3, 2, 1] } }),
 		events = [];
@@ -312,21 +313,21 @@ suite.runTest({ name: 'array sort - primitives (nested array)' }, () => {
 
 	let sorted = pa.a1.a2.sort();
 
-	if (sorted !== pa.a1.a2) throw new Error('sort base functionality broken');
-	if (events.length !== 1) throw new Error('expected to have 1 event, found ' + events.length);
-	if (events[0].type !== 'shuffle' || events[0].path.length !== 2 || events[0].path.join('.') !== 'a1.a2' || events[0].object !== pa.a1.a2) throw new Error('event 0 did not fire as expected');
-	if (pa.a1.a2[0] !== 1 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 3) throw new Error('sort base functionality broken');
+	assert.strictEqual(sorted, pa.a1.a2);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'shuffle', path: ['a1', 'a2'], value: undefined, oldValue: undefined, object: pa.a1.a2 });
+	assert.deepStrictEqual(pa.a1.a2, [1, 2, 3]);
 
 	sorted = pa.a1.a2.sort((a, b) => {
 		return a < b ? 1 : -1;
 	});
-	if (sorted !== pa.a1.a2) throw new Error('sort base functionality broken');
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[1].type !== 'shuffle' || events[1].path.length !== 2 || events[1].path.join('.') !== 'a1.a2' || events[1].object !== pa.a1.a2) throw new Error('event 1 did not fire as expected');
-	if (pa.a1.a2[0] !== 3 || pa.a1.a2[1] !== 2 || pa.a1.a2[2] !== 1) throw new Error('sort base functionality broken');
+	assert.strictEqual(sorted, pa.a1.a2);
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[1], { type: 'shuffle', path: ['a1', 'a2'], value: undefined, oldValue: undefined, object: pa.a1.a2 });
+	assert.deepStrictEqual(pa.a1.a2, [3, 2, 1]);
 });
 
-suite.runTest({ name: 'array sort - objects' }, () => {
+suite.test('array sort - objects', () => {
 	const
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
@@ -341,14 +342,14 @@ suite.runTest({ name: 'array sort - objects' }, () => {
 	});
 	pa[0].name = 'C';
 
-	if (sorted !== pa) throw new Error('sort base functionality broken');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0.name' || events[0].value !== 'A' || events[0].oldValue !== 'a' || events[0].object !== pa[2]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'shuffle' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '0.name' || events[2].value !== 'C' || events[2].oldValue !== 'c' || events[2].object !== pa[0]) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(sorted, pa);
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0, 'name'], value: 'A', oldValue: 'a', object: pa[2] });
+	assert.deepStrictEqual(events[1], { type: 'shuffle', path: [], value: undefined, oldValue: undefined, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'update', path: [0, 'name'], value: 'C', oldValue: 'c', object: pa[0] });
 });
 
-suite.runTest({ name: 'array fill - primitives' }, () => {
+suite.test('array fill - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3]),
 		events = [];
@@ -358,33 +359,33 @@ suite.runTest({ name: 'array fill - primitives' }, () => {
 	});
 
 	const filled = pa.fill('a');
-	if (filled !== pa) throw new Error('fill base functionality broken');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value !== 'a' || events[0].oldValue !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value !== 'a' || events[1].oldValue !== 2 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value !== 'a' || events[2].oldValue !== 3 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(filled, pa);
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0], value: 'a', oldValue: 1, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [1], value: 'a', oldValue: 2, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'update', path: [2], value: 'a', oldValue: 3, object: pa });
 	events.splice(0);
 
 	pa.fill('b', 1, 3);
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value !== 'b' || events[0].oldValue !== 'a' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '2' || events[1].value !== 'b' || events[1].oldValue !== 'a' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1], value: 'b', oldValue: 'a', object: pa });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [2], value: 'b', oldValue: 'a', object: pa });
 	events.splice(0);
 
 	pa.fill('c', -1, 3);
-	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'c' || events[0].oldValue !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [2], value: 'c', oldValue: 'b', object: pa });
 	events.splice(0);
 
 	//	simulating insertion of a new item into array (fill does not extend an array, so we may do it only on internal items)
 	delete pa[1];
 	pa.fill('d', 1, 2);
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '1' || typeof events[0].value !== 'undefined' || events[0].oldValue !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '1' || events[1].value !== 'd' || typeof events[1].oldValue !== 'undefined' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: ['1'], value: undefined, oldValue: 'b', object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [1], value: 'd', oldValue: undefined, object: pa });
 });
 
-suite.runTest({ name: 'array fill - objects' }, () => {
+suite.test('array fill - objects', () => {
 	const
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
@@ -394,19 +395,19 @@ suite.runTest({ name: 'array fill - objects' }, () => {
 	});
 
 	const filled = pa.fill({ name: 'Niv' });
-	if (filled !== pa) throw new Error('fill base functionality broken');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value.name !== 'Niv' || events[0].oldValue.some !== 'text' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value.name !== 'Niv' || events[1].oldValue.some !== 'else' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value.name !== 'Niv' || events[2].oldValue.some !== 'more' || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(filled, pa);
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0], value: { name: 'Niv' }, oldValue: { some: 'text' }, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [1], value: { name: 'Niv' }, oldValue: { some: 'else' }, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'update', path: [2], value: { name: 'Niv' }, oldValue: { some: 'more' }, object: pa });
 	events.splice(0);
 
 	pa[1].name = 'David';
-	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv' || events[0].object !== pa[1]) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 'name'], value: 'David', oldValue: 'Niv', object: pa[1] });
 });
 
-suite.runTest({ name: 'array fill - arrays' }, () => {
+suite.test('array fill - arrays', () => {
 	const
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
@@ -416,19 +417,19 @@ suite.runTest({ name: 'array fill - arrays' }, () => {
 	});
 
 	const filled = pa.fill([{ name: 'Niv' }]);
-	if (filled !== pa) throw new Error('fill base functionality broken');
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '0' || events[0].value[0].name !== 'Niv' || events[0].oldValue.some !== 'text' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '1' || events[1].value[0].name !== 'Niv' || events[1].oldValue.some !== 'else' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'update' || events[2].path.join('.') !== '2' || events[2].value[0].name !== 'Niv' || events[2].oldValue.some !== 'more' || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(filled, pa);
+	assert.strictEqual(events.length, 3);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0], value: [{ name: 'Niv' }], oldValue: { some: 'text' }, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [1], value: [{ name: 'Niv' }], oldValue: { some: 'else' }, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'update', path: [2], value: [{ name: 'Niv' }], oldValue: { some: 'more' }, object: pa });
 	events.splice(0);
 
 	pa[1][0].name = 'David';
-	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.0.name' || events[0].value !== 'David' || events[0].oldValue !== 'Niv' || events[0].object !== pa[1][0]) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 0, 'name'], value: 'David', oldValue: 'Niv', object: pa[1][0] });
 });
 
-suite.runTest({ name: 'array splice - primitives' }, () => {
+suite.test('array splice - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3, 4, 5, 6]),
 		events = [];
@@ -440,35 +441,38 @@ suite.runTest({ name: 'array splice - primitives' }, () => {
 	});
 
 	const spliced = pa.splice(2, 2, 'a');
-	if (!Array.isArray(spliced) || spliced.length !== 2 || spliced[0] !== 3 || spliced[1] !== 4) throw new Error('splice base functionality broken');
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (callbacks !== 1) throw new Error('expected to have 1 callback, found ' + callbacks);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '2' || events[0].value !== 'a' || events[0].oldValue !== 3 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'delete' || events[1].path.join('.') !== '3' || events[1].oldValue !== 4 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.isArray(spliced);
+	assert.strictEqual(spliced.length, 2);
+	assert.strictEqual(spliced[0], 3);
+	assert.strictEqual(spliced[1], 4);
+	assert.strictEqual(events.length, 2);
+	assert.strictEqual(callbacks, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [2], value: 'a', oldValue: 3, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'delete', path: [3], value: undefined, oldValue: 4, object: pa });
 	events.splice(0);
 	callbacks = 0;
 
 	//  pa = [1,2,'a',5,6]
 	pa.splice(-3);
-	if (events.length !== 3) throw new Error('expected to have 3 events, found ' + events.length);
-	if (callbacks !== 1) throw new Error('expected to have 1 callback, found ' + callbacks);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '2' || events[0].oldValue !== 'a' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'delete' || events[1].path.join('.') !== '3' || events[1].oldValue !== 5 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
-	if (events[2].type !== 'delete' || events[2].path.join('.') !== '4' || events[2].oldValue !== 6 || events[2].object !== pa) throw new Error('event 2 did not fire as expected');
+	assert.strictEqual(events.length, 3);
+	assert.strictEqual(callbacks, 1);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: [2], value: undefined, oldValue: 'a', object: pa });
+	assert.deepStrictEqual(events[1], { type: 'delete', path: [3], value: undefined, oldValue: 5, object: pa });
+	assert.deepStrictEqual(events[2], { type: 'delete', path: [4], value: undefined, oldValue: 6, object: pa });
 	events.splice(0);
 	callbacks = 0;
 
 	//  pa = [1,2]
 	pa.splice(0);
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (callbacks !== 1) throw new Error('expected to have 1 callback, found ' + callbacks);
-	if (events[0].type !== 'delete' || events[0].path.join('.') !== '0' || events[0].oldValue !== 1 || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'delete' || events[1].path.join('.') !== '1' || events[1].oldValue !== 2 || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.strictEqual(callbacks, 1);
+	assert.deepStrictEqual(events[0], { type: 'delete', path: [0], value: undefined, oldValue: 1, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'delete', path: [1], value: undefined, oldValue: 2, object: pa });
 	events.splice(0);
 	callbacks = 0;
 });
 
-suite.runTest({ name: 'array splice - objects' }, () => {
+suite.test('array splice - objects', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
@@ -478,30 +482,30 @@ suite.runTest({ name: 'array splice - objects' }, () => {
 	});
 
 	pa.splice(1, 2, { text: '1' });
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== '1' || events[0].oldValue.text !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'delete' || events[1].path.join('.') !== '2' || events[1].oldValue.text !== 'c' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1], value: { text: '1' }, oldValue: { text: 'b' }, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'delete', path: [2], value: undefined, oldValue: { text: 'c' }, object: pa });
 	events.splice(0);
 
 	pa[1].text = 'B';
 	pa[2].text = 'D';
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.text' || events[0].value !== 'B' || events[0].oldValue !== '1' || events[0].object !== pa[1]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd' || events[1].object !== pa[2]) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 'text'], value: 'B', oldValue: '1', object: pa[1] });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [2, 'text'], value: 'D', oldValue: 'd', object: pa[2] });
 	events.splice(0);
 
 	pa.splice(1, 1, { text: 'A' }, { text: 'B' });
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== 'A' || events[0].oldValue.text !== 'B' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '2' || events[1].value.text !== 'B' || typeof events[1].oldValue !== 'undefined' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1], value: { text: 'A' }, oldValue: { text: 'B' }, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [2], value: { text: 'B' }, oldValue: undefined, object: pa });
 	events.splice(0);
 
 	pa[3].text = 'C';
-	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '3.text' || events[0].value !== 'C' || events[0].oldValue !== 'D' || events[0].object !== pa[3]) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [3, 'text'], value: 'C', oldValue: 'D', object: pa[3] });
 });
 
-suite.runTest({ name: 'array splice - arrays' }, () => {
+suite.test('array splice - arrays', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
@@ -511,27 +515,28 @@ suite.runTest({ name: 'array splice - arrays' }, () => {
 	});
 
 	pa.splice(1, 2, [{ text: '1' }]);
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value[0].text !== '1' || events[0].oldValue.text !== 'b' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'delete' || events[1].path.join('.') !== '2' || events[1].oldValue.text !== 'c' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1], value: [{ text: '1' }], oldValue: { text: 'b' }, object: pa });
+	assert.deepStrictEqual(events[1], { type: 'delete', path: [2], value: undefined, oldValue: { text: 'c' }, object: pa });
 	events.splice(0);
 
 	pa[1][0].text = 'B';
 	pa[2].text = 'D';
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1.0.text' || events[0].value !== 'B' || events[0].oldValue !== '1' || events[0].object !== pa[1][0]) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'update' || events[1].path.join('.') !== '2.text' || events[1].value !== 'D' || events[1].oldValue !== 'd' || events[1].object !== pa[2]) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 0, 'text'], value: 'B', oldValue: '1', object: pa[1][0] });
+	assert.deepStrictEqual(events[1], { type: 'update', path: [2, 'text'], value: 'D', oldValue: 'd', object: pa[2] });
 	events.splice(0);
 
 	const spliced = pa.splice(1, 1, { text: 'A' }, [{ text: 'B' }]);
-	if (events.length !== 2) throw new Error('expected to have 2 events, found ' + events.length);
-	if (spliced.length !== 1) throw new Error('expected to have 1 spliced object');
-	if (spliced[0].length !== 1 || spliced[0][0].text !== 'B') throw new Error('spliced object is not as expected');
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '1' || events[0].value.text !== 'A' || events[0].oldValue[0].text !== 'B' || events[0].object !== pa) throw new Error('event 0 did not fire as expected');
-	if (events[1].type !== 'insert' || events[1].path.join('.') !== '2' || events[1].value[0].text !== 'B' || typeof events[1].oldValue !== 'undefined' || events[1].object !== pa) throw new Error('event 1 did not fire as expected');
+	assert.strictEqual(events.length, 2);
+	assert.strictEqual(spliced.length, 1);
+	assert.deepStrictEqual(spliced[0], [{ text: 'B' }]);
+
+	assert.deepStrictEqual(events[0], { type: 'update', path: [1], value: { text: 'A' }, oldValue: [{ text: 'B' }], object: pa });
+	assert.deepStrictEqual(events[1], { type: 'insert', path: [2], value: [{ text: 'B' }], oldValue: undefined, object: pa });
 	events.splice(0);
 
 	pa[3].text = 'C';
-	if (events.length !== 1) throw new Error('expected to have 1 events, found ' + events.length);
-	if (events[0].type !== 'update' || events[0].path.join('.') !== '3.text' || events[0].value !== 'C' || events[0].oldValue !== 'D' || events[0].object !== pa[3]) throw new Error('event 0 did not fire as expected');
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [3, 'text'], value: 'C', oldValue: 'D', object: pa[3] });
 });

@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
 
 export {
 	calcIntegrity

@@ -1,9 +1,10 @@
-import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
-import { Observable } from '../../src/object-observer.js';
+import { assert } from 'chai';
+import { getSuite } from 'just-test/suite';
+import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite({ name: 'Testing Observable - objects with same reference' });
+const suite = getSuite('Testing Observable - objects with same reference');
 
-suite.runTest({ name: 'subgraph objects pointing to the same object few times', skip: true }, test => {
+suite.test('subgraph objects pointing to the same object few times', { skip: true }, () => {
 	const childObj = { prop: 'A' };
 	const obsMainObj = Observable.from({ childA: childObj, childB: childObj });
 
@@ -11,5 +12,5 @@ suite.runTest({ name: 'subgraph objects pointing to the same object few times', 
 
 	obsMainObj.childA.prop = 'B';
 
-	test.assertEqual(obsMainObj.childA.prop, obsMainObj.childB.prop);
+	assert.strictEqual(obsMainObj.childA.prop, obsMainObj.childB.prop);
 });

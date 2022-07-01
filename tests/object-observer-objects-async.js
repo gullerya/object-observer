@@ -1,9 +1,11 @@
-import { getSuite } from '../../node_modules/just-test/dist/just-test.js';
-import { Observable } from '../../src/object-observer.js';
+import { assert } from 'chai';
+import { getSuite } from 'just-test/suite';
+import { waitNextTask } from 'just-test/time-utils';
+import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite({ name: 'Testing Observable - async dispatch' });
+const suite = getSuite('Testing Observable - async dispatch');
 
-suite.runTest({ name: 'multiple continuous mutations', timeout: 15000 }, async test => {
+suite.test('multiple continuous mutations', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -18,13 +20,13 @@ suite.runTest({ name: 'multiple continuous mutations', timeout: 15000 }, async t
 	observable.a = 'else';
 	delete observable.b;
 
-	await test.waitNextMicrotask();
+	await waitNextTask();
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(4, events.length);
+	assert.strictEqual(callbacks, 1);
+	assert.strictEqual(events.length, 4);
 });
 
-suite.runTest({ name: 'multiple continuous mutations is split bursts', timeout: 15000 }, async test => {
+suite.test('multiple continuous mutations is split bursts', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -37,10 +39,10 @@ suite.runTest({ name: 'multiple continuous mutations is split bursts', timeout: 
 	//	first burst
 	observable.a = 1;
 	observable.b = 2;
-	await test.waitNextMicrotask();
+	await waitNextTask();
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(2, events.length);
+	assert.strictEqual(callbacks, 1);
+	assert.strictEqual(events.length, 2);
 
 	callbacks = 0;
 	events.splice(0);
@@ -48,13 +50,13 @@ suite.runTest({ name: 'multiple continuous mutations is split bursts', timeout: 
 	//	second burst
 	observable.a = 3;
 	observable.b = 4;
-	await test.waitNextMicrotask();
+	await waitNextTask();
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(2, events.length);
+	assert.strictEqual(callbacks, 1);
+	assert.strictEqual(events.length, 2);
 });
 
-suite.runTest({ name: 'Object.assign with multiple properties', timeout: 15000 }, async test => {
+suite.test('Object.assign with multiple properties', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },
@@ -67,13 +69,13 @@ suite.runTest({ name: 'Object.assign with multiple properties', timeout: 15000 }
 
 	Object.assign(observable, newData);
 
-	await test.waitNextMicrotask();
+	await waitNextTask();
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(3, events.length);
+	assert.strictEqual(callbacks, 1);
+	assert.strictEqual(events.length, 3);
 });
 
-suite.runTest({ name: 'Object.assign with multiple properties + more changes', timeout: 15000 }, async test => {
+suite.test('Object.assign with multiple properties + more changes', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },
@@ -87,8 +89,8 @@ suite.runTest({ name: 'Object.assign with multiple properties + more changes', t
 	Object.assign(observable, newData);
 	observable.a = 4;
 
-	await test.waitNextMicrotask();
+	await waitNextTask();
 
-	test.assertEqual(1, callbacks);
-	test.assertEqual(4, events.length);
+	assert.strictEqual(callbacks, 1);
+	assert.strictEqual(events.length, 4);
 });
