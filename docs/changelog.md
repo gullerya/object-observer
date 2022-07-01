@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [5.0.3] - 2022-07-02
+## [5.0.4] - 2022-07-02
 ### Maintenance
 - upgraded dependencies
 - [Issue no. 86](https://github.com/gullerya/object-observer/issues/86) - moved to the new JustTest testing framework
