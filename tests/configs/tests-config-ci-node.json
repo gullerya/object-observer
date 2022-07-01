@@ -7,18 +7,11 @@
 				"maxFail": 0,
 				"maxSkip": 1,
 				"include": [
-					"./tests/a*.js",
-					"./tests/c*.js",
-					"./tests/l*.js",
-					"./tests/object-gene*.js",
-					"./tests/object-observer-a*.js",
-					"./tests/object-observer-n*.js",
-					"./tests/object-observer-s*.js",
-					"./tests/obser*.js",
-					"./tests/u*.js"
+					"./tests/*.js"
 				],
 				"exclude": [
-					"./tests/browser-host-objects.js"
+					"./tests/browser-host-objects.js",
+					"./tests/*-performance-*.js"
 				]
 			},
 			"coverage": {
