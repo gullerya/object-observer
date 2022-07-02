@@ -13,23 +13,14 @@ suite.test('test revokation of replaced objects - simple set', () => {
 			prop: 'text'
 		}
 	});
-	let eventsCollector = [];
-	let errorsInListener = 0;
+	let events = [];
 
-	Observable.observe(og, changes => {
-		try {
-			eventsCollector = eventsCollector.concat(changes);
-			assert.equal(changes.length, 1);
-			assert.deepStrictEqual(changes[0], { type: 'update', path: ['a'], value: { prop: 'text' }, oldValue: { b: { prop: 'text' }, prop: 'text' }, object: og });
-		} catch (e) {
-			errorsInListener++;
-			throw e;
-		}
-	});
+	Observable.observe(og, changes => events.push(...changes));
 
 	og.a = og.a.b;
 	assert.strictEqual(og.a.prop, 'text');
-	assert.strictEqual(errorsInListener, 0);
+	assert.equal(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: ['a'], value: { prop: 'text' }, oldValue: { b: { prop: 'text' }, prop: 'text' }, object: og });
 });
 
 suite.test('test revokation of replaced objects - splice in array', () => {
@@ -41,21 +32,12 @@ suite.test('test revokation of replaced objects - splice in array', () => {
 			prop: 'text'
 		}
 	]);
-	let eventsCollector = [];
-	let errorsInListener = 0;
+	let events = [];
 
-	Observable.observe(og, changes => {
-		try {
-			eventsCollector = eventsCollector.concat(changes);
-			assert.equal(changes.length, 1);
-			assert.deepStrictEqual(changes[0], { type: 'update', path: [0], value: { prop: 'text' }, oldValue: { child: { prop: 'text' }, prop: 'text' }, object: og });
-		} catch (e) {
-			errorsInListener++;
-			throw e;
-		}
-	});
+	Observable.observe(og, changes => events.push(...changes));
 
 	og.splice(0, 1, og[0].child);
 	assert.strictEqual(og[0].prop, 'text');
-	assert.strictEqual(errorsInListener, 0);
+	assert.strictEqual(events.length, 1);
+	assert.deepStrictEqual(events[0], { type: 'update', path: [0], value: { prop: 'text' }, oldValue: { child: { prop: 'text' }, prop: 'text' }, object: og });
 });
