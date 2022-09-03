@@ -5,7 +5,7 @@
 			"tests": {
 				"ttl": 32000,
 				"maxFail": 0,
-				"maxSkip": 1,
+				"maxSkip": 5,
 				"include": [
 					"./tests/*.js"
 				],
