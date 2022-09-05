@@ -32,13 +32,13 @@
 		"sri.json"
 	],
 	"main": "./dist/cjs/object-observer.js",
-	"module": "./dist/mjs/object-observer.min.js",
-	"browser": "./dist/mjs/object-observer.min.js",
+	"module": "./dist/object-observer.min.js",
+	"browser": "./dist/object-observer.min.js",
 	"types": "./dist/object-observer.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/mjs/object-observer.min.js",
-			"require": "./dist/cjs/object-observer.js"
+			"import": "./dist/object-observer.min.js",
+			"require": "./dist/cjs/object-observer.min.js"
 		}
 	},
 	"type": "module",
@@ -66,11 +66,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.18.13",
-		"@babel/plugin-transform-modules-commonjs": "^7.18.6",
 		"chai": "^4.3.6",
 		"eslint": "^8.18.0",
 		"just-test": "^3.0.4",
+		"mkdist": "^0.3.13",
 		"uglify-js": "^3.16.1"
 	}
 }

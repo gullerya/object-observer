@@ -1,117 +1,124 @@
-﻿import os from 'node:os';
-import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import process from 'node:process';
+import process from "node:process";
+import fs from 'node:fs/promises';
+
+import { mkdist } from 'mkdist';
 import uglify from 'uglify-js';
-import { calcIntegrity } from './integrity-utils.js';
-import { transformFileAsync } from '@babel/core';
 
-const
-	isCDN = process.argv.some(a => a === '--cdn'),
-	SRC = 'src',
-	DIST = 'dist',
-	CJS = 'cjs',
-	MJS = 'mjs',
-	CDN = 'cdn',
-	filesToCopy = ['object-observer.d.ts'],
-	filesToProcess = ['object-observer.js'];
+import { calcIntegrity } from "./integrity-utils.js";
+import * as stdout from './stdout.js';
 
-process.stdout.write(`\x1B[32mStarting the build...\x1B[0m${os.EOL}`);
-process.stdout.write(os.EOL);
+const SRC_DIR = 'src';
+const DIST_DIR = 'dist';
 
-await ensureCleanDir(DIST);
+const buildCDN = process.argv.some(a => a === '--cdn')
 
-process.stdout.write(`\tcopying "${SRC}" to "${DIST}"...`);
-for (const fileToCopy of filesToCopy) {
-	await fs.copyFile(path.join(SRC, fileToCopy), path.join(DIST, fileToCopy));
-}
-process.stdout.write(`\t\x1B[32mOK\x1B[0m${os.EOL}`);
+stdout.writeGreen('Starting the build...')
+stdout.writeNewline();
+stdout.writeNewline();
 
-await buildMJSModule(DIST, MJS);
-await buildCJSModule(DIST, CJS);
+await cleanDistDir()
 
-process.stdout.write('\tminifying...');
-const options = {
-	toplevel: true
-};
-for (const fileToMinify of filesToProcess) {
-	const fp = path.join(DIST, MJS, fileToMinify);
-	const mfp = path.join(DIST, MJS, fileToMinify.replace(/\.js$/, '.min.js'));
-	const fc = await fs.readFile(fp, { encoding: 'utf8' });
-	const mfc = uglify.minify(fc, options).code;
-	await fs.writeFile(mfp, mfc);
-}
-process.stdout.write(`\t\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
+await buildCJSModule();
+await buildESModule();
 
-if (isCDN) {
-	await buildCDNDistro(DIST, MJS, CDN);
-	const sriMap = await calcIntegrity(path.join(DIST, CDN));
-	await fs.writeFile('sri.json', JSON.stringify(sriMap, null, '\t'), { encoding: 'utf-8' });
+if (buildCDN) {
+	await buildCDNResources();
 }
 
-process.stdout.write(os.EOL);
-process.stdout.write(`\x1B[32mDONE\x1B[0m${os.EOL}`);
+async function cleanDistDir() {
+	stdout.write(`\tcleaning "dist"...`);
 
-async function ensureCleanDir(dir) {
-	process.stdout.write(`\tcleaning "${dir}"...`);
-	await fs.rm(dir, { recursive: true, force: true });
-	await fs.mkdir(dir);
-	process.stdout.write(`\t\t\x1B[32mOK\x1B[0m${os.EOL}`);
+	await fs.rm(DIST_DIR, { recursive: true, force: true });
+	await fs.mkdir(DIST_DIR);
+
+	stdout.writeGreen('OK');
+	stdout.writeNewline();
 }
 
-async function buildCDNDistro(dir, mjs, cdn) {
-	process.stdout.write('\tbuilding CDN resources...');
-	await fs.mkdir(path.join(dir, cdn), { recursive: true });
-	for (const file of filesToProcess) {
-		await Promise.all([
-			fs.copyFile(path.join(dir, mjs, file), path.join(dir, cdn, file)),
-			fs.copyFile(path.join(dir, mjs, file.replace('.js', '.min.js')), path.join(dir, cdn, file.replace('.js', '.min.js')))
-		]);
-	}
-	process.stdout.write(`\t\x1B[32mOK\x1B[0m${os.EOL}`);
+async function buildCJSModule() {
+	stdout.write('\tbuilding CJS resources...');
+
+	const { writtenFiles } = await mkdist({
+		cleanDist: false,
+		srcDir: SRC_DIR,
+		distDir: path.join(DIST_DIR, 'cjs'),
+		ext: 'js',
+		format: 'cjs',
+		pattern: '**/*.js'
+	});
+
+	await minify(writtenFiles);
+
+	stdout.writeGreen('OK');
+	stdout.writeNewline();
 }
 
-async function buildCJSModule(dir, cjs) {
-	process.stdout.write('\tbuilding CJS resources...');
-	await fs.mkdir(path.join(dir, cjs), { recursive: true });
+async function buildESModule() {
+	stdout.write('\tbuilding ESM resources...');
 
-	for (const file of filesToProcess) {
-		const transformedFile = await transformFileAsync(path.join(SRC, file), {
-			"plugins": ["@babel/plugin-transform-modules-commonjs"],
-		});
+	const { writtenFiles } = await mkdist({
+		cleanDist: false,
+		srcDir: SRC_DIR,
+		distDir: path.join(DIST_DIR),
+		ext: 'mjs',
+		format: 'esm',
+	});
 
-		await fs.writeFile(path.join(dir, cjs, file), transformedFile.code);
-	}
+	await minify(writtenFiles);
 
-	fs.writeFile(path.join(dir, cjs, 'package.json'), JSON.stringify({
-		"type": "commonjs"
-	}, undefined, 2))
-
-	process.stdout.write(`\t\x1B[32mOK\x1B[0m${os.EOL}`);
+	stdout.writeGreen('OK');
+	stdout.writeNewline();
 }
 
-async function buildMJSModule(dir, mjs) {
-	process.stdout.write('\tbuilding CJS resources...');
-	await fs.mkdir(path.join(dir, mjs), { recursive: true });
+async function minify(files) {
+	for (const file of files) {
+		const content = await fs.readFile(file);
 
-	for (const file of filesToProcess) {
-		const destFile = path.join(DIST, mjs, file);
+		const pathWithoutExtension = file.split('.');
+		const extension = pathWithoutExtension.pop();
 
-		await fs.copyFile(path.join(SRC, file), destFile);
+		if (!['js', 'mjs'].includes(extension)) {
+			continue;
+		}
 
-		const minifyOptions = {
+		const minified = uglify.minify(content.toString('utf-8'), {
+			sourceMap: true,
 			toplevel: true
-		};
+		})
 
-		const fc = await fs.readFile(destFile, { encoding: 'utf8' });
-		const mfc = uglify.minify(fc, minifyOptions).code;
+		const minifiedPath = `${pathWithoutExtension.join('.')}.min.js`
 
-		await fs.writeFile(path.join(DIST, mjs, file).replace(/\.js$/, '.min.js'), mfc)
+		await fs.writeFile(minifiedPath, minified.code);
+		await fs.writeFile(`${minifiedPath}.map`, minified.map);
+	}
+}
+
+async function buildCDNResources() {
+	stdout.write('\tbuilding CDN resources...');
+
+	const CDN_DIR = path.join(DIST_DIR, 'cdn');
+
+	await fs.mkdir(CDN_DIR);
+
+	const files = await fs.readdir(DIST_DIR);
+
+	for (const file of files) {
+		const allowedExtension = file.endsWith('.js') || file.endsWith('.mjs') || file.endsWith('.map');
+
+		if (!allowedExtension) {
+			continue;
+		}
+
+		const fileName = file.split('/').pop();
+
+		await fs.copyFile(path.join(DIST_DIR, file), path.join(CDN_DIR, fileName));
 	}
 
-	fs.writeFile(path.join(dir, mjs, 'package.json'), JSON.stringify({
-		"type": "module"
-	}, undefined, 2))
+	const sriMap = await calcIntegrity(CDN_DIR)
 
-	process.stdout.write(`\t\x1B[32mOK\x1B[0m${os.EOL}`);
+	await fs.writeFile('sri.json', JSON.stringify(sriMap, null, '\t'), { encoding: 'utf-8' });
+
+	stdout.writeGreen('OK');
+	stdout.writeNewline();
 }
