@@ -11,13 +11,13 @@ import * as stdout from './stdout.js';
 const SRC_DIR = 'src';
 const DIST_DIR = 'dist';
 
-const buildCDN = process.argv.some(a => a === '--cdn')
+const buildCDN = process.argv.some(a => a === '--cdn');
 
-stdout.writeGreen('Starting the build...')
+stdout.writeGreen('Starting the build...');
 stdout.writeNewline();
 stdout.writeNewline();
 
-await cleanDistDir()
+await cleanDistDir();
 
 await buildCJSModule();
 await buildESModule();
@@ -61,8 +61,9 @@ async function buildESModule() {
 		cleanDist: false,
 		srcDir: SRC_DIR,
 		distDir: path.join(DIST_DIR),
-		ext: 'mjs',
+		ext: 'js',
 		format: 'esm',
+		pattern: '**/*.[jt]s'
 	});
 
 	await minify(writtenFiles);
@@ -78,7 +79,7 @@ async function minify(files) {
 		const pathWithoutExtension = file.split('.');
 		const extension = pathWithoutExtension.pop();
 
-		if (!['js', 'mjs'].includes(extension)) {
+		if (extension !== 'js') {
 			continue;
 		}
 
@@ -104,7 +105,7 @@ async function buildCDNResources() {
 	const files = await fs.readdir(DIST_DIR);
 
 	for (const file of files) {
-		const allowedExtension = file.endsWith('.js') || file.endsWith('.mjs') || file.endsWith('.map');
+		const allowedExtension = file.endsWith('.js') || file.endsWith('.map');
 
 		if (!allowedExtension) {
 			continue;
@@ -115,7 +116,7 @@ async function buildCDNResources() {
 		await fs.copyFile(path.join(DIST_DIR, file), path.join(CDN_DIR, fileName));
 	}
 
-	const sriMap = await calcIntegrity(CDN_DIR)
+	const sriMap = await calcIntegrity(CDN_DIR);
 
 	await fs.writeFile('sri.json', JSON.stringify(sriMap, null, '\t'), { encoding: 'utf-8' });
 
