@@ -31,9 +31,16 @@
 		"dist",
 		"sri.json"
 	],
-	"main": "./dist/object-observer.min.js",
+	"main": "./dist/cjs/object-observer.js",
+	"module": "./dist/object-observer.min.js",
 	"browser": "./dist/object-observer.min.js",
 	"types": "./dist/object-observer.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/object-observer.min.js",
+			"require": "./dist/cjs/object-observer.min.js"
+		}
+	},
 	"type": "module",
 	"author": {
 		"name": "Yuri Guller",
@@ -59,9 +66,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
+		"chai": "^4.3.6",
 		"eslint": "^8.18.0",
 		"just-test": "^3.0.4",
-		"chai": "^4.3.6",
+		"mkdist": "^0.3.13",
 		"uglify-js": "^3.16.1"
 	}
 }
