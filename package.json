@@ -48,7 +48,10 @@
 	"browser": "./dist/object-observer.min.js",
 	"types": "./dist/object-observer.d.ts",
 	"exports": {
-		"import": "./dist/object-observer.min.js"
+		".": {
+			"import": "./dist/object-observer.min.js",
+			"require": "./dist/cjs/object-observer.min.js"
+		}
 	},
 	"files": [
 		"dist",
@@ -62,9 +65,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
+		"chai": "^4.3.6",
 		"eslint": "^8.23.0",
 		"just-test": "^3.0.4",
-		"chai": "^4.3.6",
+		"mkdist": "^0.3.13",
 		"uglify-js": "^3.17.0"
 	}
 }
