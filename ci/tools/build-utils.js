@@ -1,17 +1,14 @@
 import path from 'node:path';
-import process from "node:process";
 import fs from 'node:fs/promises';
 
 import { mkdist } from 'mkdist';
 import uglify from 'uglify-js';
 
-import { calcIntegrity } from "./integrity-utils.js";
+import { calcIntegrity } from './integrity-utils.js';
 import * as stdout from './stdout.js';
 
 const SRC_DIR = 'src';
 const DIST_DIR = 'dist';
-
-const buildCDN = process.argv.some(a => a === '--cdn');
 
 stdout.writeGreen('Starting the build...');
 stdout.writeNewline();
@@ -21,10 +18,11 @@ await cleanDistDir();
 
 await buildCJSModule();
 await buildESModule();
+await buildCDNResources();
 
-if (buildCDN) {
-	await buildCDNResources();
-}
+stdout.writeGreen('... build done');
+stdout.writeNewline();
+stdout.writeNewline();
 
 async function cleanDistDir() {
 	stdout.write(`\tcleaning "dist"...`);
@@ -32,7 +30,7 @@ async function cleanDistDir() {
 	await fs.rm(DIST_DIR, { recursive: true, force: true });
 	await fs.mkdir(DIST_DIR);
 
-	stdout.writeGreen('OK');
+	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
 }
 
@@ -50,7 +48,7 @@ async function buildCJSModule() {
 
 	await minify(writtenFiles);
 
-	stdout.writeGreen('OK');
+	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
 }
 
@@ -68,13 +66,13 @@ async function buildESModule() {
 
 	await minify(writtenFiles);
 
-	stdout.writeGreen('OK');
+	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
 }
 
 async function minify(files) {
 	for (const file of files) {
-		const content = await fs.readFile(file);
+		const content = await fs.readFile(file, { encoding: 'utf-8' });
 
 		const pathWithoutExtension = file.split('.');
 		const extension = pathWithoutExtension.pop();
@@ -83,10 +81,10 @@ async function minify(files) {
 			continue;
 		}
 
-		const minified = uglify.minify(content.toString('utf-8'), {
+		const minified = uglify.minify(content, {
 			sourceMap: true,
 			toplevel: true
-		})
+		});
 
 		const minifiedPath = `${pathWithoutExtension.join('.')}.min.js`
 
@@ -120,6 +118,6 @@ async function buildCDNResources() {
 
 	await fs.writeFile('sri.json', JSON.stringify(sriMap, null, '\t'), { encoding: 'utf-8' });
 
-	stdout.writeGreen('OK');
+	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
 }

@@ -62,7 +62,7 @@
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
 		"test": "node node_modules/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.json",
-		"version": "npm run build -- --cdn && git add --all",
+		"version": "npm run build && git add --all",
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
