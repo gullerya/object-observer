@@ -51,7 +51,7 @@
 	"exports": {
 		".": {
 			"import": "./dist/object-observer.min.js",
-			"require": "./dist/cjs/object-observer.min.js"
+			"require": "./dist/cjs/object-observer.min.cjs"
 		}
 	},
 	"files": [
