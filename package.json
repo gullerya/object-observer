@@ -45,6 +45,7 @@
 	],
 	"type": "module",
 	"main": "./dist/object-observer.min.js",
+	"module": "./dist/object-observer.min.js",
 	"browser": "./dist/object-observer.min.js",
 	"types": "./dist/object-observer.d.ts",
 	"exports": {
