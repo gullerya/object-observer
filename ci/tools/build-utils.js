@@ -41,7 +41,7 @@ async function buildCJSModule() {
 		cleanDist: false,
 		srcDir: SRC_DIR,
 		distDir: path.join(DIST_DIR, 'cjs'),
-		ext: 'js',
+		ext: 'cjs',
 		format: 'cjs',
 		pattern: '**/*.js'
 	});
@@ -77,7 +77,9 @@ async function minify(files) {
 		const pathWithoutExtension = file.split('.');
 		const extension = pathWithoutExtension.pop();
 
-		if (extension !== 'js') {
+		const allowedExtension = ['js', 'cjs'].includes(extension);
+
+		if (!allowedExtension) {
 			continue;
 		}
 
@@ -86,7 +88,7 @@ async function minify(files) {
 			toplevel: true
 		});
 
-		const minifiedPath = `${pathWithoutExtension.join('.')}.min.js`
+		const minifiedPath = `${pathWithoutExtension.join('.')}.min.${extension}`;
 
 		await fs.writeFile(minifiedPath, minified.code);
 		await fs.writeFile(`${minifiedPath}.map`, minified.map);
