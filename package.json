@@ -21,16 +21,29 @@
 		"G",
 		"Y"
 	],
+	"author": {
+		"name": "Yuri Guller",
+		"email": "gullerya@gmail.com"
+	},
 	"homepage": "https://github.com/gullerya/object-observer",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/gullerya/object-observer"
+	},
 	"bugs": {
 		"url": "https://github.com/gullerya/object-observer/issues",
 		"email": "gullerya@gmail.com"
 	},
 	"license": "ISC",
-	"files": [
-		"dist",
-		"sri.json"
+	"funding": [
+		{
+			"url": "https://paypal.me/gullerya?locale.x=en_US"
+		},
+		{
+			"url": "https://tidelift.com/funding/github/npm/object-observer"
+		}
 	],
+	"type": "module",
 	"main": "./dist/object-observer.min.js",
 	"module": "./dist/object-observer.min.js",
 	"browser": "./dist/object-observer.min.js",
@@ -41,35 +54,22 @@
 			"require": "./dist/cjs/object-observer.min.cjs"
 		}
 	},
-	"type": "module",
-	"author": {
-		"name": "Yuri Guller",
-		"email": "gullerya@gmail.com"
-	},
-	"funding": [
-		{
-			"url": "https://paypal.me/gullerya?locale.x=en_US"
-		},
-		{
-			"url": "https://tidelift.com/funding/github/npm/object-observer"
-		}
+	"files": [
+		"dist",
+		"sri.json"
 	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/gullerya/object-observer"
-	},
 	"scripts": {
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
 		"test": "node node_modules/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.json",
-		"version": "npm run build -- --cdn && git add --all",
+		"version": "npm run build && git add --all",
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
 		"chai": "^4.3.6",
-		"eslint": "^8.18.0",
+		"eslint": "^8.23.0",
 		"just-test": "^3.0.4",
 		"mkdist": "^0.3.13",
-		"uglify-js": "^3.16.1"
+		"uglify-js": "^3.17.0"
 	}
 }

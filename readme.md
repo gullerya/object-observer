@@ -48,10 +48,16 @@ For a preview/playground you are welcome to:
 
 Use regular `npm install object-observer --save-prod` to use the library from your local environment:
 ```js
-import { Observable } from 'node_modules/object-observer/dist/object-observer.min.js';
+import { Observable } from 'object-observer';
 ```
 
-Alternatively, a __CDN__ deployment available (AWS driven), so one can import it directly:
+Since version 5.1.0 a CJS porting is also available, using this syntax:
+```js
+const { Observable } = require('object-observer');
+```
+> Huge thanks to [seidelmartin](https://github.com/seidelmartin) providing the CJS build while greatly improving the build code overall along the way!
+
+A __CDN__ deployment is also available (AWS driven), so one can import it directly:
 ```js
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```

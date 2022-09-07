@@ -5,13 +5,12 @@
 			"tests": {
 				"ttl": 32000,
 				"maxFail": 0,
-				"maxSkip": 1,
+				"maxSkip": 5,
 				"include": [
 					"./tests/*.js"
 				],
 				"exclude": [
-					"./tests/browser-host-objects.js",
-					"./tests/*-performance-*.js"
+					"./tests/browser-host-objects.js"
 				]
 			},
 			"coverage": {
