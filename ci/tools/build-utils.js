@@ -1,4 +1,4 @@
-import path from 'node:path';
+﻿import path from 'node:path';
 import process from "node:process";
 import fs from 'node:fs/promises';
 
@@ -43,7 +43,7 @@ async function buildCJSModule() {
 		cleanDist: false,
 		srcDir: SRC_DIR,
 		distDir: path.join(DIST_DIR, 'cjs'),
-		ext: 'js',
+		ext: 'cjs',
 		format: 'cjs',
 		pattern: '**/*.js'
 	});
@@ -79,16 +79,18 @@ async function minify(files) {
 		const pathWithoutExtension = file.split('.');
 		const extension = pathWithoutExtension.pop();
 
-		if (extension !== 'js') {
+		const allowedExtension = ['js', 'cjs'].includes(extension);
+
+		if (!allowedExtension) {
 			continue;
 		}
 
 		const minified = uglify.minify(content.toString('utf-8'), {
 			sourceMap: true,
 			toplevel: true
-		})
+		});
 
-		const minifiedPath = `${pathWithoutExtension.join('.')}.min.js`
+		const minifiedPath = `${pathWithoutExtension.join('.')}.min.${extension}`;
 
 		await fs.writeFile(minifiedPath, minified.code);
 		await fs.writeFile(`${minifiedPath}.map`, minified.map);
