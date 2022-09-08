@@ -35,9 +35,8 @@ jobs:
       # Trigger deploy to CDN
       - name: Obtain release version
         run: echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
+        
       - name: Tirgger deploy to CDN
-        uses: benc-uk/workflow-dispatch@v1
+        uses: ./.github/workflows/release-deploy.yml
         with:
-          workflow: "Deploy (CDN)"
-          token: ${{ secrets.OO_CI_AT }}
-          inputs: '{ "version": "${{ env.RELEASE_VERSION }}" }'
+          version: ${{ env.RELEASE_VERSION }}

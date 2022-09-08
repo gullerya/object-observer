@@ -6,6 +6,12 @@ on:
       version:
         description: "Version to deploy (eg 1.2.3)"
         required: true
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 
 jobs:
   release-deploy:
@@ -19,7 +25,7 @@ jobs:
 
       # Get release version
       - name: Get release version
-        run: echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       # Pull the object-observer version to be deployed
       - name: Install
