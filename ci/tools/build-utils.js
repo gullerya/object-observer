@@ -1,8 +1,7 @@
-import path from 'node:path';
+﻿import path from 'node:path';
 import fs from 'node:fs/promises';
 
-import { mkdist } from 'mkdist';
-import uglify from 'uglify-js';
+import esbuild from 'esbuild';
 
 import { calcIntegrity } from './integrity-utils.js';
 import * as stdout from './stdout.js';
@@ -14,11 +13,14 @@ stdout.writeGreen('Starting the build...');
 stdout.writeNewline();
 stdout.writeNewline();
 
-await cleanDistDir();
-
-await buildCJSModule();
-await buildESModule();
-await buildCDNResources();
+try {
+	await cleanDistDir();
+	await buildESModule();
+	await buildCJSModule();
+	await buildCDNResources();
+} catch (e) {
+	console.error(e);
+}
 
 stdout.writeGreen('... build done');
 stdout.writeNewline();
@@ -34,65 +36,45 @@ async function cleanDistDir() {
 	stdout.writeNewline();
 }
 
-async function buildCJSModule() {
-	stdout.write('\tbuilding CJS resources...');
-
-	const { writtenFiles } = await mkdist({
-		cleanDist: false,
-		srcDir: SRC_DIR,
-		distDir: path.join(DIST_DIR, 'cjs'),
-		ext: 'cjs',
-		format: 'cjs',
-		pattern: '**/*.js'
-	});
-
-	await minify(writtenFiles);
-
-	stdout.writeGreen('\tOK');
-	stdout.writeNewline();
-}
-
 async function buildESModule() {
 	stdout.write('\tbuilding ESM resources...');
 
-	const { writtenFiles } = await mkdist({
-		cleanDist: false,
-		srcDir: SRC_DIR,
-		distDir: path.join(DIST_DIR),
-		ext: 'js',
-		format: 'esm',
-		pattern: '**/*.[jt]s'
+	await fs.copyFile(path.join(SRC_DIR, 'object-observer.d.ts'), path.join(DIST_DIR, 'object-observer.d.ts'));
+	await fs.copyFile(path.join(SRC_DIR, 'object-observer.js'), path.join(DIST_DIR, 'object-observer.js'));
+	await esbuild.build({
+		entryPoints: [path.join(DIST_DIR, 'object-observer.js')],
+		outdir: DIST_DIR,
+		minify: true,
+		sourcemap: true,
+		sourcesContent: false,
+		outExtension: { '.js': '.min.js' }
 	});
-
-	await minify(writtenFiles);
 
 	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
 }
 
-async function minify(files) {
-	for (const file of files) {
-		const content = await fs.readFile(file, { encoding: 'utf-8' });
+async function buildCJSModule() {
+	stdout.write('\tbuilding CJS resources...');
 
-		const pathWithoutExtension = file.split('.');
-		const extension = pathWithoutExtension.pop();
+	const baseConfig = {
+		entryPoints: [path.join(SRC_DIR, 'object-observer.js')],
+		outdir: path.join(DIST_DIR, 'cjs'),
+		format: 'cjs',
+		outExtension: { '.js': '.cjs' }
+	};
+	await esbuild.build(baseConfig);
+	await esbuild.build({
+		...baseConfig,
+		entryPoints: [path.join(DIST_DIR, 'cjs', 'object-observer.cjs')],
+		minify: true,
+		sourcemap: true,
+		sourcesContent: false,
+		outExtension: { '.js': '.min.cjs' }
+	});
 
-		const allowedExtension = ['js', 'cjs'].includes(extension);
-
-		if (!allowedExtension) {
-			continue;
-		}
-
-		const minified = uglify.minify(content, {
-			sourceMap: true,
-			toplevel: true
-		});
-
-		const minifiedPath = `${pathWithoutExtension.join('.')}.min.${extension}`;
-
-		await fs.writeFile(minifiedPath, minified.code);
-		await fs.writeFile(`${minifiedPath}.map`, minified.map);
-	}
+	stdout.writeGreen('\tOK');
+	stdout.writeNewline();
 }
 
 async function buildCDNResources() {
@@ -102,18 +84,11 @@ async function buildCDNResources() {
 
 	await fs.mkdir(CDN_DIR);
 
-	const files = await fs.readdir(DIST_DIR);
+	const files = (await fs.readdir(DIST_DIR))
+		.filter(file => file.endsWith('.js') || file.endsWith('.map'));
 
 	for (const file of files) {
-		const allowedExtension = file.endsWith('.js') || file.endsWith('.map');
-
-		if (!allowedExtension) {
-			continue;
-		}
-
-		const fileName = file.split('/').pop();
-
-		await fs.copyFile(path.join(DIST_DIR, file), path.join(CDN_DIR, fileName));
+		await fs.copyFile(path.join(DIST_DIR, file), path.join(CDN_DIR, file));
 	}
 
 	const sriMap = await calcIntegrity(CDN_DIR);
