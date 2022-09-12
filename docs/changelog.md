@@ -11,16 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.1.0] - 2022-09-07
 ### Added
 - [Issue no. 121](https://github.com/gullerya/object-observer/issues/121) - added commonjs module build
-### Maintenance
+### Chore
 - upgraded dependencies
 
 ## [5.0.4] - 2022-07-02
-### Maintenance
+### Chore
 - upgraded dependencies
 - [Issue no. 86](https://github.com/gullerya/object-observer/issues/86) - moved to the new JustTest testing framework
 
 ## [5.0.2] - 2022-05-09
-### Fixed
+### Chore
 - upgraded dependencies
 
 ## [5.0.0] - 2022-02-16
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.8.0] - 2022-02-12
 ### Added
 - [Issue no. 111](https://github.com/gullerya/object-observer/issues/111) - Added `observe` and `unobserve` methods as statics on the `Observable`. Those methods will be removed from the next major release (5) from the observable instance and only be available from `Observable` namespace.
-### Fixed
+### Chore
 - upgraded dependencies
 
 
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Issue no. 102](https://github.com/gullerya/object-observer/issues/102) - Added TS definitions for convenience
 
 ## [4.6.6] - 2021-12-18
-### Changed
+### Chore
 - [Issue no. 99](https://github.com/gullerya/object-observer/issues/99) - simplified CD flow
 
 ## [4.6.0] - 2021-11-19
@@ -62,15 +62,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.4.0] - 2021-11-07
 ### Fixed
 - [Issue no. 93](https://github.com/gullerya/object-observer/issues/93) - `pathsOf` misbehave fixed
+### Chore
 - dependencies updated
 - performance tuned up
 
 ## [4.3.2] - 2021-07-19
-### Fixed
+### Chore
 - dependencies updated
 
 ## [4.3.1] - 2021-06-15
-### Fixed
+### Chore
 - dependencies updated
 
 ## [4.3.0] - 2021-05-03
@@ -85,14 +86,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.2.2] - 2021-04-23
 ### Added
 - [Issue no. 77](https://github.com/gullerya/object-observer/issues/77) - manual CI trigger for release
-### Changed
+### Chore
 - documentation improved and updated
 - dependencies updated
 
 ## [4.2.1] - 2021-03-15
 ### Added
 - [Issue no. 73](https://github.com/gullerya/object-observer/issues/73) - added DOM-like API of `ObjectObserver`
-### Changed
+### Chore
 - documentation improved and updated
 - dependencies updated
 
