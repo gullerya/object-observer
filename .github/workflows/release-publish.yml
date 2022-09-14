@@ -43,3 +43,4 @@ jobs:
     uses: ./.github/workflows/release-deploy.yml
     with:
       version: ${{ needs.publish.outputs.packageVersion }}
+    secrets: inherit
