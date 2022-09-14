@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Setup NodeJS 18
+      - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
 
       # Get release version
       - name: Get release version

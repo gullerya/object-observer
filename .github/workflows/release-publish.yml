@@ -8,6 +8,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-20.04
+    outputs:
+      packageVersion: ${{ steps.outputVersion.outputs.packageVersion }}
 
     steps:
       - name: Checkout
@@ -15,10 +17,10 @@ jobs:
         with:
           token: ${{ secrets.OO_CI_AT }}
 
-      - name: Setup NodeJS 18
+      - name: Setup NodeJS
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
@@ -32,11 +34,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: npm publish
 
-      # Trigger deploy to CDN
-      - name: Obtain release version
-        run: echo "RELEASE_VERSION=$(cat package.json | jq -r '.version')" >> $GITHUB_ENV
-        
-      - name: Tirgger deploy to CDN
-        uses: ./.github/workflows/release-deploy.yml
-        with:
-          version: ${{ env.RELEASE_VERSION }}
+      - name: Output version
+        id: outputVersion
+        run: echo "::set-output name=packageVersion::$(cat package.json | jq -r '.version')"
+
+  trigger-cdn-deploy:
+    runs-on: ubuntu-20.04
+    needs: publish
+    env:
+      RELEASE_VERSION: ${{ needs.publish.outputs.packageVersion }}
+
+    uses: ./.github/workflows/release-deploy.yml
+    with:
+      version: ${{ env.RELEASE_VERSION }}
