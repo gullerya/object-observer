@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.6] - 2022-09-25
+### Chore
+- upgraded dependencies
+
 ## [5.1.5] - 2022-09-14
 ### Chore
 - reduced dependencies (via reworking build flow)

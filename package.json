@@ -67,8 +67,8 @@
 	},
 	"devDependencies": {
 		"chai": "^4.3.6",
-		"eslint": "^8.23.0",
+		"eslint": "^8.24.0",
 		"just-test": "^3.0.4",
-		"esbuild": "^0.15.7"
+		"esbuild": "^0.15.9"
 	}
 }
