@@ -46,20 +46,20 @@ const
 		}
 		return result;
 	},
-	prepareObject = (source, oMeta) => {
+	prepareObject = (source, oMeta, visited) => {
 		const target = {};
 		target[oMetaKey] = oMeta;
 		for (const key in source) {
-			target[key] = getObservedOf(source[key], key, oMeta);
+			target[key] = getObservedOf(source[key], key, oMeta, visited);
 		}
 		return target;
 	},
-	prepareArray = (source, oMeta) => {
+	prepareArray = (source, oMeta, visited) => {
 		let l = source.length;
 		const target = new Array(l);
 		target[oMetaKey] = oMeta;
 		for (let i = 0; i < l; i++) {
-			target[i] = getObservedOf(source[i], i, oMeta);
+			target[i] = getObservedOf(source[i], i, oMeta, visited);
 		}
 		return target;
 	},
@@ -164,17 +164,19 @@ const
 			}
 		} while (currentObservable);
 	},
-	getObservedOf = (item, key, parent) => {
-		if (typeof item !== 'object' || item === null) {
+	getObservedOf = (item, key, parent, visited = new Set()) => {
+		if (visited.has(item)) {
+			return null;
+		} else if (typeof item !== 'object' || item === null) {
 			return item;
 		} else if (Array.isArray(item)) {
-			return new ArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
+			return new ArrayOMeta({ target: item, ownKey: key, parent: parent, visited }).proxy;
 		} else if (ArrayBuffer.isView(item)) {
 			return new TypedArrayOMeta({ target: item, ownKey: key, parent: parent }).proxy;
 		} else if (item instanceof Date) {
 			return item;
 		} else {
-			return new ObjectOMeta({ target: item, ownKey: key, parent: parent }).proxy;
+			return new ObjectOMeta({ target: item, ownKey: key, parent: parent, visited }).proxy;
 		}
 	},
 	proxiedPop = function proxiedPop() {
@@ -512,7 +514,7 @@ class Change {
 
 class OMetaBase {
 	constructor(properties, cloningFunction) {
-		const { target, parent, ownKey } = properties;
+		const { target, parent, ownKey, visited = new Set() } = properties;
 		if (parent && ownKey !== undefined) {
 			this.parent = parent;
 			this.ownKey = ownKey;
@@ -520,7 +522,8 @@ class OMetaBase {
 			this.parent = null;
 			this.ownKey = null;
 		}
-		const targetClone = cloningFunction(target, this);
+		visited.add(target);
+		const targetClone = cloningFunction(target, this, visited);
 		this.observers = [];
 		this.revocable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revocable.proxy;

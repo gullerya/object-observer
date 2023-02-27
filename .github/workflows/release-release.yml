@@ -30,4 +30,5 @@ jobs:
       - name: Bump & Tag version
         run: |
           git config user.name "automation"
+          git config user.email "ci.gullerya@gmail.com"
           npm version ${{ github.event.inputs.version }}
