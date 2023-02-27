@@ -524,6 +524,7 @@ class OMetaBase {
 		}
 		visited.add(target);
 		const targetClone = cloningFunction(target, this, visited);
+		visited.delete(target);
 		this.observers = [];
 		this.revocable = Proxy.revocable(targetClone, this);
 		this.proxy = this.revocable.proxy;
