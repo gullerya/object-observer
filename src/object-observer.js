@@ -164,8 +164,8 @@ const
 			}
 		} while (currentObservable);
 	},
-	getObservedOf = (item, key, parent, visited = new Set()) => {
-		if (visited.has(item)) {
+	getObservedOf = (item, key, parent, visited) => {
+		if (visited !== undefined && visited.has(item)) {
 			return null;
 		} else if (typeof item !== 'object' || item === null) {
 			return item;

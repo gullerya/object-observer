@@ -45,3 +45,27 @@ suite.test('subgraph object pointing to parent in the graph', () => {
 		object: oo.gen1.gen2
 	});
 });
+
+suite.test('circular object assigned to an existing observable graph (object)', () => {
+	const o = { gen1: { gen2: { prop: 'text' } } };
+	o.gen1.gen2.child = o.gen1;
+
+	const oo = Observable.from({});
+	oo.newbie = o;
+
+	const changes = [];
+	Observable.observe(oo, cs => {
+		changes.push(...cs);
+	});
+	oo.newbie.gen1.gen2.prop = 'else';
+
+	assert.isNull(oo.newbie.gen1.gen2.child);
+	assert.equal(changes.length, 1);
+	assert.deepEqual(changes[0], {
+		type: 'update',
+		path: ['newbie', 'gen1', 'gen2', 'prop'],
+		value: 'else',
+		oldValue: 'text',
+		object: oo.newbie.gen1.gen2
+	});
+});
