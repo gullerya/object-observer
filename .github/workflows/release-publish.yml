@@ -36,7 +36,7 @@ jobs:
 
       - name: Output version
         id: outputVersion
-        run: echo "::set-output name=packageVersion::$(cat package.json | jq -r '.version')"
+        run: echo "packageVersion=$(cat package.json | jq -r '.version')" >> $GITHUB_OUTPUT
 
   trigger-cdn-deploy:
     needs: publish
