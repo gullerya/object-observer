@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.7] - 2023-03-01
+### Fixed
+- [Issue no. 129](https://github.com/gullerya/object-observer/issues/129) - graceful handling of the circular referenced inputs
+### Chore
+- updated performance data on NodeJS
+- upgraded dependencies
+
 ## [5.1.6] - 2022-09-25
 ### Chore
 - upgraded dependencies

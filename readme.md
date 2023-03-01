@@ -16,6 +16,7 @@ Main aspects and features:
 - changes delivered in a __synchronous__ way by default, __asynchronous__ delivery is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
 - observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
 - original objects are __cloned__ while turned into `Observable`s
+  - circular references are nullified in the clone
 - __array__ specifics:
   - generic object-like mutations supported
   - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
@@ -46,23 +47,25 @@ For a preview/playground you are welcome to:
 
 ## Install
 
-Use regular `npm install object-observer --save-prod` to use the library from your local environment:
+Use regular `npm install object-observer --save-prod` to use the library from your local environment.
+
+__ES__ module:
 ```js
 import { Observable } from 'object-observer';
 ```
 
-Since version 5.1.0 a CJS porting is also available, using this syntax:
+__CJS__ flavor:
 ```js
 const { Observable } = require('object-observer');
 ```
 > Huge thanks to [seidelmartin](https://github.com/seidelmartin) providing the CJS build while greatly improving the build code overall along the way!
 
-A __CDN__ deployment is also available (AWS driven), so one can import it directly:
+__CDN__ (most suggested, when possible):
 ```js
 import { Observable } from 'https://libs.gullerya.com/object-observer/x.y.z/object-observer.min.js';
 ```
 
-> Note: replace the `x.y.z` with the desired version, one of the listed in the [changelog](docs/changelog.md).
+> Replace the `x.y.z` with the desired version, one of the listed in the [changelog](docs/changelog.md).
 
 CDN features:
 - security:
@@ -78,12 +81,12 @@ Full details about CDN usage and example are [found here](docs/cdn.md).
 
 Library implements `Observable` API as it is defined [here](docs/observable.md).
 
-Additionally, from version 4.2.0 there is also 'DOM-like' API flavor - constructable `ObjectObserver`.
+There is also a 'DOM-like' API flavor - constructable `ObjectObserver`.
 This API is resonating with DOM's `MutationObserver`, `ResizeObserver` etc from the syntax perspective.
 Under the hood it uses the same `Observable` mechanics.
 Read docs about this API flavor [here](docs/dom-like-api.md).
 
-Starting from 4.3.x `object-observer` is cross-instance operable.
+`object-observer` is cross-instance operable.
 Observables created by different instances of the library will still be detected correctly as such and handled correctly by any of the instances.
 
 ## Security
