@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/object-observer.svg?label=npm%20object-observer)](https://www.npmjs.com/package/object-observer)
+[![npm](https://img.shields.io/npm/v/object-observer.svg?label=npm%20@gullerya/object-observer)](https://www.npmjs.com/package/@gullerya/object-observer)
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 
 [![Quality pipeline](https://github.com/gullerya/object-observer/workflows/Quality%20pipeline/badge.svg?branch=main)](https://github.com/gullerya/object-observer/actions?query=workflow%3A%22Quality+pipeline%22)
@@ -49,16 +49,16 @@ For a preview/playground you are welcome to:
 
 ## Install
 
-Use regular `npm install object-observer --save-prod` to use the library from your local environment.
+Use regular `npm install @gullerya/object-observer --save-prod` to use the library from your local environment.
 
 __ES__ module:
 ```js
-import { Observable } from 'object-observer';
+import { Observable } from '@gullerya/object-observer';
 ```
 
 __CJS__ flavor:
 ```js
-const { Observable } = require('object-observer');
+const { Observable } = require('@gullerya/object-observer');
 ```
 > Huge thanks to [seidelmartin](https://github.com/seidelmartin) providing the CJS build while greatly improving the build code overall along the way!
 
