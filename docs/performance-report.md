@@ -2,7 +2,7 @@
 
 ### General
 `object-observer` is purposed to be a low-level library.
-It is designed to track and deliver changes in a __synchronous__ way, at least as of now.
+It is designed to track and deliver changes in a __synchronous__ way, being __async__ possible as opt in.
 As a such, I've put some effort to optimize it to have the least possible footprint on the consuming application.
 
 Generally speaking, the framework implies some overhead on the following, when operating on __observed__ data sets:
@@ -18,7 +18,7 @@ Tests described below are covering most of those flows.
 </span>
 
 ### Hardware
-All of the benchmarks below were performed on __MacBook Pro__ (model 2019, Monterey 12.1), plugged in at the moment of tests:
+All of the benchmarks below were performed on __MacBook Pro__ (model 2019, Ventura 13.2.1), plugged in at the moment of tests:
 - CPU 2.6 GHz 6-Core Intel Core i7
 - 16 GB 2667 MHz DDR4
 
@@ -83,7 +83,7 @@ for (let i = 0; i < mutationIterations; i++) {
 All of those mutations are being watched by the listeners mentioned above and the counters are being verified to match the expectations.
 
 Below are results of those tests, where the time shown is of a single operation in average.
-All times are given in 'ms', meaning that cost of a single operation on Chrome and Chromium-Edge is usually half to few nanoseconds. Firefox values are slightly higher (worse).
+All times are given in 'ms', meaning that cost of a single operation on Chromiums/NodeJS is usually half to few nanoseconds. Firefox values are slightly higher (worse).
 
 <table>
     <tr>
@@ -139,18 +139,18 @@ All times are given in 'ms', meaning that cost of a single operation on Chrome a
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>18.14.2</sub></td>
         <td>
-            one: 0.0084 ms
+            0.0016 ms
         </td>
         <td>
-            one: 0.0005 ms
+            0.001 ms
         </td>
         <td>
-            one: 0.0009 ms
+            0.001 ms
         </td>
         <td>
-            one: 0.0008 ms
+            0.001 ms
         </td>
     </tr>
 </table>
@@ -249,15 +249,15 @@ All of those mutations are being watched by the same 2 listeners from CASE 1 and
         </td>
     </tr>
     <tr style="font-family:monospace">
-        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>12.15.0</sub></td>
+        <td style="width:75px;white-space:nowrap;font-family:sans-serif"><img src="browser-icons/nodejs.png"><sub>18.14.2</sub></td>
         <td>
-            0.0095 ms
+            0.005 ms
         </td>
         <td>
-            0.0108 ms
+            0.005 ms
         </td>
         <td>
-            0.0024 ms
+            0.001 ms
         </td>
     </tr>
 </table>

@@ -10,7 +10,8 @@
 					"./tests/*.js"
 				],
 				"exclude": [
-					"./tests/browser-host-objects.js"
+					"./tests/browser-host-objects.js",
+					"./tests/*-performance-*.js"
 				]
 			},
 			"coverage": {
