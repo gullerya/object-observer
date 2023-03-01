@@ -32,7 +32,7 @@ jobs:
 
       # Pull the object-observer version to be deployed
       - name: Install
-        run: npm install -E object-observer@${{ env.RELEASE_VERSION }}
+        run: npm install -E @gullerya/object-observer@${{ env.RELEASE_VERSION }}
 
       # Deploy
       - name: Deploy
