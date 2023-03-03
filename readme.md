@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/object-observer.svg?label=npm)](https://www.npmjs.com/package/@gullerya/object-observer)
+[![npm](https://img.shields.io/npm/v/@gullerya/object-observer.svg?label=npm)](https://www.npmjs.com/package/@gullerya/object-observer)
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 
 [![Quality pipeline](https://github.com/gullerya/object-observer/workflows/Quality%20pipeline/badge.svg?branch=main)](https://github.com/gullerya/object-observer/actions?query=workflow%3A%22Quality+pipeline%22)

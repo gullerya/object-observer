@@ -26,13 +26,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
-      # Get release version
-      - name: Get release version
-        run: echo "RELEASE_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-
       # Pull the object-observer version to be deployed
       - name: Install
-        run: npm install -E @gullerya/object-observer@${{ env.RELEASE_VERSION }}
+        run: npm install -E @gullerya/object-observer@${{ inputs.version }}
 
       # Deploy
       - name: Deploy
@@ -40,4 +36,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET }}
           AWS_REGION: eu-central-1
-        run: aws s3 sync ./node_modules/@gullerya/object-observer/dist/cdn s3://${{ secrets.AWS_LIBS_BUCKET }}/object-observer/${{ env.RELEASE_VERSION }} --delete --cache-control public,max-age=172800,immutable
+        run: aws s3 sync ./node_modules/@gullerya/object-observer/dist/cdn s3://${{ secrets.AWS_LIBS_BUCKET }}/object-observer/${{ inputs.version }} --delete --cache-control public,max-age=172800,immutable
