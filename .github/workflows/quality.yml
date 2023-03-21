@@ -75,7 +75,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install
-        run: npm ci
+        run: npm ci && npx playwright install-deps
 
       - name: Build
         run: npm run build
