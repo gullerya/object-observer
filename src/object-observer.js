@@ -682,32 +682,32 @@ const Observable = Object.freeze({
 	}
 });
 
-const
-	observerKey = Symbol('observer-key'),
-	targetsKey = Symbol('targets-key');
 class ObjectObserver {
+	#observer;
+	#targets;
+
 	constructor(observer) {
-		this[observerKey] = observer;
-		this[targetsKey] = new Set();
+		this.#observer = observer;
+		this.#targets = new Set();
 		Object.freeze(this);
 	}
 
 	observe(target, options) {
 		const r = Observable.from(target);
-		Observable.observe(r, this[observerKey], options);
-		this[targetsKey].add(r);
+		Observable.observe(r, this.#observer, options);
+		this.#targets.add(r);
 		return r;
 	}
 
 	unobserve(target) {
-		Observable.unobserve(target, this[observerKey]);
-		this[targetsKey].delete(target);
+		Observable.unobserve(target, this.#observer);
+		this.#targets.delete(target);
 	}
 
 	disconnect() {
-		for (const t of this[targetsKey]) {
-			Observable.unobserve(t, this[observerKey]);
+		for (const t of this.#targets) {
+			Observable.unobserve(t, this.#observer);
 		}
-		this[targetsKey].clear();
+		this.#targets.clear();
 	}
 }
