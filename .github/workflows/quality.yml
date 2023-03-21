@@ -52,9 +52,6 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
       - name: Test
         run: npm run test:chromium
 
@@ -76,9 +73,6 @@ jobs:
 
       - name: Install
         run: npm ci && npx playwright install-deps
-
-      - name: Build
-        run: npm run build
 
       - name: Test
         run: npm run test:webkit
