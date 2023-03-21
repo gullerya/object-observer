@@ -8,7 +8,7 @@ on:
     - cron: "0 */12 * * *"
 
 jobs:
-  quality_pipeline:
+  quality_pipeline_nodejs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
 
@@ -31,7 +31,57 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm run test
+        run: npm run test:node
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v3
+
+  quality_pipeline_chromium:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test:chromium
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v3
+
+  quality_pipeline_webkit:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test:webkit
 
       - name: Report coverage
         uses: codecov/codecov-action@v3
