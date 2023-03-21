@@ -1,7 +1,18 @@
 {
 	"environments": [
 		{
-			"node": true,
+			"browser": {
+				"type": "chromium",
+				"executors": {
+					"type": "iframe"
+				},
+				"importmap": {
+					"imports": {
+						"@gullerya/just-test": "/libs/@gullerya/just-test/bin/runner/just-test.js",
+						"@gullerya/just-test/assert": "/libs/@gullerya/just-test/bin/common/assert-utils.js"
+					}
+				}
+			},
 			"tests": {
 				"ttl": 32000,
 				"maxFail": 0,
