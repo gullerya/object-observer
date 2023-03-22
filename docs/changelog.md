@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.0] - 2023-03-22
+### Chore
+- updated the JustTest harness, the whole test suite is now running on NodeJS, Chromium, WebKit platforms
+- introduced true JS privates instead of Symbol based ones
+
 ## [6.0.3] - 2023-03-01
 ### BREAKING CHANGE
 ### Chore
