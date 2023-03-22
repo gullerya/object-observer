@@ -1,11 +1,9 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
-import { waitNextTask } from 'just-test/time-utils';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
+import { waitNextTask } from '@gullerya/just-test/time-utils';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - async dispatch');
-
-suite.test('multiple continuous mutations', async () => {
+test('multiple continuous mutations', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -26,7 +24,7 @@ suite.test('multiple continuous mutations', async () => {
 	assert.strictEqual(events.length, 4);
 });
 
-suite.test('multiple continuous mutations is split bursts', async () => {
+test('multiple continuous mutations is split bursts', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		events = [];
@@ -56,7 +54,7 @@ suite.test('multiple continuous mutations is split bursts', async () => {
 	assert.strictEqual(events.length, 2);
 });
 
-suite.test('Object.assign with multiple properties', async () => {
+test('Object.assign with multiple properties', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },
@@ -75,7 +73,7 @@ suite.test('Object.assign with multiple properties', async () => {
 	assert.strictEqual(events.length, 3);
 });
 
-suite.test('Object.assign with multiple properties + more changes', async () => {
+test('Object.assign with multiple properties + more changes', async () => {
 	const
 		observable = Observable.from({}, { async: true }),
 		newData = { a: 1, b: 2, c: 3 },

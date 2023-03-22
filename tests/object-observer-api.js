@@ -1,15 +1,13 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { ObjectObserver, Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing ObjectObserver APIs');
-
-suite.test('ensure ObjectObserver constructable', () => {
+test('ensure ObjectObserver constructable', () => {
 	assert.isTrue(typeof ObjectObserver === 'function');
 	assert.isTrue(String(ObjectObserver).includes('class'));
 });
 
-suite.test('observe 1 object', () => {
+test('observe 1 object', () => {
 	let calls = 0;
 	const oo = new ObjectObserver(changes => {
 		calls += changes.length;
@@ -20,7 +18,7 @@ suite.test('observe 1 object', () => {
 	assert.equal(1, calls);
 });
 
-suite.test('observe returns new Observable', () => {
+test('observe returns new Observable', () => {
 	const oo = new ObjectObserver(() => { });
 	const o = {};
 	const o1 = oo.observe(o);
@@ -28,14 +26,14 @@ suite.test('observe returns new Observable', () => {
 	assert.isTrue(Observable.isObservable(o1));
 });
 
-suite.test('observe returns same Observable if supplied with Observable', () => {
+test('observe returns same Observable if supplied with Observable', () => {
 	const oo = new ObjectObserver(() => { });
 	const o1 = Observable.from({});
 	const o2 = oo.observe(o1);
 	assert.equal(o1, o2);
 });
 
-suite.test('observe 3 objects', () => {
+test('observe 3 objects', () => {
 	const events = [];
 	const oo = new ObjectObserver(changes => {
 		events.push(...changes);
@@ -57,7 +55,7 @@ suite.test('observe 3 objects', () => {
 	assert.equal(o3, events[2].object);
 });
 
-suite.test('observe 3 objects then unobserve 1', () => {
+test('observe 3 objects then unobserve 1', () => {
 	const events = [];
 	const oo = new ObjectObserver(changes => {
 		events.push(...changes);
@@ -85,7 +83,7 @@ suite.test('observe 3 objects then unobserve 1', () => {
 	assert.equal(o3, events[2].object);
 });
 
-suite.test('observe 3 objects > disconnect > observe', () => {
+test('observe 3 objects > disconnect > observe', () => {
 	const events = [];
 	const oo = new ObjectObserver(changes => {
 		events.push(...changes);

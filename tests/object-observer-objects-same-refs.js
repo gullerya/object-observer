@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - objects with same reference');
-
-suite.test('subgraph objects pointing to the same object few times', { skip: true }, () => {
+test('subgraph objects pointing to the same object few times', { skip: true }, () => {
 	const childObj = { prop: 'A' };
 	const obsMainObj = Observable.from({ childA: childObj, childB: childObj });
 

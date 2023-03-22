@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - subgraphs');
-
-suite.test('inner object from observable should fire events as usual', () => {
+test('inner object from observable should fire events as usual', () => {
 	const
 		oo = Observable.from({ inner: { prop: 'more' } }),
 		iop = oo.inner,
@@ -22,7 +20,7 @@ suite.test('inner object from observable should fire events as usual', () => {
 	assert.deepStrictEqual(events[1], { type: 'insert', path: ['inner', 'new'], value: 'prop', oldValue: undefined, object: iop });
 });
 
-suite.test('removal (detaching) of inner object from observable should detach its events', () => {
+test('removal (detaching) of inner object from observable should detach its events', () => {
 	const
 		oo = Observable.from({ inner: { prop: 'more' } }),
 		iop = oo.inner,
@@ -41,7 +39,7 @@ suite.test('removal (detaching) of inner object from observable should detach it
 	assert.strictEqual(cntr, 0);
 });
 
-suite.test('replacement of inner object from observable should return non-proxified original object', () => {
+test('replacement of inner object from observable should return non-proxified original object', () => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let events = [];
 	Observable.observe(oo, changes => Array.prototype.push.apply(events, changes));
@@ -56,7 +54,7 @@ suite.test('replacement of inner object from observable should return non-proxif
 	assert.deepStrictEqual(events[0], { type: 'update', path: ['inner'], value: { p: 'back' }, oldValue: { prop: 'some', nested: { text: 'text' } }, object: oo });
 });
 
-suite.test('Object.assign on observable should raise an event/s of update with non-proxified original object', () => {
+test('Object.assign on observable should raise an event/s of update with non-proxified original object', () => {
 	const
 		observable = Observable.from({ b: { b1: 'x', b2: 'y' } }),
 		newData = { b: { b1: 'z' } },

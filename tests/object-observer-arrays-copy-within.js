@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing ObjectObserver - arrays');
-
-suite.test('array copyWithin - primitives', () => {
+test('array copyWithin - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3, 4, 5, 6]),
 		events = [];
@@ -48,7 +46,7 @@ suite.test('array copyWithin - primitives', () => {
 	callbacks = 0;
 });
 
-suite.test('array copyWithin - objects', () => {
+test('array copyWithin - objects', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
@@ -79,7 +77,7 @@ suite.test('array copyWithin - objects', () => {
 	assert.deepStrictEqual(events[0], { type: 'update', path: ['text'], value: '1', oldValue: 'b', object: detached });
 });
 
-suite.test('array copyWithin - arrays', () => {
+test('array copyWithin - arrays', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, [{ text: 'd' }]]),
 		events = [];

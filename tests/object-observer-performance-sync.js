@@ -1,6 +1,4 @@
-import { getSuite } from 'just-test/suite';
-
-const suite = getSuite('Testing Observable load - sync');
+import { test } from '@gullerya/just-test';
 
 const TOLERANCE_MULTIPLIER = 5;
 
@@ -8,7 +6,7 @@ const
 	CREATE_ITERATIONS = 100000,
 	MUTATE_ITERATIONS = 1000000;
 
-suite.test(`creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, {
+test(`creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep (x3) mutations`, {
 	// skip: true,
 	ttl: 15000
 }, async () => {
@@ -25,7 +23,7 @@ suite.test(`creating ${CREATE_ITERATIONS} observables, ${MUTATE_ITERATIONS} deep
 
 const ARRAY_ITERATIONS = 100000;
 
-suite.test(`push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`, {
+test(`push ${ARRAY_ITERATIONS} observables to an array, mutate them and pop them back`, {
 	// skip: true,
 	ttl: 15000
 }, async () => {

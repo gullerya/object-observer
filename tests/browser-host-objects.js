@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing host object (native)');
-
-suite.test('test DOMStringMap', () => {
+test('test DOMStringMap', () => {
 	const
 		e = document.createElement('div'),
 		oo = Observable.from(e.dataset),

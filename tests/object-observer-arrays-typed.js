@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing ObjectObserver - typed arrays');
-
-suite.test('typed array reverse - Int8Array', () => {
+test('typed array reverse - Int8Array', () => {
 	const
 		pa = Observable.from(new Int8Array([1, 2, 3])),
 		events = [];
@@ -21,7 +19,7 @@ suite.test('typed array reverse - Int8Array', () => {
 	assert.deepStrictEqual(pa, new Int8Array([3, 2, 1]));
 });
 
-suite.test('typed array sort - Int16Array', () => {
+test('typed array sort - Int16Array', () => {
 	const
 		pa = Observable.from(new Int16Array([3, 2, 1])),
 		events = [];
@@ -46,7 +44,7 @@ suite.test('typed array sort - Int16Array', () => {
 	assert.deepStrictEqual(pa, new Int16Array([3, 2, 1]));
 });
 
-suite.test('typed array fill - Int32Array', () => {
+test('typed array fill - Int32Array', () => {
 	const
 		pa = Observable.from(new Int32Array([1, 2, 3])),
 		events = [];
@@ -82,7 +80,7 @@ suite.test('typed array fill - Int32Array', () => {
 	assert.deepStrictEqual(events[1], { type: 'update', path: [1], value: 12056, oldValue: 0, object: pa });
 });
 
-suite.test('typed array set - Float32Array', () => {
+test('typed array set - Float32Array', () => {
 	const
 		pa = Observable.from(new Float32Array(8)),
 		events = [];
@@ -116,7 +114,7 @@ suite.test('typed array set - Float32Array', () => {
 	events.splice(0);
 });
 
-suite.test('typed array copyWithin - Float64Array', () => {
+test('typed array copyWithin - Float64Array', () => {
 	const
 		pa = Observable.from(new Float64Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])),
 		events = [];
@@ -151,7 +149,7 @@ suite.test('typed array copyWithin - Float64Array', () => {
 	events.splice(0);
 });
 
-suite.test('typed array as nested - Uint8Array', () => {
+test('typed array as nested - Uint8Array', () => {
 	const
 		po = Observable.from({ a: new Uint8Array([1, 2, 3]) }),
 		events = [];

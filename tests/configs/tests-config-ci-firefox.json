@@ -1,0 +1,30 @@
+{
+	"environments": [
+		{
+			"browser": {
+				"type": "firefox",
+				"executors": {
+					"type": "iframe"
+				},
+				"importmap": {
+					"imports": {
+						"@gullerya/just-test": "/libs/@gullerya/just-test/bin/runner/just-test.js",
+						"@gullerya/just-test/assert": "/libs/@gullerya/just-test/bin/common/assert-utils.js"
+					}
+				}
+			},
+			"tests": {
+				"ttl": 32000,
+				"maxFail": 0,
+				"maxSkip": 5,
+				"include": [
+					"./tests/api-base.js"
+				],
+				"exclude": [
+					"./tests/browser-host-objects.js",
+					"./tests/*-performance-*.js"
+				]
+			}
+		}
+	]
+}

@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - circular objects');
-
-suite.test('subgraph object pointing to the top parent', () => {
+test('subgraph object pointing to the top parent', () => {
 	const o = { prop: 'text' };
 	o.child = o;
 	const oo = Observable.from(o);
@@ -14,8 +12,8 @@ suite.test('subgraph object pointing to the top parent', () => {
 	});
 	oo.prop = 'else';
 
-	assert.isNull(oo.child);
-	assert.equal(changes.length, 1);
+	assert.strictEqual(oo.child, null);
+	assert.strictEqual(changes.length, 1);
 	assert.deepEqual(changes[0], {
 		type: 'update',
 		path: ['prop'],
@@ -25,7 +23,7 @@ suite.test('subgraph object pointing to the top parent', () => {
 	});
 });
 
-suite.test('subgraph object pointing to parent in the graph', () => {
+test('subgraph object pointing to parent in the graph', () => {
 	const o = { gen1: { gen2: { prop: 'text' } } };
 	o.gen1.gen2.child = o.gen1;
 	const oo = Observable.from(o);
@@ -35,8 +33,8 @@ suite.test('subgraph object pointing to parent in the graph', () => {
 	});
 	oo.gen1.gen2.prop = 'else';
 
-	assert.isNull(oo.gen1.gen2.child);
-	assert.equal(changes.length, 1);
+	assert.strictEqual(oo.gen1.gen2.child, null);
+	assert.strictEqual(changes.length, 1);
 	assert.deepEqual(changes[0], {
 		type: 'update',
 		path: ['gen1', 'gen2', 'prop'],
@@ -46,7 +44,7 @@ suite.test('subgraph object pointing to parent in the graph', () => {
 	});
 });
 
-suite.test('circular object assigned to an existing observable graph (object)', () => {
+test('circular object assigned to an existing observable graph (object)', () => {
 	const o = { gen1: { gen2: { prop: 'text' } } };
 	o.gen1.gen2.child = o.gen1;
 
@@ -59,8 +57,8 @@ suite.test('circular object assigned to an existing observable graph (object)', 
 	});
 	oo.newbie.gen1.gen2.prop = 'else';
 
-	assert.isNull(oo.newbie.gen1.gen2.child);
-	assert.equal(changes.length, 1);
+	assert.strictEqual(oo.newbie.gen1.gen2.child, null);
+	assert.strictEqual(changes.length, 1);
 	assert.deepEqual(changes[0], {
 		type: 'update',
 		path: ['newbie', 'gen1', 'gen2', 'prop'],

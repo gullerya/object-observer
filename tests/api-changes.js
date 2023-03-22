@@ -1,12 +1,10 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
-
-const suite = getSuite('Testing Observable APIs - Changes');
 
 //	object
 //
-suite.test('verify object - root - insert', () => {
+test('verify object - root - insert', () => {
 	let c;
 	const o = Observable.from({});
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -14,7 +12,7 @@ suite.test('verify object - root - insert', () => {
 	assert.deepStrictEqual(c, { type: 'insert', path: ['some'], value: 'new', oldValue: undefined, object: o });
 });
 
-suite.test('verify object - deep - insert', () => {
+test('verify object - deep - insert', () => {
 	let c;
 	const o = Observable.from({ a: {} });
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -22,7 +20,7 @@ suite.test('verify object - deep - insert', () => {
 	assert.deepStrictEqual(c, { type: 'insert', path: ['a', 'some'], value: 'new', oldValue: undefined, object: o.a });
 });
 
-suite.test('verify object - root - update', () => {
+test('verify object - root - update', () => {
 	let c;
 	const o = Observable.from({ p: 'old' });
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -30,7 +28,7 @@ suite.test('verify object - root - update', () => {
 	assert.deepStrictEqual(c, { type: 'update', path: ['p'], value: 'new', oldValue: 'old', object: o });
 });
 
-suite.test('verify object - deep - update', () => {
+test('verify object - deep - update', () => {
 	let c;
 	const o = Observable.from({ a: { p: 'old' } });
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -38,7 +36,7 @@ suite.test('verify object - deep - update', () => {
 	assert.deepStrictEqual(c, { type: 'update', path: ['a', 'p'], value: 'new', oldValue: 'old', object: o.a });
 });
 
-suite.test('verify object - root - delete', () => {
+test('verify object - root - delete', () => {
 	let c;
 	const o = Observable.from({ p: 'old' });
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -46,7 +44,7 @@ suite.test('verify object - root - delete', () => {
 	assert.deepStrictEqual(c, { type: 'delete', path: ['p'], value: undefined, oldValue: 'old', object: o });
 });
 
-suite.test('verify object - deep - delete', () => {
+test('verify object - deep - delete', () => {
 	let c;
 	const o = Observable.from({ a: { p: 'old' } });
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -56,7 +54,7 @@ suite.test('verify object - deep - delete', () => {
 
 //	array
 //
-suite.test('verify array - root - insert', () => {
+test('verify array - root - insert', () => {
 	let c;
 	const o = Observable.from([]);
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -64,7 +62,7 @@ suite.test('verify array - root - insert', () => {
 	assert.deepStrictEqual(c, { type: 'insert', path: [0], value: 'new', oldValue: undefined, object: o });
 });
 
-suite.test('verify array - deep - insert', () => {
+test('verify array - deep - insert', () => {
 	let c;
 	const o = Observable.from([[]]);
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -72,7 +70,7 @@ suite.test('verify array - deep - insert', () => {
 	assert.deepStrictEqual(c, { type: 'insert', path: [0, 0], value: 'new', oldValue: undefined, object: o[0] });
 });
 
-suite.test('verify array - root - update', () => {
+test('verify array - root - update', () => {
 	let c;
 	const o = Observable.from(['old']);
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -80,7 +78,7 @@ suite.test('verify array - root - update', () => {
 	assert.deepStrictEqual(c, { type: 'update', path: ['0'], value: 'new', oldValue: 'old', object: o });
 });
 
-suite.test('verify array - deep - update', () => {
+test('verify array - deep - update', () => {
 	let c;
 	const o = Observable.from([['old']]);
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -88,7 +86,7 @@ suite.test('verify array - deep - update', () => {
 	assert.deepStrictEqual(c, { type: 'update', path: [0, '0'], value: 'new', oldValue: 'old', object: o[0] });
 });
 
-suite.test('verify array - root - delete', () => {
+test('verify array - root - delete', () => {
 	let c;
 	const o = Observable.from(['old']);
 	Observable.observe(o, cs => { c = cs[0]; })
@@ -96,7 +94,7 @@ suite.test('verify array - root - delete', () => {
 	assert.deepStrictEqual(c, { type: 'delete', path: [0], value: undefined, oldValue: 'old', object: o });
 });
 
-suite.test('verify array - deep - delete', () => {
+test('verify array - deep - delete', () => {
 	let c;
 	const o = Observable.from([['old']]);
 	Observable.observe(o, cs => { c = cs[0]; })

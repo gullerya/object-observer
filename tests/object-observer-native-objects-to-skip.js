@@ -1,28 +1,23 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - non-observables');
-
-suite.test('creating observable from non-observable should throw an error', () => {
+test('creating observable from non-observable should throw an error', () => {
 	const objectsToTest = [
 		new Date()
 	];
 
 	for (const one of objectsToTest) {
-		try {
+		assert.throws(() => {
 			Observable.from(one);
-			throw new Error('should not get to this point');
-		} catch (e) {
-			assert.include(e.message, 'found to be one of a non-observable types');
-		}
+		}, 'found to be one of a non-observable types');
 	}
 
 	const o = Observable.from(objectsToTest);
 	assert.isTrue(objectsToTest.every(one => o.some(oo => oo === one)));
 });
 
-suite.test('non-observable in an object subgraph should stay unchanged', () => {
+test('non-observable in an object subgraph should stay unchanged', () => {
 	const o = {
 		data: new Date(),
 		object: {}
@@ -38,7 +33,7 @@ suite.test('non-observable in an object subgraph should stay unchanged', () => {
 	});
 });
 
-suite.test('non-observable in an array subgraph should stay unchanged', () => {
+test('non-observable in an array subgraph should stay unchanged', () => {
 	const a = [
 		{},
 		new Date()
@@ -54,7 +49,7 @@ suite.test('non-observable in an array subgraph should stay unchanged', () => {
 	});
 });
 
-suite.test('non-observable should not throw when nullified', () => {
+test('non-observable should not throw when nullified', () => {
 	const oo = Observable.from({
 		date: new Date()
 	});
@@ -63,7 +58,7 @@ suite.test('non-observable should not throw when nullified', () => {
 	oo.date = null;
 });
 
-suite.test('non-observable should be handled correctly when replaced', () => {
+test('non-observable should be handled correctly when replaced', () => {
 	const oo = Observable.from({
 		date: new Date()
 	});
@@ -75,7 +70,7 @@ suite.test('non-observable should be handled correctly when replaced', () => {
 	assert.isTrue(oo.date instanceof Date);
 });
 
-suite.test('non-observable deviation should be handled correctly when replaced', () => {
+test('non-observable deviation should be handled correctly when replaced', () => {
 	const
 		o = {
 			date: new Date()
@@ -89,7 +84,7 @@ suite.test('non-observable deviation should be handled correctly when replaced',
 	assert.isTrue(oo.date instanceof Date);
 });
 
-suite.test('non-observable should be handled correctly when deleted', () => {
+test('non-observable should be handled correctly when deleted', () => {
 	const oo = Observable.from({
 		date: new Date()
 	});

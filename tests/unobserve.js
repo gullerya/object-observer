@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing unobserving/removal of observed object (static API)');
-
-suite.test('test unobserve - single observer - explicit unobserve', () => {
+test('test unobserve - single observer - explicit unobserve', () => {
 	const
 		oo = Observable.from({ some: 'text' }),
 		observer = function () {
@@ -23,7 +21,7 @@ suite.test('test unobserve - single observer - explicit unobserve', () => {
 	assert.equal(cntr, 0);
 });
 
-suite.test('test unobserve - few observers - explicit unobserve', () => {
+test('test unobserve - few observers - explicit unobserve', () => {
 	const
 		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
@@ -57,7 +55,7 @@ suite.test('test unobserve - few observers - explicit unobserve', () => {
 	assert.equal(cntrB, 0);
 });
 
-suite.test('test unobserve - unobserve few', () => {
+test('test unobserve - unobserve few', () => {
 	const
 		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
@@ -84,7 +82,7 @@ suite.test('test unobserve - unobserve few', () => {
 	assert.equal(cntrB, 0);
 });
 
-suite.test('test unobserve - unobserve all', () => {
+test('test unobserve - unobserve all', () => {
 	const
 		oo = Observable.from({ some: 'text' }),
 		observerA = function () {
@@ -111,7 +109,7 @@ suite.test('test unobserve - unobserve all', () => {
 	assert.equal(cntrB, 0);
 });
 
-suite.test('test unobserve - observe, unobserve and observe again', () => {
+test('test unobserve - observe, unobserve and observe again', () => {
 	const
 		oo = Observable.from({ some: 'text' }),
 		observer = function () {
@@ -132,7 +130,7 @@ suite.test('test unobserve - observe, unobserve and observe again', () => {
 	assert.equal(cntr, 2);
 });
 
-suite.test('test unobserve - on observers set case', () => {
+test('test unobserve - on observers set case', () => {
 	const oo = Observable.from({ some: 'text' });
 
 	Observable.unobserve(oo, () => { });

@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Test observing specific path/s');
-
-suite.test('baseline - negative - path not a string', () => {
+test('baseline - negative - path not a string', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { path: 4 }),
@@ -12,7 +10,7 @@ suite.test('baseline - negative - path not a string', () => {
 	);
 });
 
-suite.test('baseline - negative - path empty', () => {
+test('baseline - negative - path empty', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { path: '' }),
@@ -20,7 +18,7 @@ suite.test('baseline - negative - path empty', () => {
 	);
 });
 
-suite.test('baseline - negative - pathsFrom not a string', () => {
+test('baseline - negative - pathsFrom not a string', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { pathsFrom: 4 }),
@@ -28,7 +26,7 @@ suite.test('baseline - negative - pathsFrom not a string', () => {
 	);
 });
 
-suite.test('baseline - negative - pathsFrom empty', () => {
+test('baseline - negative - pathsFrom empty', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { pathsFrom: '' }),
@@ -36,7 +34,7 @@ suite.test('baseline - negative - pathsFrom empty', () => {
 	);
 });
 
-suite.test('baseline - negative - no pathsFrom when path present', () => {
+test('baseline - negative - no pathsFrom when path present', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { path: 'some', pathsFrom: 'else' }),
@@ -44,7 +42,7 @@ suite.test('baseline - negative - no pathsFrom when path present', () => {
 	);
 });
 
-suite.test('baseline - negative - no foreign options (pathFrom)', () => {
+test('baseline - negative - no foreign options (pathFrom)', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { pathFrom: 'something' }),
@@ -52,7 +50,7 @@ suite.test('baseline - negative - no foreign options (pathFrom)', () => {
 	);
 });
 
-suite.test('observe paths of - negative a', () => {
+test('observe paths of - negative a', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { pathsOf: 4 }),
@@ -60,7 +58,7 @@ suite.test('observe paths of - negative a', () => {
 	);
 });
 
-suite.test('observe paths of - negative b', () => {
+test('observe paths of - negative b', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { path: 'inner.prop', pathsOf: 'some.thing' }),
@@ -68,7 +66,7 @@ suite.test('observe paths of - negative b', () => {
 	);
 });
 
-suite.test('baseline - no options / empty options', () => {
+test('baseline - no options / empty options', () => {
 	const
 		oo = Observable.from({ inner: { prop: 'more' } }),
 		observer = changes => (counter += changes.length);
@@ -78,11 +76,11 @@ suite.test('baseline - no options / empty options', () => {
 	Observable.observe(oo, observer, null);
 	oo.inner.prop = 'else';
 
-	assert(counter, 1);
+	assert.strictEqual(counter, 1);
 	Observable.unobserve(oo, observer);
 });
 
-suite.test('baseline - empty options is valid', () => {
+test('baseline - empty options is valid', () => {
 	const
 		oo = Observable.from({ inner: { prop: 'more' } }),
 		observer = changes => (counter += changes.length);
@@ -90,11 +88,11 @@ suite.test('baseline - empty options is valid', () => {
 	Observable.observe(oo, observer, {});
 	oo.inner.prop = 'even';
 
-	assert(counter, 1);
+	assert.strictEqual(counter, 1);
 	Observable.unobserve(oo, observer);
 });
 
-suite.test('observe specific path', () => {
+test('observe specific path', () => {
 	const oo = Observable.from({ inner: { prop: 'more' } });
 	let callbackCalls = 0,
 		changesCounter = 0;
@@ -108,11 +106,11 @@ suite.test('observe specific path', () => {
 	oo.inner.other = 'non-relevant';
 	oo.inner = {};
 
-	assert(changesCounter, 1);
-	assert(callbackCalls, 1);
+	assert.strictEqual(changesCounter, 1);
+	assert.strictEqual(callbackCalls, 1);
 });
 
-suite.test('observe paths from .. and deeper', () => {
+test('observe paths from .. and deeper', () => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
 
@@ -122,10 +120,10 @@ suite.test('observe paths from .. and deeper', () => {
 	oo.inner.prop = 'relevant';
 	oo.inner.prop = {};
 	oo.inner.prop.deepRelevant = 'again';
-	assert.equal(counter, 3);
+	assert.strictEqual(counter, 3);
 });
 
-suite.test('observe paths of - inner case', () => {
+test('observe paths of - inner case', () => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
 	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: 'inner.nested' });
@@ -135,10 +133,10 @@ suite.test('observe paths of - inner case', () => {
 	oo.inner.nested.else = 'also relevant';
 	oo.inner.nested = { nesnes: { test: 'non-relevant' } };
 	oo.inner.nested.nesnes.test = 'non-relevant';
-	assert.equal(counter, 2);
+	assert.strictEqual(counter, 2);
 });
 
-suite.test('observe paths of - array - property of same depth updated', () => {
+test('observe paths of - array - property of same depth updated', () => {
 	const oo = Observable.from({ array: [1, 2, 3], prop: { inner: 'value' } });
 	let counter = 0;
 	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: 'array' });
@@ -151,7 +149,7 @@ suite.test('observe paths of - array - property of same depth updated', () => {
 	assert.equal(counter, 2);
 });
 
-suite.test('observe paths of - root case', () => {
+test('observe paths of - root case', () => {
 	const oo = Observable.from({ inner: { prop: 'more', nested: { text: 'text' } } });
 	let counter = 0;
 	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });
@@ -162,7 +160,7 @@ suite.test('observe paths of - root case', () => {
 	assert.equal(counter, 2);
 });
 
-suite.test('observe paths of - root case - array sort', () => {
+test('observe paths of - root case - array sort', () => {
 	const oo = Observable.from([1, 3, 2, 4, 9]);
 	let counter = 0;
 	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });
@@ -171,7 +169,7 @@ suite.test('observe paths of - root case - array sort', () => {
 	assert.equal(counter, 1);
 });
 
-suite.test('observe paths of - root case - array reverse', () => {
+test('observe paths of - root case - array reverse', () => {
 	const oo = Observable.from([1, 2, 3, 4, 9]);
 	let counter = 0;
 	Observable.observe(oo, changes => { counter += changes.length; }, { pathsOf: '' });

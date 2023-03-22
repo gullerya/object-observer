@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing reassignment of equal values');
-
-suite.test('boolean', () => {
+test('boolean', () => {
 	const oo = Observable.from({ p: true });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
@@ -13,7 +11,7 @@ suite.test('boolean', () => {
 	assert.equal(changes, null);
 });
 
-suite.test('number', () => {
+test('number', () => {
 	const oo = Observable.from({ p: 6 });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
@@ -22,7 +20,7 @@ suite.test('number', () => {
 	assert.equal(changes, null);
 });
 
-suite.test('string', () => {
+test('string', () => {
 	const oo = Observable.from({ p: 'text' });
 	let changes = null;
 	Observable.observe(oo, cs => { changes = cs; });
@@ -31,7 +29,7 @@ suite.test('string', () => {
 	assert.equal(changes, null);
 });
 
-suite.test('function', () => {
+test('function', () => {
 	const
 		f = function () { },
 		oo = Observable.from({ p: f });
@@ -42,7 +40,7 @@ suite.test('function', () => {
 	assert.equal(changes, null);
 });
 
-suite.test('Symbol', () => {
+test('Symbol', () => {
 	const
 		s = Symbol('some'),
 		oo = Observable.from({ p: s });

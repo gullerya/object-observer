@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing Observable - objects');
-
-suite.test('creating observable leaves original object as is', () => {
+test('creating observable leaves original object as is', () => {
 	const person = {
 		name: 'name',
 		age: 7
@@ -21,7 +19,7 @@ suite.test('creating observable leaves original object as is', () => {
 	assert.deepStrictEqual(person.address, address);
 });
 
-suite.test('creating observable preserves original object keys order', () => {
+test('creating observable preserves original object keys order', () => {
 	const person = {
 		name: 'name',
 		age: 7,
@@ -39,7 +37,7 @@ suite.test('creating observable preserves original object keys order', () => {
 	}
 });
 
-suite.test('plain object operations', () => {
+test('plain object operations', () => {
 	const o = {
 		name: 'name',
 		age: 7,
@@ -76,7 +74,7 @@ suite.test('plain object operations', () => {
 	assert.deepStrictEqual(events[5], { type: 'delete', path: ['sex'], value: undefined, oldValue: 'male', object: po });
 });
 
-suite.test('sub tree object operations', () => {
+test('sub tree object operations', () => {
 	const person = {
 		name: 'name',
 		age: 7,
@@ -108,7 +106,7 @@ suite.test('sub tree object operations', () => {
 	assert.deepStrictEqual(events[2], { type: 'update', path: ['addressB', 'street', 'name'], value: 'new street name', oldValue: 'street name', object: po.addressB.street });
 });
 
-suite.test('subgraph correctly detached when replaced', () => {
+test('subgraph correctly detached when replaced', () => {
 	const
 		oo = Observable.from({ inner: {} }),
 		events = [],
@@ -139,7 +137,7 @@ suite.test('subgraph correctly detached when replaced', () => {
 	assert.strictEqual(1, eventsB.length);
 });
 
-suite.test('subgraph correctly detached when deleted', () => {
+test('subgraph correctly detached when deleted', () => {
 	const
 		oo = Observable.from({ inner: {} }),
 		events = [],
@@ -160,7 +158,7 @@ suite.test('subgraph correctly detached when deleted', () => {
 	assert.strictEqual(2, eventsA.length);
 });
 
-suite.test('subgraph proxy correctly processed when callbacks not yet set', () => {
+test('subgraph proxy correctly processed when callbacks not yet set', () => {
 	const
 		oo = Observable.from({
 			inner: {}
@@ -183,7 +181,7 @@ suite.test('subgraph proxy correctly processed when callbacks not yet set', () =
 	assert.strictEqual(events.length, 1);
 });
 
-suite.test('Object.assign with multiple properties - sync yields many callbacks', () => {
+test('Object.assign with multiple properties - sync yields many callbacks', () => {
 	const
 		observable = Observable.from({}),
 		newData = { a: 1, b: 2, c: 3 },
