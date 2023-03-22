@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing nested observable');
-
-suite.test('nested of observable should be observable too', () => {
+test('nested of observable should be observable too', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -21,7 +19,7 @@ suite.test('nested of observable should be observable too', () => {
 	assert.isFalse(Observable.isObservable(oo.user.address.street));
 });
 
-suite.test('observable from nested stays the same object reference', () => {
+test('observable from nested stays the same object reference', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -40,7 +38,7 @@ suite.test('observable from nested stays the same object reference', () => {
 	assert.equal(oou.address, ooua);
 });
 
-suite.test('observable from nested can be observed', () => {
+test('observable from nested can be observed', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -90,7 +88,7 @@ suite.test('observable from nested can be observed', () => {
 	assert.equal(4, nestedEvents.length);
 });
 
-suite.test('nested observable should handle errors', () => {
+test('nested observable should handle errors', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -107,7 +105,7 @@ suite.test('nested observable should handle errors', () => {
 	);
 });
 
-suite.test('nested observable should handle duplicate', () => {
+test('nested observable should handle duplicate', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -128,7 +126,7 @@ suite.test('nested observable should handle duplicate', () => {
 	assert.equal(1, events.length);
 });
 
-suite.test('nested observable should provide correct path (relative to self)', () => {
+test('nested observable should provide correct path (relative to self)', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -158,7 +156,7 @@ suite.test('nested observable should provide correct path (relative to self)', (
 	assert.equal('street', eventsUA[0].path.join('.'));
 });
 
-suite.test('nested observable should continue to function when detached', () => {
+test('nested observable should continue to function when detached', () => {
 	const oo = Observable.from({
 		user: {
 			address: {
@@ -203,7 +201,7 @@ suite.test('nested observable should continue to function when detached', () => 
 	assert.equal(3, eventsUA.length);
 });
 
-suite.test('nested observable is still cloned when moved', () => {
+test('nested observable is still cloned when moved', () => {
 	const
 		u = { user: { address: { street: 'street', block: 'block', city: 'city' } } },
 		oo = Observable.from([u, u]),

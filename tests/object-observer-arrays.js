@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing ObjectObserver - arrays');
-
-suite.test('array push - primitives', () => {
+test('array push - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3, 4]),
 		events = [];
@@ -25,7 +23,7 @@ suite.test('array push - primitives', () => {
 	assert.deepStrictEqual(events[2], { type: 'insert', path: [6], value: 7, oldValue: undefined, object: pa });
 });
 
-suite.test('array push - objects', () => {
+test('array push - objects', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -48,7 +46,7 @@ suite.test('array push - objects', () => {
 	assert.deepStrictEqual(events[3], { type: 'update', path: [1, 'text'], value: 'more', oldValue: 'secondary', object: pa[1] });
 });
 
-suite.test('array push - arrays', () => {
+test('array push - arrays', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -71,7 +69,7 @@ suite.test('array push - arrays', () => {
 	assert.deepStrictEqual(events[3], { type: 'insert', path: [1, 0, 'prop'], value: 'more', oldValue: undefined, object: pa[1][0] });
 });
 
-suite.test('array pop - primitives', () => {
+test('array pop - primitives', () => {
 	const
 		pa = Observable.from(['some']),
 		events = [];
@@ -87,7 +85,7 @@ suite.test('array pop - primitives', () => {
 	assert.strictEqual(popped, 'some');
 });
 
-suite.test('array pop - objects', () => {
+test('array pop - objects', () => {
 	const
 		pa = Observable.from([{ test: 'text' }]),
 		pad = pa[0],
@@ -112,7 +110,7 @@ suite.test('array pop - objects', () => {
 	assert.strictEqual(eventsA.length, 1);
 });
 
-suite.test('array unshift - primitives', () => {
+test('array unshift - primitives', () => {
 	const
 		pa = Observable.from([]),
 		events = [];
@@ -132,7 +130,7 @@ suite.test('array unshift - primitives', () => {
 	assert.deepStrictEqual(events[2], { type: 'insert', path: [1], value: 'c', oldValue: undefined, object: pa });
 });
 
-suite.test('array unshift - objects', () => {
+test('array unshift - objects', () => {
 	const
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
@@ -153,7 +151,7 @@ suite.test('array unshift - objects', () => {
 	assert.deepStrictEqual(events[1], { type: 'update', path: [1, 'text'], value: 'other', oldValue: 'original', object: pa[1] });
 });
 
-suite.test('array unshift - arrays', () => {
+test('array unshift - arrays', () => {
 	const
 		pa = Observable.from([{ text: 'original' }]),
 		events = [];
@@ -174,7 +172,7 @@ suite.test('array unshift - arrays', () => {
 	assert.deepStrictEqual(events[1], { type: 'update', path: [1, 'text'], value: 'other', oldValue: 'original', object: pa[1] });
 });
 
-suite.test('array shift - primitives', () => {
+test('array shift - primitives', () => {
 	const
 		pa = Observable.from(['some']),
 		events = [];
@@ -188,7 +186,7 @@ suite.test('array shift - primitives', () => {
 	assert.strictEqual(shifted, 'some');
 });
 
-suite.test('array shift - objects', () => {
+test('array shift - objects', () => {
 	const
 		pa = Observable.from([{ text: 'a', inner: { test: 'more' } }, { text: 'b' }]),
 		pa0 = pa[0],
@@ -223,7 +221,7 @@ suite.test('array shift - objects', () => {
 	assert.strictEqual(eventsA.length, 1);
 });
 
-suite.test('array reverse - primitives (flat array)', () => {
+test('array reverse - primitives (flat array)', () => {
 	const
 		pa = Observable.from([1, 2, 3]),
 		events = [];
@@ -240,7 +238,7 @@ suite.test('array reverse - primitives (flat array)', () => {
 	assert.deepStrictEqual(pa, [3, 2, 1]);
 });
 
-suite.test('array reverse - primitives (nested array)', () => {
+test('array reverse - primitives (nested array)', () => {
 	const
 		pa = Observable.from({ a1: { a2: [1, 2, 3] } }),
 		events = [];
@@ -257,7 +255,7 @@ suite.test('array reverse - primitives (nested array)', () => {
 	assert.deepStrictEqual(pa.a1.a2, [3, 2, 1]);
 });
 
-suite.test('array reverse - objects', () => {
+test('array reverse - objects', () => {
 	const
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
@@ -277,7 +275,7 @@ suite.test('array reverse - objects', () => {
 	assert.deepStrictEqual(events[2], { type: 'update', path: [0, 'name'], value: 'C', oldValue: 'c', object: pa[0] });
 });
 
-suite.test('array sort - primitives (flat array)', () => {
+test('array sort - primitives (flat array)', () => {
 	const
 		pa = Observable.from([3, 2, 1]),
 		events = [];
@@ -302,7 +300,7 @@ suite.test('array sort - primitives (flat array)', () => {
 	assert.deepStrictEqual(pa, [3, 2, 1]);
 });
 
-suite.test('array sort - primitives (nested array)', () => {
+test('array sort - primitives (nested array)', () => {
 	const
 		pa = Observable.from({ a1: { a2: [3, 2, 1] } }),
 		events = [];
@@ -327,7 +325,7 @@ suite.test('array sort - primitives (nested array)', () => {
 	assert.deepStrictEqual(pa.a1.a2, [3, 2, 1]);
 });
 
-suite.test('array sort - objects', () => {
+test('array sort - objects', () => {
 	const
 		pa = Observable.from([{ name: 'a' }, { name: 'b' }, { name: 'c' }]),
 		events = [];
@@ -349,7 +347,7 @@ suite.test('array sort - objects', () => {
 	assert.deepStrictEqual(events[2], { type: 'update', path: [0, 'name'], value: 'C', oldValue: 'c', object: pa[0] });
 });
 
-suite.test('array fill - primitives', () => {
+test('array fill - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3]),
 		events = [];
@@ -385,7 +383,7 @@ suite.test('array fill - primitives', () => {
 	assert.deepStrictEqual(events[1], { type: 'insert', path: [1], value: 'd', oldValue: undefined, object: pa });
 });
 
-suite.test('array fill - objects', () => {
+test('array fill - objects', () => {
 	const
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
@@ -407,7 +405,7 @@ suite.test('array fill - objects', () => {
 	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 'name'], value: 'David', oldValue: 'Niv', object: pa[1] });
 });
 
-suite.test('array fill - arrays', () => {
+test('array fill - arrays', () => {
 	const
 		pa = Observable.from([{ some: 'text' }, { some: 'else' }, { some: 'more' }]),
 		events = [];
@@ -429,7 +427,7 @@ suite.test('array fill - arrays', () => {
 	assert.deepStrictEqual(events[0], { type: 'update', path: [1, 0, 'name'], value: 'David', oldValue: 'Niv', object: pa[1][0] });
 });
 
-suite.test('array splice - primitives', () => {
+test('array splice - primitives', () => {
 	const
 		pa = Observable.from([1, 2, 3, 4, 5, 6]),
 		events = [];
@@ -441,7 +439,7 @@ suite.test('array splice - primitives', () => {
 	});
 
 	const spliced = pa.splice(2, 2, 'a');
-	assert.isArray(spliced);
+	assert.isTrue(Array.isArray(spliced));
 	assert.strictEqual(spliced.length, 2);
 	assert.strictEqual(spliced[0], 3);
 	assert.strictEqual(spliced[1], 4);
@@ -472,7 +470,7 @@ suite.test('array splice - primitives', () => {
 	callbacks = 0;
 });
 
-suite.test('array splice - objects', () => {
+test('array splice - objects', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];
@@ -505,7 +503,7 @@ suite.test('array splice - objects', () => {
 	assert.deepStrictEqual(events[0], { type: 'update', path: [3, 'text'], value: 'C', oldValue: 'D', object: pa[3] });
 });
 
-suite.test('array splice - arrays', () => {
+test('array splice - arrays', () => {
 	const
 		pa = Observable.from([{ text: 'a' }, { text: 'b' }, { text: 'c' }, { text: 'd' }]),
 		events = [];

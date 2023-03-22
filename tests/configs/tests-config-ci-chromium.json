@@ -18,11 +18,10 @@
 				"maxFail": 0,
 				"maxSkip": 5,
 				"include": [
-					"./tests/api-base.js"
+					"./tests/*.js"
 				],
 				"exclude": [
-					"./tests/browser-host-objects.js",
-					"./tests/*-performance-*.js"
+					"**/tests/*-performance-*.js"
 				]
 			},
 			"coverage": {

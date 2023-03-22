@@ -1,11 +1,9 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable as O1, ObjectObserver as OO1 } from '../src/object-observer.js?1';
 import { Observable as O2, ObjectObserver as OO2 } from '../src/object-observer.js?2';
 
-const suite = getSuite('Testing cross instance workability');
-
-suite.test('Observable.isObservable interoperable', () => {
+test('Observable.isObservable interoperable', () => {
 	assert.notEqual(O1, O2);
 	const obsbl1 = O1.from({});
 	assert.isTrue(O1.isObservable(obsbl1));
@@ -15,7 +13,7 @@ suite.test('Observable.isObservable interoperable', () => {
 	assert.isTrue(O1.isObservable(obsbl2));
 });
 
-suite.test('Observable.from interoperable', () => {
+test('Observable.from interoperable', () => {
 	const obsbl1 = O1.from({});
 	const obsbl2 = O2.from(obsbl1);
 	assert.equal(obsbl1, obsbl2);
@@ -25,7 +23,7 @@ suite.test('Observable.from interoperable', () => {
 	assert.equal(obsbl3, obsbl4);
 });
 
-suite.test('callbacks are interoperable', () => {
+test('callbacks are interoperable', () => {
 	const obsbl1 = O1.from({});
 	const obsbl2 = O2.from(obsbl1);
 	assert.equal(obsbl1, obsbl2);
@@ -40,7 +38,7 @@ suite.test('callbacks are interoperable', () => {
 	assert.equal(count, 4);
 });
 
-suite.test('ObjectObserver interoperable', () => {
+test('ObjectObserver interoperable', () => {
 	assert.notEqual(OO1, OO2);
 	let count = 0;
 	const oo1 = new OO1(es => count += es.length);

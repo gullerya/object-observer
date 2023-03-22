@@ -31,7 +31,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm run test:node
+        run: npm run test:nodejs
 
       - name: Report coverage
         uses: codecov/codecov-action@v3

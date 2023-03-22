@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing revokation of removed/replaced objects');
-
-suite.test('test revokation of replaced objects - simple set', () => {
+test('test revokation of replaced objects - simple set', () => {
 	const og = Observable.from({
 		a: {
 			b: {
@@ -23,7 +21,7 @@ suite.test('test revokation of replaced objects - simple set', () => {
 	assert.deepStrictEqual(events[0], { type: 'update', path: ['a'], value: { prop: 'text' }, oldValue: { b: { prop: 'text' }, prop: 'text' }, object: og });
 });
 
-suite.test('test revokation of replaced objects - splice in array', () => {
+test('test revokation of replaced objects - splice in array', () => {
 	const og = Observable.from([
 		{
 			child: {

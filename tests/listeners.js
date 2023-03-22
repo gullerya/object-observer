@@ -1,10 +1,8 @@
-import { assert } from 'chai';
-import { getSuite } from 'just-test/suite';
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
 import { Observable } from '../src/object-observer.js';
 
-const suite = getSuite('Testing listeners APIs');
-
-suite.test('test listeners invocation - single listener', () => {
+test('test listeners invocation - single listener', () => {
 	const oo = Observable.from({});
 	let events = [];
 
@@ -38,7 +36,7 @@ suite.test('test listeners invocation - single listener', () => {
 	});
 });
 
-suite.test('test listeners invocation - multiple listeners', () => {
+test('test listeners invocation - multiple listeners', () => {
 	const oo = Observable.from({});
 	let eventsA = [], eventsB = [], eventsC = [];
 
@@ -55,7 +53,7 @@ suite.test('test listeners invocation - multiple listeners', () => {
 	assert.equal(eventsC.length, 3);
 });
 
-suite.test('test listeners invocation - multiple listeners and one is throwing', () => {
+test('test listeners invocation - multiple listeners and one is throwing', () => {
 	const oo = Observable.from({});
 	let eventsA = [], eventsB = [];
 
@@ -73,7 +71,7 @@ suite.test('test listeners invocation - multiple listeners and one is throwing',
 	assert.equal(eventsB.length, 3);
 });
 
-suite.test('test listeners invocation - multiple times same listener', () => {
+test('test listeners invocation - multiple times same listener', () => {
 	const
 		oo = Observable.from({}),
 		listener = changes => { eventsA = eventsA.concat(changes); };
@@ -89,10 +87,10 @@ suite.test('test listeners invocation - multiple times same listener', () => {
 	assert.equal(eventsA.length, 3);
 });
 
-suite.test('test listeners invocation - listener is corrupted - null', () => {
+test('test listeners invocation - listener is corrupted - null', () => {
 	assert.throws(() => Observable.observe(Observable.from({}), null), 'observer MUST be a function');
 });
 
-suite.test('test listeners invocation - listener is corrupted - NaF', () => {
+test('test listeners invocation - listener is corrupted - NaF', () => {
 	assert.throws(() => Observable.observe(Observable.from({}), 'some non function'), 'observer MUST be a function');
 });
