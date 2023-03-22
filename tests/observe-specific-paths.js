@@ -50,7 +50,7 @@ test('baseline - negative - no foreign options (pathFrom)', () => {
 	);
 });
 
-test('observe paths of - negative a', { skip: true }, () => {
+test('observe paths of - negative a', () => {
 	const oo = Observable.from({});
 	assert.throws(
 		() => Observable.observe(oo, () => { }, { pathsOf: 4 }),
