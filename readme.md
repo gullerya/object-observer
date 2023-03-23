@@ -7,8 +7,6 @@
 
 # `object-observer`
 
-Starting with `6.0.0` this package will be relocated to [@gullerya/object-observer](https://www.npmjs.com/package/@gullerya/object-observer), please follow up there.
-
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
 Main aspects and features:
