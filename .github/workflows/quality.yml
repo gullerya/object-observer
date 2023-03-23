@@ -10,7 +10,7 @@ on:
 jobs:
   quality_pipeline_nodejs:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
 
   quality_pipeline_chromium:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -60,7 +60,7 @@ jobs:
 
   quality_pipeline_firefox:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -82,7 +82,7 @@ jobs:
 
   quality_pipeline_webkit:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
