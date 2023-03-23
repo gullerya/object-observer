@@ -10,7 +10,7 @@ on:
 jobs:
   quality_pipeline_nodejs:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
 
   quality_pipeline_chromium:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -58,9 +58,31 @@ jobs:
       - name: Report coverage
         uses: codecov/codecov-action@v3
 
+  quality_pipeline_firefox:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm run test:firefox
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v3
+
   quality_pipeline_webkit:
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
