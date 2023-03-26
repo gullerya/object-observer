@@ -70,10 +70,10 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"@gullerya/just-test": "^4.0.4",
+		"@gullerya/just-test": "^4.0.6",
 		"chai": "4.3.6",
 		"eslint": "^8.36.0",
-		"esbuild": "^0.17.12"
+		"esbuild": "^0.17.14"
 	},
 	"publishConfig": {
 		"access": "public"

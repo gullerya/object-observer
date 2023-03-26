@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { waitNextTask } from '@gullerya/just-test/time-utils';
+import { waitNextTask } from '@gullerya/just-test/timing';
 import { Observable } from '../src/object-observer.js';
 
 test('multiple continuous mutations', async () => {
