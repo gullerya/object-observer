@@ -5,9 +5,28 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 */3 * * *"
 
 jobs:
+  quality_pipeline_lint:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
   quality_pipeline_nodejs:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -26,9 +45,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Lint
-        run: npm run lint
 
       - name: Test
         run: npm run test:nodejs
@@ -57,6 +73,12 @@ jobs:
 
       - name: Report coverage
         uses: codecov/codecov-action@v3
+
+      - name: Archive logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: chromium-logs
+          path: reports/logs/chromium-112.0.5615.29.log
 
   quality_pipeline_firefox:
     runs-on: ubuntu-20.04

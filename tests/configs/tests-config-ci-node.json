@@ -17,16 +17,6 @@
 			"coverage": {
 				"include": [
 					"./src/**/*.js"
-				],
-				"reports": [
-					{
-						"format": "lcov",
-						"path": "./reports/coverage.lcov"
-					},
-					{
-						"format": "html",
-						"path": "./reports/coverage-html"
-					}
 				]
 			}
 		}
