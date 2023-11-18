@@ -50,6 +50,7 @@
 	"types": "./dist/object-observer.d.ts",
 	"exports": {
 		".": {
+			"types": "./dist/object-observer.d.ts",
 			"import": "./dist/object-observer.min.js",
 			"require": "./dist/cjs/object-observer.min.cjs"
 		}
@@ -72,8 +73,8 @@
 	"devDependencies": {
 		"@gullerya/just-test": "^4.0.6",
 		"chai": "4.3.6",
-		"eslint": "^8.36.0",
-		"esbuild": "^0.17.14"
+		"eslint": "^8.54.0",
+		"esbuild": "^0.19.5"
 	},
 	"publishConfig": {
 		"access": "public"
