@@ -114,7 +114,7 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Install
-        run: npm ci && npx playwright install-deps
+        run: npm ci && npx playwright install
 
       - name: Test
         run: npm run test:webkit
