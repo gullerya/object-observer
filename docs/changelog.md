@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.3] - 2023-11-28
+### Fixed
+- [Issue no. 142](https://github.com/gullerya/object-observer/issues/142) - added TypeScript type to exports declaration
+### Chore
+- updated some minor dependencies
+
+
 ## [6.1.1] - 2023-03-23
 ### Chore
 - updated the JustTest harness, the whole test suite is now running on NodeJS, Chromium, WebKit platforms
