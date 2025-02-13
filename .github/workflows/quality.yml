@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -48,7 +48,7 @@ jobs:
         run: npm run test:nodejs
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
 
   quality_pipeline_chromium:
     runs-on: ubuntu-20.04
@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -70,10 +70,10 @@ jobs:
         run: npm run test:chromium
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
 
       - name: Archive logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chromium-logs
           path: reports/logs/chromium-112.0.5615.29.log
@@ -87,7 +87,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -98,7 +98,7 @@ jobs:
         run: npm run test:firefox
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
 
   quality_pipeline_webkit:
     runs-on: ubuntu-20.04
@@ -109,7 +109,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -120,4 +120,4 @@ jobs:
         run: npm run test:webkit
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
