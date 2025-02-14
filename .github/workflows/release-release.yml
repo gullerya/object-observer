@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Prepare Git
+        run: |
+          git config user.name "automation"
+          git config user.email "ci.gullerya@gmail.com"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
