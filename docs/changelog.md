@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.4] - 2025-02-14
+### Chore
+- updated dependencies
+
 ## [6.1.3] - 2023-11-28
 ### Fixed
 - [Issue no. 142](https://github.com/gullerya/object-observer/issues/142) - added TypeScript type to exports declaration
