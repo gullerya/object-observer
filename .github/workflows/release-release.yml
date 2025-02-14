@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/gullerya/object-observer
+          repository: gullerya/object-observer
           token: ${{ secrets.OO_CI_AT }}
 
       - name: Setup NodeJS
