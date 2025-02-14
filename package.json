@@ -61,7 +61,7 @@
 	],
 	"scripts": {
 		"build": "node ./ci/tools/build-utils.js",
-		"lint": "eslint -c ./ci/.eslintrc.json ./src/*.js ./tests/*.js ./ci/**/*.js",
+		"lint": "eslint -c ./ci/eslint.config.mjs ./src/*.js ./tests/*.js ./ci/**/*.js",
 		"test": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.json",
 		"test:chromium": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-chromium.json",
 		"test:firefox": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-firefox.json",
@@ -71,10 +71,12 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
+		"@eslint/eslintrc": "^3.2.0",
+		"@eslint/js": "^9.20.0",
 		"@gullerya/just-test": "^4.0.6",
-		"chai": "4.3.6",
-		"eslint": "^8.54.0",
-		"esbuild": "^0.19.5"
+		"esbuild": "^0.25.0",
+		"eslint": "^9.20.1",
+		"globals": "^15.15.0"
 	},
 	"publishConfig": {
 		"access": "public"
