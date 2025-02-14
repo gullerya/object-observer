@@ -14,14 +14,10 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Prepare Git
-        run: |
-          git config user.name "automation"
-          git config user.email "ci.gullerya@gmail.com"
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          repository: https://github.com/gullerya/object-observer
           token: ${{ secrets.OO_CI_AT }}
 
       - name: Setup NodeJS
