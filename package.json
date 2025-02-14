@@ -1,6 +1,6 @@
 {
 	"name": "@gullerya/object-observer",
-	"version": "6.1.3",
+	"version": "6.1.4",
 	"description": "object-observer utility provides simple means to (deeply) observe specified object/array changes; implemented via native Proxy; changes delivered in a synchronous way",
 	"keywords": [
 		"object",
