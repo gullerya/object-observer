@@ -1,7 +1,7 @@
 [![npm](https://img.shields.io/npm/v/@gullerya/object-observer.svg?label=npm)](https://www.npmjs.com/package/@gullerya/object-observer)
 [![GitHub](https://img.shields.io/github/license/gullerya/object-observer.svg)](https://github.com/gullerya/object-observer)
 
-[![Quality pipeline](https://github.com/gullerya/object-observer/workflows/Quality%20pipeline/badge.svg?branch=main)](https://github.com/gullerya/object-observer/actions?query=workflow%3A%22Quality+pipeline%22)
+[![Quality pipeline](https://github.com/gullerya/object-observer/actions/workflows/quality.yml/badge.svg)](https://github.com/gullerya/object-observer/actions/workflows/quality.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/gullerya/object-observer/main.svg)](https://codecov.io/gh/gullerya/object-observer/branch/main)
 [![Codacy](https://img.shields.io/codacy/grade/a3879d7077eb4eef83a591733ad7c579.svg?logo=codacy)](https://www.codacy.com/app/gullerya/object-observer)
 
