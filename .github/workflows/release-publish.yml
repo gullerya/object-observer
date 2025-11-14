@@ -3,25 +3,24 @@ name: Publish (NPM)
 on:
   push:
     tags:
-      - v*
+      - '*.*.*'
 
 jobs:
   publish:
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
     outputs:
       packageVersion: ${{ steps.outputVersion.outputs.packageVersion }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.OO_CI_AT }}
 
       - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
-          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm ci
@@ -30,8 +29,6 @@ jobs:
         run: npm run build
 
       - name: Publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: npm publish
 
       - name: Output version
