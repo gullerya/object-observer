@@ -49,6 +49,8 @@ jobs:
 
       - name: Report coverage
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   quality_pipeline_chromium:
     runs-on: ubuntu-24.04
@@ -71,6 +73,8 @@ jobs:
 
       - name: Report coverage
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Archive logs
         uses: actions/upload-artifact@v4
@@ -99,6 +103,8 @@ jobs:
 
       - name: Report coverage
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   quality_pipeline_webkit:
     runs-on: ubuntu-24.04
@@ -121,3 +127,5 @@ jobs:
 
       - name: Report coverage
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
