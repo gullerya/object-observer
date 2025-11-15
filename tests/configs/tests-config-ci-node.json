@@ -16,7 +16,7 @@
 			},
 			"coverage": {
 				"include": [
-					"./src/**/*.js"
+					"./dist/**/*.js"
 				]
 			}
 		}
