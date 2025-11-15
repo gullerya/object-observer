@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - release-*
 
 jobs:
   quality_pipeline_lint_and_typecheck:
