@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../dist/object-observer.js';
 
 test('nested of observable should be observable too', () => {
 	const oo = Observable.from({
@@ -97,7 +97,7 @@ test('nested observable should handle errors', () => {
 				city: 'city'
 			}
 		}
-	})
+	});
 	const oou = Observable.from(oo.user);
 	assert.throws(
 		() => Observable.observe(oou, 'invalid observer'),
@@ -135,7 +135,7 @@ test('nested observable should provide correct path (relative to self)', () => {
 				city: 'city'
 			}
 		}
-	})
+	});
 	const
 		oou = Observable.from(oo.user),
 		ooua = Observable.from(oo.user.address),

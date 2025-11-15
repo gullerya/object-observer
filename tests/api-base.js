@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../dist/object-observer.js';
 
 test('ensure Observable object has defined APIs', () => {
 	assert.equal(typeof Observable, 'object');

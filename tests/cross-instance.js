@@ -1,7 +1,7 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable as O1, ObjectObserver as OO1 } from '../src/object-observer.js?1';
-import { Observable as O2, ObjectObserver as OO2 } from '../src/object-observer.js?2';
+import { Observable as O1, ObjectObserver as OO1 } from '../dist/object-observer.js?key=1';
+import { Observable as O2, ObjectObserver as OO2 } from '../dist/object-observer.js?key=2';
 
 test('Observable.isObservable interoperable', () => {
 	assert.notEqual(O1, O2);

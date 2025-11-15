@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  quality_pipeline_lint:
+  quality_pipeline_lint_and_typecheck:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
@@ -24,6 +24,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Type Check
+        run: npm run test-types
 
   quality_pipeline_nodejs:
     runs-on: ubuntu-24.04

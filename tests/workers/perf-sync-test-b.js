@@ -1,4 +1,4 @@
-import { Observable } from '../../src/object-observer.js';
+import { Observable } from '../../dist/object-observer.js';
 
 export default setup => {
 	const {

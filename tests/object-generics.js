@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../dist/object-observer.js';
 
 test('Object.seal - further extensions should fail', () => {
 	const oo = Observable.from({ propA: 'a', propB: 'b' });

@@ -47,7 +47,7 @@ export interface ObservableOptions {
 	async: boolean;
 }
 
-export interface Observer {
+export interface ChangesProcessor {
 	(changes: Change[]): void;
 }
 
@@ -60,8 +60,8 @@ export interface ObserverOptions {
 export interface Change {
 	type: ChangeType;
 	path: string[];
-	value?: any;
-	oldValue?: any;
+	value?: unknown;
+	oldValue?: unknown;
 	object: object;
 }
 

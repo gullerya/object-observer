@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../dist/object-observer.js';
 
 test('test listeners invocation - single listener', () => {
 	const oo = Observable.from({});
