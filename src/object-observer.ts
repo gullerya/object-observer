@@ -1,10 +1,10 @@
-import { Change } from './structs/change.js';
-import { ObservableArray } from './observables/array.js';
-import { ObservableTypedArray } from './observables/typed-array.js';
-import { ObservableObject } from './observables/object.js';
-import { REVERSE, SHUFFLE } from './constants.js';
-import { oMetaKey } from './constants.js';
-import { ObservableBase } from './observables/abstract-base.js';
+import { Change } from './structs/change.ts';
+import { ObservableArray } from './observables/array.ts';
+import { ObservableTypedArray } from './observables/typed-array.ts';
+import { ObservableObject } from './observables/object.ts';
+import { REVERSE, SHUFFLE } from './constants.ts';
+import { oMetaKey } from './constants.ts';
+import { ObservableBase } from './observables/abstract-base.ts';
 
 const
 	processObserveOptions = options => {

@@ -1,6 +1,6 @@
-import { Change } from '../../structs/change.js';
-import { UPDATE, oMetaKey } from '../../constants.js';
-import { callObservers } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { UPDATE, oMetaKey } from '../../constants.ts';
+import { callObservers } from '../../object-observer.ts';
 
 export default function proxiedTypedArraySet(source, offset) {
     const oMeta = this[oMetaKey];

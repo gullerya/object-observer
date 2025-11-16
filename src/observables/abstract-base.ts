@@ -1,6 +1,6 @@
-import { Change } from '../structs/change.js';
-import { proxiedDeleteProperty } from './methods/delete-property.js';
-import { proxiedSet } from './methods/set.js';
+import { Change } from '../structs/change.ts';
+import { proxiedDeleteProperty } from './methods/delete-property.ts';
+import { proxiedSet } from './methods/set.ts';
 
 const validObservableOptionKeys = { async: 1, verifiers: 1 };
 

@@ -62,7 +62,7 @@
 	"scripts": {
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/eslint.config.mjs ./src/* ./tests/*.js ./ci/**/*.js",
-		"test-types": "tsc ./src/object-observer.ts --noEmit --target es2022",
+		"test-types": "tsc",
 		"test": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.json",
 		"test:chromium": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-chromium.json",
 		"test:firefox": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-firefox.json",

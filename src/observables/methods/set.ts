@@ -1,7 +1,7 @@
-import { Change } from '../../structs/change.js';
-import { INSERT, UPDATE } from '../../constants.js';
-import { oMetaKey } from '../../constants.js';
-import { callObservers, getObservedOf } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { INSERT, UPDATE } from '../../constants.ts';
+import { oMetaKey } from '../../constants.ts';
+import { callObservers, getObservedOf } from '../../object-observer.ts';
 
 export function proxiedSet(target: object, key: string | symbol, value: unknown): boolean {
     let oldValue = target[key];

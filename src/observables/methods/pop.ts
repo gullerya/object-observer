@@ -1,6 +1,6 @@
-import { Change } from '../../structs/change.js';
-import { DELETE, oMetaKey } from '../../constants.js';
-import { callObservers } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { DELETE, oMetaKey } from '../../constants.ts';
+import { callObservers } from '../../object-observer.ts';
 
 export default function proxiedPop() {
     const oMeta = this[oMetaKey];

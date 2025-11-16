@@ -1,6 +1,6 @@
-import { ObservableBase } from './abstract-base.js';
-import { getObservedOf } from '../object-observer.js';
-import { oMetaKey } from '../constants.js';
+import { ObservableBase } from './abstract-base.ts';
+import { getObservedOf } from '../object-observer.ts';
+import { oMetaKey } from '../constants.ts';
 
 export class ObservableObject extends ObservableBase {
 

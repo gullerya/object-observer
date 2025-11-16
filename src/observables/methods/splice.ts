@@ -1,6 +1,6 @@
-import { Change } from '../../structs/change.js';
-import { INSERT, DELETE, UPDATE, oMetaKey } from '../../constants.js';
-import { callObservers, getObservedOf } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { INSERT, DELETE, UPDATE, oMetaKey } from '../../constants.ts';
+import { callObservers, getObservedOf } from '../../object-observer.ts';
 
 export default function proxiedSplice(...spliceItems: unknown[]) {
     const oMeta = this[oMetaKey];

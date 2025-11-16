@@ -1,6 +1,6 @@
-import { Change } from '../../structs/change.js';
-import { INSERT, oMetaKey } from '../../constants.js';
-import { callObservers, getObservedOf } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { INSERT, oMetaKey } from '../../constants.ts';
+import { callObservers, getObservedOf } from '../../object-observer.ts';
 
 export default function proxiedUnshift(...unshiftItems: unknown[]) {
     const oMeta = this[oMetaKey];

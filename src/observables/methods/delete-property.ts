@@ -1,7 +1,7 @@
-import { Change } from '../../structs/change.js';
-import { DELETE } from '../../constants.js';
-import { oMetaKey } from '../../constants.js';
-import { callObservers } from '../../object-observer.js';
+import { Change } from '../../structs/change.ts';
+import { DELETE } from '../../constants.ts';
+import { oMetaKey } from '../../constants.ts';
+import { callObservers } from '../../object-observer.ts';
 
 export function proxiedDeleteProperty(target: object, key: string | symbol): boolean {
     let oldValue = target[key];

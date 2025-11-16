@@ -1,15 +1,15 @@
-import { ObservableBase } from './abstract-base.js';
-import { getObservedOf } from '../object-observer.js';
-import { oMetaKey } from '../constants.js';
-import proxiedCopyWithin from './methods/copy-within.js';
-import proxiedFill from './methods/fill.js';
-import proxiedPop from './methods/pop.js';
-import proxiedPush from './methods/push.js';
-import proxiedReverse from './methods/reverse.js';
-import proxiedShift from './methods/shift.js';
-import proxiedSort from './methods/sort.js';
-import proxiedSplice from './methods/splice.js';
-import proxiedUnshift from './methods/unshift.js';
+import { ObservableBase } from './abstract-base.ts';
+import { getObservedOf } from '../object-observer.ts';
+import { oMetaKey } from '../constants.ts';
+import proxiedCopyWithin from './methods/copy-within.ts';
+import proxiedFill from './methods/fill.ts';
+import proxiedPop from './methods/pop.ts';
+import proxiedPush from './methods/push.ts';
+import proxiedReverse from './methods/reverse.ts';
+import proxiedShift from './methods/shift.ts';
+import proxiedSort from './methods/sort.ts';
+import proxiedSplice from './methods/splice.ts';
+import proxiedUnshift from './methods/unshift.ts';
 
 const proxiedArrayMethods = {
     copyWithin: proxiedCopyWithin,
