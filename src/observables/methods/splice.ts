@@ -1,4 +1,4 @@
-import { Change } from '../../structs/change.ts';
+import { Change } from '../../model/change.ts';
 import { INSERT, DELETE, UPDATE, oMetaKey } from '../../constants.ts';
 import { callObservers, getObservedOf } from '../../object-observer.ts';
 

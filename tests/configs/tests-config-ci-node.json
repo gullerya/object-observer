@@ -7,7 +7,7 @@
 				"maxFail": 0,
 				"maxSkip": 5,
 				"include": [
-					"./tests/*.js"
+					"./tests/*"
 				],
 				"exclude": [
 					"**/tests/browser-host-objects.js",
@@ -16,7 +16,7 @@
 			},
 			"coverage": {
 				"include": [
-					"./dist/**/*.js"
+					"./src/**/*"
 				]
 			}
 		}

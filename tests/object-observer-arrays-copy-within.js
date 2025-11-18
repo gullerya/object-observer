@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../dist/object-observer.js';
+import { Observable } from '../src/object-observer.ts';
 
 test('array copyWithin - primitives', () => {
 	const

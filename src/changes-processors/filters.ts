@@ -1,5 +1,4 @@
-import { REVERSE, SHUFFLE } from '../constants';
-import type { Change } from '../structs/change.ts';
+import { Change } from '../model/change.ts';
 
 export class Filter {
     static #privateCtorKey = Symbol('FilterPrivateConstructorKey');
@@ -22,39 +21,25 @@ export class Filter {
         return new Filter(Filter.#privateCtorKey, fn);
     }
 
-    static byExactPath(path: string): Filter {
-        if (typeof path !== 'string' || path === '') {
-            throw new Error('byExactPath Filter requires a non-empty string as argument');
+    static exactPaths(paths: string[]): Filter {
+        if (!Array.isArray(paths) || paths.length === 0) {
+            throw new Error('exactPaths Filter requires a non-empty array as argument');
         }
+
+        const pathsSet = new Set(paths);
         return new Filter(
             Filter.#privateCtorKey,
-            changes => changes.filter(change => change.path.join('.') === path)
+            changes => changes.filter(change => pathsSet.has(change.pathAsString))
         );
     }
 
-    static includeChildrenOfPath(parentPath: Array<string | number>): Filter {
-        if (!Array.isArray(parentPath) || parentPath.length === 0) {
-            throw new Error('includeChildrenOfPath Filter requires a non-empty array as argument');
-        }
-        const pathsOfStr = parentPath.join('.');
-        const pathsOfLength = parentPath.length;
-        return new Filter(
-            Filter.#privateCtorKey,
-            changes => changes.filter(change =>
-                (change.path.length === pathsOfLength + 1 ||
-                    (change.path.length === pathsOfLength && (change.type === REVERSE || change.type === SHUFFLE))) &&
-                change.path.join('.').startsWith(pathsOfStr)
-            )
-        );
-    }
-
-    static includePathsStartingFrom(prefix: string): Filter {
+    static pathsStartWith(prefix: string): Filter {
         if (typeof prefix !== 'string' || prefix === '') {
-            throw new Error('includePathsStartingFrom Filter requires a non-empty string as argument');
+            throw new Error('pathsStartWith Filter requires a non-empty string as argument');
         }
         return new Filter(
             Filter.#privateCtorKey,
-            changes => changes.filter(change => change.path.join('.').startsWith(prefix))
+            changes => changes.filter(change => change.pathAsString.startsWith(prefix))
         );
     }
 }

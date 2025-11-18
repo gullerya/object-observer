@@ -12,7 +12,7 @@
 				"maxFail": 0,
 				"maxSkip": 5,
 				"include": [
-					"./tests/*.js"
+					"./tests/*"
 				],
 				"exclude": [
 					"**/tests/*-performance-*.js"
@@ -20,7 +20,7 @@
 			},
 			"coverage": {
 				"include": [
-					"./dist/**/*.js"
+					"./src/**/*"
 				]
 			}
 		}

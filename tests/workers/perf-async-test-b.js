@@ -1,4 +1,4 @@
-import { Observable } from '../../dist/object-observer.js';
+import { Observable } from '../../src/object-observer.ts';
 
 export default async setup => {
 	const {

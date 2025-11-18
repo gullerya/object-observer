@@ -73,7 +73,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
-		"@gullerya/just-test": "^4.0.12",
+		"@gullerya/just-test": "^4.0.14",
 		"esbuild": "^0.27.0",
 		"eslint": "^9.39.1",
 		"globals": "^16.5.0",

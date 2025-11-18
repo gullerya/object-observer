@@ -1,4 +1,4 @@
-import { Change } from './structs/change.ts';
+import { Change } from './model/change.ts';
 import { ObservableArray } from './observables/array.ts';
 import { ObservableTypedArray } from './observables/typed-array.ts';
 import { ObservableObject } from './observables/object.ts';

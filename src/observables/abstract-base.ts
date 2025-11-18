@@ -1,4 +1,4 @@
-import { Change } from '../structs/change.ts';
+import { Change } from '../model/change.ts';
 import { proxiedDeleteProperty } from './methods/delete-property.ts';
 import { proxiedSet } from './methods/set.ts';
 

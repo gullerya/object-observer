@@ -20,8 +20,7 @@ export class ObservableTypedArray extends ObservableBase {
         return proxiedTypedArrayMethods[key] || target[key];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    observedGraphProcessor(source: Array<unknown>, observableWrapper: ObservableBase, visited: Set<unknown>): Array<unknown> {
+    observedGraphProcessor(source: Array<unknown>, observableWrapper: ObservableBase): Array<unknown> {
         source[oMetaKey] = observableWrapper;
         return source;
     }
