@@ -1,6 +1,7 @@
 import { Change } from '../../model/change.ts';
 import { INSERT, oMetaKey } from '../../constants.ts';
-import { callObservers, getObservedOf } from '../../object-observer.ts';
+import { getObservedOf } from '../processors/proc-utils.ts';
+import { callObservers } from '../processors/proc-utils.ts';
 
 export default function proxiedUnshift(...unshiftItems: unknown[]) {
     const oMeta = this[oMetaKey];

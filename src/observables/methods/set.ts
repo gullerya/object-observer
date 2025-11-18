@@ -1,7 +1,8 @@
 import { Change } from '../../model/change.ts';
 import { INSERT, UPDATE } from '../../constants.ts';
 import { oMetaKey } from '../../constants.ts';
-import { callObservers, getObservedOf } from '../../object-observer.ts';
+import { getObservedOf } from '../processors/proc-utils.ts';
+import { callObservers } from '../processors/proc-utils.ts';
 
 export function proxiedSet(target: object, key: string | symbol, value: unknown): boolean {
     let oldValue = target[key];

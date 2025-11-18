@@ -20,13 +20,16 @@ export class ObservableBase implements ProxyHandler<object> {
     #async: boolean = false;
     batches = [];
 
+    set;
+    deleteProperty;
+
     #verifiers: Array<ChangesProcessor> = [];
     #observers: Array<ChangesProcessor> = [];
 
-    set = proxiedSet;
-    deleteProperty = proxiedDeleteProperty;
-
     constructor(properties) {
+        this.set = proxiedSet;
+        this.deleteProperty = proxiedDeleteProperty;
+
         const { target, parent, ownKey, options, visited = new Set() } = properties;
         if (parent && ownKey !== undefined) {
             this.#parent = parent;

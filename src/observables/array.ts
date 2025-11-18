@@ -1,5 +1,5 @@
 import { ObservableBase } from './abstract-base.ts';
-import { getObservedOf } from '../object-observer.ts';
+import { getObservedOf } from './processors/proc-utils.ts';
 import { oMetaKey } from '../constants.ts';
 import proxiedCopyWithin from './methods/copy-within.ts';
 import proxiedFill from './methods/fill.ts';
@@ -32,10 +32,10 @@ export class ObservableArray extends ObservableBase {
     observedGraphProcessor(source: Array<unknown>, observableWrapper: ObservableBase, visited: Set<unknown>): Array<unknown> {
         const arrayLength = source.length;
         const target = new Array(arrayLength);
-        target[oMetaKey] = observableWrapper;
         for (let i = 0; i < arrayLength; i++) {
             target[i] = getObservedOf(source[i], i, observableWrapper, visited);
         }
+        target[oMetaKey] = observableWrapper;
         return target;
     }
 }

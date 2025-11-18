@@ -1,6 +1,6 @@
 import { Change } from '../../model/change.ts';
 import { DELETE, oMetaKey } from '../../constants.ts';
-import { callObservers } from '../../object-observer.ts';
+import { callObservers } from '../processors/proc-utils.ts';
 
 export default function proxiedPop() {
     const oMeta = this[oMetaKey];

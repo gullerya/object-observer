@@ -1,6 +1,6 @@
 import { Change } from '../../model/change.ts';
 import { UPDATE, oMetaKey } from '../../constants.ts';
-import { callObservers } from '../../object-observer.ts';
+import { callObservers } from '../processors/proc-utils.ts';
 
 export default function proxiedTypedArraySet(source, offset) {
     const oMeta = this[oMetaKey];

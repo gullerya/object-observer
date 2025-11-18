@@ -1,6 +1,6 @@
 import { Change } from '../../model/change.ts';
 import { REVERSE, oMetaKey } from '../../constants.ts';
-import { callObservers } from '../../object-observer.ts';
+import { callObservers } from '../processors/proc-utils.ts';
 
 export default function proxiedReverse() {
     const oMeta = this[oMetaKey];

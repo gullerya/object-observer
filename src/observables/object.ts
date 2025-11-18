@@ -1,5 +1,5 @@
 import { ObservableBase } from './abstract-base.ts';
-import { getObservedOf } from '../object-observer.ts';
+import { getObservedOf } from './processors/proc-utils.ts';
 import { oMetaKey } from '../constants.ts';
 
 export class ObservableObject extends ObservableBase {

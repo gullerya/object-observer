@@ -1,10 +1,5 @@
-import { Change } from './model/change.ts';
-import { ObservableArray } from './observables/array.ts';
-import { ObservableTypedArray } from './observables/typed-array.ts';
-import { ObservableObject } from './observables/object.ts';
-import { REVERSE, SHUFFLE } from './constants.ts';
 import { oMetaKey } from './constants.ts';
-import { ObservableBase } from './observables/abstract-base.ts';
+import { getObservableFromRoot } from './observables/processors/proc-utils.ts';
 
 const
 	processObserveOptions = options => {
@@ -44,138 +39,108 @@ const
 			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid observer option/s`);
 		}
 		return result;
-	},
-	filterChanges = (options, changes) => {
-		if (options === null) {
-			return changes;
-		}
-
-		let result = changes;
-		if (options.path) {
-			const oPath = options.path;
-			result = changes.filter(change =>
-				change.path.join('.') === oPath
-			);
-		} else if (options.pathsOf) {
-			const oPathsOf = options.pathsOf;
-			const oPathsOfStr = oPathsOf.join('.');
-			result = changes.filter(change =>
-				(change.path.length === oPathsOf.length + 1 ||
-					(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
-				change.path.join('.').startsWith(oPathsOfStr)
-			);
-		} else if (options.pathsFrom) {
-			const oPathsFrom = options.pathsFrom;
-			result = changes.filter(change =>
-				change.path.join('.').startsWith(oPathsFrom)
-			);
-		}
-		return result;
-	},
-	callObserverSafe = (listener, changes) => {
-		try {
-			listener(changes);
-		} catch (e) {
-			console.error(`failed to notify listener ${listener} with ${changes}`, e);
-		}
-	},
-	callObserversFromMT = function callObserversFromMT() {
-		const batches = this.batches;
-		this.batches = [];
-		for (const [listener, changes] of batches) {
-			callObserverSafe(listener, changes);
-		}
 	};
+// filterChanges = (options, changes) => {
+// 	if (options === null) {
+// 		return changes;
+// 	}
 
-export function callObservers(oMeta: ObservableBase, changes: Change[]) {
-	let currentObservable: ObservableBase = oMeta;
-	let isAsync, observers, target, options, relevantChanges, i;
-	const l = changes.length;
-	do {
-		isAsync = currentObservable.async;
-		observers = currentObservable.observers;
-		i = observers.length;
-		while (i--) {
-			[target, options] = observers[i];
-			relevantChanges = filterChanges(options, changes);
+// 	let result = changes;
+// 	if (options.path) {
+// 		const oPath = options.path;
+// 		result = changes.filter(change =>
+// 			change.path.join('.') === oPath
+// 		);
+// 	} else if (options.pathsOf) {
+// 		const oPathsOf = options.pathsOf;
+// 		const oPathsOfStr = oPathsOf.join('.');
+// 		result = changes.filter(change =>
+// 			(change.path.length === oPathsOf.length + 1 ||
+// 				(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
+// 			change.path.join('.').startsWith(oPathsOfStr)
+// 		);
+// 	} else if (options.pathsFrom) {
+// 		const oPathsFrom = options.pathsFrom;
+// 		result = changes.filter(change =>
+// 			change.path.join('.').startsWith(oPathsFrom)
+// 		);
+// 	}
+// 	return result;
+// },
+// callObserverSafe = (listener, changes) => {
+// 	try {
+// 		listener(changes);
+// 	} catch (e) {
+// 		console.error(`failed to notify listener ${listener} with ${changes}`, e);
+// 	}
+// },
+// callObserversFromMT = function callObserversFromMT() {
+// 	const batches = this.batches;
+// 	this.batches = [];
+// 	for (const [listener, changes] of batches) {
+// 		callObserverSafe(listener, changes);
+// 	}
+// };
 
-			if (relevantChanges.length) {
-				if (isAsync) {
-					//	this is the async dispatch handling
-					if (currentObservable.batches.length === 0) {
-						queueMicrotask(callObserversFromMT.bind(currentObservable));
-					}
-					let rb;
-					for (const b of currentObservable.batches) {
-						if (b[0] === target) {
-							rb = b;
-							break;
-						}
-					}
-					if (!rb) {
-						rb = [target, []];
-						currentObservable.batches.push(rb);
-					}
-					Array.prototype.push.apply(rb[1], relevantChanges);
-				} else {
-					//	this is the naive straight forward synchronous dispatch
-					callObserverSafe(target, relevantChanges);
-				}
-			}
-		}
+// export function callObservers(oMeta: ObservableBase, changes: Change[]) {
+// 	let currentObservable: ObservableBase = oMeta;
+// 	let isAsync, observers, target, options, relevantChanges, i;
+// 	const l = changes.length;
+// 	do {
+// 		isAsync = currentObservable.async;
+// 		observers = currentObservable.observers;
+// 		i = observers.length;
+// 		while (i--) {
+// 			[target, options] = observers[i];
+// 			relevantChanges = filterChanges(options, changes);
 
-		//	cloning all the changes and notifying in context of parent
-		const parent = currentObservable.parent;
-		if (parent) {
-			for (let j = 0; j < l; j++) {
-				const change = changes[j];
-				changes[j] = new Change(
-					change.type,
-					[currentObservable.ownKey, ...change.path],
-					change.value,
-					change.oldValue,
-					change.object
-				);
-			}
-			currentObservable = parent;
-		} else {
-			break;
-		}
-	} while (currentObservable);
-};
+// 			if (relevantChanges.length) {
+// 				if (isAsync) {
+// 					//	this is the async dispatch handling
+// 					if (currentObservable.batches.length === 0) {
+// 						queueMicrotask(callObserversFromMT.bind(currentObservable));
+// 					}
+// 					let rb;
+// 					for (const b of currentObservable.batches) {
+// 						if (b[0] === target) {
+// 							rb = b;
+// 							break;
+// 						}
+// 					}
+// 					if (!rb) {
+// 						rb = [target, []];
+// 						currentObservable.batches.push(rb);
+// 					}
+// 					Array.prototype.push.apply(rb[1], relevantChanges);
+// 				} else {
+// 					//	this is the naive straight forward synchronous dispatch
+// 					callObserverSafe(target, relevantChanges);
+// 				}
+// 			}
+// 		}
 
-export function getObservedOf(item: unknown, key: string | symbol | number, parent: object, visited?: Set<unknown>) {
-	if (visited !== undefined && visited.has(item)) {
-		return null;
-	} else if (typeof item !== 'object' || item === null) {
-		return item;
-	} else if (Array.isArray(item)) {
-		return new ObservableArray({ target: item, ownKey: key, parent: parent, visited }).proxy;
-	} else if (ArrayBuffer.isView(item)) {
-		return new ObservableTypedArray({ target: item, ownKey: key, parent: parent }).proxy;
-	} else if (item instanceof Date) {
-		return item;
-	} else {
-		return new ObservableObject({ target: item, ownKey: key, parent: parent, visited }).proxy;
-	}
-};
+// 		//	cloning all the changes and notifying in context of parent
+// 		const parent = currentObservable.parent;
+// 		if (parent) {
+// 			for (let j = 0; j < l; j++) {
+// 				const change = changes[j];
+// 				changes[j] = new Change(
+// 					change.type,
+// 					[currentObservable.ownKey, ...change.path],
+// 					change.value,
+// 					change.oldValue,
+// 					change.object
+// 				);
+// 			}
+// 			currentObservable = parent;
+// 		} else {
+// 			break;
+// 		}
+// 	} while (currentObservable);
+// };
 
 export const Observable = Object.freeze({
-	from: (target, options = undefined) => {
-		if (!target || typeof target !== 'object') {
-			throw new Error('observable MAY ONLY be created from a non-null object');
-		} else if (target[oMetaKey]) {
-			return target;
-		} else if (Array.isArray(target)) {
-			return new ObservableArray({ target: target, ownKey: null, parent: null, options: options }).proxy;
-		} else if (ArrayBuffer.isView(target)) {
-			return new ObservableTypedArray({ target: target, ownKey: null, parent: null, options: options }).proxy;
-		} else if (target instanceof Date) {
-			throw new Error(`${target} found to be one of a non-observable types`);
-		} else {
-			return new ObservableObject({ target: target, ownKey: null, parent: null, options: options }).proxy;
-		}
-	},
+	from: getObservableFromRoot,
 	isObservable: input => {
 		return !!(input && input[oMetaKey]);
 	},
