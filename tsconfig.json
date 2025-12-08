@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "strict": false,
-        "target": "es2022",
+        "target": "es2024",
         "noEmit": true,
         "allowImportingTsExtensions": true,
         "rewriteRelativeImportExtensions": true,

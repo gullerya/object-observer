@@ -1,8 +1,6 @@
 ﻿import path from 'node:path';
 import fs from 'node:fs/promises';
-
 import esbuild from 'esbuild';
-
 import { calcIntegrity } from './integrity-utils.js';
 import * as stdout from './stdout.js';
 
@@ -50,7 +48,6 @@ async function buildESModule() {
 	};
 	await esbuild.build(config);
 	await esbuild.build({ ...config, minify: true, outExtension: { '.js': '.min.js' } });
-	// await fs.copyFile(path.join(SRC_DIR, 'object-observer.d.ts'), path.join(DIST_DIR, 'object-observer.d.ts'));
 
 	stdout.writeGreen('\tOK');
 	stdout.writeNewline();
