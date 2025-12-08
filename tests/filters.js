@@ -35,9 +35,19 @@ test('exactPaths filter - negative cases', () => {
 	assert.throws(() => Filter.exactPaths([]), 'exactPaths Filter requires a non-empty array as argument');
 });
 
-test('test listeners invocation - listener is corrupted - null', () => {
-
+test('pathsStartWith filter - positive cases', () => {
+	const f = Filter.pathsStartWith('a.b');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('update', ['a', 'c', 'c'], 3, 0),
+		new Change('update', ['a', 'b', 'c'], 4, 0)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 2);
 });
 
-test('test listeners invocation - listener is corrupted - NaF', () => {
+test('pathsStartWith filter - negative cases', () => {
+	assert.throws(() => Filter.pathsStartWith(null), 'pathsStartWith Filter requires a non-empty string as argument');
+	assert.throws(() => Filter.pathsStartWith([]), 'pathsStartWith Filter requires a non-empty string as argument');
 });
