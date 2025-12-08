@@ -50,4 +50,5 @@ test('pathsStartWith filter - positive cases', () => {
 test('pathsStartWith filter - negative cases', () => {
 	assert.throws(() => Filter.pathsStartWith(null), 'pathsStartWith Filter requires a non-empty string as argument');
 	assert.throws(() => Filter.pathsStartWith([]), 'pathsStartWith Filter requires a non-empty string as argument');
+	assert.throws(() => Filter.pathsStartWith(''), 'pathsStartWith Filter requires a non-empty string as argument');
 });
