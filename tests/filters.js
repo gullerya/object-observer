@@ -7,10 +7,15 @@ test('test filters - ctor direct use forbidden', () => {
 	assert.throws(() => new Filter('some', (change) => change.prop !== 'skip'), 'Filter class cannot be instantiated directly', 'Filter class cannot be instantiated directly');
 });
 
-test('custom filter', () => {
+test('custom filter - positive cases', () => {
 	const filterLogic = changes => changes.filter(c => c.value !== null);
 	const f = Filter.custom(filterLogic);
 	assert.strictEqual(f.fn, filterLogic, 'Filter code is correct');
+});
+
+test('custom filter - negative cases', () => {
+	assert.throws(() => Filter.custom(null), 'custom Filter requires a function as argument');
+	assert.throws(() => Filter.custom('some'), 'custom Filter requires a function as argument');
 });
 
 test('exactPaths filter - positive cases', () => {

@@ -25,7 +25,6 @@ export class Filter {
         if (!Array.isArray(paths) || paths.length === 0) {
             throw new Error('exactPaths Filter requires a non-empty array as argument');
         }
-
         const pathsSet = new Set(paths);
         return new Filter(
             Filter.#privateCtorKey,
