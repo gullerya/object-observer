@@ -16,8 +16,8 @@ const proxiedTypedArrayMethods = {
 
 export class ObservableTypedArray extends ObservableBase {
 
-    get(taget: object, key: string): unknown {
-        return proxiedTypedArrayMethods[key] || taget[key];
+    get(target: object, key: string): unknown {
+        return proxiedTypedArrayMethods[key] || target[key];
     }
 
     observedGraphProcessor(source: Array<unknown>, observableWrapper: ObservableBase): Array<unknown> {

@@ -50,7 +50,6 @@ export class ObservableBase implements ProxyHandler<object> {
 
     detach() {
         this.#parent = null;
-        // this.#revoke();
         return this.#target;
     }
 
