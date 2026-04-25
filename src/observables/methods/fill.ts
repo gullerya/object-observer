@@ -1,41 +1,31 @@
 import { Change } from '../../model/change.ts';
 import { INSERT, UPDATE, oMetaKey } from '../../constants.ts';
-import { getObservedOf } from '../processors/proc-utils.ts';
-import { callObservers } from '../processors/proc-utils.ts';
+import { callObservers, detachIfObservable, getObservedOf } from '../processors/proc-utils.ts';
 
 export default function proxiedFill(filVal, start, end) {
-    const oMeta = this[oMetaKey];
-    const target = oMeta.target;
-    const changes = [];
-    const tarLen = target.length;
-    const prev = target.slice(0);
-    start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
-    end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
+	const oMeta = this[oMetaKey];
+	const target = oMeta.target;
+	const changes = [];
+	const tarLen = target.length;
+	const prev = target.slice(0);
+	start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+	end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
 
-    if (start < tarLen && end > start) {
-        target.fill(filVal, start, end);
+	if (start < tarLen && end > start) {
+		target.fill(filVal, start, end);
 
-        let tmpObserved;
-        for (let i = start, item, tmpTarget; i < end; i++) {
-            item = target[i];
-            target[i] = getObservedOf(item, i, oMeta);
-            if (i in prev) {
-                tmpTarget = prev[i];
-                if (tmpTarget && typeof tmpTarget === 'object') {
-                    tmpObserved = tmpTarget[oMetaKey];
-                    if (tmpObserved) {
-                        tmpTarget = tmpObserved.detach();
-                    }
-                }
+		for (let i = start; i < end; i++) {
+			target[i] = getObservedOf(target[i], i, oMeta);
+			if (i in prev) {
+				const oldValue = detachIfObservable(prev[i]);
+				changes.push(new Change(UPDATE, [i], target[i], oldValue, this));
+			} else {
+				changes.push(new Change(INSERT, [i], target[i], undefined, this));
+			}
+		}
 
-                changes.push(new Change(UPDATE, [i], target[i], tmpTarget, this));
-            } else {
-                changes.push(new Change(INSERT, [i], target[i], undefined, this));
-            }
-        }
+		callObservers(oMeta, changes);
+	}
 
-        callObservers(oMeta, changes);
-    }
-
-    return this;
+	return this;
 };

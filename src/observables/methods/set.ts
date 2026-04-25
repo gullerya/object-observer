@@ -1,28 +1,21 @@
 import { Change } from '../../model/change.ts';
 import { INSERT, UPDATE } from '../../constants.ts';
-import { oMetaKey } from '../../constants.ts';
-import { getObservedOf } from '../processors/proc-utils.ts';
-import { callObservers } from '../processors/proc-utils.ts';
+import { callObservers, detachIfObservable, getObservedOf } from '../processors/proc-utils.ts';
 
 export function proxiedSet(target: object, key: string | symbol, value: unknown): boolean {
-    let oldValue = target[key];
+	const prevValue = target[key];
 
-    if (value !== oldValue) {
-        const newValue = getObservedOf(value, key, this);
-        target[key] = newValue;
+	if (value !== prevValue) {
+		const newValue = getObservedOf(value, key, this);
+		target[key] = newValue;
 
-        if (oldValue && typeof oldValue === 'object') {
-            const tmpObserved = oldValue[oMetaKey];
-            if (tmpObserved) {
-                oldValue = tmpObserved.detach();
-            }
-        }
+		const oldValue = detachIfObservable(prevValue);
 
-        const changes = oldValue === undefined
-            ? [new Change(INSERT, [key], newValue, undefined, this.proxy)]
-            : [new Change(UPDATE, [key], newValue, oldValue, this.proxy)];
-        callObservers(this, changes);
-    }
+		const changes = oldValue === undefined
+			? [new Change(INSERT, [key], newValue, undefined, this.proxy)]
+			: [new Change(UPDATE, [key], newValue, oldValue, this.proxy)];
+		callObservers(this, changes);
+	}
 
-    return true;
+	return true;
 };

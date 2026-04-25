@@ -1,22 +1,14 @@
 import { Change } from '../../model/change.ts';
 import { DELETE } from '../../constants.ts';
-import { oMetaKey } from '../../constants.ts';
-import { callObservers } from '../processors/proc-utils.ts';
+import { callObservers, detachIfObservable } from '../processors/proc-utils.ts';
 
 export function proxiedDeleteProperty(target: object, key: string | symbol): boolean {
-    let oldValue = target[key];
+	const prevValue = target[key];
+	delete target[key];
+	const oldValue = detachIfObservable(prevValue);
 
-    delete target[key];
+	const changes = [new Change(DELETE, [key], undefined, oldValue, this.proxy)];
+	callObservers(this, changes);
 
-    if (oldValue && typeof oldValue === 'object') {
-        const tmpObserved = oldValue[oMetaKey];
-        if (tmpObserved) {
-            oldValue = tmpObserved.detach();
-        }
-    }
-
-    const changes = [new Change(DELETE, [key], undefined, oldValue, this.proxy)];
-    callObservers(this, changes);
-
-    return true;
+	return true;
 };

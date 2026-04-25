@@ -1,49 +1,41 @@
 import { Change } from '../../model/change.ts';
 import { UPDATE, oMetaKey } from '../../constants.ts';
-import { getObservedOf } from '../processors/proc-utils.ts';
-import { callObservers } from '../processors/proc-utils.ts';
+import { callObservers, detachIfObservable, getObservedOf } from '../processors/proc-utils.ts';
 
 export default function proxiedCopyWithin(dest, start, end) {
-    const oMeta = this[oMetaKey];
-    const target = oMeta.target;
-    const tarLen = target.length;
-    dest = dest < 0 ? Math.max(tarLen + dest, 0) : dest;
-    start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
-    end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
-    const len = Math.min(end - start, tarLen - dest);
+	const oMeta = this[oMetaKey];
+	const target = oMeta.target;
+	const tarLen = target.length;
+	dest = dest < 0 ? Math.max(tarLen + dest, 0) : dest;
+	start = start === undefined ? 0 : (start < 0 ? Math.max(tarLen + start, 0) : Math.min(start, tarLen));
+	end = end === undefined ? tarLen : (end < 0 ? Math.max(tarLen + end, 0) : Math.min(end, tarLen));
+	const len = Math.min(end - start, tarLen - dest);
 
-    if (dest < tarLen && dest !== start && len > 0) {
-        const
-            prev = target.slice(0),
-            changes = [];
+	if (dest < tarLen && dest !== start && len > 0) {
+		const prev = target.slice(0);
+		const changes = [];
 
-        target.copyWithin(dest, start, end);
+		target.copyWithin(dest, start, end);
 
-        for (let i = dest, nItem, oItem, tmpObserved; i < dest + len; i++) {
-            //	update newly placed observables, if any
-            nItem = target[i];
-            if (nItem && typeof nItem === 'object') {
-                nItem = getObservedOf(nItem, i, oMeta);
-                target[i] = nItem;
-            }
+		for (let i = dest; i < dest + len; i++) {
+			//	update newly placed observables, if any
+			let nItem = target[i];
+			if (nItem && typeof nItem === 'object') {
+				nItem = getObservedOf(nItem, i, oMeta);
+				target[i] = nItem;
+			}
 
-            //	detach overridden observables, if any
-            oItem = prev[i];
-            if (oItem && typeof oItem === 'object') {
-                tmpObserved = oItem[oMetaKey];
-                if (tmpObserved) {
-                    oItem = tmpObserved.detach();
-                }
-            }
+			//	detach overridden observables, if any
+			const oItem = detachIfObservable(prev[i]);
 
-            if (typeof nItem !== 'object' && nItem === oItem) {
-                continue;
-            }
-            changes.push(new Change(UPDATE, [i], nItem, oItem, this));
-        }
+			if (typeof nItem !== 'object' && nItem === oItem) {
+				continue;
+			}
+			changes.push(new Change(UPDATE, [i], nItem, oItem, this));
+		}
 
-        callObservers(oMeta, changes);
-    }
+		callObservers(oMeta, changes);
+	}
 
-    return this;
+	return this;
 };
