@@ -1,5 +1,8 @@
 import { oMetaKey } from './constants.ts';
 import { getObservableFromRoot } from './observables/processors/proc-utils.ts';
+import { Filter, type FilterFn } from './changes-processors/filters.ts';
+
+export { Filter };
 
 const
 	processObserveOptions = options => {
@@ -7,30 +10,22 @@ const
 			return null;
 		}
 
-		const result = {};
+		const result: { filters?: FilterFn[] } = {};
 		const invalidOptions = [];
 		for (const [optName, optVal] of Object.entries(options)) {
-			if (optName === 'path') {
-				if (typeof optVal !== 'string' || optVal === '') {
-					throw new Error('"path" option, if/when provided, MUST be a non-empty string');
+			if (optName === 'filters') {
+				if (!Array.isArray(optVal) || optVal.length === 0) {
+					throw new Error('"filters" option, if/when provided, MUST be a non-empty array of Filter instances');
 				}
-				result[optName] = optVal;
-			} else if (optName === 'pathsOf') {
-				if (options.path) {
-					throw new Error('"pathsOf" option MAY NOT be specified together with "path" option');
+				const fns: FilterFn[] = new Array(optVal.length);
+				for (let i = 0; i < optVal.length; i++) {
+					const f = optVal[i];
+					if (!(f instanceof Filter)) {
+						throw new Error('"filters" option, if/when provided, MUST be a non-empty array of Filter instances');
+					}
+					fns[i] = f.fn;
 				}
-				if (typeof optVal !== 'string') {
-					throw new Error('"pathsOf" option, if/when provided, MUST be a string (MAY be empty)');
-				}
-				result[optName] = options.pathsOf.split('.').filter(Boolean);
-			} else if (optName === 'pathsFrom') {
-				if (options.path || options.pathsOf) {
-					throw new Error('"pathsFrom" option MAY NOT be specified together with "path"/"pathsOf" option/s');
-				}
-				if (typeof optVal !== 'string' || optVal === '') {
-					throw new Error('"pathsFrom" option, if/when provided, MUST be a non-empty string');
-				}
-				result[optName] = optVal;
+				result.filters = fns;
 			} else {
 				invalidOptions.push(optName);
 			}
@@ -38,7 +33,7 @@ const
 		if (invalidOptions.length) {
 			throw new Error(`'${invalidOptions.join(', ')}' is/are not a valid observer option/s`);
 		}
-		return result;
+		return Object.keys(result).length === 0 ? null : result;
 	};
 
 export const Observable = Object.freeze({

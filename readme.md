@@ -14,7 +14,7 @@ Main aspects and features:
 - observation is 'deep', yielding changes from a __sub-graphs__ too
 - nested objects of the observable graph are observables too
 - changes delivered in a __synchronous__ way by default, __asynchronous__ delivery is optionally available as per `Observable` configuration; [more details here](docs/sync-async.md)
-- observed path may optionally be filtered as per `observer` configuration; [more details here](docs/filter-paths.md)
+- observed changes may optionally be filtered via the `Filter` class; [more details here](docs/filters.md)
 - original objects are __cloned__ while turned into `Observable`s
   - circular references are nullified in the clone
 - __array__ specifics:
@@ -210,11 +210,13 @@ In cases of massive changes touching presumably the whole array I took a pessimi
 
 ##### Observation options
 
-`object-observer` allows to filter the events delivered to each callback/listener by an optional configuration object passed to the `observe` API.
+`object-observer` allows to filter the events delivered to each callback/listener via an optional `filters` array — each element MUST be a `Filter` instance. Multiple filters compose as logical AND (each filter narrows the result).
 
 > In the examples below assume that `callback = changes => {...}`.
 
 ```javascript
+import { Observable, Filter } from '@gullerya/object-observer';
+
 let user = {
         firstName: 'Aya',
         lastName: 'Guller',
@@ -229,29 +231,17 @@ let user = {
     },
     oUser = Observable.from(user);
 
-//  path
+//  exact paths
 //
-//  going to observe ONLY the changes of 'firstName'
-Observable.observe(oUser, callback, {path: 'firstName'});
+//  going to observe ONLY the changes of 'firstName' or 'address.city'
+Observable.observe(oUser, callback, { filters: [Filter.exactPaths(['firstName', 'address.city'])] });
 
-//  going to observe ONLY the changes of 'address.city'
-Observable.observe(oUser, callback, {path: 'address.city'});
+//  direct children of 'address' (city, street, block, extra) — and REVERSE/SHUFFLE at 'address'
+Observable.observe(oUser, callback, { filters: [Filter.directChildrenOf('address')] });
 
-//  pathsOf
-//
-//  going to observe the changes of 'address' own properties ('city', 'block') but not else
-Observable.observe(oUser, callback, {pathsOf: 'address'});
-//  here we'll be notified on changes of
-//    address.city
-//    address.extra
+//  all changes from 'address' and deeper
+Observable.observe(oUser, callback, { filters: [Filter.pathsStartWith('address')] });
 
-//  pathsFrom
-//
-//  going to observe the changes from 'address' and deeper
-Observable.observe(oUser, callback, {pathsFrom: 'address'});
-//  here we'll be notified on changes of
-//    address
-//    address.city
-//    address.extra
-//    address.extra.data
+//  custom predicate
+Observable.observe(oUser, callback, { filters: [Filter.custom(cs => cs.filter(c => c.type === 'update'))] });
 ```

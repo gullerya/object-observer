@@ -10,7 +10,7 @@ export interface ObservableOptions {
 }
 export type ChangesProcessor = (changes: Change[]) => void;
 
-export class ObservableBase implements ProxyHandler<object> {
+export abstract class ObservableBase implements ProxyHandler<object> {
     #parent: ObservableBase | null;
     ownKey: string | null;
     #target: object;
@@ -60,10 +60,7 @@ export class ObservableBase implements ProxyHandler<object> {
     get verifiers(): Array<ChangesProcessor> { return this.#verifiers; }
     get observers(): Array<ChangesProcessor> { return this.#observers; }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    observedGraphProcessor(source: object, observableWrapper: ObservableBase, visited: Set<unknown>): object {
-        throw new Error('observedGraphProcessor MUST be implemented in derived classes');
-    }
+    abstract observedGraphProcessor(source: object, observableWrapper: ObservableBase, visited: Set<unknown>): object;
 
     #processOptions(options: ObservableOptions | undefined): void {
         if (!options) {

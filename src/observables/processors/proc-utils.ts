@@ -1,4 +1,4 @@
-import { oMetaKey, REVERSE, SHUFFLE } from '../../constants.ts';
+import { oMetaKey } from '../../constants.ts';
 import { Change } from '../../model/change.ts';
 import { ObservableBase } from '../abstract-base.ts';
 import { ObservableArray } from '../array.ts';
@@ -113,29 +113,13 @@ export function callObservers(oMeta: ObservableBase, changes: Change[]) {
 };
 
 function filterChanges(options, changes) {
-	if (options === null) {
+	if (options === null || !options.filters) {
 		return changes;
 	}
-
 	let result = changes;
-	if (options.path) {
-		const oPath = options.path;
-		result = changes.filter(change =>
-			change.pathAsString === oPath
-		);
-	} else if (options.pathsOf) {
-		const oPathsOf = options.pathsOf;
-		const oPathsOfStr = oPathsOf.join('.');
-		result = changes.filter(change =>
-			(change.path.length === oPathsOf.length + 1 ||
-				(change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
-			change.pathAsString.startsWith(oPathsOfStr)
-		);
-	} else if (options.pathsFrom) {
-		const oPathsFrom = options.pathsFrom;
-		result = changes.filter(change =>
-			change.pathAsString.startsWith(oPathsFrom)
-		);
+	const filters = options.filters;
+	for (let i = 0, l = filters.length; i < l && result.length; i++) {
+		result = filters[i](result);
 	}
 	return result;
 }

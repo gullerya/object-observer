@@ -86,15 +86,9 @@ Observable.unobserve(observableAddress);
 ```
 
 ## Observation options
-If/When provided, `options` parameter MUST contain ONLY one of the properties below, no 'unknown' properties allowed.
+If/When provided, `options` MUST be an object. Unknown properties are rejected — incorrect observation options throw, to fail fast.
 
-In order to fail-fast and prevent unexpected mess down the hill, incorrect observation options will throw.
-
-- __`path`__ - non-empty string; specific path to observe, only a changes of this exact path will be notified; [details here](filter-paths.md)
-
-- __`pathsOf`__ - string, MAY be empty; direct properties of the specified path will be notified; [details here](filter-paths.md)
-
-- __`pathsFrom`__ - non-empty string, any changes from the specified path and deeper will be delivered to the observer; [details here](filter-paths.md)
+- __`filters`__ - non-empty array of `Filter` instances; changes that survive **all** filters (logical AND) are delivered to the observer; [details here](filters.md)
 
 ## `Change` instance properties
 

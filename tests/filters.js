@@ -52,3 +52,33 @@ test('pathsStartWith filter - negative cases', () => {
 	assert.throws(() => Filter.pathsStartWith([]), 'pathsStartWith Filter requires a non-empty string as argument');
 	assert.throws(() => Filter.pathsStartWith(''), 'pathsStartWith Filter requires a non-empty string as argument');
 });
+
+test('directChildrenOf filter - positive cases', () => {
+	const f = Filter.directChildrenOf('a');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('update', ['a', 'b', 'c'], 3, 0),
+		new Change('update', ['a', 'c'], 4, 0),
+		new Change('update', ['aX', 'b'], 5, 0)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 2);
+});
+
+test('directChildrenOf filter - empty path = root', () => {
+	const f = Filter.directChildrenOf('');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('reverse', [], undefined, undefined),
+		new Change('shuffle', [], undefined, undefined)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 3);
+});
+
+test('directChildrenOf filter - negative cases', () => {
+	assert.throws(() => Filter.directChildrenOf(null), 'directChildrenOf Filter requires a string as argument (MAY be empty)');
+	assert.throws(() => Filter.directChildrenOf(123), 'directChildrenOf Filter requires a string as argument (MAY be empty)');
+});
