@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [Issue no. 149](https://github.com/gullerya/object-observer/issues/149) - added verifiers to prevent unallowed changes
 - [Issue no. 152](https://github.com/gullerya/object-observer/issues/152) - change the way filters are configured
+### Fixed
+- `npm test` script referenced a non-existent `.json` config; now points to the correct `.js` file
 ### Chore
 - updated dependencies
 - reorganized sources
 - updated build scripts
+- raised Node.js runtime to `24.15.0` (aligned with current LTS)
+- browser support matrix updated to "last 2 versions" of Chrome, Firefox, Edge, Safari
+- removed stale commented-out duplicate of the dispatch pipeline from `src/object-observer.ts`
 
 ## [6.1.4] - 2025-02-14
 ### Chore

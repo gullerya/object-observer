@@ -63,7 +63,7 @@
 		"build": "node ./ci/tools/build-utils.js",
 		"lint": "eslint -c ./ci/eslint.config.mjs ./src/* ./tests/*.js ./ci/**/*.js",
 		"test-types": "tsc",
-		"test": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.json",
+		"test": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-node.js",
 		"test:chromium": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-chromium.js",
 		"test:firefox": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-firefox.js",
 		"test:webkit": "node node_modules/@gullerya/just-test/bin/local-runner.js config_file=./tests/configs/tests-config-ci-webkit.js",
