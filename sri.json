@@ -1,6 +1,6 @@
 {
-	"dist/cdn/object-observer.js": "sha512-4JSeuw8uOwqMSGz6wX4oZWKwbgRt5dB0kcemUJkK+fgXR2lLHgxNjf2XeZDL1v3bVUuPvOPauGW89YgK0YmnmQ==",
-	"dist/cdn/object-observer.js.map": "sha512-SXGYrEiThB+7WA+kG3EQfBymkPEBTtnhEQST7XAC98PTzQbwPpvCNuXfN3gFUgpTRegB7PoVEKjq5/CR3Hr7Nw==",
-	"dist/cdn/object-observer.min.js": "sha512-62Md9XWugP+Ot8Wbm4yUq0N3CMLCJLDRraDrL+N3wbDYPMg4wan9Znly09Uh32sneJFLx1YDEIkCxF4vgJRhsQ==",
-	"dist/cdn/object-observer.min.js.map": "sha512-Pk2JKDulMrcTjp0y05o0pAL2rpjD5t/h9OnRY4DTNaXn+MiF1pq3ZjsAOomKyCujhQ6NFgugUyRmVAcKHm0DKA=="
+	"dist/cdn/object-observer.js": "sha512-ywG0PACduYPgmOWRLS+gcYNgOtHsmOFXmuCQI7cTxePndoglV+hn3AZhO+uEuh3b/pKJD3vujn3QvtGnGQgrEA==",
+	"dist/cdn/object-observer.js.map": "sha512-7eKH4iPXrU5EecOHb9EvT27wXKOhlnV2utpQshtFOs2FVOS8QEdzY93UR16Kppz0ivJx/2UY5yC7X8UwafFVuQ==",
+	"dist/cdn/object-observer.min.js": "sha512-yWDCo2vTsWOfXVN/gryETkDf3n/ZdZhYkpV3InCA0ywsvBsbCk3gSkIvgk/NDEShMtGAbp4UWbExfKdqxel+jw==",
+	"dist/cdn/object-observer.min.js.map": "sha512-/Yf1dTEZX8GzgN4lUJmtywBC6x7LrCNJBNpxXRY5B+IA3xQGIt7WNmXmLduHvVC65XjWpIm22zX8Z2Y+QJQNJA=="
 }

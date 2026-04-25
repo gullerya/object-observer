@@ -76,21 +76,15 @@ export function callObservers(oMeta: ObservableBase, changes: Change[]) {
 			if (relevantChanges.length) {
 				if (isAsync) {
 					//	this is the async dispatch handling
-					if (currentObservable.batches.length === 0) {
+					if (currentObservable.batches.size === 0) {
 						queueMicrotask(callObserversFromMT.bind(currentObservable));
 					}
-					let rb;
-					for (const b of currentObservable.batches) {
-						if (b[0] === target) {
-							rb = b;
-							break;
-						}
+					let batch = currentObservable.batches.get(target);
+					if (!batch) {
+						batch = [];
+						currentObservable.batches.set(target, batch);
 					}
-					if (!rb) {
-						rb = [target, []];
-						currentObservable.batches.push(rb);
-					}
-					Array.prototype.push.apply(rb[1], relevantChanges);
+					batch.push(...relevantChanges);
 				} else {
 					//	this is the naive straight forward synchronous dispatch
 					callObserverSafe(target, relevantChanges);
@@ -156,7 +150,7 @@ function callObserverSafe(listener, changes) {
 
 function callObserversFromMT() {
 	const batches = this.batches;
-	this.batches = [];
+	this.batches = new Map();
 	for (const [listener, changes] of batches) {
 		callObserverSafe(listener, changes);
 	}

@@ -18,7 +18,7 @@ export class ObservableBase implements ProxyHandler<object> {
     // eslint-disable-next-line no-unused-private-class-members
     #revoke: () => void;
     #async: boolean = false;
-    batches = [];
+    batches = new Map<ChangesProcessor, Change[]>();
 
     set;
     deleteProperty;
