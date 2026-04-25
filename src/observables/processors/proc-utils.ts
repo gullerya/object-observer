@@ -103,7 +103,7 @@ function filterChanges(options, changes) {
     if (options.path) {
         const oPath = options.path;
         result = changes.filter(change =>
-            change.path.join('.') === oPath
+            change.pathAsString === oPath
         );
     } else if (options.pathsOf) {
         const oPathsOf = options.pathsOf;
@@ -111,12 +111,12 @@ function filterChanges(options, changes) {
         result = changes.filter(change =>
             (change.path.length === oPathsOf.length + 1 ||
                 (change.path.length === oPathsOf.length && (change.type === REVERSE || change.type === SHUFFLE))) &&
-            change.path.join('.').startsWith(oPathsOfStr)
+            change.pathAsString.startsWith(oPathsOfStr)
         );
     } else if (options.pathsFrom) {
         const oPathsFrom = options.pathsFrom;
         result = changes.filter(change =>
-            change.path.join('.').startsWith(oPathsFrom)
+            change.pathAsString.startsWith(oPathsFrom)
         );
     }
     return result;
