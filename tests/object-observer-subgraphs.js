@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../src/object-observer.ts';
 
 test('inner object from observable should fire events as usual', () => {
 	const

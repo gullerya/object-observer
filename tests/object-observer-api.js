@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { ObjectObserver, Observable } from '../src/object-observer.js';
+import { ObjectObserver, Observable } from '../src/object-observer.ts';
 
 test('ensure ObjectObserver constructable', () => {
 	assert.isTrue(typeof ObjectObserver === 'function');

@@ -4,9 +4,10 @@ on:
   pull_request:
     branches:
       - main
+      - release-*
 
 jobs:
-  quality_pipeline_lint:
+  quality_pipeline_lint_and_typecheck:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
@@ -24,6 +25,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Type Check
+        run: npm run test-types
 
   quality_pipeline_nodejs:
     runs-on: ubuntu-24.04
@@ -68,6 +72,9 @@ jobs:
       - name: Install
         run: npm ci && npx playwright install --with-deps chromium
 
+      - name: Build
+        run: npm run build
+
       - name: Test
         run: npm run test:chromium
 
@@ -75,12 +82,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Archive logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: chromium-logs
-          path: reports/logs/chromium-112.0.5615.29.log
 
   quality_pipeline_firefox:
     runs-on: ubuntu-24.04
@@ -98,13 +99,11 @@ jobs:
       - name: Install
         run: npm ci && npx playwright install --with-deps firefox
 
+      - name: Build
+        run: npm run build
+
       - name: Test
         run: npm run test:firefox
-
-      - name: Report coverage
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   quality_pipeline_webkit:
     runs-on: ubuntu-24.04
@@ -122,10 +121,8 @@ jobs:
       - name: Install
         run: npm ci && npx playwright install --with-deps webkit
 
+      - name: Build
+        run: npm run build
+
       - name: Test
         run: npm run test:webkit
-
-      - name: Report coverage
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

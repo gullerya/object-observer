@@ -1,0 +1,84 @@
+import { test } from '@gullerya/just-test';
+import { assert } from '@gullerya/just-test/assert';
+import { Filter } from '../src/changes-processors/filters.ts';
+import { Change } from '../src/model/change.ts';
+
+test('test filters - ctor direct use forbidden', () => {
+	assert.throws(() => new Filter('some', (change) => change.prop !== 'skip'), 'Filter class cannot be instantiated directly', 'Filter class cannot be instantiated directly');
+});
+
+test('custom filter - positive cases', () => {
+	const filterLogic = changes => changes.filter(c => c.value !== null);
+	const f = Filter.custom(filterLogic);
+	assert.strictEqual(f.fn, filterLogic, 'Filter code is correct');
+});
+
+test('custom filter - negative cases', () => {
+	assert.throws(() => Filter.custom(null), 'custom Filter requires a function as argument');
+	assert.throws(() => Filter.custom('some'), 'custom Filter requires a function as argument');
+});
+
+test('exactPaths filter - positive cases', () => {
+	const f = Filter.exactPaths(['a', 'b.c']);
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['b', 'c'], 2, 0),
+		new Change('update', ['a', 'b', 'c'], 3, 0),
+		new Change('update', ['b', 'c', 'd'], 4, 0)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 2);
+});
+
+test('exactPaths filter - negative cases', () => {
+	assert.throws(() => Filter.exactPaths(null), 'exactPaths Filter requires a non-empty array as argument');
+	assert.throws(() => Filter.exactPaths([]), 'exactPaths Filter requires a non-empty array as argument');
+});
+
+test('pathsStartWith filter - positive cases', () => {
+	const f = Filter.pathsStartWith('a.b');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('update', ['a', 'c', 'c'], 3, 0),
+		new Change('update', ['a', 'b', 'c'], 4, 0)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 2);
+});
+
+test('pathsStartWith filter - negative cases', () => {
+	assert.throws(() => Filter.pathsStartWith(null), 'pathsStartWith Filter requires a non-empty string as argument');
+	assert.throws(() => Filter.pathsStartWith([]), 'pathsStartWith Filter requires a non-empty string as argument');
+	assert.throws(() => Filter.pathsStartWith(''), 'pathsStartWith Filter requires a non-empty string as argument');
+});
+
+test('directChildrenOf filter - positive cases', () => {
+	const f = Filter.directChildrenOf('a');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('update', ['a', 'b', 'c'], 3, 0),
+		new Change('update', ['a', 'c'], 4, 0),
+		new Change('update', ['aX', 'b'], 5, 0)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 2);
+});
+
+test('directChildrenOf filter - empty path = root', () => {
+	const f = Filter.directChildrenOf('');
+	const changes = [
+		new Change('update', ['a'], 1, 0),
+		new Change('update', ['a', 'b'], 2, 0),
+		new Change('reverse', [], undefined, undefined),
+		new Change('shuffle', [], undefined, undefined)
+	];
+	const filtered = f.fn(changes);
+	assert.strictEqual(filtered.length, 3);
+});
+
+test('directChildrenOf filter - negative cases', () => {
+	assert.throws(() => Filter.directChildrenOf(null), 'directChildrenOf Filter requires a string as argument (MAY be empty)');
+	assert.throws(() => Filter.directChildrenOf(123), 'directChildrenOf Filter requires a string as argument (MAY be empty)');
+});
