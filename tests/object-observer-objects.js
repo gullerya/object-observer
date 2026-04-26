@@ -1,6 +1,6 @@
 import { test } from '@gullerya/just-test';
 import { assert } from '@gullerya/just-test/assert';
-import { Observable } from '../src/object-observer.js';
+import { Observable } from '../src/object-observer.ts';
 
 test('creating observable leaves original object as is', () => {
 	const person = {
@@ -42,7 +42,7 @@ test('plain object operations', () => {
 		name: 'name',
 		age: 7,
 		address: null
-	}
+	};
 	const
 		events = [],
 		tmpAddress = { street: 'some' };
