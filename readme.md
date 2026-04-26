@@ -9,6 +9,8 @@
 
 __`object-observer`__ provides a deep observation of a changes performed on an object/array graph.
 
+For a high-level overview of how the library is put together see the [architecture](docs/architecture.md) doc.
+
 Main aspects and features:
 - implemented via native __Proxy__ (revokable)
 - observation is 'deep', yielding changes from a __sub-graphs__ too

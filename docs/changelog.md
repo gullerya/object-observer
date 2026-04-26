@@ -6,13 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [7.0.0]
+
+## [7.0.0] - 2026-04-26
+> See the [v6 → v7 migration guide](v6-to-v7-migration-guide.md) for the full list of breaks and before/after examples.
+
 ### BREAKING CHANGE
 - [Issue no. 152](https://github.com/gullerya/object-observer/issues/152) - `Observable.observe` options API replaced:
   - removed: `path`, `pathsOf`, `pathsFrom`
   - added: `filters` — a non-empty array of `Filter` instances; multiple filters compose as logical AND
   - `Filter` is now exported from the package entry; use its static factories (`exactPaths`, `pathsStartWith`, `directChildrenOf`, `custom`) to build filters
   - migration: `{ path: 'a.b' }` → `{ filters: [Filter.exactPaths(['a.b'])] }`; `{ pathsOf: 'a' }` → `{ filters: [Filter.directChildrenOf('a')] }`; `{ pathsFrom: 'a' }` → `{ filters: [Filter.pathsStartWith('a')] }`
+- `Change` object fields (`type`, `path`, `value`, `oldValue`, `object`) are now read-only getters (were writable public fields in v6); reading is unaffected, writing throws in strict mode
 ### Added
 - [Issue no. 149](https://github.com/gullerya/object-observer/issues/149) - added verifiers to prevent unallowed changes
 - `Filter.directChildrenOf(path)` factory — covers the previous `pathsOf` semantics, with a fixed sibling-prefix bug (`directChildrenOf('inner')` no longer matches `innerX.foo`)
