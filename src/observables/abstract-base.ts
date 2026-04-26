@@ -1,12 +1,13 @@
 import { Change } from '../model/change.ts';
+import { Validator } from '../changes-processors/validators.ts';
 import { proxiedDeleteProperty } from './methods/delete-property.ts';
 import { proxiedSet } from './methods/set.ts';
 
-const validObservableOptionKeys = { async: 1, verifiers: 1 };
+const validObservableOptionKeys = { async: 1, validators: 1 };
 
 export interface ObservableOptions {
     async?: boolean;
-    verifiers?: Array<ChangesProcessor>;
+    validators?: Array<Validator>;
 }
 export type ChangesProcessor = (changes: Change[]) => void;
 
@@ -23,7 +24,7 @@ export abstract class ObservableBase implements ProxyHandler<object> {
     set;
     deleteProperty;
 
-    #verifiers: Array<ChangesProcessor> = [];
+    #validators: Array<Validator> = [];
     #observers: Array<ChangesProcessor> = [];
 
     constructor(properties) {
@@ -57,7 +58,7 @@ export abstract class ObservableBase implements ProxyHandler<object> {
     get target(): object { return this.#target; }
     get proxy(): unknown { return this.#proxy; }
     get async(): boolean { return this.#async; }
-    get verifiers(): Array<ChangesProcessor> { return this.#verifiers; }
+    get validators(): Array<Validator> { return this.#validators; }
     get observers(): Array<ChangesProcessor> { return this.#observers; }
 
     abstract observedGraphProcessor(source: object, observableWrapper: ObservableBase, visited: Set<unknown>): object;
@@ -77,8 +78,16 @@ export abstract class ObservableBase implements ProxyHandler<object> {
 
         this.#async = Boolean(options.async);
 
-        if (Array.isArray(options.verifiers)) {
-            this.#verifiers.push(...options.verifiers);
+        if (options.validators !== undefined) {
+            if (!Array.isArray(options.validators) || options.validators.length === 0) {
+                throw new Error('"validators" option, if/when provided, MUST be a non-empty array of Validator instances');
+            }
+            for (const v of options.validators) {
+                if (!(v instanceof Validator)) {
+                    throw new Error('"validators" option, if/when provided, MUST be a non-empty array of Validator instances');
+                }
+            }
+            this.#validators.push(...options.validators);
         }
     }
 }

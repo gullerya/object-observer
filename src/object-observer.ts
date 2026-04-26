@@ -1,8 +1,9 @@
 import { oMetaKey } from './constants.ts';
 import { getObservableFromRoot } from './observables/processors/proc-utils.ts';
 import { Filter, type FilterFn } from './changes-processors/filters.ts';
+import { Validator } from './changes-processors/validators.ts';
 
-export { Filter };
+export { Filter, Validator };
 
 const
 	processObserveOptions = options => {

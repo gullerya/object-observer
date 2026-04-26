@@ -61,6 +61,29 @@ export function detachIfObservable(value: unknown): unknown {
 	return value;
 }
 
+//	invoke every Validator attached to the root of this observable tree.
+//	changes' paths are rebuilt relative to the root before being passed to validators.
+//	any validator throw propagates — mutation is aborted.
+export function runValidators(oMeta: ObservableBase, changes: Change[]): void {
+	//	find root + accumulate path prefix from this node up
+	const prefix: Array<string | symbol | number> = [];
+	let current: ObservableBase = oMeta;
+	while (current.parent) {
+		prefix.unshift(current.ownKey);
+		current = current.parent;
+	}
+	const validators = current.validators;
+	if (validators.length === 0) {
+		return;
+	}
+	const rooted = prefix.length === 0
+		? changes
+		: changes.map(c => new Change(c.type, [...prefix, ...c.path], c.value, c.oldValue, c.object));
+	for (let i = 0, l = validators.length; i < l; i++) {
+		validators[i].validate(rooted);
+	}
+}
+
 export function callObservers(oMeta: ObservableBase, changes: Change[]) {
 	let currentObservable: ObservableBase = oMeta;
 	let isAsync, observers, target, options, relevantChanges, i;

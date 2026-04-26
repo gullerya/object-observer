@@ -17,14 +17,17 @@ Main aspects and features:
 - observed changes may optionally be filtered via the `Filter` class; [more details here](docs/filters.md)
 - original objects are __cloned__ while turned into `Observable`s
   - circular references are nullified in the clone
+- observed mutations on plain objects:
+  - property assignment (`obj.x = v`, `obj['x'] = v`)
+  - property deletion (`delete obj.x`)
 - __array__ specifics:
-  - generic object-like mutations supported
-  - intrinsic `Array` mutation methods supported: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
-  - massive mutations delivered in a single callback, usually having an array of an atomic changes
+  - indexed assignment (`arr[i] = v`), `length` assignment, and `delete arr[i]` are observed (same traps as for plain objects)
+  - intrinsic `Array` mutation methods observed: `pop`, `push`, `shift`, `unshift`, `reverse`, `sort`, `fill`, `splice`, `copyWithin`
+  - massive mutations delivered in a single callback, usually as an array of atomic changes
 - __typed array__ specifics:
-  - generic object-like mutations supported
-  - intrinsic `TypedArray` mutation methods supported: `reverse`, `sort`, `fill`, `set`, `copyWithin`
-  - massive mutations delivered in a single callback, usually having an array of an atomic changes
+  - indexed assignment (`ta[i] = v`) is observed (same trap as for plain objects); `length` is fixed
+  - intrinsic `TypedArray` mutation methods observed: `reverse`, `sort`, `fill`, `set`, `copyWithin`
+  - massive mutations delivered in a single callback, usually as an array of atomic changes
 - intrinsic mutation methods of `Map`, `WeakMap`, `Set`, `WeakSet` (`set`, `delete`) etc __are not__ observed (see this [issue](https://github.com/gullerya/object-observer/issues/1) for more details)
 - following host objects (and their extensions) are __skipped__ from cloning / turning into observables: `Date`
 
@@ -245,3 +248,26 @@ Observable.observe(oUser, callback, { filters: [Filter.pathsStartWith('address')
 //  custom predicate
 Observable.observe(oUser, callback, { filters: [Filter.custom(cs => cs.filter(c => c.type === 'update'))] });
 ```
+
+##### Validators
+
+`object-observer` allows to veto mutations before they are applied via an optional `validators` array supplied to `Observable.from`. Each element MUST be a `Validator` instance. Validators are attached at tree creation — they apply to the whole observable graph, not per observer.
+
+A validator receives the prospective `Change[]` (with rooted paths and the raw, un-observified new value) BEFORE the underlying target is mutated. Throwing from a validator aborts the mutation: the target is left unchanged and observers are not invoked. Multiple validators compose as logical AND with short-circuit — the first throw stops the chain.
+
+```javascript
+import { Observable, Validator } from '@gullerya/object-observer';
+
+const immutableMarker = Validator.custom(changes => {
+    for (const c of changes) {
+        if (c.oldValue === 'immutable') {
+            throw new Error(`change at '${c.pathAsString}' rejected: oldValue is immutable`);
+        }
+    }
+});
+
+const oo = Observable.from({ a: 'immutable' }, { validators: [immutableMarker] });
+oo.a = 'other';    //  throws; oo.a still === 'immutable'; no observer fired
+```
+
+> Not yet supported: validators do not currently run for `Array.prototype.splice`, `Array.prototype.fill`, and `Array.prototype.copyWithin` (and their `TypedArray` counterparts where applicable). These mutations proceed as before without validator consultation. Support is planned for a subsequent release.
