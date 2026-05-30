@@ -58,7 +58,7 @@ jobs:
 
   quality_pipeline_chromium:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -67,7 +67,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: '24.15.0'
 
       - name: Install
         run: npm ci && npx playwright install --with-deps chromium
@@ -85,7 +85,7 @@ jobs:
 
   quality_pipeline_firefox:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -94,7 +94,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: '24.15.0'
 
       - name: Install
         run: npm ci && npx playwright install --with-deps firefox
@@ -107,7 +107,7 @@ jobs:
 
   quality_pipeline_webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -116,7 +116,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v6
         with:
-          node-version-file: '.nvmrc'
+          node-version: '24.15.0'
 
       - name: Install
         run: npm ci && npx playwright install --with-deps webkit
