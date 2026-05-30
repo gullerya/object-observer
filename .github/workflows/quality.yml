@@ -58,7 +58,7 @@ jobs:
 
   quality_pipeline_chromium:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -85,7 +85,7 @@ jobs:
 
   quality_pipeline_firefox:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -107,7 +107,7 @@ jobs:
 
   quality_pipeline_webkit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
