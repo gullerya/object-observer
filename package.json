@@ -72,13 +72,13 @@
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.39.1",
+		"@eslint/js": "^9.39.4",
 		"@gullerya/just-test": "^4.0.17",
 		"esbuild": "^0.27.0",
-		"eslint": "^9.39.1",
+		"eslint": "^9.39.4",
 		"globals": "^16.5.0",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.48.0"
+		"typescript-eslint": "^8.60.0"
 	},
 	"publishConfig": {
 		"access": "public"
